@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+
+{% block y %}
+
+{% if session.tutor %}
+	Conversation history: {{ session.tutor.history }}
+{% else %}
+	No conversation history. Use the /ask endpoint to test a question.
+{% endif %}
+
+{% endblock %}
