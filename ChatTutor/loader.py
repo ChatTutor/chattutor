@@ -14,7 +14,7 @@ from database import VectorDatabase
 
 texts = read_folder("datasets/")
 
-database = VectorDatabase("./db", "deeplake_vectordb")
+database = VectorDatabase("./db", "chroma")
 database.init_db()
 database.load_datasource('test_embedding')
 
