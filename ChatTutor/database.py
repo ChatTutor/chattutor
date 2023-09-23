@@ -8,7 +8,7 @@ import requests
 import json
 
 # Setting up user and URL for activeloop
-username = "hpstennes"
+username = "mit.quantum.ai"
 activeloop_url = "https://app.activeloop.ai/api/query/v1"
 
 def embedding_function(texts, model="text-embedding-ada-002"):
