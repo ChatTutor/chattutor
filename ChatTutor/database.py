@@ -7,29 +7,33 @@ import openai
 import requests
 import json
 
+# Setting up user and URL for activeloop
 username = "hpstennes"
 activeloop_url = "https://app.activeloop.ai/api/query/v1"
 
 def embedding_function(texts, model="text-embedding-ada-002"):
+    # Function to get embeddings for given texts using OpenAI API
     if isinstance(texts, str):
         texts = [texts]
     texts = [t.replace("\n", " ") for t in texts]
-    return [data['embedding']for data in openai.Embedding.create(input = texts, model=model)['data']]
+    return [data['embedding'] for data in openai.Embedding.create(input=texts, model=model)['data']]
 
+# Loading API keys from keys.json
 with open('./keys.json') as f:
     keys = json.load(f)
 
 class VectorDatabase:
-
     def __init__(self, path, db_provider):
         self.path = path
         self.db_provider = db_provider
 
     def init_db(self):
+        # Initializing the database client if the provider is 'chroma'
         if self.db_provider != "chroma": return
         self.client = chromadb.PersistentClient(path=self.path)
-    
+
     def load_datasource(self, name):
+        # Loading the appropriate data source based on the database provider
         if self.db_provider == "chroma":
             self.load_datasource_chroma(name)
         elif self.db_provider == "deeplake_vectordb":
@@ -54,13 +58,15 @@ class VectorDatabase:
         )
 
     def add_texts(self, texts: List[Text]):
+        # Adding texts to the database based on the database provider
         if self.db_provider == "chroma":
             self.add_texts_chroma(texts)
         elif self.db_provider.startswith("deeplake"):
             self.add_texts_deeplake(texts)
-        else: raise Exception("db_provider must be one of \'chroma\' or \'deeplake\'")
+        else: raise Exception("db_provider must be one of 'chroma' or 'deeplake'")
 
-    def add_texts_deeplake(self, texts: List[Text]):        
+    def add_texts_deeplake(self, texts: List[Text]):
+        # Adding texts to Deeplake data source with specified embedding function, data, and metadata
         text_strs = [text.text for text in texts]
 
         self.datasource.add(text = text_strs, 
@@ -69,6 +75,7 @@ class VectorDatabase:
             metadata = [{"doc": text.doc.docname} for text in texts])
 
     def add_texts_chroma(self, texts: List[Text]):
+        # Adding texts to Chroma data source with specified ids, metadatas, and documents
         count = self.datasource.count()
         ids = [str(i) for i in range(count, count + len(texts))]
         print(ids)
@@ -79,6 +86,7 @@ class VectorDatabase:
         )
 
     def query(self, prompt, n_results, from_doc):
+        # Querying the database based on the database provider
         if self.db_provider == "chroma":
             data = self.query_chroma(prompt, n_results, from_doc)
             return " ".join(data["documents"][0])
@@ -89,12 +97,14 @@ class VectorDatabase:
         else: raise Exception("db_provider must be one of \'chroma\' or \'deeplake\'")
     
     def query_chroma(self, prompt, n_results, from_doc):
+        # Querying Chroma data source with specified query_texts, n_results, and optional where clause
         if from_doc:
             return self.datasource.query(query_texts=prompt, n_results=n_results, where={"doc": from_doc})
         else:
             return self.datasource.query(query_texts=prompt, n_results=6)
-        
+
     def query_deeplake(self, prompt, n_results, from_doc):
+        # Querying Deeplake data source with specified embedding_data, embedding_function, k, optional filter, and exec_option
         if from_doc:
             return self.datasource.search(embedding_data=prompt, embedding_function=embedding_function, k=n_results, 
                                           filter={"metadata": {"doc": from_doc}}, exec_option = "compute_engine")
@@ -102,6 +112,7 @@ class VectorDatabase:
             return self.datasource.search(embedding_data=prompt, embedding_function=embedding_function, k=n_results, exec_option = "compute_engine")
         
     def query_deeplake_tensor(self, prompt, n_results, from_doc):
+        # Querying Deeplake tensor data source with specified embedding, query string, and headers
         embedding = embedding_function(prompt)
         embedding_string = ",".join(str(item) for item in embedding[0])
         

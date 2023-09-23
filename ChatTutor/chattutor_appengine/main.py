@@ -34,7 +34,6 @@ def ask():
 
     db.load_datasource(collection_name)
     response = tutor.ask_question(db, conversation, from_doc)
-
     return response
 
 if __name__ == "__main__":
