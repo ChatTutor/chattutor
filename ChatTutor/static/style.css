@@ -26,6 +26,11 @@
     background-image: var(--body-bg);
     font-family: Helvetica, sans-serif;
   }
+
+  .msg {
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+  }
+  
   
   .msger {
     display: flex;
@@ -50,6 +55,7 @@
     color: #666;
   }
   
+  
   .msger-chat {
     flex: 1;
     overflow-y: auto;
@@ -71,6 +77,9 @@
   }
   .msg:last-of-type {
     margin: 0;
+  }
+  .msg-text {
+    line-height: 1.5;
   }
   .msg-img {
     width: 50px;
@@ -158,6 +167,11 @@
   .msger-send-btn:hover {
     background: rgb(0, 180, 50);
   }
+  .msger-send-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  
   
   .msger-chat {
     background-color: #fcfcfe;
