@@ -10,7 +10,7 @@ import os
 with open('./keys.json') as f:
     keys = json.load(f)
 os.environ['OPENAI_API_KEY'] = keys["lab_openai"]
-os.environ['ACTIVELOOP_TOKEN'] = keys["activeloop"]
+#os.environ['ACTIVELOOP_TOKEN'] = keys["activeloop"]
 
 app = Flask(__name__)
 CORS(app)  # Enabling CORS for the Flask app to allow requests from different origins
@@ -18,16 +18,30 @@ db.init_db()
 
 @app.route("/")
 def index():
-    # Redirecting the root URL to the index.html in the static folder
+    """
+        Serves the landing page of the web application which provides
+        the ChatTutor interface. Users can ask the Tutor questions and it will
+        response with information from its database of papers and information.
+        Redirects the root URL to the index.html in the static folder
+    """
     return redirect(url_for('static', filename='index.html'))
 
 @app.route('/static/<path:path>')
 def serve_static(path):
-    # Serving static files from the 'static' directory
+    """Serving static files from the 'static' directory"""
     return send_from_directory('static', path)
 
 @app.route("/ask", methods=["POST", "GET"])
 def ask():
+    """Route that facilitates the asking of questions. The response is generated
+    based on an embedding.
+    
+    URLParams:
+        conversation (List({role: ... , content: ...})):  snapshot of the current conversation 
+        collection: embedding used for vectorization
+    Yields:
+        response: {data: {time: ..., message: ...}}
+    """
     data = request.json
     conversation = data["conversation"]
     collection_name = data["collection"]
