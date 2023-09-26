@@ -10,7 +10,7 @@ import os
 with open('./keys.json') as f:
     keys = json.load(f)
 os.environ['OPENAI_API_KEY'] = keys["lab_openai"]
-os.environ['ACTIVELOOP_TOKEN'] = keys["activeloop"]
+#os.environ['ACTIVELOOP_TOKEN'] = keys["activeloop"]
 
 app = Flask(__name__)
 CORS(app)  # Enabling CORS for the Flask app to allow requests from different origins

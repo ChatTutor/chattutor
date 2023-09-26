@@ -15,28 +15,37 @@
 		<title> flask </title>
 	</head>
 	<body>
+
 		<section class="msger">
-            <header class="msger-header">
-              <div class="msger-header-title">
-                <i class="fas fa-comment-alt"></i> ChatTutor
-              </div>
-              <div class="msger-header-options">
-                <span><i class="fas fa-cog"></i></span>
-              </div>
-            </header>
-          
+            <div class="msg-header-helper">
+                <header class="msger-header">
+
+                  <div class="msger-header-title">
+                    <i class="fas fa-comment-alt"></i> ChatTutor
+                  </div>
+                  <div class="msger-header-options">
+                    <span><i class="fas fa-cog"></i></span>
+                  </div>
+                    <div class="button-div">
+                        <button class="theme-button" id="themeBtn">Toggle theme</button>
+                    </div>
+
+                </header>
+            </div>
+
             <main class="msger-chat">
-              <div class="msg left-msg">
+              <div class="msg left-msg" style="margin-top: 50px !important;">
                 <div
                  class="msg-img"
+                 id="msgImg"
                  style="background-image: url(https://static.thenounproject.com/png/2216285-200.png)"
                 ></div>
-          
+
                 <div class="msg-bubble">
                   <div class="msg-info">
                     <div class="msg-info-name">ChatTutor</div>
                   </div>
-          
+
                   <div class="msg-text">
                     Welcome to ChatTutor, feel free to ask any questions about this lesson.
                   </div>
@@ -48,7 +57,6 @@
                 </button>
               </div>
             </main>
-          
             <form class="msger-inputarea">
               <input type="text" class="msger-input" placeholder="Enter your message...">
               <button type="submit" class="msger-send-btn" id="sendBtn">Send</button>
