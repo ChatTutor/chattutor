@@ -4,6 +4,13 @@ import os
 import json
 
 def read_folder(path):
+    """
+        Reads the contents of a folder and parses each file according to it's type, 
+        weather pdf, notebook or plain text. 
+        
+        Returns:
+            [Text]: an array of texts obtained from parsing the folder's files (see definitions.py)
+    """
     texts = []
 
     for dirpath, dirnames, filenames in os.walk(path):
@@ -23,11 +30,32 @@ def read_folder(path):
     return texts
 
 def parse_plaintext(path: str, doc: Doc, chunk_chars: int, overlap: int):
+    """Parses a plain text file and generates texts from its content.
+
+    Args:
+        path (str): path to the file
+        doc (Doc): Doc object that the Text objects will comply to
+        chunk_chars (int): size of chunks
+        overlap (int): overlap of chunks
+
+    Returns:
+        [Text]: The resulting Texts as an array
+    """
     with open(path, "r") as f:
         return texts_from_str(f.read(), doc, chunk_chars, overlap)
     
 def parse_notebook(path: str, doc: Doc, chunk_chars: int, overlap: int):
+    """Parses a jupyter notebook file and generates texts from its content.
 
+    Args:
+        path (str): path to the file
+        doc (Doc): Doc object that the Text objects will comply to
+        chunk_chars (int): size of chunks
+        overlap (int): overlap of chunks
+
+    Returns:
+        List(Text): The resulting Texts as an array
+    """
     print("parsing notebook ", path)
 
     with open(path, "r") as f:
@@ -41,6 +69,17 @@ def parse_notebook(path: str, doc: Doc, chunk_chars: int, overlap: int):
         return texts_from_str(text_str, doc, chunk_chars, overlap)
 
 def parse_pdf(path: str, doc: Doc, chunk_chars: int, overlap: int) -> List[Text]:
+    """Parses a pdf file and generates texts from its content.
+
+    Args:
+        path (str): path to the file
+        doc (Doc): Doc object that the Text objects will comply to
+        chunk_chars (int): size of chunks
+        overlap (int): overlap of chunks
+
+    Returns:
+        List(Text): The resulting Texts as an array
+    """
     import pypdf
 
     pdfFileObj = open(path, "rb")

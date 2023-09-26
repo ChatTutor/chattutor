@@ -1,3 +1,8 @@
+"""
+    Program that adds texts read from the `datasets/` forlder using `reader.py`'s 
+    `read_folder` function to the `./db` chroma VectorDatabase (see `database.py`)
+"""
+
 import json
 import os
 from time import sleep
