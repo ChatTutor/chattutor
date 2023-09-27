@@ -70,7 +70,7 @@ function windowIsResizing() {
       themeBtnDiv.style.left = '25px'
       const arr = [themeBtn, interfaceBtn]
       arr.forEach(btn => {
-        btn.style.backgroundColor = '#579FFB'
+        btn.style.backgroundColor = 'rgb(140, 0, 255)'
         btn.style.color = 'white'
         btn.style.textDecoration = 'none'
         btn.style.padding = '10px'
@@ -90,7 +90,7 @@ const lightMode = {
   border: '1px solid #ddd',
   left_msg_bg: '#ececec',
   left_msg_txt: 'black',
-  right_msg_bg: '#579ffb',
+  right_msg_bg: 'rgb(140, 0, 255)',
   msg_header_bg: 'rgba(238,238,238,0.75)',
   msg_header_txt: '#666',
   clear_btn_txt: '#999',
@@ -132,12 +132,12 @@ const darkMode = {
   border: '1px solid #2d2d2d',
 
   left_msg_txt: 'white',
-  right_msg_bg: '#579ffb',
+  right_msg_bg: 'rgb(140, 0, 255)',
   msg_header_bg: 'rgba(41,41,41,0.75)',
   msg_header_txt: '#d5d5d5',
   clear_btn_txt: '#e5e5e5',
-  msg_chat_bg_scrollbar: '#2d2d2d',
-  msg_chat_bg_thumb: '#3f3f3f',
+  msg_chat_bg_scrollbar: 'transparent',
+  msg_chat_bg_thumb: '#656172',
   msg_input_bg: '#2f2f2f',
   msg_input_area_bg: '#252525',
   msg_invert_image: 'invert(100%)',
@@ -152,13 +152,14 @@ const darkMode = {
     msg_margin: '5px',
     msg_chat_padding: '10px',
     right_msg_txt: 'white',
-    right_msg_bg: '#579ffb',
+    right_msg_bg: 'rgb(140, 0, 255)',
     msg_header_bg: 'rgba(48,48,59,0.75)',
     msg_input_area_bg: '#3e3c46',
     msg_input_bg: '#2e2e33',
     left_msg_bg: '#302f36',
   },
   normalInterface_: {
+    msg_chat_bg_scrollbar: '#52505b',
     display_images: 'none',
     border_radius_all: '0px',
     msg_bubble_max_width: 'unset',
