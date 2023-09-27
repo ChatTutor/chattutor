@@ -225,8 +225,7 @@ function queryGPT() {
         messages.forEach(message => {
           const contentToAppend = message.message.content ? message.message.content : "";
           accumulatedContent += contentToAppend + "|";
-
-
+          console.log(accumulatedContent)
 
           if (isFirstMessage) {
             addMessage("assistant", accumulatedContent, false);
