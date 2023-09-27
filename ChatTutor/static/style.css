@@ -6,6 +6,7 @@
     --left-msg-bg: 0;
     --left-msg-txt: 0;
     --right-msg-bg: 0;
+    --right-msg-txt: 0;
     --msg-header-bg: 0;
     --msg-header-txt: 0;
     --clear-btn-txt: 0;
@@ -16,6 +17,16 @@
     --msg-input-area-bg: 0;
     --msg-invert-image: 0;
     --msg-input-color: 0;
+
+
+    --display-images: block;
+    --border-radius-all: 15px;
+    --msg-bubble-max-width: 450px;
+    --msg-bubble-width: unset;
+
+    --msg-margin: 5px;
+    --msg-chat-padding: 10px;
+
   }
 
   html {
@@ -41,6 +52,7 @@
 
   .msg {
     transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    margin: var(--msg-margin) !important;
   }
   
   
@@ -75,7 +87,7 @@
   .msger-chat {
     flex: 1;
     overflow-y: scroll;
-    padding: 10px;
+    padding: var(--msg-chat-padding);
     border-radius: 20px;
     margin-bottom: 20px;
     box-shadow: 0 15px 15px -5px rgba(0, 0, 0, 0.2);
@@ -100,6 +112,7 @@
     display: flex;
     align-items: flex-end;
     margin-bottom: 10px;
+
   }
   .msg:last-of-type {
     margin: 0;
@@ -116,11 +129,13 @@
     background-size: cover;
     border-radius: 50%;
     background-color: white;
+    display: var(--display-images);
   }
   .msg-bubble {
-    max-width: 450px;
+    max-width: var(--msg-bubble-max-width);
+    width: var(--msg-bubble-width);
     padding: 15px;
-    border-radius: 15px;
+    border-radius: var(--border-radius-all);
     background: var(--left-msg-bg);
   }
   .msg-info {
@@ -152,11 +167,8 @@
     justify-content: center;
   }
   .clear-btn{
-    background: none;
     border: none;
-    color: var(--clear-btn-txt);
-    text-decoration: underline;
-    cursor: pointer;
+    color: var(--clear-btn-txt);;
   }
 
   .right-msg {
@@ -164,7 +176,7 @@
   }
   .right-msg .msg-bubble {
     background: var(--right-msg-bg);
-    color: #fff;
+    color: var(--right-msg-txt);
     border-bottom-right-radius: 0;
   }
   .right-msg .msg-img {
@@ -213,7 +225,7 @@
 
   }
 
-  .theme-button {
+  .button-div {
     position: fixed;
   }
 
@@ -242,3 +254,51 @@
   .msger-header-title {
     margin-top: 3px;
   }
+
+
+.clear-btn {
+  margin-left: 10px;
+  background: rgb(196, 0, 0);
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.23s;
+}
+.clear-btn:hover {
+  background: rgb(180, 0, 0);
+}
+.clear-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.stop-gen-btn {
+  margin-left: 10px;
+  background: rgb(196, 0, 0);
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.23s;
+}
+.stop-gen-btn:hover {
+  background: rgb(180, 0, 0);
+}
+.stop-gen-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+
+.left-msg .msg-bgd {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  width: var(--msg-bubble-width);
+}
+
+.right-msg .msg-bgd {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-end;
+  width: var(--msg-bubble-width);
+}
