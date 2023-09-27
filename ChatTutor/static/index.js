@@ -1,6 +1,6 @@
 // Constants for embed mode and UI elements
 const embed_mode = false;
-const clear = get('.clear-btn');
+const clear = document.getElementById('clearBtnId');
 const clearContainer = get('.clear-btn-container');
 const mainArea = get('.msger');
 const msgerForm = get(".msger-inputarea");
@@ -22,41 +22,65 @@ const debugAskURL = new URL("http://127.0.0.1:5000/ask");
 var conversation = [];
 var original_file = "";
 let lastMessageId = null;
+var stopGeneration = false
+
 
 // Get the send button
 const sendBtn = document.getElementById('sendBtn');
 const themeBtn = document.getElementById('themeBtn')
+const themeBtnDiv = document.getElementById('themeBtnDiv')
+const interfaceBtn = document.getElementById('interfaceBtn')
 
+const scrollHelper = document.getElementById('scrollHelper')
+const stopGenButton = document.getElementById('stopBtnId')
 
-
-
+stopGenButton.style.display = 'none'
 // Listen for windoe resize to move the 'theme toggle button
 window.addEventListener('resize', windowIsResizing)
 
 function windowIsResizing() {
     // the button for choosing themes snaps in place when the window is too small
   if(window.innerWidth < 1200) {
-      themeBtn.style.backgroundColor = 'transparent'
-      themeBtn.style.position = 'inherit'
-      themeBtn.style.color = 'var(--msg-header-txt)'
-      themeBtn.style.textDecoration = 'underline'
-      themeBtn.style.top = '25px'
-      themeBtn.style.left = '25px'
-      themeBtn.style.padding = '0'
-      themeBtn.style.boxShadow = 'none'
-      themeBtn.style.border = 'none'
-      themeBtn.style.borderRadius = '0px'
+
+      themeBtnDiv.style.position = 'inherit'
+      themeBtnDiv.style.top = '25px'
+      themeBtnDiv.style.left = '25px'
+
+
+      const arr = [themeBtn, interfaceBtn]
+      arr.forEach(btn => {
+        btn.style.backgroundColor = 'transparent'
+        btn.style.color = 'var(--msg-header-txt)'
+        btn.style.textDecoration = 'underline'
+        btn.style.padding = '0'
+        btn.style.boxShadow = 'none'
+        btn.style.border = 'none'
+        btn.style.borderRadius = '0px'
+        btn.style.margin = '0'
+
+        btn.style.height = 'unset'
+        btn.style.width = 'unset'
+      })
+
+
+
   } else {
-      themeBtn.style.backgroundColor = 'var(--right-msg-bg)'
-      themeBtn.style.position = 'fixed'
-      themeBtn.style.color = 'white'
-      themeBtn.style.textDecoration = 'none'
-      themeBtn.style.top = '25px'
-      themeBtn.style.left = '25px'
-      themeBtn.style.padding = '15px 10px'
-      themeBtn.style.boxShadow = '0 5px 5px -5px rgba(0, 0, 0, 0.2)'
-      themeBtn.style.border = 'var(--border)'
-    themeBtn.style.borderRadius = '20px'
+      themeBtnDiv.style.position = 'fixed'
+      themeBtnDiv.style.top = '25px'
+      themeBtnDiv.style.left = '25px'
+      const arr = [themeBtn, interfaceBtn]
+      arr.forEach(btn => {
+        btn.style.backgroundColor = '#579FFB'
+        btn.style.color = 'white'
+        btn.style.textDecoration = 'none'
+        btn.style.padding = '10px'
+        btn.style.boxShadow = '0 5px 5px -5px rgba(0, 0, 0, 0.2)'
+        btn.style.border = 'var(--border)'
+        btn.style.borderRadius = '50%'
+        btn.style.margin = '0'
+        btn.style.height = '40px'
+        btn.style.width = '40px'
+      })
   }
 }
 // Themes
@@ -76,14 +100,37 @@ const lightMode = {
   msg_input_bg: '#ddd',
   msg_input_area_bg: '#eee',
   msg_invert_image: 'invert(0%)',
-  msg_input_color: "black"
+  msg_input_color: "black",
+  right_msg_txt: 'white',
+  imessageInterface_: {
+    display_images: 'block',
+    border_radius_all: '15px',
+    msg_bubble_max_width: '450px',
+    msg_bubble_width: 'unset',
+    msg_margin: '5px',
+    msg_chat_padding: '10px',
+    right_msg_txt: 'white'
+  },
+  normalInterface_: {
+    display_images: 'none',
+    border_radius_all: '0px',
+    msg_bubble_max_width: 'unset',
+    msg_bubble_width: '100%',
+    msg_margin: '0',
+    msg_chat_padding: '0',
+    msg_chat_bg: '#f1f1f1',
+    right_msg_bg: 'white',
+    right_msg_txt: 'black',
+    left_msg_bg: 'transparent'
+  }
+
 }
 
 const darkMode = {
-  body_bg: 'linear-gradient(135deg, #282828 0%, #17232c 100%)',
+  body_bg: 'linear-gradient(135deg, #3e3c46 0%, #17232c 100%)',
   msger_bg: '#2d2d2d',
   border: '1px solid #2d2d2d',
-  left_msg_bg: '#383838',
+
   left_msg_txt: 'white',
   right_msg_bg: '#579ffb',
   msg_header_bg: 'rgba(41,41,41,0.75)',
@@ -91,15 +138,52 @@ const darkMode = {
   clear_btn_txt: '#e5e5e5',
   msg_chat_bg_scrollbar: '#2d2d2d',
   msg_chat_bg_thumb: '#3f3f3f',
-  msg_chat_bg: '#1b1b1b',
   msg_input_bg: '#2f2f2f',
   msg_input_area_bg: '#252525',
   msg_invert_image: 'invert(100%)',
-  msg_input_color: "white"
+  msg_input_color: "white",
+  right_msg_txt: 'white',
+  msg_chat_bg: '#3e3c46',
+  imessageInterface_: {
+    display_images: 'block',
+    border_radius_all: '15px',
+    msg_bubble_max_width: '450px',
+    msg_bubble_width: 'unset',
+    msg_margin: '5px',
+    msg_chat_padding: '10px',
+    right_msg_txt: 'white',
+    right_msg_bg: '#579ffb',
+    msg_header_bg: 'rgba(48,48,59,0.75)',
+    msg_input_area_bg: '#3e3c46',
+    msg_input_bg: '#2e2e33',
+    left_msg_bg: '#302f36',
+  },
+  normalInterface_: {
+    display_images: 'none',
+    border_radius_all: '0px',
+    msg_bubble_max_width: 'unset',
+    msg_bubble_width: '100%',
+    msg_margin: '0',
+    msg_chat_padding: '0',
+    right_msg_bg: '#302f36',
+    right_msg_txt: 'white',
+    msg_header_bg: 'rgba(48,48,59,0.75)',
+    msg_input_area_bg: '#3e3c46',
+    left_msg_bg: 'transparent',
+    msg_input_bg: '#2e2e33'
+  }
+}
+
+const smallCard = {
+  card_max_width: '867px'
+}
+
+const bigCard = {
+  card_max_width: 'unset'
 }
 
 let theme = null
-
+let interfaceTheme = null
 
 // Configures UI
 if(embed_mode) {
@@ -123,27 +207,56 @@ document.addEventListener('DOMContentLoaded', windowIsResizing)
 // Event listener for toggling the theme
 themeBtn.addEventListener('click', toggleDarkMode)
 
+stopGenButton.addEventListener('click', stopGenerating)
+
+interfaceBtn.addEventListener('click', toggleInterfaceMode)
+
 // function for keeping the theme whn the page refreshes
 function setThemeOnRefresh() {
   theme = localStorage.getItem('theme')
   if (theme == null) {
-    setTheme('light')
+    setTheme('dark')
   } else {
     setTheme(theme)
   }
-}
 
+  interfaceTheme = localStorage.getItem('interfacetheme')
+  if (interfaceTheme == null) {
+    setTheme('normal')
+  } else {
+    setTheme(interfaceTheme)
+  }
+}
 // helper function
 function setTheme(th) {
-  const themeObject = theme === 'dark' ? darkMode : lightMode
-    for (key in themeObject) {
+  setProperties()
+  const _style = "\"font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle\""
+    themeBtn.innerHTML = theme === "dark" ? `<span class="material-symbols-outlined" style=${_style}> light_mode </span>` :
+        `<i class="material-symbols-outlined" style=${_style}> dark_mode\n </i>`
+  interfaceBtn.innerHTML = interfaceTheme === "normal" ? `<span class=\"material-symbols-outlined\" style=${_style}> mode_comment </span>` :
+      `<span class="material-symbols-outlined" style=${_style}> crop_3_2 </span>`
+}
+
+function setProperties() {
+  const object = theme === 'dark' ? darkMode : lightMode
+  const interfaceObject = interfaceTheme === 'normal' ? object.normalInterface_ : object.imessageInterface_
+  setPropertiesHelper(object)
+  setPropertiesHelper(interfaceObject)
+}
+function setPropertiesHelper(themeObject) {
+
+  for (key in themeObject) {
+    if(key.endsWith('_')) {
+
+    } else {
       const property_replaced = key.replace(/_/g, '-')
       const property_name = `--${property_replaced}`
       console.log(property_name)
       const value = themeObject[key]
+
       document.documentElement.style.setProperty(property_name, value)
     }
-    themeBtn.innerText = theme == "dark" ? "Light mode" : "Dark mode"
+  }
 }
 
 // function that toggles theme
@@ -153,10 +266,24 @@ function toggleDarkMode() {
   } else if(theme === 'dark') {
     theme = 'light'
   } else {
-    theme = 'light'
+    theme = 'dark'
   }
-  setTheme(theme)
   localStorage.setItem('theme', theme)
+  setTheme(theme)
+
+}
+
+function toggleInterfaceMode() {
+  if (interfaceTheme === 'normal') {
+    interfaceTheme = 'message'
+  } else if(theme === 'message') {
+    interfaceTheme = 'normal'
+  } else {
+    interfaceTheme = 'normal'
+  }
+  localStorage.setItem('interfacetheme', interfaceTheme)
+  setTheme(interfaceTheme)
+
 }
 
 function clearConversation() {
@@ -166,9 +293,15 @@ function clearConversation() {
   var childNodes = msgerChat.childNodes;
   for(var i = childNodes.length - 3; i >= 2; i--){
       var childNode = childNodes[i];
-      childNode.parentNode.removeChild(childNode);
+      if (childNode.id !== 'clearContId' && childNode.id !== 'clearBtnId') {
+        childNode.parentNode.removeChild(childNode);
+      }
   }
   sendBtn.disabled = false;
+}
+
+function stopGenerating() {
+  stopGeneration = true
 }
 
 
@@ -179,6 +312,8 @@ function handleFormSubmit(event) {
 
   // Disable the send button
   sendBtn.disabled = true;
+  clear.style.display = 'none'
+  stopGenButton.style.display = 'block'
 
   addMessage("user", msgText, true);
   msgerInput.value = "";
@@ -218,31 +353,57 @@ function queryGPT() {
         if (done) {
           // Enable the send button when streaming is done
           sendBtn.disabled = false;
+          clear.style.display = 'block'
+          stopGenButton.style.display = 'none'
+          stopGeneration = false
           return;
         }
         const strValue = new TextDecoder().decode(value);
         const messages = strValue.split('\n\n').filter(Boolean).map(chunk => JSON.parse(chunk.split('data: ')[1]));
-        messages.forEach(message => {
-          const contentToAppend = message.message.content ? message.message.content : "";
-          accumulatedContent += contentToAppend;
 
+        for (messageIndex in messages) {
+          message = messages[messageIndex]
 
-
+          if(stopGeneration === false) {
+            const contentToAppend = message.message.content ? message.message.content : "";
+            accumulatedContent += contentToAppend;
+          }
           if (isFirstMessage) {
             addMessage("assistant", accumulatedContent, false);
             isFirstMessage = false;
           } else {
-            if (typeof(message.message.content) == 'undefined') {
+            if (typeof (message.message.content) == 'undefined') {
               conversation.push({"role": 'assistant', "content": accumulatedContent})
               localStorage.setItem("conversation", JSON.stringify(conversation))
             }
+            scrollHelper.scrollIntoView()
             updateLastMessage(accumulatedContent);
           }
-        });
-        read();
+
+          if(stopGeneration === true) {
+              accumulatedContent += " ...Stopped generating";
+              conversation.push({"role": 'assistant', "content": accumulatedContent})
+              localStorage.setItem("conversation", JSON.stringify(conversation))
+
+              sendBtn.disabled = false;
+            clear.style.display = 'block'
+            stopGenButton.style.display = 'none'
+              scrollHelper.scrollIntoView()
+              updateLastMessage(accumulatedContent);
+              break
+          }
+        }
+        if(stopGeneration === false) {
+          read();
+        } else {
+          stopGeneration = false
+        }
       }).catch(err => {
         console.error('Stream error:', err);
         sendBtn.disabled = false;
+        clear.style.display = 'block'
+        stopGenButton.style.display = 'none'
+        stopGeneration = false
       });
     }
     read();
@@ -250,6 +411,9 @@ function queryGPT() {
     console.error('Fetch error:', err);
     // Enable the send button in case of an error
     sendBtn.disabled = false;
+    clear.style.display = 'block'
+    stopGenButton.style.display = 'none'
+    stopGeneration = false
   });
 }
 
@@ -329,6 +493,7 @@ function addMessage(role, message, updateConversation) {
 
   const msgHTML = `
     <div class="msg ${side}-msg" id="${messageId}">
+    <div class="msg-bgd">
       <div class="msg-img" style="background-image: url(${img})"></div>
 
       <div class="msg-bubble">
@@ -338,6 +503,7 @@ function addMessage(role, message, updateConversation) {
         </div>
 
         <div class="msg-text">${messageStr}</div>
+      </div>
       </div>
     </div>
   `;
