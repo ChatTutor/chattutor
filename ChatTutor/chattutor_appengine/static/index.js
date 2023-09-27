@@ -203,7 +203,7 @@ function queryGPT() {
   }
   if (embed_mode) args.from_doc = original_file
 
-  fetch('/ask', {
+  fetch(prodAskURL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
