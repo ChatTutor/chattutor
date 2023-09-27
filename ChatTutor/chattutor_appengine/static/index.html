@@ -4,47 +4,31 @@
 	<head>
         <link rel="stylesheet" href="./style.css">
 		<meta name="viewport" content="initial-scale=1, width=device-width">
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script type="text/javascript" id="MathJax-script" async
-  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-</script>
-<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn" crossorigin="anonymous">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx" crossorigin="anonymous"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous" 
-    onload="renderMathInElement(document.body);"></script> -->
 		<title> flask </title>
 	</head>
 	<body>
 		<section class="msger">
-            <div class="msg-header-helper">
-                <header class="msger-header">
-
-                  <div class="msger-header-title">
-                    <i class="fas fa-comment-alt"></i> ChatTutor
-                  </div>
-                  <div class="msger-header-options">
-                    <span><i class="fas fa-cog"></i></span>
-                  </div>
-                    <div class="button-div">
-                        <button class="theme-button" id="themeBtn">Toggle theme</button>
-                    </div>
-
-                </header>
-            </div>
-
+            <header class="msger-header">
+              <div class="msger-header-title">
+                <i class="fas fa-comment-alt"></i> ChatTutor
+              </div>
+              <div class="msger-header-options">
+                <span><i class="fas fa-cog"></i></span>
+              </div>
+            </header>
+          
             <main class="msger-chat">
-              <div class="msg left-msg" style="margin-top: 50px !important;">
+              <div class="msg left-msg">
                 <div
                  class="msg-img"
-                 id="msgImg"
                  style="background-image: url(https://static.thenounproject.com/png/2216285-200.png)"
                 ></div>
-
+          
                 <div class="msg-bubble">
                   <div class="msg-info">
                     <div class="msg-info-name">ChatTutor</div>
                   </div>
-
+          
                   <div class="msg-text">
                     Welcome to ChatTutor, feel free to ask any questions about this lesson.
                   </div>
@@ -56,14 +40,12 @@
                 </button>
               </div>
             </main>
+          
             <form class="msger-inputarea">
               <input type="text" class="msger-input" placeholder="Enter your message...">
-              <button type="submit" class="msger-send-btn" id="sendBtn">Send</button>
+              <button type="submit" class="msger-send-btn">Send</button>
             </form>
           </section>
           <script src="index.js"></script>
-
-      
 	</body>
 </html>
-
