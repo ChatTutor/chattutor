@@ -224,8 +224,9 @@ function queryGPT() {
         const messages = strValue.split('\n\n').filter(Boolean).map(chunk => JSON.parse(chunk.split('data: ')[1]));
         messages.forEach(message => {
           const contentToAppend = message.message.content ? message.message.content : "";
-          accumulatedContent += contentToAppend + "|";
-          console.log(accumulatedContent)
+          accumulatedContent += contentToAppend;
+
+
 
           if (isFirstMessage) {
             addMessage("assistant", accumulatedContent, false);
@@ -240,7 +241,7 @@ function queryGPT() {
         });
         read();
       }).catch(err => {
-        console.error('Stream error:', err, response);
+        console.error('Stream error:', err);
         sendBtn.disabled = false;
       });
     }
