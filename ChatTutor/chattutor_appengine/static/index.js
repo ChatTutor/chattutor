@@ -224,7 +224,7 @@ function queryGPT() {
         const messages = strValue.split('\n\n').filter(Boolean).map(chunk => JSON.parse(chunk.split('data: ')[1]));
         messages.forEach(message => {
           const contentToAppend = message.message.content ? message.message.content : "";
-          accumulatedContent += contentToAppend;
+          accumulatedContent += contentToAppend + "|";
 
 
 
