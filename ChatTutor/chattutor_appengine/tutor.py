@@ -1,8 +1,5 @@
 import openai
 import tiktoken  # Importing tiktoken to count tokens in a string
-with open('./keys.json') as f:
-    keys = json.load(f)
-openai.api_key = keys["lab_openai"]
 
 """
 The system message provides context to the AI model about its role and how it should respond.
