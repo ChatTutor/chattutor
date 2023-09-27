@@ -241,7 +241,7 @@ function queryGPT() {
         });
         read();
       }).catch(err => {
-        console.error('Stream error:', err);
+        console.error('Stream error:', err, response);
         sendBtn.disabled = false;
       });
     }
