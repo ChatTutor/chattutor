@@ -210,10 +210,12 @@ function queryGPT() {
     },
     body: JSON.stringify(args)
   }).then(response => {
+    console.log("responded")
     const reader = response.body.getReader();
     let accumulatedContent = "";
     let isFirstMessage = true;
     function read() {
+      console.log("reading...")
       reader.read().then(({ done, value }) => {
         if (done) {
           // Enable the send button when streaming is done
@@ -221,8 +223,6 @@ function queryGPT() {
           return;
         }
         const strValue = new TextDecoder().decode(value);
-        console.log(chunk.split('data: ')[1], chunk)
-
         const messages = strValue.split('\n\n').filter(Boolean).map(chunk => JSON.parse(chunk.split('data: ')[1]));
         messages.forEach(message => {
           const contentToAppend = message.message.content ? message.message.content : "";
