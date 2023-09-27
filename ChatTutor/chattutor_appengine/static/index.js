@@ -67,7 +67,7 @@ msgerForm.addEventListener("submit", event => {
 function queryGPT() {
   args = {
     "conversation": conversation,
-    "collection": "test_embedding"
+    "collection": "QuantumSystems"
   }
   if(embed_mode) args.from_doc = original_file
 
@@ -79,8 +79,8 @@ function queryGPT() {
 	  body: JSON.stringify(args)
   })
     .then(response => {
-      if(response.status == response.ok)
-        return response.text()
+      if(response.ok) return response.text();
+      return "ChatTutor encountered an error, please try again later."
     })
     .then(text => {
       addMessage("assistant", text, true);
