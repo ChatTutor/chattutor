@@ -199,7 +199,7 @@ function loadConversationFromLocalStorage() {
 function queryGPT() {
   args = {
     "conversation": conversation,
-    "collection": "QuantumSystems"
+    "collection": "test_embedding"
   }
   if (embed_mode) args.from_doc = original_file
 
