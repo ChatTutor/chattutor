@@ -98,7 +98,7 @@
 
   }
   .msger-chat::-webkit-scrollbar-track {
-    background: transparent;
+    background: var(--msg-chat-bg-scrollbar);
     margin-top: 20px;
     margin-bottom: 20px;
   }
@@ -205,14 +205,14 @@
   }
   .msger-send-btn {
     margin-left: 10px;
-    background: rgb(0, 196, 65);
+    background: rgb(140, 0, 255);
     color: #fff;
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.23s;
+    transition: filter 0.23s;
   }
   .msger-send-btn:hover {
-    background: rgb(0, 180, 50);
+    filter: saturate(180%);
   }
   .msger-send-btn:disabled {
     cursor: not-allowed;
@@ -258,14 +258,16 @@
 
 .clear-btn {
   margin-left: 10px;
-  background: rgb(196, 0, 0);
-  color: #fff;
+  background: var(--msg-input-bg);
+  color: var(--left-msg-txt);
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.23s;
+  transition: background-color 0.23s;
+
 }
 .clear-btn:hover {
-  background: rgb(180, 0, 0);
+  background-color: var(--left-msg-txt);
+  color: var(--msg-input-bg)
 }
 .clear-btn:disabled {
   cursor: not-allowed;
@@ -274,14 +276,15 @@
 
 .stop-gen-btn {
   margin-left: 10px;
-  background: rgb(196, 0, 0);
-  color: #fff;
+  background: var(--msg-input-bg);
+  color: var(--left-msg-txt);
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.23s;
+  transition: background-color 0.23s;
 }
 .stop-gen-btn:hover {
-  background: rgb(180, 0, 0);
+  background-color: var(--left-msg-txt);
+  color: var(--msg-input-bg)
 }
 .stop-gen-btn:disabled {
   cursor: not-allowed;
@@ -301,4 +304,22 @@
   flex-direction: row-reverse;
   align-items: flex-end;
   width: var(--msg-bubble-width);
+}
+
+#interfaceBtn:hover {
+  filter: saturate(180%);
+  cursor: pointer;
+}
+
+#interfaceBtn {
+  transition: filter 0.2s ease-in;
+}
+
+#themeBtn:hover {
+  filter: saturate(180%);
+  cursor: pointer;
+}
+
+#themeBtn {
+  transition: filter 0.2s ease-in;
 }
