@@ -1,11 +1,23 @@
+/*the variables are now set using index.js, making it possible to switch the colors via theme picking*/
 :root {
-    --body-bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    --msger-bg: #fff;
-    --border: 2px solid #ddd;
-    --left-msg-bg: #ececec;
-    --right-msg-bg: #579ffb;
+    --body-bg: 0;
+    --msger-bg: 0;
+    --border: 0;
+    --left-msg-bg: 0;
+    --left-msg-txt: 0;
+    --right-msg-bg: 0;
+    --msg-header-bg: 0;
+    --msg-header-txt: 0;
+    --clear-btn-txt: 0;
+    --msg-chat-bg-scrollbar: 0;
+    --msg-chat-bg-thumb: 0;
+    --msg-chat-bg: 0;
+    --msg-input-bg: 0;
+    --msg-input-area-bg: 0;
+    --msg-invert-image: 0;
+    --msg-input-color: 0;
   }
-  
+
   html {
     box-sizing: border-box;
   }
@@ -26,6 +38,11 @@
     background-image: var(--body-bg);
     font-family: Helvetica, sans-serif;
   }
+
+  .msg {
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+  }
+  
   
   .msger {
     display: flex;
@@ -35,35 +52,50 @@
     max-width: 867px;
     margin: 25px 10px;
     height: calc(100% - 50px);
-    border: var(--border);
-    border-radius: 5px;
-    background: var(--msger-bg);
-    box-shadow: 0 15px 15px -5px rgba(0, 0, 0, 0.2);
+    /*background: var(--msger-bg);*/
+    border-radius: 20px;
+    position: relative;
   }
-  
+
   .msger-header {
     display: flex;
     justify-content: space-between;
+    flex-direction: row !important;
     padding: 10px;
     border-bottom: var(--border);
-    background: #eee;
-    color: #666;
+    background: transparent;
+    /*background: rgba(59, 102, 107, 0.5);*/
+    color: var(--msg-header-txt);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    width: 100%;
+    z-index: 999;
   }
   
   .msger-chat {
     flex: 1;
-    overflow-y: auto;
+    overflow-y: scroll;
     padding: 10px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 15px 15px -5px rgba(0, 0, 0, 0.2);
+    border: var(--border)
   }
   .msger-chat::-webkit-scrollbar {
     width: 6px;
+
   }
   .msger-chat::-webkit-scrollbar-track {
-    background: #ddd;
+    background: transparent;
+    margin-top: 20px;
+    margin-bottom: 20px;
   }
   .msger-chat::-webkit-scrollbar-thumb {
-    background: #bdbdbd;
+    margin-top: 20px;
+    background: var(--msg-chat-bg-thumb);
+    margin-bottom: 20px;
   }
+
   .msg {
     display: flex;
     align-items: flex-end;
@@ -71,6 +103,9 @@
   }
   .msg:last-of-type {
     margin: 0;
+  }
+  .msg-text {
+    line-height: 1.5;
   }
   .msg-img {
     width: 50px;
@@ -80,6 +115,7 @@
     background-position: center;
     background-size: cover;
     border-radius: 50%;
+    background-color: white;
   }
   .msg-bubble {
     max-width: 450px;
@@ -105,6 +141,10 @@
     border-bottom-left-radius: 0;
   }
 
+  .left-msg {
+    color: var(--left-msg-txt)
+  }
+
   .clear-btn-container {
     display: flex;
     padding-top: 15px;
@@ -114,7 +154,7 @@
   .clear-btn{
     background: none;
     border: none;
-    color: #999;
+    color: var(--clear-btn-txt);
     text-decoration: underline;
     cursor: pointer;
   }
@@ -135,17 +175,21 @@
     display: flex;
     padding: 10px;
     border-top: var(--border);
-    background: #eee;
+    background: var(--msg-input-area-bg);
+    border-radius: 20px;
+    box-shadow: 0 15px 15px -5px rgba(0, 0, 0, 0.2);
+    border: var(--border)
   }
   .msger-inputarea * {
     padding: 10px;
     border: none;
-    border-radius: 3px;
     font-size: 1em;
+    border-radius: 10px;
   }
   .msger-input {
     flex: 1;
-    background: #ddd;
+    background: var(--msg-input-bg);
+    color: var(--msg-input-color)
   }
   .msger-send-btn {
     margin-left: 10px;
@@ -158,8 +202,43 @@
   .msger-send-btn:hover {
     background: rgb(0, 180, 50);
   }
-  
-  .msger-chat {
-    background-color: #fcfcfe;
+  .msger-send-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
   }
   
+  
+  .msger-chat {
+    background-color: var(--msg-chat-bg);
+
+  }
+
+  .theme-button {
+    position: fixed;
+  }
+
+  .msg-header-helper {
+    position: absolute;
+    width: inherit;
+    z-index: 999;
+
+  }
+
+  .msg-header-helper::before {
+    content: "";
+    position: absolute;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background-color: var(--msg-header-bg);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+  }
+
+  .msger-header-title {
+    margin-top: 3px;
+  }
