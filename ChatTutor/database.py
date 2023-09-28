@@ -28,7 +28,6 @@ def embedding_function(texts, model="text-embedding-ada-002"):
     return [data['embedding'] for data in openai.Embedding.create(input=texts, model=model)['data']]
 
 # Loading API keys from .env.yaml
-import yaml
 if 'CHATUTOR_GCP' in os.environ: 
     openai.api_key = os.environ['OPENAI_API_KEY']
 else:
