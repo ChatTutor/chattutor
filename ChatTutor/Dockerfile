@@ -1,9 +1,14 @@
-FROM 3.11-bullseye
+
 ENV PYTHONUNBUFFERED True
 
-RUN apt update
-WORKDIR /app
-ADD requirements.txt /app/requirements.txt
-RUN pip install -r /app/requirements.txt
+ENV APP_HOME /app
 
-CMD ["gunicorn", "app:app", "--config=config.py"]
+ENV PORT 5000
+
+WORKDIR $APP_HOME
+
+COPY . ./
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
