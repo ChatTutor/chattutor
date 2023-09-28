@@ -233,7 +233,7 @@ function queryGPT() {
         console.log(messages)
         messages.forEach(message => {
           const contentToAppend = message.message.content ? message.message.content : "";
-          accumulatedContent += contentToAppend + message.time;
+          accumulatedContent += contentToAppend + "--{" + message.time + "}=N={" + new Date().getTime() + "}\n";
           console.log(accumulatedContent)
 
 
