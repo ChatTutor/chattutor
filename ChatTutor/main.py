@@ -74,7 +74,8 @@ def ask():
         "X-Accel-Buffering" : "no",
         "X-Content-Type-Options": "nosniff",
         "Cache-Control": "no-cache",
-        "Connection": "keep-alive"})
+        "Connection": "keep-alive"
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)  # Running the app in debug mode
