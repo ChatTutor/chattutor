@@ -9,13 +9,15 @@ import os
 import openai
 
 if 'CHATUTOR_GCP' in os.environ: 
-    print("DEV MODE")
-    openai.api_key = os.environ['ACTIVELOOP_TOKEN']
+    openai.api_key = os.environ['OPENAI_API_KEY']
 else:
-    with open('./keys.json') as f:
-        keys = json.load(f)
-    os.environ['OPENAI_API_KEY'] = keys["lab_openai"]
-    os.environ['ACTIVELOOP_TOKEN'] = keys["activeloop"]
+    import yaml
+    with open('.env.yaml') as f:
+        yamlenv = yaml.safe_load(f)
+    keys = yamlenv["env_variables"]
+    print(keys)
+    os.environ['OPENAI_API_KEY'] = keys["OPENAI_API_KEY"]
+    os.environ['ACTIVELOOP_TOKEN'] = keys["ACTIVELOOP_TOKEN"]
 
 app = Flask(__name__)
 CORS(app)  # Enabling CORS for the Flask app to allow requests from different origins
