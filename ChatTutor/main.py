@@ -27,7 +27,7 @@ db.init_db()
 #     db='mydatabase',
 #     charset='utf8mb4',
 #     cursorclass=pymysql.cursors.DictCursor
-# ) ## for mysql server
+# ) ## for mysql server TO BE USED INSTEAD OF 'con'.
 
 
 presetTables1 = """
@@ -111,8 +111,8 @@ def addtodb():
     insert_chat(chat_k_id)
     message_to_upload = {'content': content, 'role': role, 'chat': chat_k_id}
     insert_message(message_to_upload)
-    print('HEY: ', message_to_upload)
-    print_for_debug()
+    # print('HEY: ', message_to_upload)
+    # print_for_debug()
     return Response('inserted!', content_type='text')
 
 def print_for_debug():
