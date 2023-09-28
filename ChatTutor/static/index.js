@@ -192,7 +192,7 @@ function loadConversationFromLocalStorage() {
     conversation.forEach(message => {addMessage(message["role"], message["content"], false)})
   }
   else conversation = []
-  MathJax.typesetPromise();
+  //MathJax.typesetPromise();
 }
 
 function queryGPT() {
@@ -296,18 +296,19 @@ function formatMessage(message, makeLists = true) {
 function updateLastMessage(newContent) {
   if (lastMessageId) {
     const lastMessageElement = document.querySelector(`#${lastMessageId} .msg-text`);
-    
+    alert("update")
     if (lastMessageElement) {
 
       const newContentFormatted = formatMessage(newContent)
       lastMessageElement.innerHTML = newContentFormatted;
+      alert(newContentFormatted)
     } else {
       console.error('Cannot find the .msg-text element to update.');
     }
   } else {
     console.error('No message has been added yet.');
   }
-  MathJax.typesetPromise();
+  //MathJax.typesetPromise();
 
 }
 
