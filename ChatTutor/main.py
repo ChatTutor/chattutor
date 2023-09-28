@@ -66,7 +66,7 @@ def ask():
         start_time = time.time()
         for chunk in tutor.ask_question(db, conversation, from_doc):
             chunk_time = time.time() - start_time
-            yield f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n\n"
+            yield f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n[CHUNK]\n"
     
     # Streaming the generated responses as server-sent events
     return Response(stream_with_context(generate()), content_type='text/event-stream')
