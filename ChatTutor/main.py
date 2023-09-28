@@ -1,5 +1,5 @@
 from flask import Flask, request, redirect, send_from_directory, url_for
-from flask import stream_with_context, Response
+from flask import stream_with_context, Response, abort
 from flask_cors import CORS  # Importing CORS to handle Cross-Origin Resource Sharing
 from extensions import db  # Importing the database object from extensions module
 import tutor
@@ -7,6 +7,7 @@ import json
 import time
 import os
 import openai
+import loader
 
 if 'CHATUTOR_GCP' in os.environ: 
     openai.api_key = os.environ['OPENAI_API_KEY']
@@ -76,6 +77,18 @@ def ask():
         "Cache-Control": "no-cache",
         "Connection": "keep-alive"
     })
+
+
+@app.route('/compile_chroma_db', methods=['POST'])
+def compile_chroma_db():
+    token = request.headers.get('Authorization')
+
+    if token != openai.api_key:
+        abort(401)  # Unauthorized
+    
+    loader.init_chroma_db()
+
+    return "Chroma db created successfully", 200
 
 if __name__ == "__main__":
     app.run(debug=True)  # Running the app in debug mode
