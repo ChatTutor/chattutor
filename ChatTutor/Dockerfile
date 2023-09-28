@@ -1,4 +1,4 @@
-FROM 3.11-bullseye
+FROM python:3.11-bullseye
 
 ENV PYTHONUNBUFFERED True
 
