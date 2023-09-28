@@ -300,7 +300,7 @@ function updateLastMessage(newContent) {
       const newContentFormatted = formatMessage(newContent)
 
       document.querySelector(`#${lastMessageId} .msg-text`).innerHTML = newContentFormatted;
-      alert(newContentFormatted + "\n\n" + lastMessageElement.innerHTMLdocument.querySelector(`#${lastMessageId} .msg-text`).innerHTML)
+      alert(document.querySelector(`#${lastMessageId} .msg-text`).innerHTML = newContentFormatted)
     } else {
       console.error('Cannot find the .msg-text element to update.');
     }
