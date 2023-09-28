@@ -29,10 +29,14 @@ var stopGeneration = false
 const sendBtn = document.getElementById('sendBtn');
 const themeBtn = document.getElementById('themeBtn')
 const themeBtnDiv = document.getElementById('themeBtnDiv')
-const interfaceBtn = document.getElementById('interfaceBtn')
-
+const messageInput = document.getElementById('msgInput')
 const scrollHelper = document.getElementById('scrollHelper')
 const stopGenButton = document.getElementById('stopBtnId')
+
+messageInput.addEventListener('input', (event) => {
+  console.log('kajk')
+  sendBtn.disabled = messageInput.value.length === 0;
+})
 
 stopGenButton.style.display = 'none'
 // Listen for windoe resize to move the 'theme toggle button
@@ -47,7 +51,7 @@ function windowIsResizing() {
       themeBtnDiv.style.left = '25px'
 
 
-      const arr = [themeBtn, interfaceBtn]
+      const arr = [themeBtn]
       arr.forEach(btn => {
         btn.style.backgroundColor = 'transparent'
         btn.style.color = 'var(--msg-header-txt)'
@@ -68,7 +72,7 @@ function windowIsResizing() {
       themeBtnDiv.style.position = 'fixed'
       themeBtnDiv.style.top = '25px'
       themeBtnDiv.style.left = '25px'
-      const arr = [themeBtn, interfaceBtn]
+      const arr = [themeBtn]
       arr.forEach(btn => {
         btn.style.backgroundColor = 'rgb(140, 0, 255)'
         btn.style.color = 'white'
@@ -102,6 +106,7 @@ const lightMode = {
   msg_invert_image: 'invert(0%)',
   msg_input_color: "black",
   right_msg_txt: 'white',
+  // legacy, not used
   imessageInterface_: {
     display_images: 'block',
     border_radius_all: '15px',
@@ -109,8 +114,11 @@ const lightMode = {
     msg_bubble_width: 'unset',
     msg_margin: '5px',
     msg_chat_padding: '10px',
-    right_msg_txt: 'white'
+    right_msg_txt: 'white',
+    msg_padding: '0',
+    right_msg_bg_bgd: 'transparent',
   },
+  // this is the interface
   normalInterface_: {
     display_images: 'none',
     border_radius_all: '0px',
@@ -121,7 +129,9 @@ const lightMode = {
     msg_chat_bg: '#f1f1f1',
     right_msg_bg: 'white',
     right_msg_txt: 'black',
-    left_msg_bg: 'transparent'
+    left_msg_bg: 'transparent',
+    msg_padding: '5px 20px',
+    right_msg_bg_bgd: 'white',
   }
 
 }
@@ -144,6 +154,7 @@ const darkMode = {
   msg_input_color: "white",
   right_msg_txt: 'white',
   msg_chat_bg: '#3e3c46',
+  // legacy, not used
   imessageInterface_: {
     display_images: 'block',
     border_radius_all: '15px',
@@ -157,11 +168,14 @@ const darkMode = {
     msg_input_area_bg: '#3e3c46',
     msg_input_bg: '#2e2e33',
     left_msg_bg: '#302f36',
+    msg_padding: '0',
+    right_msg_bg_bgd: 'transparent',
   },
+  // this is the interface
   normalInterface_: {
     msg_chat_bg_scrollbar: '#52505b',
     display_images: 'none',
-    border_radius_all: '0px',
+    border_radius_all: '10px',
     msg_bubble_max_width: 'unset',
     msg_bubble_width: '100%',
     msg_margin: '0',
@@ -171,7 +185,9 @@ const darkMode = {
     msg_header_bg: 'rgba(48,48,59,0.75)',
     msg_input_area_bg: '#3e3c46',
     left_msg_bg: 'transparent',
-    msg_input_bg: '#2e2e33'
+    msg_input_bg: '#2e2e33',
+    msg_padding: '5px 20px',
+    right_msg_bg_bgd: '#302f36',
   }
 }
 
@@ -210,10 +226,12 @@ themeBtn.addEventListener('click', toggleDarkMode)
 
 stopGenButton.addEventListener('click', stopGenerating)
 
-interfaceBtn.addEventListener('click', toggleInterfaceMode)
-
 // function for keeping the theme whn the page refreshes
 function setThemeOnRefresh() {
+  // disable send button
+  sendBtn.disabled = messageInput.value.length === 0;
+
+
   theme = localStorage.getItem('theme')
   if (theme == null) {
     setTheme('dark')
@@ -221,12 +239,9 @@ function setThemeOnRefresh() {
     setTheme(theme)
   }
 
-  interfaceTheme = localStorage.getItem('interfacetheme')
-  if (interfaceTheme == null) {
-    setTheme('normal')
-  } else {
-    setTheme(interfaceTheme)
-  }
+  interfaceTheme = 'normal'
+  setTheme('normal')
+
 }
 // helper function
 function setTheme(th) {
@@ -234,8 +249,6 @@ function setTheme(th) {
   const _style = "\"font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle\""
     themeBtn.innerHTML = theme === "dark" ? `<span class="material-symbols-outlined" style=${_style}> light_mode </span>` :
         `<i class="material-symbols-outlined" style=${_style}> dark_mode\n </i>`
-  interfaceBtn.innerHTML = interfaceTheme === "normal" ? `<span class=\"material-symbols-outlined\" style=${_style}> mode_comment </span>` :
-      `<span class="material-symbols-outlined" style=${_style}> crop_3_2 </span>`
 }
 
 function setProperties() {
@@ -275,13 +288,7 @@ function toggleDarkMode() {
 }
 
 function toggleInterfaceMode() {
-  if (interfaceTheme === 'normal') {
-    interfaceTheme = 'message'
-  } else if(theme === 'message') {
-    interfaceTheme = 'normal'
-  } else {
-    interfaceTheme = 'normal'
-  }
+  interfaceTheme = 'normal'
   localStorage.setItem('interfacetheme', interfaceTheme)
   setTheme(interfaceTheme)
 

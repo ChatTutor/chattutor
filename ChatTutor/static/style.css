@@ -19,13 +19,16 @@
     --msg-input-color: 0;
 
 
-    --display-images: block;
-    --border-radius-all: 15px;
-    --msg-bubble-max-width: 450px;
-    --msg-bubble-width: unset;
+    --display-images: 0;
+    --border-radius-all: 0;
+    --msg-bubble-max-width: 0;
+    --msg-bubble-width: 0;
 
-    --msg-margin: 5px;
-    --msg-chat-padding: 10px;
+    --msg-margin: 0;
+    --msg-chat-padding: 0;
+    --msg-padding: 0;
+
+  --right-msg-bg-bgd: 0;
 
   }
 
@@ -177,7 +180,7 @@
   .right-msg .msg-bubble {
     background: var(--right-msg-bg);
     color: var(--right-msg-txt);
-    border-bottom-right-radius: 0;
+    border-bottom-right-radius: 10px;
   }
   .right-msg .msg-img {
     margin: 0 0 0 10px;
@@ -210,6 +213,13 @@
     font-weight: bold;
     cursor: pointer;
     transition: filter 0.23s;
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
   }
   .msger-send-btn:hover {
     filter: saturate(180%);
@@ -263,6 +273,12 @@
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.23s;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
 
 }
 .clear-btn:hover {
@@ -281,6 +297,12 @@
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.23s;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
 }
 .stop-gen-btn:hover {
   background-color: var(--left-msg-txt);
@@ -297,6 +319,7 @@
   flex-direction: row;
   align-items: flex-end;
   width: var(--msg-bubble-width);
+  padding: var(--msg-padding);
 }
 
 .right-msg .msg-bgd {
@@ -304,6 +327,8 @@
   flex-direction: row-reverse;
   align-items: flex-end;
   width: var(--msg-bubble-width);
+  padding: var(--msg-padding);
+  background-color: var(--right-msg-bg-bgd);
 }
 
 #interfaceBtn:hover {

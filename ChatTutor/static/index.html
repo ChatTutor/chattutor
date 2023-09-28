@@ -30,7 +30,6 @@
 
                     <div class="button-div" id="themeBtnDiv">
                         <button class="theme-button" id="themeBtn">Toggle theme</button>
-                        <button class="interface-button" id="interfaceBtn">Toggle interface</button>
                     </div>
 
                 </header>
@@ -65,14 +64,23 @@
                 </div>
             </main>
             <form class="msger-inputarea">
-              <input type="text" class="msger-input" placeholder="Enter your message...">
-              <button type="submit" class="msger-send-btn" id="sendBtn">Send</button>
+              <input type="text" class="msger-input" placeholder="Enter your message..." id="msgInput">
+              <button type="submit" class="msger-send-btn" id="sendBtn">
+
+                  <span class="material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
+                    send
+                  </span>
+              </button>
                 <button class="clear-btn" id="clearBtnId">
-                    Clear
+                    <span class="material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
+                        delete_forever
+                    </span>
                 </button>
 
                 <button class="stop-gen-btn" id="stopBtnId">
-                    Stop
+                    <span class="material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
+                        stop_circle
+                    </span>
                 </button>
             </form>
           </section>
