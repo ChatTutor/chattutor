@@ -215,6 +215,8 @@ function queryGPT() {
     let isFirstMessage = true;
     function read() {
       console.log("reading...")
+      console.error("reading....");
+
       reader.read().then(({ done, value }) => {
         if (done) {
           // Enable the send button when streaming is done
@@ -235,6 +237,7 @@ function queryGPT() {
           const contentToAppend = message.message.content ? message.message.content : "";
           accumulatedContent += contentToAppend;
           console.log(accumulatedContent)
+          console.error(accumulatedContent);
 
           if (isFirstMessage) {
             addMessage("assistant", accumulatedContent, false);
