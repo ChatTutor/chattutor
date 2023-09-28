@@ -28,7 +28,7 @@ def init_chroma_db():
 
     source_bucket = storage_client.bucket(source_bucket_name)
 
-    texts = read_folder(source_bucket_name, './')
+    texts = read_folder_gcp(source_bucket_name, './')
 
     # Initializing and configuring the database
     database = VectorDatabase("./db", "chroma")
