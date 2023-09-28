@@ -201,7 +201,7 @@ function queryGPT() {
     "collection": "test_embedding"
   }
   if (embed_mode) args.from_doc = original_file
-
+  console.log("request:", JSON.stringify(args))
   fetch(`${window.location.origin}/ask`, {
     method: 'POST',
     headers: {
