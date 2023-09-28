@@ -246,7 +246,6 @@ function queryGPT() {
               localStorage.setItem("conversation", JSON.stringify(conversation))
             }
             updateLastMessage(accumulatedContent);
-            accumulatedContent +="updated"
           }
         });
         read();
@@ -296,14 +295,12 @@ function formatMessage(message, makeLists = true) {
 function updateLastMessage(newContent) {
   if (lastMessageId) {
     const lastMessageElement = document.querySelector(`#${lastMessageId} .msg-text`);
-    alert(`update #${lastMessageId} .msg-text \n\n ${lastMessageElement}`)
     if (lastMessageElement) {
 
       const newContentFormatted = formatMessage(newContent)
 
       document.querySelector(`#${lastMessageId} .msg-text`).innerHTML = newContentFormatted;
-      alert(newContentFormatted + "\n\n" + lastMessageElement.innerHTML)
-
+      alert(newContentFormatted + "\n\n" + lastMessageElement.innerHTMLdocument.querySelector(`#${lastMessageId} .msg-text`).innerHTML)
     } else {
       console.error('Cannot find the .msg-text element to update.');
     }
