@@ -205,7 +205,8 @@ function queryGPT() {
   fetch(`${window.location.origin}/ask`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'X-Accel-Buffering': 'no'
     },
     body: JSON.stringify(args)
   }).then(response => {
