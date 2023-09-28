@@ -6,11 +6,16 @@ import tutor
 import json
 import time
 import os
+import openai
 
-with open('./keys.json') as f:
-    keys = json.load(f)
-os.environ['OPENAI_API_KEY'] = keys["lab_openai"]
-#os.environ['ACTIVELOOP_TOKEN'] = keys["activeloop"]
+if 'CHATUTOR_GCP' in os.environ: 
+    print("DEV MODE")
+    openai.api_key = os.environ['ACTIVELOOP_TOKEN']
+else:
+    with open('./keys.json') as f:
+        keys = json.load(f)
+    os.environ['OPENAI_API_KEY'] = keys["lab_openai"]
+    os.environ['ACTIVELOOP_TOKEN'] = keys["activeloop"]
 
 app = Flask(__name__)
 CORS(app)  # Enabling CORS for the Flask app to allow requests from different origins
