@@ -1,3 +1,5 @@
+import uuid
+
 from flask import Flask, request, redirect, send_from_directory, url_for
 from flask import stream_with_context, Response
 from flask_cors import CORS  # Importing CORS to handle Cross-Origin Resource Sharing
@@ -6,6 +8,8 @@ import tutor
 import json
 import time
 import os
+# import pymysql
+import sqlite3
 
 with open('./keys.json') as f:
     keys = json.load(f)
@@ -15,6 +19,49 @@ os.environ['OPENAI_API_KEY'] = keys["lab_openai"]
 app = Flask(__name__)
 CORS(app)  # Enabling CORS for the Flask app to allow requests from different origins
 db.init_db()
+
+# connection = pymysql.connect(
+#     host='localhost',
+#     user='root',
+#     password='password',
+#     db='mydatabase',
+#     charset='utf8mb4',
+#     cursorclass=pymysql.cursors.DictCursor
+# ) ## for mysql server
+
+
+presetTables1 = """
+    DROP TABLE IF EXISTS lchats
+"""
+
+presetTables2 = """
+    DROP TABLE IF EXISTS lmessages
+"""
+
+chats_table_Sql = """
+CREATE TABLE IF NOT EXISTS lchats (
+    chat_id text PRIMARY KEY
+    )"""
+
+messages_table_Sql = """
+CREATE TABLE IF NOT EXISTS lmessages (
+    mes_id text PRIMARY KEY,
+    role text NOT NULL,
+    content text NOT NULL,
+    chat_key integer NOT NULL,
+    FOREIGN KEY (chat_key) REFERENCES chats (chat_id)
+    )"""
+
+
+def initialize_ldatabase():
+    con = sqlite3.connect('chat_store.sqlite3')
+    cur = con.cursor()
+    # cur.execute(presetTables1)
+    # cur.execute(presetTables2)
+    cur.execute(chats_table_Sql)
+    cur.execute(messages_table_Sql)
+
+initialize_ldatabase()
 
 @app.route("/")
 def index():
@@ -53,18 +100,43 @@ def ask():
             chunks += chunk_content
             chunk_time = time.time() - start_time
             yield f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n\n"
-        conversation_new = data["conversation"]
-        student_message = conversation_new[-1]
-        assistant_message = {'role': 'assistant', 'content': chunks}
-        print(student_message)
-        print(assistant_message)
-
-
-    # Streaming the generated responses as server-sent events
     return Response(stream_with_context(generate()), content_type='text/event-stream')
 
-def add_to_db(student_message, assistant_message):
-    print('Adding...') # to be modified, to add the messages in the database. For now, idk if it should be locally or chromadb or something else
+@app.route('/addtodb', methods=["POST", "GET"])
+def addtodb():
+    data = request.json
+    content = data['content']
+    role = data['role']
+    chat_k_id = data['chat_k']
+    insert_chat(chat_k_id)
+    message_to_upload = {'content': content, 'role': role, 'chat': chat_k_id}
+    insert_message(message_to_upload)
+    print('HEY: ', message_to_upload)
+    print_for_debug()
+    return Response('inserted!', content_type='text')
+
+def print_for_debug():
+    with sqlite3.connect('chat_store.sqlite3') as con:
+        cur = con.cursor()
+        response = cur.execute('SELECT * from lmessages')
+        print(response.fetchall())
+
+def insert_message(a_message):
+    with sqlite3.connect('chat_store.sqlite3') as con:
+        cur = con.cursor()
+        insert_format_lmessages = "INSERT INTO lmessages (role, content, chat_key) VALUES (?, ?, ?)"
+        role = a_message['role']
+        content = a_message['content']
+        chat_key = a_message['chat']
+        cur.execute(insert_format_lmessages, (role, content, chat_key))
+
+def insert_chat(chat_key):
+    with sqlite3.connect('chat_store.sqlite3') as con:
+        cur = con.cursor()
+        insert_format_lchats = "INSERT OR IGNORE INTO lchats (chat_id) VALUES (?)"
+        cur.execute(insert_format_lchats, (chat_key,))
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)  # Running the app in debug mode
