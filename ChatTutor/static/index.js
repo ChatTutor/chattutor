@@ -182,7 +182,8 @@ function handleFormSubmit(event) {
 
   addMessage("user", msgText, true);
   msgerInput.value = "";
-  queryGPT();
+  //queryGPT();
+  queryGPT_test();
 }
 
 
@@ -193,6 +194,48 @@ function loadConversationFromLocalStorage() {
   }
   else conversation = []
   MathJax.typesetPromise();
+}
+
+async function queryGPT_test() {
+  let result = '';
+  const decoder = new TextDecoder();
+  const response = await fetch(`${window.location.origin}/ask`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(args)
+  });
+
+  for await (const chunk of response.body){
+      result += decoder.decode(chunk, {stream:true});
+      const lines = result.split('\n[CHUNK]\n').filter(Boolean);
+      result = lines.pop() || '';
+
+      for(const line of lines){
+        message = ""
+        try {
+            message = JSON.parse(line.split('data: ')[1])
+        } catch (e) {
+            continue;
+        }
+        const contentToAppend = message.message.content ? message.message.content : "";
+        accumulatedContent += contentToAppend;
+        console.log(accumulatedContent)
+
+
+        if (isFirstMessage) {
+          addMessage("assistant", accumulatedContent, false);
+          isFirstMessage = false;
+        } else {
+          if (typeof(message.message.content) == 'undefined') {
+            conversation.push({"role": 'assistant', "content": accumulatedContent})
+            localStorage.setItem("conversation", JSON.stringify(conversation))
+          }
+          updateLastMessage(accumulatedContent);
+        }
+      }
+  }
 }
 
 
@@ -245,7 +288,8 @@ function queryGPT() {
         read();
       }).catch(err => {
         console.error('Stream error:', err);
-        sendBtn.disabled = false;
+        //sendBtn.disabled = false;
+        read();
       });
     }
     read();
