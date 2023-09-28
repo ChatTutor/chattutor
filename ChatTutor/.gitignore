@@ -2,3 +2,4 @@ keys.json
 .openai/
 A2rchi/
 venv/
+.env.yaml
