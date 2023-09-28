@@ -7,12 +7,13 @@ import json
 import os
 from time import sleep
 
+import yaml
+with open('.env.yaml') as f:
+    yamlenv = yaml.safe_load(f)
+keys = yamlenv["env_variables"]
 
-with open('./keys.json') as f:
-    keys = json.load(f)
-
-os.environ['OPENAI_API_KEY'] = keys["lab_openai"]
-os.environ['ACTIVELOOP_TOKEN'] = keys["activeloop"]
+os.environ['OPENAI_API_KEY'] = keys["OPENAI_API_KEY"]
+os.environ['ACTIVELOOP_TOKEN'] = keys["ACTIVELOOP_TOKEN"]
 
 from reader import read_folder
 from database import VectorDatabase

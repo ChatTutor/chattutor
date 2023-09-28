@@ -26,9 +26,11 @@ def embedding_function(texts, model="text-embedding-ada-002"):
     texts = [t.replace("\n", " ") for t in texts]
     return [data['embedding'] for data in openai.Embedding.create(input=texts, model=model)['data']]
 
-# Loading API keys from keys.json
-with open('./keys.json') as f:
-    keys = json.load(f)
+# Loading API keys from .env.yaml
+import yaml
+with open('.env.yaml') as f:
+    yamlenv = yaml.safe_load(f)
+keys = yamlenv["env_variables"]
 
 class VectorDatabase:
     """
@@ -154,9 +156,6 @@ class VectorDatabase:
         """Querying Deeplake tensor data source with specified embedding, query string, and headers"""
         embedding = embedding_function(prompt)
         embedding_string = ",".join(str(item) for item in embedding[0])
-        
-        with open('./keys.json') as f:
-            keys = json.load(f)
 
         if from_doc != None:
             query_str = f"SELECT * FROM (select text, metadata, COSINE_SIMILARITY(embedding, ARRAY[{embedding_string}]) AS score FROM \"hub://hpstennes/{self.collection_name}\") WHERE metadata[\'doc\'] == \'{from_doc}\' ORDER BY score desc LIMIT {n_results}"
@@ -169,7 +168,7 @@ class VectorDatabase:
                 "as_list": True
             }, 
             headers={
-                "Authorization": "Bearer " + keys["activeloop"]
+                "Authorization": "Bearer " + keys["ACTIVELOOP_TOKEN"]
             })
 
         print("deeplake response:")
