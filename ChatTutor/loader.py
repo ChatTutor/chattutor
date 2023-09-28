@@ -8,16 +8,15 @@ import os
 from google.cloud import storage
 import yaml
 
-with open('.env.yaml') as f:
-    yamlenv = yaml.safe_load(f)
-keys = yamlenv["env_variables"]
-
-os.environ['OPENAI_API_KEY'] = keys["OPENAI_API_KEY"]
-os.environ['ACTIVELOOP_TOKEN'] = keys["ACTIVELOOP_TOKEN"]
-
 from reader import read_folder
 from database import VectorDatabase
 
+# with open('.env.yaml') as f:
+#     yamlenv = yaml.safe_load(f)
+# keys = yamlenv["env_variables"]
+
+# os.environ['OPENAI_API_KEY'] = keys["OPENAI_API_KEY"]
+# os.environ['ACTIVELOOP_TOKEN'] = keys["ACTIVELOOP_TOKEN"]
 
 # Initializing a storage client
 def init_chroma_db():
