@@ -8,7 +8,7 @@ import os
 from google.cloud import storage
 import yaml
 
-from reader import read_folder
+from reader import read_folder, read_folder_gcp
 from database import VectorDatabase
 
 # with open('.env.yaml') as f:
@@ -28,7 +28,7 @@ def init_chroma_db():
 
     source_bucket = storage_client.bucket(source_bucket_name)
 
-    texts = read_folder_gcp(source_bucket_name, './')
+    texts = read_folder_gcp(source_bucket_name, './', storage_client)
 
     # Initializing and configuring the database
     database = VectorDatabase("./db", "chroma")
@@ -50,45 +50,6 @@ def init_chroma_db():
 
     print(f'Database file uploaded to {destination_bucket_name}/{database_file_name_in_bucket}')
 
-
-def read_folder_gcp(bucket_name, folder_name):
-    """
-    Reads the contents of a folder in a GCS bucket and parses each file according to its type, 
-    whether pdf, notebook, or plain text.
-    
-    Parameters:
-    - bucket_name: str, Name of the Google Cloud Storage bucket.
-    - folder_name: str, Name of the folder in the bucket.
-        
-    Returns:
-        [Text]: an array of texts obtained from parsing the bucket's files.
-    """
-    texts = []
-    
-    # Initializing a storage client
-    storage_client = storage.Client()
-    bucket = storage_client.bucket(bucket_name)
-    
-    # Iterating through blobs in the specified folder of the bucket
-    blobs = bucket.list_blobs(prefix=folder_name)
-    
-    for blob in blobs:
-        # Check if the blob is not the folder itself
-        if blob.name != folder_name:
-            file_contents = blob.download_as_text()
-            doc = Doc(docname=blob.name, citation="", dockey=blob.name)
-            
-            try:
-                if blob.name.endswith(".pdf"): new_texts = parse_pdf(file_contents, doc, 2000, 100)
-                elif blob.name.endswith(".ipynb"): new_texts = parse_notebook(file_contents, doc, 2000, 100)
-                else: new_texts = parse_plaintext(file_contents, doc, 2000, 100)
-                
-                texts.extend(new_texts)
-            except Exception as e: 
-                print(e.__str__())
-                pass
-                
-    return texts
 
 # Replace 'your-bucket-name' with your actual bucket name and 'your-folder-name' with the name of your folder in the bucket
 # texts = read_folder("datasets/")

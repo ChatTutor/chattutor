@@ -2,6 +2,46 @@ from definitions import Doc, Text
 from typing import List
 import os
 import json
+from google.cloud import storage
+
+def read_folder_gcp(bucket_name, folder_name):
+    """
+    Reads the contents of a folder in a GCS bucket and parses each file according to its type, 
+    whether pdf, notebook, or plain text.
+    
+    Parameters:
+    - bucket_name: str, Name of the Google Cloud Storage bucket.
+    - folder_name: str, Name of the folder in the bucket.
+        
+    Returns:
+        [Text]: an array of texts obtained from parsing the bucket's files.
+    """
+    texts = []
+    
+    # Initializing a storage client
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    
+    # Iterating through blobs in the specified folder of the bucket
+    blobs = bucket.list_blobs(prefix=folder_name)
+    
+    for blob in blobs[:5]:
+        # Check if the blob is not the folder itself
+        if blob.name != folder_name:
+            file_contents = blob.download_as_text()
+            doc = Doc(docname=blob.name, citation="", dockey=blob.name)
+            
+            try:
+                if blob.name.endswith(".pdf"): new_texts = parse_pdf(file_contents, doc, 2000, 100)
+                elif blob.name.endswith(".ipynb"): new_texts = parse_notebook(file_contents, doc, 2000, 100)
+                else: new_texts = parse_plaintext(file_contents, doc, 2000, 100)
+                
+                texts.extend(new_texts)
+            except Exception as e: 
+                print(e.__str__())
+                pass
+                
+    return texts
 
 def read_folder(path):
     """
