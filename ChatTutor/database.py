@@ -6,6 +6,7 @@ from deeplake.core.vectorstore import VectorStore
 import openai
 import requests
 import json
+import os
 
 # Setting up user and URL for activeloop
 username = "mit.quantum.ai"
@@ -28,9 +29,16 @@ def embedding_function(texts, model="text-embedding-ada-002"):
 
 # Loading API keys from .env.yaml
 import yaml
-with open('.env.yaml') as f:
-    yamlenv = yaml.safe_load(f)
-keys = yamlenv["env_variables"]
+if 'CHATUTOR_GCP' in os.environ: 
+    openai.api_key = os.environ['OPENAI_API_KEY']
+else:
+    import yaml
+    with open('.env.yaml') as f:
+        yamlenv = yaml.safe_load(f)
+    keys = yamlenv["env_variables"]
+    print(keys)
+    os.environ['OPENAI_API_KEY'] = keys["OPENAI_API_KEY"]
+    os.environ['ACTIVELOOP_TOKEN'] = keys["ACTIVELOOP_TOKEN"]
 
 class VectorDatabase:
     """
