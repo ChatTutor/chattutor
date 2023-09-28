@@ -69,7 +69,7 @@ def ask():
             yield f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n[CHUNK]\n"
     
     # Streaming the generated responses as server-sent events
-    return Response(stream_with_context(generate()), content_type='text/event-stream')
+    return Response(generate(), content_type='application/x-ndjson')
 
 if __name__ == "__main__":
     app.run(debug=True)  # Running the app in debug mode
