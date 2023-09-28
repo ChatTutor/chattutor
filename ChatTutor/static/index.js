@@ -233,7 +233,7 @@ function queryGPT() {
         console.log(messages)
         messages.forEach(message => {
           const contentToAppend = message.message.content ? message.message.content : "";
-          accumulatedContent += contentToAppend + "--{" + message.time + "}=N={" + new Date().getTime() + "}-{" + isFirstMessage + "}\n";
+          accumulatedContent += contentToAppend;
           console.log(accumulatedContent)
 
 
@@ -296,12 +296,14 @@ function formatMessage(message, makeLists = true) {
 function updateLastMessage(newContent) {
   if (lastMessageId) {
     const lastMessageElement = document.querySelector(`#${lastMessageId} .msg-text`);
-    alert("update")
+    alert(`update #${lastMessageId} .msg-text \n\n ${lastMessageElement}`)
     if (lastMessageElement) {
 
       const newContentFormatted = formatMessage(newContent)
-      lastMessageElement.innerHTML = newContentFormatted;
-      alert(newContentFormatted)
+
+      document.querySelector(`#${lastMessageId} .msg-text`).innerHTML = newContentFormatted;
+      alert(newContentFormatted + "\n\n" + lastMessageElement.innerHTML)
+
     } else {
       console.error('Cannot find the .msg-text element to update.');
     }
