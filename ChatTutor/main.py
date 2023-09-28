@@ -6,11 +6,18 @@ import tutor
 import json
 import time
 import os
+import openai
 
-with open('./keys.json') as f:
-    keys = json.load(f)
-os.environ['OPENAI_API_KEY'] = keys["lab_openai"]
-#os.environ['ACTIVELOOP_TOKEN'] = keys["activeloop"]
+if 'CHATUTOR_GCP' in os.environ: 
+    openai.api_key = os.environ['OPENAI_API_KEY']
+else:
+    import yaml
+    with open('.env.yaml') as f:
+        yamlenv = yaml.safe_load(f)
+    keys = yamlenv["env_variables"]
+    print(keys)
+    os.environ['OPENAI_API_KEY'] = keys["OPENAI_API_KEY"]
+    os.environ['ACTIVELOOP_TOKEN'] = keys["ACTIVELOOP_TOKEN"]
 
 app = Flask(__name__)
 CORS(app)  # Enabling CORS for the Flask app to allow requests from different origins
@@ -59,10 +66,16 @@ def ask():
         start_time = time.time()
         for chunk in tutor.ask_question(db, conversation, from_doc):
             chunk_time = time.time() - start_time
-            yield f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n\n"
+            print(f"SENT: data: {json.dumps({'time': chunk_time, 'message': chunk})}\n[CHUNK]\n")
+            yield f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n[CHUNK]\n"
     
     # Streaming the generated responses as server-sent events
-    return Response(stream_with_context(generate()), content_type='text/event-stream')
+    return Response(stream_with_context(generate()), content_type='text/event-stream', headers={
+        "X-Accel-Buffering" : "no",
+        "X-Content-Type-Options": "nosniff",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive"
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)  # Running the app in debug mode

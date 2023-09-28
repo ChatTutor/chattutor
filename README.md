@@ -7,13 +7,14 @@ This project is the web application for ChatTutor.
 
 ## Usage
 
-1. Navigate to the **ChatTutor** folder and insert the **keys.json** file which should
+1. Navigate to the **ChatTutor** folder and insert the **.env.yaml** file which should
 have the following format:
 
-```json
-{
-    "lab_openai": "<openai-api-key>"
-}
+```yaml
+env_variables:
+    CHATUTOR_GCP: TRUE
+    OPENAI_API_KEY: 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
+    ACTIVELOOP_TOKEN: eyJhbGciOiJIUzUxMiIsImlhdCI6MTY4Njg0NTEzNiwiZXhwIjoxNjk0MTAyNjk5fQ.eyJpZCI6Imhwc3Rlbm5lcyJ9.dT5u1T9UFo9t3n1Y4XbN0BVTif7S9aiOq6ZR9e9zSJQlloOb2IV5pqaQb8aqLySQYBeScqLff3L4LYSixOADUA
 ```
 
 The project file tree should look like this:
@@ -23,7 +24,7 @@ root_folder (named chattutor)
 |- ChatTutor/
       |- requirements.txt
       |- ... (other files and folders)
-      |- keys.json (the file you added)
+      |- .env.yaml (the file you added)
 |- db/
       |- ...
 |- README.md

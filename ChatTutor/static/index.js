@@ -192,9 +192,8 @@ function loadConversationFromLocalStorage() {
     conversation.forEach(message => {addMessage(message["role"], message["content"], false)})
   }
   else conversation = []
-  MathJax.typesetPromise();
+  //MathJax.typesetPromise();
 }
-
 
 function queryGPT() {
   args = {
@@ -202,18 +201,23 @@ function queryGPT() {
     "collection": "test_embedding"
   }
   if (embed_mode) args.from_doc = original_file
-
-  fetch('/ask', {
+  console.log("request:", JSON.stringify(args))
+  fetch(`${window.location.origin}/ask`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'X-Accel-Buffering': 'no'
     },
     body: JSON.stringify(args)
   }).then(response => {
+    console.log("responded")
     const reader = response.body.getReader();
     let accumulatedContent = "";
     let isFirstMessage = true;
     function read() {
+      console.log("reading...")
+      console.error("reading....");
+
       reader.read().then(({ done, value }) => {
         if (done) {
           // Enable the send button when streaming is done
@@ -221,12 +225,20 @@ function queryGPT() {
           return;
         }
         const strValue = new TextDecoder().decode(value);
-        const messages = strValue.split('\n\n').filter(Boolean).map(chunk => JSON.parse(chunk.split('data: ')[1]));
+        console.log(strValue.split('\n[CHUNK]\n').filter(Boolean))
+        const messages = strValue.split('\n[CHUNK]\n').filter(Boolean).map(chunk => {
+          try {
+            return JSON.parse(chunk.split('data: ')[1])
+          } catch(e) {
+            return {'time': 0, 'message': ''}
+          }
+        });
+        console.log(messages)
         messages.forEach(message => {
           const contentToAppend = message.message.content ? message.message.content : "";
           accumulatedContent += contentToAppend;
-
-
+          console.log(accumulatedContent)
+          console.error(accumulatedContent);
 
           if (isFirstMessage) {
             addMessage("assistant", accumulatedContent, false);
@@ -242,7 +254,8 @@ function queryGPT() {
         read();
       }).catch(err => {
         console.error('Stream error:', err);
-        sendBtn.disabled = false;
+        //sendBtn.disabled = false;
+        read();
       });
     }
     read();
@@ -285,18 +298,17 @@ function formatMessage(message, makeLists = true) {
 function updateLastMessage(newContent) {
   if (lastMessageId) {
     const lastMessageElement = document.querySelector(`#${lastMessageId} .msg-text`);
-    
     if (lastMessageElement) {
 
       const newContentFormatted = formatMessage(newContent)
-      lastMessageElement.innerHTML = newContentFormatted;
+      document.querySelector(`#${lastMessageId} .msg-text`).innerHTML = newContentFormatted;
     } else {
       console.error('Cannot find the .msg-text element to update.');
     }
   } else {
     console.error('No message has been added yet.');
   }
-  MathJax.typesetPromise();
+  //MathJax.typesetPromise();
 
 }
 
