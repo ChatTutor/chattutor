@@ -2,3 +2,8 @@ keys.json
 .openai/
 A2rchi/
 venv/
+__pycache__/
+chattutor-393319-5c666d5a8c61.json
+.DS_Store
+downloaded_papers
+arxiv_ids.txt
