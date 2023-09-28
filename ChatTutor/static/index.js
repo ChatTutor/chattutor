@@ -236,7 +236,6 @@ function queryGPT() {
           accumulatedContent += contentToAppend;
           console.log(accumulatedContent)
 
-
           if (isFirstMessage) {
             addMessage("assistant", accumulatedContent, false);
             isFirstMessage = false;
@@ -298,9 +297,7 @@ function updateLastMessage(newContent) {
     if (lastMessageElement) {
 
       const newContentFormatted = formatMessage(newContent)
-
       document.querySelector(`#${lastMessageId} .msg-text`).innerHTML = newContentFormatted;
-      alert(document.querySelector(`#${lastMessageId} .msg-text`).innerHTML = newContentFormatted)
     } else {
       console.error('Cannot find the .msg-text element to update.');
     }
