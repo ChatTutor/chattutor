@@ -1,7 +1,7 @@
 import uuid
 
 from flask import Flask, request, redirect, send_from_directory, url_for
-from flask import stream_with_context, Response
+from flask import stream_with_context, Response, abort
 from flask_cors import CORS  # Importing CORS to handle Cross-Origin Resource Sharing
 from extensions import db  # Importing the database object from extensions module
 import tutor
@@ -10,11 +10,20 @@ import time
 import os
 # import pymysql
 import sqlite3
+import openai
+import loader
 
-with open('./keys.json') as f:
-    keys = json.load(f)
-os.environ['OPENAI_API_KEY'] = keys["lab_openai"]
-#os.environ['ACTIVELOOP_TOKEN'] = keys["activeloop"]
+
+if 'CHATUTOR_GCP' in os.environ: 
+    openai.api_key = os.environ['OPENAI_API_KEY']
+else:
+    import yaml
+    with open('.env.yaml') as f:
+        yamlenv = yaml.safe_load(f)
+    keys = yamlenv["env_variables"]
+    print(keys)
+    os.environ['OPENAI_API_KEY'] = keys["OPENAI_API_KEY"]
+    os.environ['ACTIVELOOP_TOKEN'] = keys["ACTIVELOOP_TOKEN"]
 
 app = Flask(__name__)
 CORS(app)  # Enabling CORS for the Flask app to allow requests from different origins
@@ -65,16 +74,30 @@ initialize_ldatabase()
 
 @app.route("/")
 def index():
-    # Redirecting the root URL to the index.html in the static folder
+    """
+        Serves the landing page of the web application which provides
+        the ChatTutor interface. Users can ask the Tutor questions and it will
+        response with information from its database of papers and information.
+        Redirects the root URL to the index.html in the static folder
+    """
     return redirect(url_for('static', filename='index.html'))
 
 @app.route('/static/<path:path>')
 def serve_static(path):
-    # Serving static files from the 'static' directory
+    """Serving static files from the 'static' directory"""
     return send_from_directory('static', path)
 
 @app.route("/ask", methods=["POST", "GET"])
 def ask():
+    """Route that facilitates the asking of questions. The response is generated
+    based on an embedding.
+    
+    URLParams:
+        conversation (List({role: ... , content: ...})):  snapshot of the current conversation 
+        collection: embedding used for vectorization
+    Yields:
+        response: {data: {time: ..., message: ...}}
+    """
     data = request.json
     conversation = data["conversation"]
     collection_name = data["collection"]
@@ -136,7 +159,16 @@ def insert_chat(chat_key):
         insert_format_lchats = "INSERT OR IGNORE INTO lchats (chat_id) VALUES (?)"
         cur.execute(insert_format_lchats, (chat_key,))
 
+@app.route('/compile_chroma_db', methods=['POST'])
+def compile_chroma_db():
+    token = request.headers.get('Authorization')
 
+    if token != openai.api_key:
+        abort(401)  # Unauthorized
+    
+    loader.init_chroma_db()
+
+    return "Chroma db created successfully", 200
 
 if __name__ == "__main__":
     app.run(debug=True)  # Running the app in debug mode
