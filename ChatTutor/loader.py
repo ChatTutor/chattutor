@@ -7,6 +7,7 @@ import json
 import os
 from google.cloud import storage
 import yaml
+from time import sleep
 
 from reader import read_folder, read_folder_gcp
 from database import VectorDatabase
