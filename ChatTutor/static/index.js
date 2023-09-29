@@ -207,6 +207,18 @@ if(embed_mode) {
   setupEmbedMode();
 }
 
+function uploadMessageToDB(msg, chat_k) {
+    if(msg.content === "") {
+        return
+    }
+    const data_ = {content: msg.content, role: msg.role, chat_k: chat_k}
+    console.log(`DATA: ${JSON.stringify(data_)} `)
+    fetch('/addtodb', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data_)})
+        .then(() =>{
+            console.log('Andu')
+        })
+}
+
 // Event listener to clear conversation
 clear.addEventListener('click', clearConversation);
 
@@ -226,11 +238,33 @@ themeBtn.addEventListener('click', toggleDarkMode)
 
 stopGenButton.addEventListener('click', stopGenerating)
 
+// I dodn't know if i should install uuidv4 using npm or what should i use
+function uuidv4() {
+  return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
+}
+
+function setChatId() {
+    localStorage.setItem('conversation_id', uuidv4())
+}
+
+function getChatId() {
+    return localStorage.getItem('conversation_id')
+}
+
+function reinstantiateChatId() {
+    localStorage.removeItem('conversation_id')
+    setChatId()
+}
+
 // function for keeping the theme whn the page refreshes
 function setThemeOnRefresh() {
   // disable send button
   sendBtn.disabled = messageInput.value.length === 0;
-
+  if(getChatId() == null) {
+    setChatId()
+  }
 
   theme = localStorage.getItem('theme')
   if (theme == null) {
@@ -285,6 +319,7 @@ function toggleDarkMode() {
   localStorage.setItem('theme', theme)
   setTheme(theme)
 
+
 }
 
 function toggleInterfaceMode() {
@@ -297,7 +332,7 @@ function toggleInterfaceMode() {
 function clearConversation() {
   conversation = [];
   localStorage.setItem("conversation", JSON.stringify([]));
-
+    reinstantiateChatId()
   var childNodes = msgerChat.childNodes;
   for(var i = childNodes.length - 3; i >= 2; i--){
       var childNode = childNodes[i];
@@ -364,10 +399,11 @@ function queryGPT() {
       reader.read().then(({ done, value }) => {
         if (done) {
           // Enable the send button when streaming is done
-          sendBtn.disabled = false;
-          clear.style.display = 'block'
-          stopGenButton.style.display = 'none'
-          stopGeneration = false
+            sendBtn.disabled = false;
+            clear.style.display = 'block'
+            stopGenButton.style.display = 'none'
+            stopGeneration = false
+            uploadMessageToDB({content: accumulatedContent, role: 'assistant'}, getChatId())
           return;
         }
         const strValue = new TextDecoder().decode(value);
@@ -409,10 +445,11 @@ function queryGPT() {
               localStorage.setItem("conversation", JSON.stringify(conversation))
 
               sendBtn.disabled = false;
-            clear.style.display = 'block'
-            stopGenButton.style.display = 'none'
+              clear.style.display = 'block'
+              stopGenButton.style.display = 'none'
               scrollHelper.scrollIntoView()
               updateLastMessage(accumulatedContent);
+              uploadMessageToDB({content: accumulatedContent, role: 'assistant'}, getChatId())
               break
           }
         }
@@ -473,7 +510,6 @@ function updateLastMessage(newContent) {
   if (lastMessageId) {
     const lastMessageElement = document.querySelector(`#${lastMessageId} .msg-text`);
     if (lastMessageElement) {
-
       const newContentFormatted = formatMessage(newContent)
       document.querySelector(`#${lastMessageId} .msg-text`).innerHTML = newContentFormatted;
     } else {
@@ -512,7 +548,8 @@ function addMessage(role, message, updateConversation) {
   }
 
   const messageStr = formatMessage(message, role === "assistant")
-
+    const ms = {content: `${message}`, role: 'student'}
+    uploadMessageToDB(ms, getChatId())
   const msgHTML = `
     <div class="msg ${side}-msg" id="${messageId}">
     <div class="msg-bgd">
@@ -530,9 +567,8 @@ function addMessage(role, message, updateConversation) {
     </div>
   `;
 
-
   clearContainer.insertAdjacentHTML("beforebegin", msgHTML);
-  
+
   // Find the newly added message and animate it
   const newMessage = document.getElementById(messageId);
   newMessage.style.opacity = "0";
@@ -544,7 +580,6 @@ function addMessage(role, message, updateConversation) {
   // Start the animation
   newMessage.style.opacity = "1";
   newMessage.style.transform = "translateY(0)";
-  
   msgerChat.scrollTop += 500;
   if(updateConversation){
     conversation.push({"role": role, "content": message})
