@@ -373,56 +373,39 @@ function loadConversationFromLocalStorage() {
   //MathJax.typesetPromise();
 }
 
+
+
+
 function queryGPT() {
   args = {
     "conversation": conversation,
     "collection": "test_embedding"
   }
   if (embed_mode) args.from_doc = original_file
-  console.log("request:", JSON.stringify(args))
-  fetch(`${window.location.origin}/ask`, {
+  fetch('/ask', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'X-Accel-Buffering': 'no'
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify(args)
   }).then(response => {
-    console.log("responded")
     const reader = response.body.getReader();
     let accumulatedContent = "";
     let isFirstMessage = true;
     function read() {
-      console.log("reading...")
-      console.error("reading....");
-
       reader.read().then(({ done, value }) => {
         if (done) {
           // Enable the send button when streaming is done
-            sendBtn.disabled = false;
-            clear.style.display = 'block'
-            stopGenButton.style.display = 'none'
-            stopGeneration = false
-            uploadMessageToDB({content: accumulatedContent, role: 'assistant'}, getChatId())
+          sendBtn.disabled = false;
+          clear.style.display = 'block'
+          stopGenButton.style.display = 'none'
+          stopGeneration = false
           return;
         }
         const strValue = new TextDecoder().decode(value);
-        console.log(strValue.split('\n[CHUNK]\n').filter(Boolean))
-        const messages = strValue.split('\n[CHUNK]\n').filter(Boolean).map(chunk => {
-          try {
-            return JSON.parse(chunk.split('data: ')[1])
-          } catch(e) {
-            return {'time': 0, 'message': ''}
-          }
-        });
-        console.log(messages)
-        messages.forEach(message => {
-          const contentToAppend = message.message.content ? message.message.content : "";
-          accumulatedContent += contentToAppend;
-          console.log(accumulatedContent)
-          console.error(accumulatedContent);
-
-
+        const messages = strValue.split('\n\n').filter(Boolean).map(chunk => JSON.parse(chunk.split('data: ')[1]));
+        for (messageIndex in messages) {
+          message = messages[messageIndex]
           if(stopGeneration === false) {
             const contentToAppend = message.message.content ? message.message.content : "";
             accumulatedContent += contentToAppend;
@@ -438,21 +421,18 @@ function queryGPT() {
             scrollHelper.scrollIntoView()
             updateLastMessage(accumulatedContent);
           }
-
           if(stopGeneration === true) {
               accumulatedContent += " ...Stopped generating";
               conversation.push({"role": 'assistant', "content": accumulatedContent})
               localStorage.setItem("conversation", JSON.stringify(conversation))
-
               sendBtn.disabled = false;
-              clear.style.display = 'block'
-              stopGenButton.style.display = 'none'
+            clear.style.display = 'block'
+            stopGenButton.style.display = 'none'
               scrollHelper.scrollIntoView()
               updateLastMessage(accumulatedContent);
-              uploadMessageToDB({content: accumulatedContent, role: 'assistant'}, getChatId())
-              return;
+              break
           }
-        })
+        }
         if(stopGeneration === false) {
           read();
         } else {
@@ -476,6 +456,109 @@ function queryGPT() {
     stopGeneration = false
   });
 }
+// function queryGPT() {
+//   args = {
+//     "conversation": conversation,
+//     "collection": "test_embedding"
+//   }
+//   if (embed_mode) args.from_doc = original_file
+//   console.log("request:", JSON.stringify(args))
+//   fetch(`${window.location.origin}/ask`, {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json',
+//       'X-Accel-Buffering': 'no'
+//     },
+//     body: JSON.stringify(args)
+//   }).then(response => {
+//     console.log("responded")
+//     const reader = response.body.getReader();
+//     let accumulatedContent = "";
+//     let isFirstMessage = true;
+//     function read() {
+//       console.log("reading...")
+//       console.error("reading....");
+
+//       reader.read().then(({ done, value }) => {
+//         if (done) {
+//           // Enable the send button when streaming is done
+//             sendBtn.disabled = false;
+//             clear.style.display = 'block'
+//             stopGenButton.style.display = 'none'
+//             stopGeneration = false
+//             uploadMessageToDB({content: accumulatedContent, role: 'assistant'}, getChatId())
+//           return;
+//         }
+//         const strValue = new TextDecoder().decode(value);
+//         console.log(strValue.split('\n[CHUNK]\n').filter(Boolean))
+//         const messages = strValue.split('\n[CHUNK]\n').filter(Boolean).map(chunk => {
+//           try {
+//             return JSON.parse(chunk.split('data: ')[1])
+//           } catch(e) {
+//             return {'time': 0, 'message': ''}
+//           }
+//         });
+//         console.log(messages)
+//         messages.forEach(message => {
+//           const contentToAppend = message.message.content ? message.message.content : "";
+//           accumulatedContent += contentToAppend;
+//           console.log(accumulatedContent)
+//           console.error(accumulatedContent);
+
+
+//           if(stopGeneration === false) {
+//             const contentToAppend = message.message.content ? message.message.content : "";
+//             accumulatedContent += contentToAppend;
+//           }
+//           if (isFirstMessage) {
+//             addMessage("assistant", accumulatedContent, false);
+//             isFirstMessage = false;
+//           } else {
+//             if (typeof (message.message.content) == 'undefined') {
+//               conversation.push({"role": 'assistant', "content": accumulatedContent})
+//               localStorage.setItem("conversation", JSON.stringify(conversation))
+//             }
+//             scrollHelper.scrollIntoView()
+//             updateLastMessage(accumulatedContent);
+//           }
+
+//           if(stopGeneration === true) {
+//               accumulatedContent += " ...Stopped generating";
+//               conversation.push({"role": 'assistant', "content": accumulatedContent})
+//               localStorage.setItem("conversation", JSON.stringify(conversation))
+
+//               sendBtn.disabled = false;
+//               clear.style.display = 'block'
+//               stopGenButton.style.display = 'none'
+//               scrollHelper.scrollIntoView()
+//               updateLastMessage(accumulatedContent);
+//               uploadMessageToDB({content: accumulatedContent, role: 'assistant'}, getChatId())
+//               return;
+//           }
+//         })
+//         if(stopGeneration === false) {
+//           read();
+//         } else {
+//           stopGeneration = false
+//         }
+//       }).catch(err => {
+//         console.error('Stream error:', err);
+//         sendBtn.disabled = false;
+//         clear.style.display = 'block'
+//         stopGenButton.style.display = 'none'
+//         stopGeneration = false
+//       });
+//     }
+//     read();
+//   }).catch(err => {
+//     console.error('Fetch error:', err);
+//     // Enable the send button in case of an error
+//     sendBtn.disabled = false;
+//     clear.style.display = 'block'
+//     stopGenButton.style.display = 'none'
+//     stopGeneration = false
+//   });
+// }
 
 function formatMessage(message, makeLists = true) {
   const messageArr = message.split("\n")
