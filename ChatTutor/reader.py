@@ -66,7 +66,9 @@ def read_folder(path):
             filepath = os.path.join(dirpath, file)
             doc = Doc(docname=file, citation="", dockey=file)
             try:
-                if file.endswith(".pdf"): new_texts = parse_pdf(filepath, doc, 2000, 100)
+                if file.endswith(".pdf"): 
+                    # print("SSSSSSSSS")
+                    new_texts = parse_pdf(filepath, doc, 2000, 100)
                 elif file.endswith(".ipynb"): new_texts = parse_notebook(filepath, doc, 2000, 100)
                 else: new_texts = parse_plaintext(filepath, doc, 2000, 100)
                 
@@ -128,10 +130,10 @@ def parse_pdf(file_contents: str, doc: Doc, chunk_chars: int, overlap: int) -> L
     Returns:
         List(Text): The resulting Texts as an array
     """
-    # import pypdf
 
     # pdfFileObj = open(path, "rb")
     pdfReader = PyPDF2.PdfReader(BytesIO(file_contents))
+    # pdfReader = PyPDF2.PdfReader(file_contents)
     split = ""
     pages: List[str] = []
     texts: List[Text] = []

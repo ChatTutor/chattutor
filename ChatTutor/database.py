@@ -58,7 +58,9 @@ class VectorDatabase:
     def init_db(self):
         """Initializing the database client if the provider is 'chroma'"""
         if self.db_provider != "chroma": return
-        self.client = chromadb.PersistentClient(path=self.path)
+
+        # self.client = chromadb.PersistentClient(path=self.path)
+        self.client = chromadb.HttpClient(host='34.123.154.72', port=8000)
 
     def load_datasource(self, name):
         """Loading the appropriate data source based on the database provider"""
