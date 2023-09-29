@@ -11,12 +11,7 @@ import yaml
 from reader import read_folder, read_folder_gcp
 from database import VectorDatabase
 
-# with open('.env.yaml') as f:
-#     yamlenv = yaml.safe_load(f)
-# keys = yamlenv["env_variables"]
 
-# os.environ['OPENAI_API_KEY'] = keys["OPENAI_API_KEY"]
-# os.environ['ACTIVELOOP_TOKEN'] = keys["ACTIVELOOP_TOKEN"]
 
 # Initializing a storage client
 def init_chroma_db():
@@ -34,7 +29,7 @@ def init_chroma_db():
     database = VectorDatabase("./db", "chroma")
     database.init_db()
     database.load_datasource('test_embedding')
-
+    print('adding texts:',len(texts),texts[0])
     # Adding texts to the database
     database.add_texts(texts)
 
@@ -50,15 +45,21 @@ def init_chroma_db():
     print(f'Database file uploaded to {destination_bucket_name}/{database_file_name_in_bucket}')
 
 
+# with open('.env.yaml') as f:
+#     yamlenv = yaml.safe_load(f)
+# keys = yamlenv["env_variables"]
+
+# os.environ['OPENAI_API_KEY'] = keys["OPENAI_API_KEY"]
+# os.environ['ACTIVELOOP_TOKEN'] = keys["ACTIVELOOP_TOKEN"]
+
 # Replace 'your-bucket-name' with your actual bucket name and 'your-folder-name' with the name of your folder in the bucket
 # texts = read_folder("datasets/")
 
 # database = VectorDatabase("./db", "chroma")
 # database.init_db()
 # database.load_datasource('test_embedding')
-
+# print('text', texts[0])
 # database.add_texts(texts)
-
 
 # Dividing the texts into two halves
 # first_half = len(texts) // 2
