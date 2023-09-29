@@ -359,6 +359,7 @@ function handleFormSubmit(event) {
   stopGenButton.style.display = 'block'
 
   addMessage("user", msgText, true);
+  uploadMessageToDB({role: 'user', content: msgText}, getChatId())
   msgerInput.value = "";
   queryGPT();
 }
@@ -400,6 +401,7 @@ function queryGPT() {
           clear.style.display = 'block'
           stopGenButton.style.display = 'none'
           stopGeneration = false
+            uploadMessageToDB({content: accumulatedContent, role: 'assistant'}, getChatId())
           return;
         }
         const strValue = new TextDecoder().decode(value);
@@ -428,6 +430,7 @@ function queryGPT() {
               sendBtn.disabled = false;
             clear.style.display = 'block'
             stopGenButton.style.display = 'none'
+              uploadMessageToDB({content: accumulatedContent, role: 'assistant'}, getChatId())
               scrollHelper.scrollIntoView()
               updateLastMessage(accumulatedContent);
               break
@@ -631,8 +634,7 @@ function addMessage(role, message, updateConversation) {
   }
 
   const messageStr = formatMessage(message, role === "assistant")
-    const ms = {content: `${message}`, role: 'student'}
-    uploadMessageToDB(ms, getChatId())
+
   const msgHTML = `
     <div class="msg ${side}-msg" id="${messageId}">
     <div class="msg-bgd">

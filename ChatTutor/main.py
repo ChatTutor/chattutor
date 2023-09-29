@@ -38,11 +38,11 @@ db.init_db()
 #     cursorclass=pymysql.cursors.DictCursor
 # ) ## for mysql server TO BE USED INSTEAD OF 'con'.
 
-
+# Only for deleting the db when you first access the site. Can be used for debugging
 presetTables1 = """
     DROP TABLE IF EXISTS lchats
 """
-
+# only for deleting the db when you first access the site. Can be used for debugging
 presetTables2 = """
     DROP TABLE IF EXISTS lmessages
 """
@@ -58,13 +58,15 @@ CREATE TABLE IF NOT EXISTS lmessages (
     role text NOT NULL,
     content text NOT NULL,
     chat_key integer NOT NULL,
-    FOREIGN KEY (chat_key) REFERENCES chats (chat_id)
+    FOREIGN KEY (chat_key) REFERENCES lchats (chat_id)
     )"""
 
 
 def initialize_ldatabase():
+    """Creates the tables if they don't exist"""
     con = sqlite3.connect('chat_store.sqlite3')
     cur = con.cursor()
+    #if you want to delete the database when a user acceses the site. (For DEBUGGING purposes only
     # cur.execute(presetTables1)
     # cur.execute(presetTables2)
     cur.execute(chats_table_Sql)
@@ -102,15 +104,11 @@ def ask():
     conversation = data["conversation"]
     collection_name = data["collection"]
     from_doc = data.get("from_doc")
-
-    # print("convo: ", data['conversation'])
-
     # Logging whether the request is specific to a document or can be from any document
     if(from_doc): print("only from doc", from_doc)
     else: print("from any doc")
 
     db.load_datasource(collection_name)
-
     def generate():
         # This function generates responses to the questions in real-time and yields the response
         # along with the time taken to generate it.
@@ -134,17 +132,22 @@ def addtodb():
     insert_chat(chat_k_id)
     message_to_upload = {'content': content, 'role': role, 'chat': chat_k_id}
     insert_message(message_to_upload)
-    # print('HEY: ', message_to_upload)
-    # print_for_debug()
+    print_for_debug()
     return Response('inserted!', content_type='text')
 
+
 def print_for_debug():
+    """For debugging purposes. Acceses  the content of the lmessages table"""
     with sqlite3.connect('chat_store.sqlite3') as con:
         cur = con.cursor()
+        # This accesses the contents in the database ( for messages )
         response = cur.execute('SELECT * from lmessages')
-        print(response.fetchall())
+        # response = cur.execute('SELECT * from lchats') -- this is for chats.
+        print("DC:", response.fetchall())
+
 
 def insert_message(a_message):
+    """This inserts a message into the sqlite3 database."""
     with sqlite3.connect('chat_store.sqlite3') as con:
         cur = con.cursor()
         insert_format_lmessages = "INSERT INTO lmessages (role, content, chat_key) VALUES (?, ?, ?)"
@@ -153,7 +156,10 @@ def insert_message(a_message):
         chat_key = a_message['chat']
         cur.execute(insert_format_lmessages, (role, content, chat_key))
 
+
+
 def insert_chat(chat_key):
+    """This inserts a chat into the sqlite3 database, ignoring the command if the chat already exists."""
     with sqlite3.connect('chat_store.sqlite3') as con:
         cur = con.cursor()
         insert_format_lchats = "INSERT OR IGNORE INTO lchats (chat_id) VALUES (?)"
