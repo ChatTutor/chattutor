@@ -1,5 +1,6 @@
 import uuid
 
+import flask
 from flask import Flask, request, redirect, send_from_directory, url_for
 from flask import stream_with_context, Response, abort
 from flask_cors import CORS  # Importing CORS to handle Cross-Origin Resource Sharing
@@ -51,6 +52,22 @@ chats_table_Sql = """
 CREATE TABLE IF NOT EXISTS lchats (
     chat_id text PRIMARY KEY
     )"""
+
+
+def connect_to_database():
+    """Function that connects to the database"""
+    # for mysql server
+    # connection = pymysql.connect(
+    #     host='localhost',
+    #     user='root',
+    #     password='password',
+    #     db='mydatabase',
+    #     charset='utf8mb4',
+    #     cursorclass=pymysql.cursors.DictCursor
+    # )
+    # return connection
+    return sqlite3.connect('chat_store.sqlite3')
+
 
 messages_table_Sql = """
 CREATE TABLE IF NOT EXISTS lmessages (
@@ -135,10 +152,62 @@ def addtodb():
     print_for_debug()
     return Response('inserted!', content_type='text')
 
+@app.route('/getfromdb', methods=["POST", "GET"])
+def getfromdb():
+    data = request.form
+    username = data.get('lusername', 'nan')
+    passcode = data.get('lpassword', 'nan')
+    print(data)
+    print(username, passcode)
+    if username == 'root' and passcode == 'admin':
+        with connect_to_database() as con:
+            cur = con.cursor()
+            response = cur.execute('SELECT * FROM lmessages JOIN lchats ON lmessages.chat_key = lchats.chat_id')
+            messages_arr = response.fetchall()
+            renderedString = ""
+            for message in messages_arr:
+                role = message[1]
+                content = message[2]
+                chat_id = message[3]
+                msg_html = f"""
+                    <div class="left-msg">
+                        <div class="msg-bgd">
+                          <div class="msg-bubble">
+                            <div class="msg-info">
+                              <div class="msg-info-name">role: {role}</div>
+                              <div class="msg-info-name">chat_key: {chat_id}</div>
+                            </div>
+
+                            <div class="msg-text">content: {content}</div>
+                          </div>
+                        </div>
+                    </div>
+                """
+                renderedString += msg_html
+
+            return flask.render_template('display_messages.html', renderedString=renderedString)
+    else:
+        return flask.render_template_string('Error, please <a href="/static/display_db.html">Go back</a>')
+
+
+@app.route('/exesql', methods=["POST", "GET"])
+def exesql():
+    data = request.json
+    username = data['lusername']
+    passcode = data['lpassword']
+    sqlexec = data['lexesql']
+    if username == 'root' and passcode == 'admin':
+        with connect_to_database() as con:
+            cur = con.cursor()
+            response = cur.execute(sqlexec)
+            messages_arr = response.fetchall()
+            return Response(f'{messages_arr}', 200)
+    else:
+        return Response('fail', 404)
 
 def print_for_debug():
     """For debugging purposes. Acceses  the content of the lmessages table"""
-    with sqlite3.connect('chat_store.sqlite3') as con:
+    with connect_to_database() as con:
         cur = con.cursor()
         # This accesses the contents in the database ( for messages )
         response = cur.execute('SELECT * from lmessages')
@@ -146,9 +215,10 @@ def print_for_debug():
         print("DC:", response.fetchall())
 
 
+
 def insert_message(a_message):
     """This inserts a message into the sqlite3 database."""
-    with sqlite3.connect('chat_store.sqlite3') as con:
+    with connect_to_database() as con:
         cur = con.cursor()
         insert_format_lmessages = "INSERT INTO lmessages (role, content, chat_key) VALUES (?, ?, ?)"
         role = a_message['role']
@@ -160,7 +230,7 @@ def insert_message(a_message):
 
 def insert_chat(chat_key):
     """This inserts a chat into the sqlite3 database, ignoring the command if the chat already exists."""
-    with sqlite3.connect('chat_store.sqlite3') as con:
+    with connect_to_database() as con:
         cur = con.cursor()
         insert_format_lchats = "INSERT OR IGNORE INTO lchats (chat_id) VALUES (?)"
         cur.execute(insert_format_lchats, (chat_key,))
