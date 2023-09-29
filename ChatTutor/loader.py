@@ -24,7 +24,7 @@ def init_chroma_db():
     source_bucket_name = 'downloaded_content'
     source_folder_name = './'
     destination_bucket_name = 'chromadb_cqn'
-    database_file_name_in_bucket = 'database_file'
+    database_file_name_in_bucket = 'chroma.sqlite3'
 
     source_bucket = storage_client.bucket(source_bucket_name)
 
@@ -36,10 +36,9 @@ def init_chroma_db():
     database.load_datasource('test_embedding')
 
     # Adding texts to the database
-    database.add_texts(texts[:5])
+    database.add_texts(texts)
 
-    # Let's assume the database is stored in a file named 'database_file' in the './db' directory.
-    database_file_path = './db/database_file'
+    database_file_path = './db/chroma.sqlite3'
 
     # Getting the destination bucket object
     destination_bucket = storage_client.bucket(destination_bucket_name)
