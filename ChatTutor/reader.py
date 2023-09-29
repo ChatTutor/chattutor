@@ -23,14 +23,14 @@ def read_folder_gcp(bucket_name, folder_name):
     # Initializing a storage client
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
-    print('bucket:',bucket)
+    # print('bucket:',bucket)
     
     # Iterating through blobs in the specified folder of the bucket
     blobs = bucket.list_blobs(prefix='')
-    print('blobs:',blobs)
+    # print('blobs:',blobs)
     blobs_list = list(blobs)
     for blob in blobs_list[:5]:
-        print('blob:',blob.name)
+        # print('blob:',blob.name)
         # Check if the blob is not the folder itself
         if blob.name != folder_name:
             file_contents = blob.download_as_bytes()
@@ -143,7 +143,7 @@ def parse_pdf(file_contents: str, doc: Doc, chunk_chars: int, overlap: int) -> L
             # pretty formatting of pages (e.g. 1-3, 4, 5-7)
             pg = "-".join([pages[0], pages[-1]])
 
-            print(split[:chunk_chars])
+            # print(split[:chunk_chars])
 
             texts.append(
                 Text(
