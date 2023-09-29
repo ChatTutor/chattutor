@@ -3,6 +3,8 @@ from typing import List
 import os
 import json
 from google.cloud import storage
+from io import BytesIO
+import PyPDF2
 
 def read_folder_gcp(bucket_name, folder_name):
     """
@@ -31,13 +33,16 @@ def read_folder_gcp(bucket_name, folder_name):
         print('blob:',blob.name)
         # Check if the blob is not the folder itself
         if blob.name != folder_name:
-            file_contents = blob.download_as_text()
+            file_contents = blob.download_as_bytes()
             doc = Doc(docname=blob.name, citation="", dockey=blob.name)
             
             try:
-                if blob.name.endswith(".pdf"): new_texts = parse_pdf(file_contents, doc, 2000, 100)
-                elif blob.name.endswith(".ipynb"): new_texts = parse_notebook(file_contents, doc, 2000, 100)
-                else: new_texts = parse_plaintext(file_contents, doc, 2000, 100)
+                if blob.name.endswith(".pdf"): 
+                    new_texts = parse_pdf(file_contents, doc, 2000, 100)
+                elif blob.name.endswith(".ipynb"): 
+                    new_texts = parse_notebook(file_contents, doc, 2000, 100)
+                else: 
+                    new_texts = parse_plaintext(file_contents, doc, 2000, 100)
                 
                 texts.extend(new_texts)
             except Exception as e: 
@@ -111,7 +116,7 @@ def parse_notebook(path: str, doc: Doc, chunk_chars: int, overlap: int):
 
         return texts_from_str(text_str, doc, chunk_chars, overlap)
 
-def parse_pdf(path: str, doc: Doc, chunk_chars: int, overlap: int) -> List[Text]:
+def parse_pdf(file_contents: str, doc: Doc, chunk_chars: int, overlap: int) -> List[Text]:
     """Parses a pdf file and generates texts from its content.
 
     Args:
@@ -123,10 +128,10 @@ def parse_pdf(path: str, doc: Doc, chunk_chars: int, overlap: int) -> List[Text]
     Returns:
         List(Text): The resulting Texts as an array
     """
-    import pypdf
+    # import pypdf
 
-    pdfFileObj = open(path, "rb")
-    pdfReader = pypdf.PdfReader(pdfFileObj)
+    # pdfFileObj = open(path, "rb")
+    pdfReader = PyPDF2.PdfReader(BytesIO(file_contents))
     split = ""
     pages: List[str] = []
     texts: List[Text] = []
@@ -152,7 +157,7 @@ def parse_pdf(path: str, doc: Doc, chunk_chars: int, overlap: int) -> List[Text]
         texts.append(
             Text(text=split[:chunk_chars], name=f"{doc.docname} pages {pg}", doc=doc)
         )
-    pdfFileObj.close()
+    # pdfFileObj.close()
     return texts
 
 def texts_from_str(text_str: str, doc: Doc, chunk_chars: int, overlap: int):
