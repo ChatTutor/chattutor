@@ -55,6 +55,8 @@ def ask():
     collection_name = data["collection"]
     from_doc = data.get("from_doc")
 
+    # print("convo: ", data['conversation'])
+
     # Logging whether the request is specific to a document or can be from any document
     if(from_doc): print("only from doc", from_doc)
     else: print("from any doc")
@@ -64,12 +66,22 @@ def ask():
     def generate():
         # This function generates responses to the questions in real-time and yields the response
         # along with the time taken to generate it.
+        chunks = ""
         start_time = time.time()
         for chunk in tutor.ask_question(db, conversation, from_doc):
+            chunk_content = ""
+            if 'content' in chunk:
+                chunk_content = chunk['content']
+            chunks += chunk_content
             chunk_time = time.time() - start_time
-            print(f"SENT: data: {json.dumps({'time': chunk_time, 'message': chunk})}\n[CHUNK]\n")
-            yield f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n[CHUNK]\n"
-    
+            yield f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n\n"
+            
+        conversation_new = data["conversation"]
+        student_message = conversation_new[-1]
+        assistant_message = {'role': 'assistant', 'content': chunks}
+        print(student_message)
+        print(assistant_message)
+        
     # Streaming the generated responses as server-sent events
     return Response(stream_with_context(generate()), content_type='text/event-stream', headers={
         "X-Accel-Buffering" : "no",
@@ -89,6 +101,9 @@ def compile_chroma_db():
     loader.init_chroma_db()
 
     return "Chroma db created successfully", 200
+
+def add_to_db(student_message, assistant_message):
+    print('Adding...') # to be modified, to add the messages in the database. For now, idk if it should be locally or chromadb or something else
 
 if __name__ == "__main__":
     app.run(debug=True)  # Running the app in debug mode
