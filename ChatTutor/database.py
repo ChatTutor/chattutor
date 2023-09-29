@@ -120,7 +120,7 @@ class VectorDatabase:
         """
         count = self.datasource.count()
         ids = [str(i) for i in range(count, count + len(texts))]
-        print(ids)
+        print('ids:', ids)
         self.datasource.add(
             ids=ids,
             metadatas=[{"doc": text.doc.docname} for text in texts],
