@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+        <title>Show db</title>
+        <link rel="stylesheet" href="./style.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+		<meta name="viewport" content="initial-scale=1, width=device-width">
+
+    </head>
+
+    <body>
+            <form action="/getfromdb" method="post" class="pswd-inputarea">
+                <a href="/" style="color: var(--left-msg-txt)">Go back</a>
+                <label for="lusername" class="pswd-label">Username</label>
+                <input type="text" id="lusername" name="lusername" value="" class="pswd-input"><br>
+                <label for="lpassword" class="pswd-label">Password</label>
+                <input type="text" id="lpassword" name="lpassword" value="" class="pswd-input"><br>
+                <input type="submit" value="Submit">
+            </form>
+        <script src="./display_db.js" type="module"></script>
+    </body>
+</html>

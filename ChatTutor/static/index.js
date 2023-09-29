@@ -1,4 +1,6 @@
 // Constants for embed mode and UI elements
+import {lightMode, darkMode, setProperties} from "./constants.js";
+
 const embed_mode = false;
 const clear = document.getElementById('clearBtnId');
 const clearContainer = get('.clear-btn-container');
@@ -6,7 +8,6 @@ const mainArea = get('.msger');
 const msgerForm = get(".msger-inputarea");
 const msgerInput = get(".msger-input");
 const msgerChat = get(".msger-chat");
-
 
 // Constants for bot and person details
 const BOT_IMG = "https://static.thenounproject.com/png/2216285-200.png";
@@ -45,11 +46,9 @@ window.addEventListener('resize', windowIsResizing)
 function windowIsResizing() {
     // the button for choosing themes snaps in place when the window is too small
   if(window.innerWidth < 1200) {
-
       themeBtnDiv.style.position = 'inherit'
       themeBtnDiv.style.top = '25px'
       themeBtnDiv.style.left = '25px'
-
 
       const arr = [themeBtn]
       arr.forEach(btn => {
@@ -65,8 +64,6 @@ function windowIsResizing() {
         btn.style.height = 'unset'
         btn.style.width = 'unset'
       })
-
-
 
   } else {
       themeBtnDiv.style.position = 'fixed'
@@ -85,109 +82,6 @@ function windowIsResizing() {
         btn.style.height = '40px'
         btn.style.width = '40px'
       })
-  }
-}
-// Themes
-const lightMode = {
-  body_bg: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-  msger_bg: '#fff',
-  border: '1px solid #ddd',
-  left_msg_bg: '#ececec',
-  left_msg_txt: 'black',
-  right_msg_bg: 'rgb(140, 0, 255)',
-  msg_header_bg: 'rgba(238,238,238,0.75)',
-  msg_header_txt: '#666',
-  clear_btn_txt: '#999',
-  msg_chat_bg_scrollbar: '#ddd',
-  msg_chat_bg_thumb: '#bdbdbd',
-  msg_chat_bg: '#fcfcfe',
-  msg_input_bg: '#ddd',
-  msg_input_area_bg: '#eee',
-  msg_invert_image: 'invert(0%)',
-  msg_input_color: "black",
-  right_msg_txt: 'white',
-  // legacy, not used
-  imessageInterface_: {
-    display_images: 'block',
-    border_radius_all: '15px',
-    msg_bubble_max_width: '450px',
-    msg_bubble_width: 'unset',
-    msg_margin: '5px',
-    msg_chat_padding: '10px',
-    right_msg_txt: 'white',
-    msg_padding: '0',
-    right_msg_bg_bgd: 'transparent',
-  },
-  // this is the interface
-  normalInterface_: {
-    display_images: 'none',
-    border_radius_all: '0px',
-    msg_bubble_max_width: 'unset',
-    msg_bubble_width: '100%',
-    msg_margin: '0',
-    msg_chat_padding: '0',
-    msg_chat_bg: '#f1f1f1',
-    right_msg_bg: 'white',
-    right_msg_txt: 'black',
-    left_msg_bg: 'transparent',
-    msg_padding: '5px 20px',
-    right_msg_bg_bgd: 'white',
-  }
-
-}
-
-const darkMode = {
-  body_bg: 'linear-gradient(135deg, #3e3c46 0%, #17232c 100%)',
-  msger_bg: '#2d2d2d',
-  border: '1px solid #2d2d2d',
-
-  left_msg_txt: 'white',
-  right_msg_bg: 'rgb(140, 0, 255)',
-  msg_header_bg: 'rgba(41,41,41,0.75)',
-  msg_header_txt: '#d5d5d5',
-  clear_btn_txt: '#e5e5e5',
-  msg_chat_bg_scrollbar: 'transparent',
-  msg_chat_bg_thumb: '#656172',
-  msg_input_bg: '#2f2f2f',
-  msg_input_area_bg: '#252525',
-  msg_invert_image: 'invert(100%)',
-  msg_input_color: "white",
-  right_msg_txt: 'white',
-  msg_chat_bg: '#3e3c46',
-  // legacy, not used
-  imessageInterface_: {
-    display_images: 'block',
-    border_radius_all: '15px',
-    msg_bubble_max_width: '450px',
-    msg_bubble_width: 'unset',
-    msg_margin: '5px',
-    msg_chat_padding: '10px',
-    right_msg_txt: 'white',
-    right_msg_bg: 'rgb(140, 0, 255)',
-    msg_header_bg: 'rgba(48,48,59,0.75)',
-    msg_input_area_bg: '#3e3c46',
-    msg_input_bg: '#2e2e33',
-    left_msg_bg: '#302f36',
-    msg_padding: '0',
-    right_msg_bg_bgd: 'transparent',
-  },
-  // this is the interface
-  normalInterface_: {
-    msg_chat_bg_scrollbar: '#52505b',
-    display_images: 'none',
-    border_radius_all: '10px',
-    msg_bubble_max_width: 'unset',
-    msg_bubble_width: '100%',
-    msg_margin: '0',
-    msg_chat_padding: '0',
-    right_msg_bg: '#302f36',
-    right_msg_txt: 'white',
-    msg_header_bg: 'rgba(48,48,59,0.75)',
-    msg_input_area_bg: '#3e3c46',
-    left_msg_bg: 'transparent',
-    msg_input_bg: '#2e2e33',
-    msg_padding: '5px 20px',
-    right_msg_bg_bgd: '#302f36',
   }
 }
 
@@ -285,28 +179,6 @@ function setTheme(th) {
         `<i class="material-symbols-outlined" style=${_style}> dark_mode\n </i>`
 }
 
-function setProperties() {
-  const object = theme === 'dark' ? darkMode : lightMode
-  const interfaceObject = interfaceTheme === 'normal' ? object.normalInterface_ : object.imessageInterface_
-  setPropertiesHelper(object)
-  setPropertiesHelper(interfaceObject)
-}
-function setPropertiesHelper(themeObject) {
-
-  for (key in themeObject) {
-    if(key.endsWith('_')) {
-
-    } else {
-      const property_replaced = key.replace(/_/g, '-')
-      const property_name = `--${property_replaced}`
-      console.log(property_name)
-      const value = themeObject[key]
-
-      document.documentElement.style.setProperty(property_name, value)
-    }
-  }
-}
-
 // function that toggles theme
 function toggleDarkMode() {
   if (theme === 'light') {
@@ -378,7 +250,7 @@ function loadConversationFromLocalStorage() {
 
 
 function queryGPT() {
-  args = {
+  const args = {
     "conversation": conversation,
     "collection": "test_embedding"
   }
@@ -406,36 +278,37 @@ function queryGPT() {
         }
         const strValue = new TextDecoder().decode(value);
         const messages = strValue.split('\n\n').filter(Boolean).map(chunk => JSON.parse(chunk.split('data: ')[1]));
-        for (messageIndex in messages) {
-          message = messages[messageIndex]
-          if(stopGeneration === false) {
-            const contentToAppend = message.message.content ? message.message.content : "";
-            accumulatedContent += contentToAppend;
+          let message;
+          for (var messageIndex in messages) {
+              message = messages[messageIndex]
+              if (stopGeneration === false) {
+                  const contentToAppend = message.message.content ? message.message.content : "";
+                  accumulatedContent += contentToAppend;
+              }
+              if (isFirstMessage) {
+                  addMessage("assistant", accumulatedContent, false);
+                  isFirstMessage = false;
+              } else {
+                  if (typeof (message.message.content) == 'undefined') {
+                      conversation.push({"role": 'assistant', "content": accumulatedContent})
+                      localStorage.setItem("conversation", JSON.stringify(conversation))
+                  }
+                  scrollHelper.scrollIntoView()
+                  updateLastMessage(accumulatedContent);
+              }
+              if (stopGeneration === true) {
+                  accumulatedContent += " ...Stopped generating";
+                  conversation.push({"role": 'assistant', "content": accumulatedContent})
+                  localStorage.setItem("conversation", JSON.stringify(conversation))
+                  sendBtn.disabled = false;
+                  clear.style.display = 'block'
+                  stopGenButton.style.display = 'none'
+                  uploadMessageToDB({content: accumulatedContent, role: 'assistant'}, getChatId())
+                  scrollHelper.scrollIntoView()
+                  updateLastMessage(accumulatedContent);
+                  break
+              }
           }
-          if (isFirstMessage) {
-            addMessage("assistant", accumulatedContent, false);
-            isFirstMessage = false;
-          } else {
-            if (typeof (message.message.content) == 'undefined') {
-              conversation.push({"role": 'assistant', "content": accumulatedContent})
-              localStorage.setItem("conversation", JSON.stringify(conversation))
-            }
-            scrollHelper.scrollIntoView()
-            updateLastMessage(accumulatedContent);
-          }
-          if(stopGeneration === true) {
-              accumulatedContent += " ...Stopped generating";
-              conversation.push({"role": 'assistant', "content": accumulatedContent})
-              localStorage.setItem("conversation", JSON.stringify(conversation))
-              sendBtn.disabled = false;
-            clear.style.display = 'block'
-            stopGenButton.style.display = 'none'
-              uploadMessageToDB({content: accumulatedContent, role: 'assistant'}, getChatId())
-              scrollHelper.scrollIntoView()
-              updateLastMessage(accumulatedContent);
-              break
-          }
-        }
         if(stopGeneration === false) {
           read();
         } else {
@@ -568,7 +441,7 @@ function formatMessage(message, makeLists = true) {
 
   let messageStr = ""
   let listSwitch = 0
-  for (messageArrIndex in messageArr) {
+  for (let messageArrIndex in messageArr) {
     const paragraph = messageArr[messageArrIndex]
     if(paragraph.startsWith('- ') && makeLists) {
       if(listSwitch === 0) {
@@ -612,6 +485,9 @@ function updateLastMessage(newContent) {
 
 
 function addMessage(role, message, updateConversation) {
+    let role_name
+    let img
+    let side
   if(role === "assistant") {
     role_name = BOT_NAME;
     img = BOT_IMG;
