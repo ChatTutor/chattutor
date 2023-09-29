@@ -450,9 +450,9 @@ function queryGPT() {
               scrollHelper.scrollIntoView()
               updateLastMessage(accumulatedContent);
               uploadMessageToDB({content: accumulatedContent, role: 'assistant'}, getChatId())
-              break
+              return;
           }
-        }
+        })
         if(stopGeneration === false) {
           read();
         } else {
