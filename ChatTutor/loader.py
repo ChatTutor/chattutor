@@ -11,7 +11,10 @@ import yaml
 from reader import read_folder, read_folder_gcp
 from database import VectorDatabase
 
-
+# Splits a list into n (roughly) equal parts
+def split(a, n):
+    k, m = divmod(len(a), n)
+    return list(a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n))
 
 # Initializing a storage client
 def init_chroma_db():
@@ -30,8 +33,12 @@ def init_chroma_db():
     database.init_db()
     database.load_datasource('test_embedding')
     print('adding texts:',len(texts),texts[0])
-    # Adding texts to the database
-    database.add_texts(texts)
+    
+    # So we don't hit the openai rate limit
+    texts_split = split(texts, 8)
+    for texts in texts_split:
+        database.add_texts(texts)
+        sleep(61)
 
     database_file_path = './db/chroma.sqlite3'
 
