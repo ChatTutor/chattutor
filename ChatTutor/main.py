@@ -1,16 +1,24 @@
 from flask import Flask, request, redirect, send_from_directory, url_for
-from flask import stream_with_context, Response
+from flask import stream_with_context, Response, abort
 from flask_cors import CORS  # Importing CORS to handle Cross-Origin Resource Sharing
 from extensions import db  # Importing the database object from extensions module
 import tutor
 import json
 import time
 import os
+import openai
+import loader
 
-with open('./keys.json') as f:
-    keys = json.load(f)
-os.environ['OPENAI_API_KEY'] = keys["lab_openai"]
-#os.environ['ACTIVELOOP_TOKEN'] = keys["activeloop"]
+if 'CHATUTOR_GCP' in os.environ: 
+    openai.api_key = os.environ['OPENAI_API_KEY']
+else:
+    import yaml
+    with open('.env.yaml') as f:
+        yamlenv = yaml.safe_load(f)
+    keys = yamlenv["env_variables"]
+    print(keys)
+    os.environ['OPENAI_API_KEY'] = keys["OPENAI_API_KEY"]
+    os.environ['ACTIVELOOP_TOKEN'] = keys["ACTIVELOOP_TOKEN"]
 
 app = Flask(__name__)
 CORS(app)  # Enabling CORS for the Flask app to allow requests from different origins
@@ -18,16 +26,30 @@ db.init_db()
 
 @app.route("/")
 def index():
-    # Redirecting the root URL to the index.html in the static folder
+    """
+        Serves the landing page of the web application which provides
+        the ChatTutor interface. Users can ask the Tutor questions and it will
+        response with information from its database of papers and information.
+        Redirects the root URL to the index.html in the static folder
+    """
     return redirect(url_for('static', filename='index.html'))
 
 @app.route('/static/<path:path>')
 def serve_static(path):
-    # Serving static files from the 'static' directory
+    """Serving static files from the 'static' directory"""
     return send_from_directory('static', path)
 
 @app.route("/ask", methods=["POST", "GET"])
 def ask():
+    """Route that facilitates the asking of questions. The response is generated
+    based on an embedding.
+    
+    URLParams:
+        conversation (List({role: ... , content: ...})):  snapshot of the current conversation 
+        collection: embedding used for vectorization
+    Yields:
+        response: {data: {time: ..., message: ...}}
+    """
     data = request.json
     conversation = data["conversation"]
     collection_name = data["collection"]
@@ -53,15 +75,32 @@ def ask():
             chunks += chunk_content
             chunk_time = time.time() - start_time
             yield f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n\n"
+            
         conversation_new = data["conversation"]
         student_message = conversation_new[-1]
         assistant_message = {'role': 'assistant', 'content': chunks}
         print(student_message)
         print(assistant_message)
-
-
+        
     # Streaming the generated responses as server-sent events
-    return Response(stream_with_context(generate()), content_type='text/event-stream')
+    return Response(stream_with_context(generate()), content_type='text/event-stream', headers={
+        "X-Accel-Buffering" : "no",
+        "X-Content-Type-Options": "nosniff",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive"
+    })
+
+
+@app.route('/compile_chroma_db', methods=['POST'])
+def compile_chroma_db():
+    token = request.headers.get('Authorization')
+
+    if token != openai.api_key:
+        abort(401)  # Unauthorized
+    
+    loader.init_chroma_db()
+
+    return "Chroma db created successfully", 200
 
 def add_to_db(student_message, assistant_message):
     print('Adding...') # to be modified, to add the messages in the database. For now, idk if it should be locally or chromadb or something else

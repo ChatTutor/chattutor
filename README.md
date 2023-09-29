@@ -1,7 +1,49 @@
 # ChatTutor
 
+ChatTutor is an AI kernel currently being trained on data from quantum related papers at the Center for Quantum Networks. It aims to provide students with information about scientists, citations and scientific discoveries or improvements. 
+
 ## Overview
 This project is the web application for ChatTutor.
+
+## Usage
+
+1. Navigate to the **ChatTutor** folder and insert the **.env.yaml** file which should
+have the following format:
+
+```yaml
+env_variables:
+    CHATUTOR_GCP: TRUE
+    OPENAI_API_KEY: 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
+    ACTIVELOOP_TOKEN: eyJhbGciOiJIUzUxMiIsImlhdCI6MTY4Njg0NTEzNiwiZXhwIjoxNjk0MTAyNjk5fQ.eyJpZCI6Imhwc3Rlbm5lcyJ9.dT5u1T9UFo9t3n1Y4XbN0BVTif7S9aiOq6ZR9e9zSJQlloOb2IV5pqaQb8aqLySQYBeScqLff3L4LYSixOADUA
+```
+
+The project file tree should look like this:
+
+```
+root_folder (named chattutor)
+|- ChatTutor/
+      |- requirements.txt
+      |- ... (other files and folders)
+      |- .env.yaml (the file you added)
+|- db/
+      |- ...
+|- README.md
+```
+
+2. **Setup Virtual Environment and Install Dependencies**
+```sh
+   python -m venv venv
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   pip install -r requirements.txt
+```
+
+3. **Run the flask application**
+```
+   python main.py
+```
+
+4. **Interact with ChatTutor:**
+Open a web browser and navigate to http://127.0.0.1:5000/ to interact with the application. Use the provided interface to ask questions and receive responses based on the loaded data sources.
 
 ## Components
 
@@ -43,23 +85,6 @@ This project is the web application for ChatTutor.
      - Manages the conversation, sends user messages to the server, and updates the chat with responses.
  - **File**: `index.html`
      - Defines the interface for the chat bot.
-
-
-## Usage
-
-1. **Setup Virtual Environment and Install Dependencies**
-   ```sh
-   python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-   pip install -r requirements.txt```
-
-2. **Run the flask application**
-   ```
-   python main.py
-   ```
-
-3. **Interact with ChatTutor:**
-Open a web browser and navigate to http://127.0.0.1:5000/ to interact with the application. Use the provided interface to ask questions and receive responses based on the loaded data sources.
 
 ## Configuration
 - API keys for OpenAI and Deep Lake are loaded from keys.json.
