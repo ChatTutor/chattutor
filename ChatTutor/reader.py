@@ -24,11 +24,11 @@ def read_folder_gcp(bucket_name, folder_name):
     print('bucket:',bucket)
     
     # Iterating through blobs in the specified folder of the bucket
-    blobs = bucket.list_blobs(prefix=folder_name)
+    blobs = bucket.list_blobs(prefix='')
     print('blobs:',blobs)
     blobs_list = list(blobs)
     for blob in blobs_list[:5]:
-        print('blob:',blob)
+        print('blob:',blob.name)
         # Check if the blob is not the folder itself
         if blob.name != folder_name:
             file_contents = blob.download_as_text()
