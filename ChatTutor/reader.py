@@ -21,11 +21,14 @@ def read_folder_gcp(bucket_name, folder_name):
     # Initializing a storage client
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
+    print('bucket:',bucket)
     
     # Iterating through blobs in the specified folder of the bucket
     blobs = bucket.list_blobs(prefix=folder_name)
+    print('blobs:',blobs)
     blobs_list = list(blobs)
     for blob in blobs_list[:5]:
+        print('blob:',blob)
         # Check if the blob is not the folder itself
         if blob.name != folder_name:
             file_contents = blob.download_as_text()
