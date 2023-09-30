@@ -32,6 +32,7 @@ def ask_question(db, conversation, from_doc=None):
 
     # Querying the database to retrieve relevant documents to the user's question
     docs = db.query(prompt, 6, from_doc)
+    print('database response:', docs)
 
     # Creating a chat completion object with OpenAI API to get the model's response
     response = openai.ChatCompletion.create(
