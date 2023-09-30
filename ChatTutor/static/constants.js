@@ -109,7 +109,6 @@ export function setProperties() {
   const interfaceObject = interfaceTheme === 'normal' ? object.normalInterface_ : object.imessageInterface_
   setPropertiesHelper(object)
   setPropertiesHelper(interfaceObject)
-    console.log("DKFSDKKH")
 }
 function setPropertiesHelper(themeObject) {
 
@@ -119,7 +118,6 @@ function setPropertiesHelper(themeObject) {
     } else {
       const property_replaced = key.replace(/_/g, '-')
       const property_name = `--${property_replaced}`
-      console.log(property_name)
       const value = themeObject[key]
 
       document.documentElement.style.setProperty(property_name, value)

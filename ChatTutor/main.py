@@ -245,9 +245,11 @@ def upload_data_to_process():
     file = request.files['file']
     data = request.form
     desc = data['name'].replace(" ", "-")
+    if len(desc) == 0:
+        desc = "untitled"+"_"+get_random_string(5)
     allowed_extensions = (".txt", ".ipynb", ".pdf")
     resp = {
-        "collection_name": "false"
+        "collection_name": False
     }
     if file.filename != '':
         file_like_object = file.stream._file  
