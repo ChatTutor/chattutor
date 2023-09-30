@@ -5,7 +5,7 @@ import json
 from google.cloud import storage
 from io import BytesIO
 import PyPDF2
-from database import add_texts_chroma, VectorDatabase
+from database import VectorDatabase
 
 def read_folder_gcp(bucket_name, folder_name):
     """
