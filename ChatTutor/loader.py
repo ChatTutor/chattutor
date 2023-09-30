@@ -36,7 +36,7 @@ def init_chroma_db():
     print('adding texts:',len(texts),texts[0])
     
     # So we don't hit the openai rate limit
-    texts_split = split(texts, 8)
+    texts_split = split(texts, 16)
     for texts in texts_split:
         database.add_texts(texts)
         sleep(61)
