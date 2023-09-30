@@ -5,6 +5,7 @@ import json
 from google.cloud import storage
 from io import BytesIO
 import PyPDF2
+from database import add_texts_chroma, VectorDatabase
 
 def read_folder_gcp(bucket_name, folder_name):
     """
@@ -23,6 +24,10 @@ def read_folder_gcp(bucket_name, folder_name):
     # Initializing a storage client
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
+
+    database = VectorDatabase("./db", "chroma")
+    database.init_db()
+    database.load_datasource('test_embedding')
     # print('bucket:',bucket)
     
     # Iterating through blobs in the specified folder of the bucket
@@ -39,7 +44,7 @@ def read_folder_gcp(bucket_name, folder_name):
             
             try:
                 if blob.name.endswith(".pdf"): 
-                    new_texts = parse_pdf(file_contents, doc, 2000, 100)
+                    new_texts = parse_pdf(database, file_contents, doc, 2000, 100)
                 elif blob.name.endswith(".ipynb"): 
                     new_texts = parse_notebook(file_contents, doc, 2000, 100)
                 else: 
@@ -119,7 +124,7 @@ def parse_notebook(path: str, doc: Doc, chunk_chars: int, overlap: int):
 
         return texts_from_str(text_str, doc, chunk_chars, overlap)
 
-def parse_pdf(file_contents: str, doc: Doc, chunk_chars: int, overlap: int) -> List[Text]:
+def parse_pdf(database, file_contents: str, doc: Doc, chunk_chars: int, overlap: int) -> List[Text]:
     """Parses a pdf file and generates texts from its content.
 
     Args:
@@ -147,12 +152,9 @@ def parse_pdf(file_contents: str, doc: Doc, chunk_chars: int, overlap: int) -> L
             pg = "-".join([pages[0], pages[-1]])
 
             # print(split[:chunk_chars])
-
-            texts.append(
-                Text(
-                    text=split[:chunk_chars], name=f"{doc.docname} pages {pg}", doc=doc
-                )
-            )
+            text = [Text(text=split[:chunk_chars], name=f"{doc.docname} pages {pg}", doc=doc)]
+            database.add_texts_chroma(text)
+            texts.append(text[0])
             split = split[chunk_chars - overlap :]
             pages = [str(i + 1)]
     if len(split) > overlap:
