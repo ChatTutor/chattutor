@@ -30,9 +30,9 @@ def init_chroma_db():
     texts = read_folder_gcp(source_bucket_name, './')
 
     # Initializing and configuring the database
-    database = VectorDatabase("./db", "chroma")
-    database.init_db()
-    database.load_datasource('test_embedding')
+    # database = VectorDatabase("./db", "chroma")
+    # database.init_db()
+    # database.load_datasource('test_embedding')
     # print('adding texts:',len(texts),texts[0])
     
     # So we don't hit the openai rate limit
