@@ -34,7 +34,7 @@ def read_folder_gcp(bucket_name, folder_name):
     blobs = bucket.list_blobs(prefix='')
     # print('blobs:',blobs)
     blobs_list = list(blobs)
-    for i, blob in enumerate(blobs_list):
+    for i, blob in enumerate(blobs_list[::-1]):
         print('on text #' + str(i))
         # print('blob:',blob.name)
         # Check if the blob is not the folder itself
