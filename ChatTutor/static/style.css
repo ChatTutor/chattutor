@@ -72,6 +72,19 @@
     position: relative;
   }
 
+    .pswder {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 867px;
+    margin: 25px 10px;
+    height: calc(100% - 50px);
+    /*background: var(--msger-bg);*/
+    border-radius: 20px;
+    position: relative;
+  }
+
   .msger-header {
     display: flex;
     justify-content: space-between;
@@ -201,10 +214,62 @@
     font-size: 1em;
     border-radius: 10px;
   }
+
+.pswd-inputarea * {
+    padding: 10px;
+    border: none;
+    font-size: 1em;
+    border-radius: 10px;
+  }
+    .pswd-label {
+        color: var(--left-msg-txt)
+    }
+  .pswd-inputarea {
+    display: flex;
+    padding: 10px;
+    border-top: var(--border);
+    background: var(--msg-input-area-bg);
+    border-radius: 20px;
+    box-shadow: 0 15px 15px -5px rgba(0, 0, 0, 0.2);
+    border: var(--border);
+      flex-direction: column;
+      width: 400px;
+      max-width: 100%;
+      margin: 10px;
+  }
+
+  .sql-pswd-inputarea * {
+    padding: 10px;
+    border: none;
+    font-size: 1em;
+    border-radius: 10px;
+  }
+    .sql-pswd-label {
+        color: var(--left-msg-txt)
+    }
+  .sql-pswd-inputarea {
+
+    display: none;
+    padding: 10px;
+    border-top: var(--border);
+    background: var(--msg-input-area-bg);
+    border-radius: 20px;
+    box-shadow: 0 15px 15px -5px rgba(0, 0, 0, 0.2);
+    border: var(--border);
+      flex-direction: column;
+      width: 400px;
+      max-width: 100%;
+      margin: 10px;
+
+  }
   .msger-input {
     flex: 1;
     background: var(--msg-input-bg);
     color: var(--msg-input-color)
+  }
+   .pswd-input {
+    background: var(--msg-input-bg);
+    color: var(--msg-input-color);
   }
   .msger-send-btn {
     margin-left: 10px;
@@ -347,4 +412,27 @@
 
 #themeBtn {
   transition: filter 0.2s ease-in;
+}
+
+#consoleID {
+    background-color: black;
+    color: green;
+    max-width: 100%;
+    border-radius: 5px;
+    padding: 10px;
+    height: 200px;
+    overflow-y: scroll;
+    margin: 5px;
+    padding: 5px;
+}
+#showBtn {
+    border: none;
+    background-color: rgb(140, 0, 255);
+    color: white;
+    padding: 15px;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    border-radius: 20px;
+
 }
