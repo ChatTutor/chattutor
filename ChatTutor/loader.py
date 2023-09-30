@@ -33,13 +33,13 @@ def init_chroma_db():
     database = VectorDatabase("./db", "chroma")
     database.init_db()
     database.load_datasource('test_embedding')
-    print('adding texts:',len(texts),texts[0])
+    # print('adding texts:',len(texts),texts[0])
     
     # So we don't hit the openai rate limit
-    texts_split = split(texts, 16)
-    for texts in texts_split:
-        database.add_texts(texts)
-        sleep(61)
+    # texts_split = split(texts, 16)
+    # for texts in texts_split:
+    #     database.add_texts(texts)
+    #     sleep(61)
 
     database_file_path = './db/chroma.sqlite3'
 
