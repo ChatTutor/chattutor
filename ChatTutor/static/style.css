@@ -436,3 +436,70 @@
     border-radius: 20px;
 
 }
+
+
+#uploadBtnId.active{
+  background-color: red;
+}
+
+
+#body-overlay {
+  width: 100vw;
+  height: 100vh;
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.real-menu {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  z-index: 1400;
+  width: 300px;
+  height: 100%;
+  padding: .5rem 1rem;
+  box-shadow: 0 6px 12px rgba(107, 82, 82, 0.3);
+  background-color: white;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  transition: ease 0.2s all;
+}
+
+
+body.menu-open #body-overlay{
+
+  display: block;
+  
+}
+body.menu-open .real-menu {
+      left: 0;
+  }
+
+.nice-btn {
+  margin-left: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.23s;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  border: none !important;
+}
+
+.col{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.real-menu .container * {
+  margin-top: 20px;
+}

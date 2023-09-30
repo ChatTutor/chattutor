@@ -33,7 +33,11 @@ const themeBtnDiv = document.getElementById('themeBtnDiv')
 const messageInput = document.getElementById('msgInput')
 const scrollHelper = document.getElementById('scrollHelper')
 const stopGenButton = document.getElementById('stopBtnId')
-
+const uploadZipButton = document.getElementById('uploadBtnId')
+const sendUploadedZipButton = document.getElementById('sendformupload')
+const uploadZipPapersForm = document.getElementById('uploadFileForm')
+const selectUploadedCollection = document.getElementById('selectUploadedCollection')
+let uploadedCollections = []
 messageInput.addEventListener('input', (event) => {
   console.log('kajk')
   sendBtn.disabled = messageInput.value.length === 0;
@@ -121,7 +125,8 @@ msgerForm.addEventListener("submit", handleFormSubmit);
 
 // Event listener to load conversation from local storage on DOM load
 document.addEventListener("DOMContentLoaded", loadConversationFromLocalStorage);
-
+// REMVE ALL from collections saved in local storage + clean up local storage
+document.addEventListener("DOMContentLoaded", clearCollectionsFromLocalStorage)
 
 document.addEventListener('DOMContentLoaded', setThemeOnRefresh)
 
@@ -246,13 +251,50 @@ function loadConversationFromLocalStorage() {
   //MathJax.typesetPromise();
 }
 
+function loadCollectionsFromLocalStorage() {
+  collections = JSON.parse(localStorage.getItem("uploaded-collections"))//TODO
+  if(collections) {
+    collections.forEach(collname => {
+      addCollectionToFrontEnd(collname)
+    })
+  }
+}
+
+function clearCollectionsFromLocalStorage() {
+  let collections = JSON.parse(localStorage.getItem("uploaded-collections"))
+  if(collections) {
+    collections.forEach(collname => {
+      fetchClearCollection(collname)
+    })
+  }
+}
+
+function fetchClearCollection(collname) {
+  console.log("clearing ", collname)
+  let args = {
+    "collection":collname
+  }
+  fetch("/delete_uploaded_data", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(args)
+  }).then(response => response.json()).then(data => {
+    console.log("deleted " + data["deleted"])
+  })
+}
 
 
 
-function queryGPT() {
+
+function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding") {
+  let collection_name = "test_embedding"
+  let selected_collection_name = selectUploadedCollection.options[ selectUploadedCollection.selectedIndex ].value
+  collection_name = selected_collection_name
   const args = {
     "conversation": conversation,
-    "collection": "test_embedding"
+    "collection": collection_name
   }
   if (embed_mode) args.from_doc = original_file
   fetch('/ask', {
@@ -332,109 +374,6 @@ function queryGPT() {
     stopGeneration = false
   });
 }
-// function queryGPT() {
-//   args = {
-//     "conversation": conversation,
-//     "collection": "test_embedding"
-//   }
-//   if (embed_mode) args.from_doc = original_file
-//   console.log("request:", JSON.stringify(args))
-//   fetch(`${window.location.origin}/ask`, {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//       'X-Accel-Buffering': 'no'
-//     },
-//     body: JSON.stringify(args)
-//   }).then(response => {
-//     console.log("responded")
-//     const reader = response.body.getReader();
-//     let accumulatedContent = "";
-//     let isFirstMessage = true;
-//     function read() {
-//       console.log("reading...")
-//       console.error("reading....");
-
-//       reader.read().then(({ done, value }) => {
-//         if (done) {
-//           // Enable the send button when streaming is done
-//             sendBtn.disabled = false;
-//             clear.style.display = 'block'
-//             stopGenButton.style.display = 'none'
-//             stopGeneration = false
-//             uploadMessageToDB({content: accumulatedContent, role: 'assistant'}, getChatId())
-//           return;
-//         }
-//         const strValue = new TextDecoder().decode(value);
-//         console.log(strValue.split('\n[CHUNK]\n').filter(Boolean))
-//         const messages = strValue.split('\n[CHUNK]\n').filter(Boolean).map(chunk => {
-//           try {
-//             return JSON.parse(chunk.split('data: ')[1])
-//           } catch(e) {
-//             return {'time': 0, 'message': ''}
-//           }
-//         });
-//         console.log(messages)
-//         messages.forEach(message => {
-//           const contentToAppend = message.message.content ? message.message.content : "";
-//           accumulatedContent += contentToAppend;
-//           console.log(accumulatedContent)
-//           console.error(accumulatedContent);
-
-
-//           if(stopGeneration === false) {
-//             const contentToAppend = message.message.content ? message.message.content : "";
-//             accumulatedContent += contentToAppend;
-//           }
-//           if (isFirstMessage) {
-//             addMessage("assistant", accumulatedContent, false);
-//             isFirstMessage = false;
-//           } else {
-//             if (typeof (message.message.content) == 'undefined') {
-//               conversation.push({"role": 'assistant', "content": accumulatedContent})
-//               localStorage.setItem("conversation", JSON.stringify(conversation))
-//             }
-//             scrollHelper.scrollIntoView()
-//             updateLastMessage(accumulatedContent);
-//           }
-
-//           if(stopGeneration === true) {
-//               accumulatedContent += " ...Stopped generating";
-//               conversation.push({"role": 'assistant', "content": accumulatedContent})
-//               localStorage.setItem("conversation", JSON.stringify(conversation))
-
-//               sendBtn.disabled = false;
-//               clear.style.display = 'block'
-//               stopGenButton.style.display = 'none'
-//               scrollHelper.scrollIntoView()
-//               updateLastMessage(accumulatedContent);
-//               uploadMessageToDB({content: accumulatedContent, role: 'assistant'}, getChatId())
-//               return;
-//           }
-//         })
-//         if(stopGeneration === false) {
-//           read();
-//         } else {
-//           stopGeneration = false
-//         }
-//       }).catch(err => {
-//         console.error('Stream error:', err);
-//         sendBtn.disabled = false;
-//         clear.style.display = 'block'
-//         stopGenButton.style.display = 'none'
-//         stopGeneration = false
-//       });
-//     }
-//     read();
-//   }).catch(err => {
-//     console.error('Fetch error:', err);
-//     // Enable the send button in case of an error
-//     sendBtn.disabled = false;
-//     clear.style.display = 'block'
-//     stopGenButton.style.display = 'none'
-//     stopGeneration = false
-//   });
-// }
 
 function formatMessage(message, makeLists = true) {
   const messageArr = message.split("\n")
@@ -573,3 +512,65 @@ function formatDate(date) {
 
   return `${h.slice(-2)}:${m.slice(-2)}`;
 }
+
+function uploadFile() {
+  fetch('/upload_data_to_process', {
+    method: 'POST',
+    body: new FormData(uploadZipPapersForm)
+  }).then(response => response.json()).then(data => {
+    let created_collection_name = data['collection_name']
+    console.log("Created collection " + created_collection_name)
+    addCollectionToFrontEnd(created_collection_name)
+  })
+}
+
+function addCollectionToFrontEnd(created_collection_name) {
+  uploadedCollections.push(created_collection_name)
+  console.log(uploadedCollections)
+    selectUploadedCollection.innerHTML += `
+      <option value=${created_collection_name}>${created_collection_name.split("_")[0]}:collection</option>
+    `
+    localStorage.setItem("uploaded-collections", JSON.stringify(uploadedCollections))
+  allert(`Created collection ${created_collection_name}`)
+}
+
+sendUploadedZipButton.addEventListener("click", uploadFile)
+
+
+function hasClass(ele, cls) {
+  return !!ele.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
+}
+
+function addClass(ele, cls) {
+  if (!hasClass(ele, cls)) ele.className += " " + cls;
+}
+
+function removeClass(ele, cls) {
+  if (hasClass(ele, cls)) {
+      var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+      ele.className = ele.className.replace(reg, ' ');
+  }
+}
+
+//Add event from js the keep the marup clean
+function init() {
+  document.getElementById("open-menu").addEventListener("click", toggleMenu);
+  document.getElementById("body-overlay").addEventListener("click", toggleMenu);
+}
+
+//The actual fuction
+function toggleMenu() {
+  var ele = document.getElementsByTagName('body')[0];
+  if (!hasClass(ele, "menu-open")) {
+      addClass(ele, "menu-open");
+  } else {
+      removeClass(ele, "menu-open");
+  }
+}
+
+//Prevent the function to run before the document is loaded
+document.addEventListener('readystatechange', function() {
+  if (document.readyState === "complete") {
+      init();
+  }
+});

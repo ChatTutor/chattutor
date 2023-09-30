@@ -51,16 +51,22 @@ class VectorDatabase:
         db_provider : str
             provider of the database: either \'chroma\' or \'deeplake\'
     """
-    def __init__(self, path, db_provider):
+    def __init__(self, path, db_provider, hosted=True):
         self.path = path
+        self.hosted = hosted
         self.db_provider = db_provider
 
     def init_db(self):
         """Initializing the database client if the provider is 'chroma'"""
         if self.db_provider != "chroma": return
+        # self.client = chromadb.HttpClient(host='34.123.154.72', port=8000)
+        if self.hosted:
+            ip = self.path.split(":")[0]
+            port = int(self.path.split(":")[1])
+            self.client = chromadb.HttpClient(host=ip, port=port)
+        else:
+            self.client = chromadb.PersistentClient(path=self.path)
 
-        # self.client = chromadb.PersistentClient(path=self.path)
-        self.client = chromadb.HttpClient(host='34.123.154.72', port=8000)
 
     def load_datasource(self, name):
         """Loading the appropriate data source based on the database provider"""
@@ -89,6 +95,9 @@ class VectorDatabase:
             runtime = {"tensor_db": True}
         )
 
+    def delete_datasource_chroma(self, collection_name):
+        self.client.delete_collection(name=collection_name)
+        
     def add_texts(self, texts: List[Text]):
         """Adding texts to the database based on the database provider
         

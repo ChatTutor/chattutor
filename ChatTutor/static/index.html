@@ -85,6 +85,41 @@
                 </button>
             </form>
           </section>
+
+          <div id="body-overlay"></div>
+          <nav class="real-menu" role="navigation">            
+              <div class="container overlay col">
+                <h1>Upload Zip Files (beta)</h1>
+                <form id="uploadFileForm" enctype="multipart/form-data">
+                    <div class="input-group">
+                        <label for="files">Select zip</label>
+                        <input type="file" id="Zip File" name="file">
+
+                        <label for="name">Set a name</label>
+                        <input type="text" id="name" name="name">
+                      </div>
+                </form>
+                <button class="send nice-btn" id="sendformupload">
+                  <span class="nice-btn material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
+                      upload
+                  </span>
+                </button>
+                <h3>Select collection to respond from</h3>
+                <select id="selectUploadedCollection">
+                    <option value="test_embedding">Default</option>
+                </select>
+
+              </div>
+
+              <div class="container" id = "uploadedFilesInfo">
+
+              </div>
+          </nav>
+          <button id="open-menu">Open menu</button>
+
+    
+
+
           <script src="index.js" type="module"></script>
 
       
