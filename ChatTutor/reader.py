@@ -73,7 +73,6 @@ def read_folder(path):
             doc = Doc(docname=file, citation="", dockey=file)
             try:
                 if file.endswith(".pdf"): 
-                    # print("SSSSSSSSS")
                     new_texts = parse_pdf(filepath, doc, 2000, 100)
                 elif file.endswith(".ipynb"): new_texts = parse_notebook(filepath, doc, 2000, 100)
                 else: new_texts = parse_plaintext(filepath, doc, 2000, 100)
@@ -83,6 +82,24 @@ def read_folder(path):
                 print(e.__str__())
                 pass
                 
+    return texts
+
+def read_filearray(files):
+    texts = []
+
+    for file in files:
+        print("AAAAAAA")
+        doc = Doc(docname=file[1], citation="", dockey=file[1])
+        print(file[1])
+        try:
+            if file[1].endswith(".pdf"): new_texts = parse_pdf(file[0], doc, 2000, 100)
+            elif file[1].endswith(".ipynb"): new_texts = parse_notebook_file(file[0], doc, 2000, 100)
+            else: new_texts = parse_plaintext_file(file[0], doc, 2000, 100)
+            
+            texts.extend(new_texts)
+        except Exception as e: 
+            print(e.__str__())
+            pass
     return texts
 
 def parse_plaintext(path: str, doc: Doc, chunk_chars: int, overlap: int):
@@ -124,7 +141,7 @@ def parse_notebook(path: str, doc: Doc, chunk_chars: int, overlap: int):
 
         return texts_from_str(text_str, doc, chunk_chars, overlap)
 
-def parse_pdf(database, file_contents: str, doc: Doc, chunk_chars: int, overlap: int) -> List[Text]:
+def parse_pdf(file_contents: str, doc: Doc, chunk_chars: int, overlap: int) -> List[Text]:
     """Parses a pdf file and generates texts from its content.
 
     Args:
@@ -153,7 +170,7 @@ def parse_pdf(database, file_contents: str, doc: Doc, chunk_chars: int, overlap:
 
             # print(split[:chunk_chars])
             text = [Text(text=split[:chunk_chars], name=f"{doc.docname} pages {pg}", doc=doc)]
-            database.add_texts_chroma(text)
+            # database.add_texts_chroma(text)
             texts.append(text[0])
             split = split[chunk_chars - overlap :]
             pages = [str(i + 1)]
@@ -164,6 +181,43 @@ def parse_pdf(database, file_contents: str, doc: Doc, chunk_chars: int, overlap:
         )
     # pdfFileObj.close()
     return texts
+
+
+def parse_plaintext_file(file, doc: Doc, chunk_chars: int, overlap: int):
+    """Parses a plain text file and generates texts from its content.
+
+    Args:
+        file: File
+        doc (Doc): Doc object that the Text objects will comply to
+        chunk_chars (int): size of chunks
+        overlap (int): overlap of chunks
+
+    Returns:
+        [Text]: The resulting Texts as an array
+    """
+    
+    return texts_from_str(file.read(), doc, chunk_chars, overlap)
+    
+def parse_notebook_file(file, doc: Doc, chunk_chars: int, overlap: int):
+    """Parses a jupyter notebook file and generates texts from its content.
+
+    Args:
+        path (str): path to the file
+        doc (Doc): Doc object that the Text objects will comply to
+        chunk_chars (int): size of chunks
+        overlap (int): overlap of chunks
+
+    Returns:
+        List(Text): The resulting Texts as an array
+    """
+    text_str = ""
+    data = json.load(file)
+    for cell in data["cells"]:
+        type = cell["cell_type"]
+        if type == "code" or type == "markdown":
+            text_str += "".join(cell["source"])
+
+    return texts_from_str(text_str, doc, chunk_chars, overlap)
 
 def texts_from_str(text_str: str, doc: Doc, chunk_chars: int, overlap: int):
     texts = []
@@ -183,3 +237,4 @@ def texts_from_str(text_str: str, doc: Doc, chunk_chars: int, overlap: int):
             Text(text=text_str[:chunk_chars], name=f"{doc.docname} pages {index}", doc=doc)
         )
     return texts
+

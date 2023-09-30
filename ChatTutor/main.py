@@ -2,10 +2,10 @@ import uuid
 
 import flask
 from flask import Flask, request, redirect, send_from_directory, url_for
-from flask import stream_with_context, Response, abort
+from flask import stream_with_context, Response, abort, jsonify
 from flask_cors import CORS  # Importing CORS to handle Cross-Origin Resource Sharing
-from extensions import db  # Importing the database object from extensions module
-import tutor
+from extensions import db, get_random_string  # Importing the database object from extensions module
+from tutor import Tutor
 import json
 import time
 import os
@@ -13,7 +13,7 @@ import os
 import sqlite3
 import openai
 import loader
-
+from reader import read_filearray
 
 if 'CHATUTOR_GCP' in os.environ: 
     openai.api_key = os.environ['OPENAI_API_KEY']
@@ -124,20 +124,9 @@ def ask():
     # Logging whether the request is specific to a document or can be from any document
     if(from_doc): print("only from doc", from_doc)
     else: print("from any doc")
-
     db.load_datasource(collection_name)
-    def generate():
-        # This function generates responses to the questions in real-time and yields the response
-        # along with the time taken to generate it.
-        chunks = ""
-        start_time = time.time()
-        for chunk in tutor.ask_question(db, conversation, from_doc):
-            chunk_content = ""
-            if 'content' in chunk:
-                chunk_content = chunk['content']
-            chunks += chunk_content
-            chunk_time = time.time() - start_time
-            yield f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n\n"
+    chattutor = Tutor(db)
+    generate = chattutor.stream_response_generator(conversation, from_doc)
     return Response(stream_with_context(generate()), content_type='text/event-stream')
 
 @app.route('/addtodb', methods=["POST", "GET"])
@@ -245,6 +234,50 @@ def compile_chroma_db():
     loader.init_chroma_db()
 
     return "Chroma db created successfully", 200
+
+
+import zipfile
+from reader import read_filearray
+from datetime import datetime
+
+@app.route("/upload_data_to_process", methods=['POST'])
+def upload_data_to_process():
+    file = request.files['file']
+    data = request.form
+    desc = data['name'].replace(" ", "-")
+    allowed_extensions = (".txt", ".ipynb", ".pdf")
+    resp = {
+        "collection_name": "false"
+    }
+    if file.filename != '':
+        file_like_object = file.stream._file  
+        zipfile_ob = zipfile.ZipFile(file_like_object)
+        file_names = zipfile_ob.namelist()
+        # Filter names to only include the filetype that you want:
+        files = [(zipfile_ob.open(name).read(),name) for name in file_names]
+        texts = read_filearray(files)
+        
+        print("Texts: ", texts)
+        
+        collection_name = desc + "_" + get_random_string(20) + datetime.now().isoformat().replace(".","a").replace(":","n").replace("-","d")
+        print(file_names)
+        print(texts)
+        db.load_datasource(collection_name)
+        db.add_texts(texts)
+        resp["collection_name"] = collection_name
+        print(file_names)
+
+    return jsonify(resp)
+
+@app.route("/delete_uploaded_data", methods=['POST'])
+def delete_uploaded_data():
+    data = request.json
+    collection_name = data["collection"]
+    
+    db.delete_datasource_chroma(collection_name)
+    return jsonify({
+        "deleted":collection_name
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)  # Running the app in debug mode
