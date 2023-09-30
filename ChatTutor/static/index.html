@@ -31,6 +31,12 @@
 
                     <div class="button-div" id="themeBtnDiv">
                         <button class="theme-button" id="themeBtn">Toggle theme</button>
+                        <button class="theme-button"id="open-menu">
+                            <span class="material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
+                                menu
+                              </span>
+                        </button>
+
                     </div>
 
                 </header>
@@ -87,27 +93,59 @@
           </section>
 
           <div id="body-overlay"></div>
-          <nav class="real-menu" role="navigation">            
-              <div class="container overlay col">
-                <h1>Upload Zip Files (beta)</h1>
-                <form id="uploadFileForm" enctype="multipart/form-data">
-                    <div class="input-group">
-                        <label for="files">Select zip</label>
-                        <input type="file" id="Zip File" name="file">
+          <nav class="real-menu" role="navigation">
+                <section>
+                    <div class="conainer col">
+                        <h1>Settings</h1>
 
-                        <label for="name">Set a name</label>
-                        <input type="text" id="name" name="name">
+                    </div>
+                </section>
+                <section>
+                    <div class="container col">
+                        <p>
+                            Use the form below to upload files you want the model to learn
+                            from. Upload files as zip archives with pdfs/txts inside them.
+                            Each zip file you upload will be saved temporarily as a collection
+                            and removed from our database when you reload your page.
+                        </p>
+                        <p>
+                            If you upload multiple collections, you can use the select below
+                            to select the selection you want the model to learn from for it to
+                            be able to respond to you. <b>Default</b> is the default collection
+                            with CQN papers.
+                        </p>
+                    </div>
+                </section>
+                <section>    
+                    <div class="container overlay col ">
+                      <h1>Upload Zip Files (beta)</h1>
+                      <div class="pswd-inputarea no-box-shadow col">
+                          <form id="uploadFileForm" class="" enctype="multipart/form-data">
+                              <div class="input-group">
+                                  <label for="files">Select zip</label>
+                                  <input type="file" style="width: 100% !important; margin-bottom: 20px" id="Zip File" name="file" class="msger-input">
+          
+                                  <label for="name">Set a name</label>
+                                  <input type="text" style="width: 100% !important" id="name" name="name" class="pswd-input">
+                                </div>
+                          </form>
+                          <button class="send nice-btn theme-button" id="sendformupload">
+                            <span class="nice-btn material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
+                                upload
+                            </span>
+                          </button>
                       </div>
-                </form>
-                <button class="send nice-btn" id="sendformupload">
-                  <span class="nice-btn material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
-                      upload
-                  </span>
-                </button>
-                <h3>Select collection to respond from</h3>
-                <select id="selectUploadedCollection">
-                    <option value="test_embedding">Default</option>
-                </select>
+
+                </section>        
+                <section>
+                    <div class="container col">
+                        <h3>Select collection</h3>
+                        <select id="selectUploadedCollection">
+                            <option value="test_embedding">Default</option>
+                        </select>
+
+                    </div>
+                </section>
 
               </div>
 
@@ -115,7 +153,6 @@
 
               </div>
           </nav>
-          <button id="open-menu">Open menu</button>
 
     
 

@@ -214,16 +214,18 @@
     font-size: 1em;
     border-radius: 10px;
   }
-
+.no-box-shadow{
+  box-shadow: none !important;
+}
 .pswd-inputarea * {
-    padding: 10px;
-    border: none;
-    font-size: 1em;
-    border-radius: 10px;
+  padding: 10px;
+  border: none;
+  font-size: 1em;
+  border-radius: 10px;
+}
+  .pswd-label {
+      color: var(--left-msg-txt)
   }
-    .pswd-label {
-        color: var(--left-msg-txt)
-    }
   .pswd-inputarea {
     display: flex;
     padding: 10px;
@@ -405,12 +407,17 @@
   transition: filter 0.2s ease-in;
 }
 
-#themeBtn:hover {
+.theme-button:hover {
   filter: saturate(180%);
   cursor: pointer;
 }
-
-#themeBtn {
+.theme-button.disabled{
+  background-color: gray !important;
+}
+.theme-button.disabled:hover{
+  background-color: gray !important;
+}
+.theme-button {
   transition: filter 0.2s ease-in;
 }
 
@@ -500,6 +507,47 @@ body.menu-open .real-menu {
   align-items: center;
 }
 
-.real-menu .container * {
-  margin-top: 20px;
+select {
+  -webkit-appearance: button;
+  -moz-appearance: button;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -webkit-padding-end: 20px;
+  -moz-padding-end: 20px;
+  -webkit-padding-start: 2px;
+  -moz-padding-start: 2px;
+  background-color: #F07575; /* Fallback color if gradients are not supported */
+  background-image: url(../images/select-arrow.png), -webkit-linear-gradient(top, #E5E5E5, #F4F4F4); /* For Chrome and Safari */
+  background-image: url(../images/select-arrow.png), -moz-linear-gradient(top, #E5E5E5, #F4F4F4); /* For old Firefox (3.6 to 15) */
+  background-image: url(../images/select-arrow.png), -ms-linear-gradient(top, #E5E5E5, #F4F4F4); /* For pre-releases of Internet Explorer  10*/
+  background-image: url(../images/select-arrow.png), -o-linear-gradient(top, #E5E5E5, #F4F4F4); /* For old Opera (11.1 to 12.0) */
+  background-image: url(../images/select-arrow.png), linear-gradient(to bottom, #E5E5E5, #F4F4F4); /* Standard syntax; must be last */
+  background-position: center right;
+  background-repeat: no-repeat;
+  border: 1px solid #AAA;
+  border-radius: 2px;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+  color: #555;
+  font-size: inherit;
+  margin: 0;
+  overflow: hidden;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.real-menu section {
+  border-bottom: 1px solid gray;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.real-menu p {
+  margin-bottom: 10px;
+}
+
+.real-menu {
+  background-image: var(--body-bg) !important;
+  color: var(--left-msg-txt);
 }

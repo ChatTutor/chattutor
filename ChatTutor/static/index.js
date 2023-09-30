@@ -48,13 +48,15 @@ stopGenButton.style.display = 'none'
 window.addEventListener('resize', windowIsResizing)
 
 function windowIsResizing() {
+  console.log("resize")
     // the button for choosing themes snaps in place when the window is too small
   if(window.innerWidth < 1200) {
       themeBtnDiv.style.position = 'inherit'
       themeBtnDiv.style.top = '25px'
       themeBtnDiv.style.left = '25px'
 
-      const arr = [themeBtn]
+      const arr = document.querySelectorAll('.theme-button')
+      console.log(arr)
       arr.forEach(btn => {
         btn.style.backgroundColor = 'transparent'
         btn.style.color = 'var(--msg-header-txt)'
@@ -73,7 +75,8 @@ function windowIsResizing() {
       themeBtnDiv.style.position = 'fixed'
       themeBtnDiv.style.top = '25px'
       themeBtnDiv.style.left = '25px'
-      const arr = [themeBtn]
+      const arr = document.querySelectorAll('.theme-button')
+      console.log(arr)
       arr.forEach(btn => {
         btn.style.backgroundColor = 'rgb(140, 0, 255)'
         btn.style.color = 'white'
@@ -514,13 +517,19 @@ function formatDate(date) {
 }
 
 function uploadFile() {
+
   fetch('/upload_data_to_process', {
     method: 'POST',
     body: new FormData(uploadZipPapersForm)
   }).then(response => response.json()).then(data => {
     let created_collection_name = data['collection_name']
     console.log("Created collection " + created_collection_name)
-    addCollectionToFrontEnd(created_collection_name)
+    if (created_collection_name == false || created_collection_name == "false") {
+      alert("Select file")
+    } else {
+      addCollectionToFrontEnd(created_collection_name)
+
+    }
   })
 }
 
@@ -531,7 +540,7 @@ function addCollectionToFrontEnd(created_collection_name) {
       <option value=${created_collection_name}>${created_collection_name.split("_")[0]}:collection</option>
     `
     localStorage.setItem("uploaded-collections", JSON.stringify(uploadedCollections))
-  allert(`Created collection ${created_collection_name}`)
+  alert(`Created collection ${created_collection_name}`)
 }
 
 sendUploadedZipButton.addEventListener("click", uploadFile)
