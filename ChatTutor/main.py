@@ -75,6 +75,8 @@ CREATE TABLE IF NOT EXISTS lmessages (
     role text NOT NULL,
     content text NOT NULL,
     chat_key integer NOT NULL,
+    clear_number integer NOT NULL,
+    time_created text NOT NULL,
     FOREIGN KEY (chat_key) REFERENCES lchats (chat_id)
     )"""
 
@@ -146,8 +148,10 @@ def addtodb():
     content = data['content']
     role = data['role']
     chat_k_id = data['chat_k']
+    clear_number = data['clear_number']
+    time_created = data['time_created']
     insert_chat(chat_k_id)
-    message_to_upload = {'content': content, 'role': role, 'chat': chat_k_id}
+    message_to_upload = {'content': content, 'role': role, 'chat': chat_k_id, 'clear_number': clear_number, 'time_created': time_created}
     insert_message(message_to_upload)
     print_for_debug()
     return Response('inserted!', content_type='text')
@@ -162,20 +166,27 @@ def getfromdb():
     if username == 'root' and passcode == 'admin':
         with connect_to_database() as con:
             cur = con.cursor()
-            response = cur.execute('SELECT * FROM lmessages JOIN lchats ON lmessages.chat_key = lchats.chat_id')
+            response = cur.execute('SELECT * FROM lmessages ORDER BY chat_key ,clear_number, time_created')
             messages_arr = response.fetchall()
             renderedString = ""
+            i = 0
             for message in messages_arr:
                 role = message[1]
                 content = message[2]
                 chat_id = message[3]
+                style = 'font-size: 10px; background-color: var(--msg-input-bg); overflow: hidden; padding: 2px; border-radius: 2px'
+
+                side = 'left'
+                if role != 'assistant':
+                    side = 'right'
+
                 msg_html = f"""
-                    <div class="left-msg">
+                    <div class="{side}-msg">
                         <div class="msg-bgd">
                           <div class="msg-bubble">
                             <div class="msg-info">
                               <div class="msg-info-name">role: {role}</div>
-                              <div class="msg-info-name">chat_key: {chat_id}</div>
+                              <div class="msg-info-name" style="{style}">chat_key: {chat_id}</div>
                             </div>
 
                             <div class="msg-text">content: {content}</div>
@@ -210,7 +221,7 @@ def print_for_debug():
     with connect_to_database() as con:
         cur = con.cursor()
         # This accesses the contents in the database ( for messages )
-        response = cur.execute('SELECT * from lmessages')
+        response = cur.execute('SELECT * FROM lmessages ORDER BY clear_number, time_created')
         # response = cur.execute('SELECT * from lchats') -- this is for chats.
         print("DC:", response.fetchall())
 
@@ -220,11 +231,13 @@ def insert_message(a_message):
     """This inserts a message into the sqlite3 database."""
     with connect_to_database() as con:
         cur = con.cursor()
-        insert_format_lmessages = "INSERT INTO lmessages (role, content, chat_key) VALUES (?, ?, ?)"
+        insert_format_lmessages = "INSERT INTO lmessages (role, content, chat_key, clear_number, time_created) VALUES (?, ?, ?, ?, ?)"
         role = a_message['role']
         content = a_message['content']
         chat_key = a_message['chat']
-        cur.execute(insert_format_lmessages, (role, content, chat_key))
+        clear_number = a_message['clear_number']
+        time_created = a_message['time_created']
+        cur.execute(insert_format_lmessages, (role, content, chat_key, clear_number, time_created))
 
 
 
