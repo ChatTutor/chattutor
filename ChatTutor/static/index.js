@@ -243,7 +243,7 @@ function loadConversationFromLocalStorage() {
     conversation.forEach(message => {addMessage(message["role"], message["content"], false)})
   }
   else conversation = []
-  //MathJax.typesetPromise();
+  MathJax.typesetPromise();
 }
 
 
@@ -321,8 +321,10 @@ function queryGPT() {
         stopGenButton.style.display = 'none'
         stopGeneration = false
       });
+      MathJax.typesetPromise();
     }
     read();
+    // MathJax.typesetPromise();
   }).catch(err => {
     console.error('Fetch error:', err);
     // Enable the send button in case of an error
@@ -477,7 +479,7 @@ function updateLastMessage(newContent) {
   } else {
     console.error('No message has been added yet.');
   }
-  MathJax.typesetPromise();
+  // MathJax.typesetPromise();
 
 }
 
@@ -533,7 +535,7 @@ function addMessage(role, message, updateConversation) {
   newMessage.style.opacity = "0";
   newMessage.style.transform = "translateY(1rem)";
 
-  MathJax.typesetPromise([newMessage]);
+  // MathJax.typesetPromise([newMessage]);
   
   // Trigger reflow to make the transition work
   void newMessage.offsetWidth;
