@@ -86,7 +86,16 @@
             </form>
           </section>
           <script src="index.js" type="module"></script>
-
+          <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+          </script>
       
 	</body>
 </html>

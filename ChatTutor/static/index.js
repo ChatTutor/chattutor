@@ -477,11 +477,9 @@ function updateLastMessage(newContent) {
   } else {
     console.error('No message has been added yet.');
   }
-  //MathJax.typesetPromise();
+  MathJax.typesetPromise();
 
 }
-
-
 
 
 function addMessage(role, message, updateConversation) {
@@ -534,6 +532,8 @@ function addMessage(role, message, updateConversation) {
   const newMessage = document.getElementById(messageId);
   newMessage.style.opacity = "0";
   newMessage.style.transform = "translateY(1rem)";
+
+  MathJax.typesetPromise([newMessage]);
   
   // Trigger reflow to make the transition work
   void newMessage.offsetWidth;
