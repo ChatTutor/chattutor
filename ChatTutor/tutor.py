@@ -2,10 +2,11 @@ import openai
 import tiktoken  # Importing tiktoken to count tokens in a string
 import time
 import json
-"""
-The system message provides context to the AI model about its role and how it should respond.
-"""
 class Tutor:
+    
+    """
+    The system message provides context to the AI model about its role and how it should respond.
+    """
     system_message = "You are an AI that helps students with questions about a course. Do your best to help the student with their question, using the following helpful context information to inform your response:\n{docs}"
     def __init__(self, embedding_db):
         self.embedding_db = embedding_db
