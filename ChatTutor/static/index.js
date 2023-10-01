@@ -25,7 +25,6 @@ var original_file = "";
 let lastMessageId = null;
 var stopGeneration = false
 
-
 // Get the send button
 const sendBtn = document.getElementById('sendBtn');
 const themeBtn = document.getElementById('themeBtn')
@@ -85,6 +84,11 @@ function windowIsResizing() {
   }
 }
 
+function getFormattedIntegerFromDate() {
+    let d = Date.now()
+
+}
+
 const smallCard = {
   card_max_width: '867px'
 }
@@ -105,7 +109,7 @@ function uploadMessageToDB(msg, chat_k) {
     if(msg.content === "") {
         return
     }
-    const data_ = {content: msg.content, role: msg.role, chat_k: chat_k}
+    const data_ = {content: msg.content, role: msg.role, chat_k: chat_k, time_created: `${Date.now()}`, clear_number: getClearNumber()}
     console.log(`DATA: ${JSON.stringify(data_)} `)
     fetch('/addtodb', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data_)})
         .then(() =>{
@@ -147,9 +151,22 @@ function getChatId() {
     return localStorage.getItem('conversation_id')
 }
 
+function increaseClearNumber() {
+    let clnr = getClearNumber()
+    let clear_number = parseInt(clnr)
+    localStorage.setItem('clear_number', `${clear_number+1}`)
+}
+
+function resetClearNumber() {
+    localStorage.setItem('clear_number', '0')
+}
+
+function getClearNumber() {
+    return localStorage.getItem('clear_number')
+}
+
 function reinstantiateChatId() {
-    localStorage.removeItem('conversation_id')
-    setChatId()
+    increaseClearNumber()
 }
 
 // function for keeping the theme whn the page refreshes
@@ -158,6 +175,10 @@ function setThemeOnRefresh() {
   sendBtn.disabled = messageInput.value.length === 0;
   if(getChatId() == null) {
     setChatId()
+  }
+
+  if(getClearNumber() == null) {
+      resetClearNumber()
   }
 
   theme = localStorage.getItem('theme')
@@ -190,8 +211,6 @@ function toggleDarkMode() {
   }
   localStorage.setItem('theme', theme)
   setTheme(theme)
-
-
 }
 
 function toggleInterfaceMode() {
@@ -218,7 +237,6 @@ function clearConversation() {
 function stopGenerating() {
   stopGeneration = true
 }
-
 
 function handleFormSubmit(event) {
   event.preventDefault();
