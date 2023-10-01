@@ -211,7 +211,7 @@ function toggleInterfaceMode() {
 
 function clearConversation() {
   conversation = [];
-  localStorage.setItem("conversation", JSON.stringify([]));
+  localStorage.setItem("cqn-conversation", JSON.stringify([]));
     reinstantiateChatId()
   var childNodes = msgerChat.childNodes;
   for(var i = childNodes.length - 3; i >= 2; i--){
@@ -250,7 +250,7 @@ function handleFormSubmit(event) {
 
 
 function loadConversationFromLocalStorage() {
-  conversation = JSON.parse(localStorage.getItem("conversation"))
+  conversation = JSON.parse(localStorage.getItem("cqn-conversation"))
   if(conversation){
     conversation.forEach(message => {addMessage(message["role"], message["content"], false)})
   }
@@ -348,7 +348,7 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
               } else {
                   if (typeof (message.message.content) == 'undefined') {
                       conversation.push({"role": 'assistant', "content": accumulatedContent})
-                      localStorage.setItem("conversation", JSON.stringify(conversation))
+                      localStorage.setItem("cqn-conversation", JSON.stringify(conversation))
                   }
                   scrollHelper.scrollIntoView()
                   updateLastMessage(accumulatedContent);
@@ -356,7 +356,7 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
               if (stopGeneration === true) {
                   accumulatedContent += " ...Stopped generating";
                   conversation.push({"role": 'assistant', "content": accumulatedContent})
-                  localStorage.setItem("conversation", JSON.stringify(conversation))
+                  localStorage.setItem("cqn-conversation", JSON.stringify(conversation))
                   sendBtn.disabled = false;
                   clear.style.display = 'block'
                   stopGenButton.style.display = 'none'
@@ -498,7 +498,7 @@ function addMessage(role, message, updateConversation) {
   msgerChat.scrollTop += 500;
   if(updateConversation){
     conversation.push({"role": role, "content": message})
-    localStorage.setItem("conversation", JSON.stringify(conversation))
+    localStorage.setItem("cqn-conversation", JSON.stringify(conversation))
   }
 }
 
