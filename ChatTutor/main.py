@@ -9,7 +9,7 @@ import tutor
 import json
 import time
 import os
-# import pymysql
+import pymysql
 import sqlite3
 import openai
 import loader
@@ -31,13 +31,13 @@ CORS(app)  # Enabling CORS for the Flask app to allow requests from different or
 db.init_db()
 
 # connection = pymysql.connect(
-#     host='localhost',
-#     user='root',
+#     host='34.41.31.71',
+#     user='admin',
 #     password='password',
 #     db='mydatabase',
 #     charset='utf8mb4',
 #     cursorclass=pymysql.cursors.DictCursor
-# ) ## for mysql server TO BE USED INSTEAD OF 'con'.
+# ) ## for mysql server TO BE USED INSTEAD OF 'con'
 
 # Only for deleting the db when you first access the site. Can be used for debugging
 presetTables1 = """
@@ -50,7 +50,7 @@ presetTables2 = """
 
 chats_table_Sql = """
 CREATE TABLE IF NOT EXISTS lchats (
-    chat_id text PRIMARY KEY
+    chat_id varchar(100) PRIMARY KEY
     )"""
 
 
@@ -66,15 +66,26 @@ def connect_to_database():
     #     cursorclass=pymysql.cursors.DictCursor
     # )
     # return connection
-    return sqlite3.connect('chat_store.sqlite3')
+
+    connection = pymysql.connect(
+        host='34.41.31.71',
+        user='admin',
+        password='AltaParolaPuternica1245',
+        db='chatmsg',
+        charset='utf8mb4',
+        cursorclass=pymysql.cursors.DictCursor
+    )
+
+    return connection
+    # return sqlite3.connect('')
 
 
 messages_table_Sql = """
 CREATE TABLE IF NOT EXISTS lmessages (
-    mes_id text PRIMARY KEY,
+    mes_id varchar(100) PRIMARY KEY,
     role text NOT NULL,
     content text NOT NULL,
-    chat_key integer NOT NULL,
+    chat_key varchar(100) NOT NULL,
     clear_number integer NOT NULL,
     time_created text NOT NULL,
     FOREIGN KEY (chat_key) REFERENCES lchats (chat_id)
@@ -83,7 +94,7 @@ CREATE TABLE IF NOT EXISTS lmessages (
 
 def initialize_ldatabase():
     """Creates the tables if they don't exist"""
-    con = sqlite3.connect('chat_store.sqlite3')
+    con = connect_to_database()
     cur = con.cursor()
     #if you want to delete the database when a user acceses the site. (For DEBUGGING purposes only
     # cur.execute(presetTables1)
@@ -166,14 +177,15 @@ def getfromdb():
     if username == 'root' and passcode == 'admin':
         with connect_to_database() as con:
             cur = con.cursor()
-            response = cur.execute('SELECT * FROM lmessages ORDER BY chat_key ,clear_number, time_created')
-            messages_arr = response.fetchall()
+            res = cur.execute("SELECT * FROM lmessages ORDER BY chat_key, clear_number, time_created")
+            messages_arr = cur.fetchall()
             renderedString = ""
             i = 0
             for message in messages_arr:
-                role = message[1]
-                content = message[2]
-                chat_id = message[3]
+                role = message['role']
+                content = message['content']
+                chat_id = message['chat_key']
+                clear_number = message['clear_number']
                 style = 'font-size: 10px; background-color: var(--msg-input-bg); overflow: hidden; padding: 2px; border-radius: 2px'
 
                 side = 'left'
@@ -186,7 +198,7 @@ def getfromdb():
                           <div class="msg-bubble">
                             <div class="msg-info">
                               <div class="msg-info-name">role: {role}</div>
-                              <div class="msg-info-name" style="{style}">chat_key: {chat_id}</div>
+                              <div class="msg-info-name" style="{style}">chat_key: {chat_id}, {clear_number}</div>
                             </div>
 
                             <div class="msg-text">content: {content}</div>
@@ -211,7 +223,8 @@ def exesql():
         with connect_to_database() as con:
             cur = con.cursor()
             response = cur.execute(sqlexec)
-            messages_arr = response.fetchall()
+            messages_arr = cur.fetchall()
+            con.commit()
             return Response(f'{messages_arr}', 200)
     else:
         return Response('fail', 404)
@@ -220,10 +233,8 @@ def print_for_debug():
     """For debugging purposes. Acceses  the content of the lmessages table"""
     with connect_to_database() as con:
         cur = con.cursor()
-        # This accesses the contents in the database ( for messages )
         response = cur.execute('SELECT * FROM lmessages ORDER BY clear_number, time_created')
-        # response = cur.execute('SELECT * from lchats') -- this is for chats.
-        print("DC:", response.fetchall())
+        # con.commit()
 
 
 
@@ -231,13 +242,15 @@ def insert_message(a_message):
     """This inserts a message into the sqlite3 database."""
     with connect_to_database() as con:
         cur = con.cursor()
-        insert_format_lmessages = "INSERT INTO lmessages (role, content, chat_key, clear_number, time_created) VALUES (?, ?, ?, ?, ?)"
+
         role = a_message['role']
         content = a_message['content']
         chat_key = a_message['chat']
         clear_number = a_message['clear_number']
         time_created = a_message['time_created']
-        cur.execute(insert_format_lmessages, (role, content, chat_key, clear_number, time_created))
+        insert_format_lmessages = f"INSERT INTO lmessages (mes_id ,role, content, chat_key, clear_number, time_created) VALUES ('{uuid.uuid4()}','{role}', %s, '{chat_key}', {clear_number}, '{time_created}')"
+        cur.execute(insert_format_lmessages, (content,))
+        con.commit()
 
 
 
@@ -245,8 +258,10 @@ def insert_chat(chat_key):
     """This inserts a chat into the sqlite3 database, ignoring the command if the chat already exists."""
     with connect_to_database() as con:
         cur = con.cursor()
-        insert_format_lchats = "INSERT OR IGNORE INTO lchats (chat_id) VALUES (?)"
-        cur.execute(insert_format_lchats, (chat_key,))
+        insert_format_lchats = ""
+        cur.execute(f"INSERT IGNORE INTO lchats (chat_id) VALUES ('{chat_key}')")
+        con.commit()
+        # print('inserted!')
 
 @app.route('/compile_chroma_db', methods=['POST'])
 def compile_chroma_db():
