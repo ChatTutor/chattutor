@@ -8,7 +8,12 @@ from urllib.error import URLError
 from google.cloud import storage
 
 from selenium import webdriver
-from selenium.common.exceptions import TimeoutException, NoSuchElementException, ElementClickInterceptedException, StaleElementReferenceException
+from selenium.common.exceptions import (
+    TimeoutException,
+    NoSuchElementException,
+    ElementClickInterceptedException,
+    StaleElementReferenceException,
+)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
@@ -19,7 +24,7 @@ from selenium.webdriver.chrome.options import Options
 # chrome_options = Options()
 # chrome_options.add_argument('--headless')  # Run browser in the background
 # chrome_options.add_argument('--disable-gpu')  # Applicable to windows os only
-# chrome_options.add_argument('start-maximized') 
+# chrome_options.add_argument('start-maximized')
 # chrome_options.add_argument('disable-infobars')
 # chrome_options.add_argument('--disable-extensions')
 # driver = webdriver.Chrome(options=chrome_options)
@@ -47,7 +52,7 @@ from selenium.webdriver.chrome.options import Options
 #         except (TimeoutException, StaleElementReferenceException, NoSuchElementException, ElementClickInterceptedException):
 #             print('no more "load more" buttons found')
 #             break
-    
+
 #     # Get a list of all "View Article" buttons
 #     try:
 #         article_number = 1
@@ -59,7 +64,7 @@ from selenium.webdriver.chrome.options import Options
 #           print(article_number)
 #           article_number += 1
 #     except (NoSuchElementException, ElementClickInterceptedException):
-#         print('no more "view article" buttons found')    
+#         print('no more "view article" buttons found')
 
 #     # Click on each "View Article" button and retrieve the arXiv ID
 #     for i,button in enumerate(view_article_buttons):
@@ -92,6 +97,7 @@ from selenium.webdriver.chrome.options import Options
 
 # print("ArXiv links are saved in arxiv_ids.txt.")
 
+
 def upload_blob(bucket_name, file_content, destination_blob_name):
     """
     Uploads a file to the bucket.
@@ -99,29 +105,34 @@ def upload_blob(bucket_name, file_content, destination_blob_name):
     source_file_name = "local/path/to/file"
     destination_blob_name = "storage-object-name"
     """
-    
+
     # Initialize a storage client using your service account key file.
-    storage_client = storage.Client.from_service_account_json('chattutor-393319-5c666d5a8c61.json')
+    storage_client = storage.Client.from_service_account_json(
+        "chattutor-393319-5c666d5a8c61.json"
+    )
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(destination_blob_name)
     blob.upload_from_string(file_content)
-    
 
     print(f"File uploaded as {destination_blob_name}.")
+
 
 def file_exists_in_bucket(bucket_name, blob_name):
     """
     Checks if a file exists in the specified bucket.
     """
-    storage_client = storage.Client.from_service_account_json('chattutor-393319-5c666d5a8c61.json')
+    storage_client = storage.Client.from_service_account_json(
+        "chattutor-393319-5c666d5a8c61.json"
+    )
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(blob_name)
     return blob.exists()
 
-bucket_name = "downloaded_content" # replace with your bucket name
+
+bucket_name = "downloaded_content"  # replace with your bucket name
 
 # Read the links from the file
-with open('arxiv_ids.txt', 'r') as file:
+with open("arxiv_ids.txt", "r") as file:
     links = file.readlines()
 
 max_retries = 3
@@ -129,19 +140,19 @@ delay_between_requests = 2
 for link in links:
     retries = 0
     success = False
-    
+
     while retries < max_retries and not success:
         try:
             paper = next(arxiv.Search(id_list=[link]).results())
-            print(f'Downloading {link}: {paper}')
+            print(f"Downloading {link}: {paper}")
 
             blob_name = f"{paper.title}.pdf"
-            
+
             if file_exists_in_bucket(bucket_name, blob_name):
                 print(f"{blob_name} already exists in the bucket. Skipping...")
                 success = True
                 continue
-            
+
             response = requests.get(paper.pdf_url)
             if response.status_code == 200:
                 upload_blob(bucket_name, response.content, f"{paper.title}.pdf")
@@ -149,12 +160,12 @@ for link in links:
                 print(f"Downloaded and uploaded {link}")
             else:
                 print(f"Failed to download {link}")
-                
+
         except URLError as e:
             print(f"URLError for {link}: {e}. Retrying...")
             retries += 1
             time.sleep(delay_between_requests)
-            
+
         # except Exception as e:  # Catch other exceptions and be explicit about variable 'e'
         #     print(f"Error processing {link}: {e}")
         #     retries += 1  # Depending on the type of error, you may want to decide whether to retry or not.
@@ -172,7 +183,7 @@ for link in links:
 # for link in links:
 #   retries = 0
 #   success = False
-  
+
 #   while retries < max_retries and not success:
 #     try:
 #       paper = next(arxiv.Search(id_list=[link]).results())
@@ -181,7 +192,7 @@ for link in links:
 #         paper.download_pdf(dirpath=downloaded_paper_dir, filename=f"{paper.title}.pdf")
 #         success = True
 #         print(f"Downloaded {link}")
-    
+
 #     except URLError as e:
 #           if isinstance(e.reason, ConnectionResetError):
 #               print(f"ConnectionResetError for {link}: {e.reason}. Retrying...")
@@ -194,15 +205,3 @@ for link in links:
 #         print(f"Error processing {link}: {e}")
 #         retries += 1  # Depending on the type of error, you may want to decide whether to retry or not.
 #         time.sleep(delay_between_requests)  # Same here, decide based on the error if a sleep is necessary.
-      
-
-
-
-
-
-
-
-
-
-
-
