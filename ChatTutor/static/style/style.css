@@ -483,6 +483,12 @@ body.menu-open #body-overlay{
   display: block;
   
 }
+
+#body-overlay.show{
+
+  display: block !important;
+  
+}
 body.menu-open .real-menu {
       left: 0;
   }
@@ -622,4 +628,41 @@ select {
 
 .area input:focus {
   outline: none;
+}
+
+#nice-alert { 
+  z-index: 4000;
+  max-width: 0px !important ;
+  max-height: 0px !important;
+  position: absolute;
+  overflow: hidden;
+  top: 50vh;
+  left: 50vw;
+  background-color: var(--msg-chat-bg);
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  transition: all 0.05s ease;
+  border-radius: 20px;
+  color: var(--msg-input-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0px;
+}
+
+#nice-alert.show { 
+  z-index: 4000;
+  max-width: 2200px !important ;
+  max-height: 3100px !important;
+  padding: 20px;
+
+  position: absolute;
+  overflow: hidden;
+  top: calc(50vh - 50px);
+  left: 40vw;
+  right: 4ovw;
+}
+
+#nice-alert button {
+  margin-top: 20px !important;
 }
