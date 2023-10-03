@@ -124,3 +124,11 @@ function setPropertiesHelper(themeObject) {
     }
   }
 }
+
+document.querySelectorAll(".no-enter").forEach(el=>{
+  el.addEventListener("keypress", function(event){
+    if (event.which == '13') {
+      event.preventDefault();
+    }
+})
+})

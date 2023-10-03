@@ -1,5 +1,6 @@
 // Constants for embed mode and UI elements
 import {lightMode, darkMode, setProperties} from "./constants.js";
+import {alert} from "./nicealert.js"
 
 const embed_mode = false;
 const clear = document.getElementById('clearBtnId');

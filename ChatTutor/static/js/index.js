@@ -1,6 +1,6 @@
 // Constants for embed mode and UI elements
 import {lightMode, darkMode, setProperties} from "./constants.js";
-
+import {alert} from "./nicealert.js"
 const embed_mode = false;
 const clear = document.getElementById('clearBtnId');
 const clearContainer = get('.clear-btn-container');
@@ -529,6 +529,15 @@ function formatDate(date) {
 }
 
 function uploadFile() {
+  let myFormData = new FormData(uploadZipPapersForm)
+  const formDataObj = {};
+  myFormData.forEach((value, key) => (formDataObj[key] = value));
+  console.log(formDataObj)
+
+  if (formDataObj["file"]["name"] == '') {
+    alert("Please upload a file!")
+    return
+  }
 
   fetch('/upload_data_to_process', {
     method: 'POST',
