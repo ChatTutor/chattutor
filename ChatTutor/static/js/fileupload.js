@@ -1,10 +1,15 @@
 const upload_files = document.querySelectorAll('.multiple-upload');
 
 function onFile() {
+    console.log(upload.files)
     var me = this,
         file = upload.files[0],
-        name = file.name.replace(/.[^/.]+$/, '');
-    upload.parentNode.querySelector("span").innerHTML = name
+        name = file.name;
+
+    upload.parentNode.querySelector("span").innerHTML = ""
+    Array.from(upload.files).forEach(f => {
+        upload.parentNode.querySelector("span").innerHTML += f.name + ", "
+    })
 }
 
 upload_files.forEach(upload => {

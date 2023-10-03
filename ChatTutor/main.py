@@ -280,15 +280,19 @@ def compile_chroma_db():
 
 @app.route("/upload_data_to_process", methods=["POST"])
 def upload_data_to_process():
-    file = request.files["file"]
+    file = request.files.getlist("file")
+    print(file)
     data = request.form
     desc = data["name"].replace(" ", "-")
     if len(desc) == 0:
         desc = "untitled" + "-" + get_random_string(5)
     resp = {"collection_name": False}
     print("File,", file)
-    if file.filename != "":
-        files = extract_file(file)
+    if file[0].filename != "":
+        files = []
+        for f in file:
+            files = files + extract_file(f)
+            print(f"Extracted file {f}")
         texts = read_filearray(files)
         # Generating the collection name based on the name provided by user, a random string and the current
         # date formatted with punctuation replaced
