@@ -128,19 +128,42 @@ class MessageDB:
 
     def parse_messages(self, messages_arr):
         renderedString = ""
+        i = 0
         for message in messages_arr:
             role = message['role']
             content = message['content']
             chat_id = message['chat_key']
             clear_number = message['clear_number']
             style = 'font-size: 10px; background-color: var(--msg-input-bg); overflow: hidden; padding: 2px; border-radius: 2px'
-
             side = 'left'
             if role != 'assistant':
                 side = 'right'
 
+
+            chat_header = ""
+
+            if i != 0:
+                current_message = messages_arr[i]
+                prev_message = messages_arr[i - 1]
+                if current_message['chat_key'] != prev_message['chat_key']:
+                    chat_header = f"""
+                        <div style="color: white; padding: 10px; background-color: rgb(100, 105, 130)">Chat id: {chat_id}</div>
+                    """
+
+                if current_message['clear_number'] != prev_message['clear_number']:
+                    chat_header = f"""
+                        <div style="color: white; padding: 10px; background-color: rgb(50, 105, 130)">Cleared {clear_number} times</div>
+                    """
+            else:
+                chat_header = f"""
+                    <div style="color: white; padding: 10px; background-color: rgb(100, 105, 130)">Chat id: {chat_id}</div>
+                """
+
+
+            i = i + 1
             msg_html = f"""
                            <div class="{side}-msg">
+                                {chat_header}
                                <div class="msg-bgd">
                                  <div class="msg-bubble">
                                    <div class="msg-info">
