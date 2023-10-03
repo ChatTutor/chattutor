@@ -10,6 +10,7 @@ import random
 import string
 from datetime import datetime
 
+
 def get_random_string(length):
     # choose from all lowercase letter
     letters = string.ascii_lowercase
@@ -17,14 +18,15 @@ def get_random_string(length):
     print("Random string of length", length, "is:", result_str)
     return result_str
 
+
 def generate_unique_name(desc):
     return (
-            desc
-            + "_"
-            + get_random_string(20)
-            + datetime.now()
-            .isoformat()
-            .replace(".", "a")
-            .replace(":", "n")
-            .replace("-", "d")
-        )
+        desc
+        + "_"
+        + get_random_string(20)
+        + datetime.now()
+        .isoformat()
+        .replace(".", "a")
+        .replace(":", "n")
+        .replace("-", "d")
+    )

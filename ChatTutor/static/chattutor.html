@@ -104,27 +104,32 @@
                     <div class="container col">
                         <p>
                             Use the form below to upload files you want the model to learn
-                            from. Upload files as zip archives with pdfs/txts inside them.
+                            from. Upload files as zip archives with pdfs/txts inside them, or 
+                            add simple pdfs or txts.
+                        </p>
+                        <p>
                             Each zip file you upload will be saved temporarily as a collection
                             and removed from our database when you reload your page.
                         </p>
                         <p>
                             If you upload multiple collections, you can use the select below
                             to select the selection you want the model to learn from for it to
-                            be able to respond to you. <b>Default</b> is the default collection
-                            with CQN papers.
+                            be able to respond to you.
                         </p>
                     </div>
                 </section>
                 <section>    
                     <div class="container overlay col ">
                       <h1>Upload Zip Files (beta)</h1>
-                      <div class="pswd-inputarea no-box-shadow col">
+                      <div class="pswd-inputarea col">
                           <form id="uploadFileForm" class="" enctype="multipart/form-data">
                               <div class="input-group">
                                   <label for="files">Select zip</label>
-                                  <input type="file" style="width: 100% !important; margin-bottom: 20px" id="Zip File" name="file" class="msger-input">
-          
+                                  <!-- <input type="file" style="width: 100% !important; margin-bottom: 20px" id="Zip File" name="file" class="msger-input"> -->
+                                    <div class="area">
+                                        <span>Upload File</span>
+                                        <input type="file" class="multiple-upload" id="upload" name="file"/>
+                                    </div>
                                   <label for="name">Set a name</label>
                                   <input type="text" style="width: 100% !important" id="name" name="name" class="pswd-input">
                                 </div>
@@ -156,6 +161,7 @@
 
 
           <script src="js/index.js" type="module"></script>
+          <script src="js/fileupload.js" type="module"></script>
 
       
 	</body>

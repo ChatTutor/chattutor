@@ -6,7 +6,8 @@ from flask import stream_with_context, Response, abort, jsonify
 from flask_cors import CORS  # Importing CORS to handle Cross-Origin Resource Sharing
 from extensions import (
     db,
-    get_random_string, generate_unique_name
+    get_random_string,
+    generate_unique_name,
 )  # Importing the database object from extensions module
 from tutor import Tutor
 import json
@@ -276,6 +277,7 @@ def compile_chroma_db():
     loader.init_chroma_db()
     return "Chroma db created successfully", 200
 
+
 @app.route("/upload_data_to_process", methods=["POST"])
 def upload_data_to_process():
     file = request.files["file"]
@@ -284,13 +286,14 @@ def upload_data_to_process():
     if len(desc) == 0:
         desc = "untitled" + "-" + get_random_string(5)
     resp = {"collection_name": False}
+    print("File,", file)
     if file.filename != "":
         files = extract_file(file)
         texts = read_filearray(files)
         # Generating the collection name based on the name provided by user, a random string and the current
         # date formatted with punctuation replaced
         collection_name = generate_unique_name(desc)
-        
+
         db.load_datasource(collection_name)
         db.add_texts(texts)
         resp["collection_name"] = collection_name

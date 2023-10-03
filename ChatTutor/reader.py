@@ -263,7 +263,10 @@ def texts_from_str(text_str: str, doc: Doc, chunk_chars: int, overlap: int):
         )
     return texts
 
+
 import zipfile
+
+
 def extract_zip(file):
     """Extracts the content of a zip file and returns file-like objects
 
@@ -277,6 +280,7 @@ def extract_zip(file):
     files = [(zipfile_ob.open(name).read(), name) for name in file_names]
     return files
 
+
 def extract_file(file):
     """Extracts the content of a file and returns file-like objects
 
@@ -284,6 +288,6 @@ def extract_file(file):
         file : Zip-file/single-file (pdf, txt of ipynb)
     Returns: Array of tuples [(file, filename)]
     """
-    if file.filename.endswith(('.pdf', '.txt', '.ipynb')):
+    if file.filename.endswith((".pdf", ".txt", ".ipynb")):
         return [(file.read(), file.filename)]
     return extract_zip(file)
