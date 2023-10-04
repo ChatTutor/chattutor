@@ -1,6 +1,6 @@
 import pymysql
 import uuid
-
+import datetime
 
 class MessageSchema:
     mes_id = ''
@@ -127,18 +127,24 @@ class MessageDB:
             return messages_arr
 
     def parse_messages(self, messages_arr):
-        renderedString = ""
+        renderedString = ('<table class="messages-table"> <tr style="background-color: rgb(140, 0, 255); color: white"> '
+                          '<th> Role </th>'
+                          '<th> Content </th>'
+                          '<th> Number of clears </th>'
+                          '<th> Time </th>'
+                          '<th> Chat id </th>'
+                          ' </tr>')
         i = 0
         for message in messages_arr:
             role = message['role']
             content = message['content']
             chat_id = message['chat_key']
             clear_number = message['clear_number']
+            time_cr = message['time_created']
             style = 'font-size: 10px; background-color: var(--msg-input-bg); overflow: hidden; padding: 2px; border-radius: 2px'
             side = 'left'
             if role != 'assistant':
                 side = 'right'
-
 
             chat_header = ""
 
@@ -147,36 +153,41 @@ class MessageDB:
                 prev_message = messages_arr[i - 1]
                 if current_message['chat_key'] != prev_message['chat_key']:
                     chat_header = f"""
-                        <div style="color: white; padding: 10px; background-color: rgb(100, 105, 130)">Chat id: {chat_id}</div>
+                        Chat id: {chat_id}
                     """
 
                 if current_message['clear_number'] != prev_message['clear_number']:
                     chat_header = f"""
-                        <div style="color: white; padding: 10px; background-color: rgb(50, 105, 130)">Cleared {clear_number} times</div>
+                        Cleared {clear_number}
                     """
             else:
                 chat_header = f"""
-                    <div style="color: white; padding: 10px; background-color: rgb(100, 105, 130)">Chat id: {chat_id}</div>
+                    Chat id: {chat_id}
                 """
 
-
+            styl_td = ""
             i = i + 1
-            msg_html = f"""
-                           <div class="{side}-msg">
-                                {chat_header}
-                               <div class="msg-bgd">
-                                 <div class="msg-bubble">
-                                   <div class="msg-info">
-                                     <div class="msg-info-name">role: {role}</div>
-                                     <div class="msg-info-name" style="{style}">chat_key: {chat_id}, {clear_number}</div>
-                                   </div>
 
-                                   <div class="msg-text">content: {content}</div>
-                                 </div>
-                               </div>
-                           </div>
+            timstp = int(time_cr)
+
+            tr_header = ""
+            if chat_header != "":
+                tr_header = f'<tr style="color: var(--left-msg-txt); background-color: rgba(140, 0, 255, 0.5)"><td colspan="5">{chat_header}</td></tr>'
+
+            msg_html = f"""
+                            
+                            {tr_header}
+                           <tr style="color: var(--left-msg-txt); {styl_td}">
+                                <td style={styl_td}>{role}</td>
+                                <td style={styl_td}>{content}</td>
+                                <td style={styl_td}>{clear_number}</td>
+                                <td style={styl_td}>{datetime.datetime.utcfromtimestamp(timstp / 1000)}</td>
+                                <td style={styl_td}>{chat_id}</td>
+                           </tr>
                        """
             renderedString += msg_html
+
+        renderedString += '</table>'
         return renderedString
 
 
