@@ -461,6 +461,14 @@
   background: var(--msg-header-bg);
 }
 
+#body-overlay .loading-lay{
+  display: none;
+}
+
+#body-overlay.loading .loading-lay{
+  display: none;
+}
+
 .real-menu {
   position: fixed;
   top: 0;

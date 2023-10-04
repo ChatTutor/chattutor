@@ -108,6 +108,8 @@ class VectorDatabase:
         print(coll_names, collection_name)
         if collection_name in coll_names:
             self.client.delete_collection(name=collection_name)
+            coll_names = [coll.name for coll in collections]
+            print(coll_names, collection_name)
 
     def add_texts(self, texts: List[Text]):
         """Adding texts to the database based on the database provider

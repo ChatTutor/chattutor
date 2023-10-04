@@ -31,15 +31,20 @@ class Tutor:
         prompt = conversation[-1]["content"]
 
         # Querying the database to retrieve relevant documents to the user's question
-        docs = self.embedding_db.query(prompt, 6, from_doc)
+        docs = None
+        if self.embedding_db:
+            docs = self.embedding_db.query(prompt, 6, from_doc)
 
         # Creating a chat completion object with OpenAI API to get the model's response
+        messages = conversation
+        if self.embedding_db:
+            messages = [
+                {"role": "system", "content": self.system_message.format(docs=docs)}
+            ] + conversation
+        
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo-16k",
-            messages=[
-                {"role": "system", "content": self.system_message.format(docs=docs)}
-            ]
-            + conversation,
+            messages=messages,
             temperature=1,
             frequency_penalty=0.0,
             presence_penalty=0.0,

@@ -151,15 +151,15 @@ def ask():
     """
     data = request.json
     conversation = data["conversation"]
-    collection_name = data["collection"]
+    collection_name = data.get("collection")
     from_doc = data.get("from_doc")
+    print(collection_name)
     # Logging whether the request is specific to a document or can be from any document
-    if from_doc:
-        print("only from doc", from_doc)
-    else:
-        print("from any doc")
-    db.load_datasource(collection_name)
-    chattutor = Tutor(db)
+    chattutor = Tutor(None)
+    if collection_name:
+        db.load_datasource(collection_name)
+        chattutor = Tutor(db)
+    
     generate = chattutor.stream_response_generator(conversation, from_doc)
     return Response(stream_with_context(generate()), content_type="text/event-stream")
 
