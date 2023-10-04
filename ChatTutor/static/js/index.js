@@ -238,10 +238,6 @@ function handleFormSubmit(event) {
   event.preventDefault();
   const msgText = msgerInput.value;
   if (!msgText) return;
-  if (selectUploadedCollection && !selectUploadedCollection.options[ selectUploadedCollection.selectedIndex ]) {
-    alert("Please upload some files for the tutor to learn from!")
-    return
-  }
 
   // Disable the send button
   sendBtn.disabled = true;
@@ -305,17 +301,21 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
   let collection_name = "test_embedding"
   let selected_collection_name = "test_embedding"
   if (selectUploadedCollection && !selectUploadedCollection.options[ selectUploadedCollection.selectedIndex ]) {
-    alert("Please upload some files for the tutor to learn from! Click on menu!")
-    return
+    collection_name = NaN
   }
-  if (selectUploadedCollection) {
+  else if (selectUploadedCollection) {
     selected_collection_name = selectUploadedCollection.options[ selectUploadedCollection.selectedIndex ].value
-  
   }
   collection_name = selected_collection_name
-  const args = {
+  var args = {
     "conversation": conversation,
     "collection": collection_name
+  }
+  if (collection_name == NaN) {
+    console.log("default collection")
+    args = {
+      "conversation": conversation
+    }
   }
   if (embed_mode) args.from_doc = original_file
   fetch('/ask', {
@@ -540,8 +540,13 @@ function uploadFile() {
   myFormData.forEach((value, key) => (formDataObj[key] = value));
   console.log(formDataObj)
 
+  sendUploadedZipButton.querySelector("span").innerHTML = `<img src="./images/loading.gif" style="width: 40px; height: 40px;">`
+
+  console.log(formDataObj["file"])
   if (formDataObj["file"]["name"] == '') {
     alert("Please upload a file!")
+    sendUploadedZipButton.querySelector("span").innerHTML = "upload"
+
     return
   }
 
@@ -557,6 +562,8 @@ function uploadFile() {
       addCollectionToFrontEnd(created_collection_name)
 
     }
+
+    sendUploadedZipButton.querySelector("span").innerHTML = "upload"
   })
 }
 
