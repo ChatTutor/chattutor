@@ -130,7 +130,13 @@ msgerForm.addEventListener("submit", handleFormSubmit);
 document.addEventListener("DOMContentLoaded", loadConversationFromLocalStorage);
 // REMVE ALL from collections saved in local storage + clean up local storage
 document.addEventListener("DOMContentLoaded", clearCollectionsFromLocalStorage)
-
+window.onbeforeunload = function(){
+  clearCollectionsFromLocalStorage()
+}
+// OR
+window.addEventListener("beforeunload", function(e){
+  clearCollectionsFromLocalStorage()
+});
 document.addEventListener('DOMContentLoaded', setThemeOnRefresh)
 
 document.addEventListener('DOMContentLoaded', windowIsResizing)
