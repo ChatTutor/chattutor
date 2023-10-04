@@ -1,6 +1,7 @@
 // Constants for embed mode and UI elements
 import {lightMode, darkMode, setProperties} from "./constants.js";
 import {alert} from "./nicealert.js"
+import { clearFileInput } from "./fileupload.js";
 const embed_mode = false;
 const clear = document.getElementById('clearBtnId');
 const clearContainer = get('.clear-btn-container');
@@ -37,6 +38,7 @@ const uploadZipButton = document.getElementById('uploadBtnId')
 const sendUploadedZipButton = document.getElementById('sendformupload')
 const uploadZipPapersForm = document.getElementById('uploadFileForm')
 const selectUploadedCollection = document.getElementById('selectUploadedCollection')
+const clearformupload = document.getElementById("clearformupload")
 let uploadedCollections = []
 messageInput.addEventListener('input', (event) => {
   console.log('kajk')
@@ -204,8 +206,6 @@ function toggleDarkMode() {
   }
   localStorage.setItem('theme', theme)
   setTheme(theme)
-
-
 }
 
 function toggleInterfaceMode() {
@@ -441,8 +441,9 @@ function updateLastMessage(newContent) {
 
 }
 
-
-
+clearformupload.addEventListener("click", ()=>{
+  clearFileInput(document.querySelector("#upload"))
+})
 
 function addMessage(role, message, updateConversation) {
     let role_name
@@ -563,7 +564,10 @@ function uploadFile() {
 
     }
 
+
+
     sendUploadedZipButton.querySelector("span").innerHTML = "upload"
+    clearFileInput(document.querySelector("#upload"))
   })
 }
 
