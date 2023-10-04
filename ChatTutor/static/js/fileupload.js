@@ -8,7 +8,12 @@ function onFile() {
 
     upload.parentNode.querySelector("span").innerHTML = ""
     Array.from(upload.files).forEach(f => {
-        upload.parentNode.querySelector("span").innerHTML += f.name + ", "
+        var nm = f.name
+        if (nm.length > 20) {
+            nm = nm.substr(0, 16) + "..."
+        }
+            
+        upload.parentNode.querySelector("span").innerHTML += nm + ", "
     })
 }
 
