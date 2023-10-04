@@ -30,6 +30,19 @@ upload_files.forEach(upload => {
     }, false);
 })
 
+export function clearFileInput(ctrl) {
+    try {
+        ctrl.value = null;
+    } catch(ex) { }
+    if (ctrl.value) {
+        ctrl.parentNode.replaceChild(ctrl.cloneNode(true), ctrl);
+    }
+
+    try{
+        ctrl.parentNode.querySelector("span").innerHTML = `<span>Upload File</span>`
+    } catch (ex) { }
+}
+
 {/* <div class="area">
     <input type="file" class="multiple-upload" />
 </div> */}

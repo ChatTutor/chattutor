@@ -123,22 +123,31 @@
                       <h1>Upload Files</h1>
                       <div class="pswd-inputarea col">
                           <form id="uploadFileForm" class="no-enter" enctype="multipart/form-data">
-                              <div class="input-group">
-                                  <label for="files">Select file/files</label>
-                                  <!-- <input type="file" style="width: 100% !important; margin-bottom: 20px" id="Zip File" name="file" class="msger-input"> -->
+                                <div class="input-group">
+                                    <label for="files">Select file/files</label>
+                                    <!-- <input type="file" style="width: 100% !important; margin-bottom: 20px" id="Zip File" name="file" class="msger-input"> -->
                                     <div class="area">
                                         <span>Upload File</span>
                                         <input type="file" class="multiple-upload" id="upload" name="file" multiple/>
                                     </div>
-                                  <label for="name">Set a name</label>
-                                  <input type="text" style="width: 100% !important" id="name" name="name" class="pswd-input">
+                                    <label for="name">Set a name</label>
+                                    <input type="text" style="width: 100% !important" id="name" name="name" class="pswd-input">
                                 </div>
                           </form>
-                          <button class="send nice-btn theme-button" id="sendformupload">
-                            <span class="nice-btn material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
-                                upload
-                            </span>
-                          </button>
+                          <div class="row">
+                            <button class="send nice-btn theme-button" id="sendformupload">
+                              <span class="nice-btn material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
+                                  upload
+                              </span>
+                            </button>
+
+                            <button class="send nice-btn theme-button" id="clearformupload">
+                              <span class="nice-btn material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
+                                  close
+                              </span>
+                            </button>
+
+                          </div>
                       </div>
 
                 </section>        
