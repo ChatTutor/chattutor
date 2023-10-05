@@ -244,7 +244,7 @@ def print_for_debug():
         # This accesses the contents in the database ( for messages )
         response = cur.execute("SELECT * from lmessages")
         # response = cur.execute('SELECT * from lchats') -- this is for chats.
-        print("DC:", response.fetchall())
+        # print("DC:", response.fetchall())
 
 
 def insert_message(a_message):
