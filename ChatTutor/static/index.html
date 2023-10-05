@@ -1,102 +1,28 @@
 <!DOCTYPE html>
-
 <html lang="en">
-	<head>
-        <link rel="stylesheet" href="./style.css">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-		<meta name="viewport" content="initial-scale=1, width=device-width">
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script type="text/javascript" id="MathJax-script" async
-  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-</script>
-<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn" crossorigin="anonymous">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx" crossorigin="anonymous"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous" 
-    onload="renderMathInElement(document.body);"></script> -->
-		<title> flask </title>
-	</head>
-	<body>
-		<section class="msger">
-            <div class="msg-header-helper">
-                <header class="msger-header">
-
-                  <div class="msger-header-title">
-                    <i class="fas fa-comment-alt"></i> ChatTutor
-                      <a href="display_db.html" style="color: var(--left-msg-txt)">See db</a>
-                  </div>
-                  <div class="msger-header-options">
-                    <span><i class="fas fa-cog"></i></span>
-                  </div>
-
-
-                    <div class="button-div" id="themeBtnDiv">
-                        <button class="theme-button" id="themeBtn">Toggle theme</button>
-                    </div>
-
-                </header>
-            </div>
-
-            <main class="msger-chat">
-
-                <div class="msg left-msg" style="margin-top: 50px !important;">
-                    <div class="msg-bgd">
-                        <div
-                        class="msg-img"
-                        id="msgImg"
-                        style="background-image: url(https://static.thenounproject.com/png/2216285-200.png)"
-                        ></div>
-
-                        <div class="msg-bubble">
-                            <div class="msg-info">
-                                <div class="msg-info-name">ChatTutor</div>
-                            </div>
-
-                            <div class="msg-text">
-                                Welcome to ChatTutor, feel free to ask any questions about this lesson.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="clear-btn-container" id="clearContId">
-                    <!-- Name must be change but DO NOT DELETE ( the messages get added before this container ) -->
-                </div>
-                <div style="background-color: black;" id="scrollHelper">
-                    <!-- Helper for keeping scrolling  -->
-                </div>
-            </main>
-            <form class="msger-inputarea">
-              <input type="text" class="msger-input" placeholder="Enter your message..." id="msgInput">
-              <button type="submit" class="msger-send-btn" id="sendBtn">
-
-                  <span class="material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
-                    send
-                  </span>
-              </button>
-                <button class="clear-btn" id="clearBtnId">
-                    <span class="material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
-                        delete_forever
-                    </span>
-                </button>
-
-                <button class="stop-gen-btn" id="stopBtnId">
-                    <span class="material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
-                        stop_circle
-                    </span>
-                </button>
-            </form>
-          </section>
-          <script src="index.js" type="module"></script>
-          <script>
-            MathJax = {
-              tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]
-              },
-              svg: {
-                fontCache: 'global'
-              }
-            };
-          </script>
-      
-	</body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style/style.css">
+</head>
+<body>
+    <div class="col mainpage">
+        <h1>ChatTutor</h1>
+        <button class="link-button theme-button row">
+            <img src="data:image/png;base64,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">
+            <a href="/cqn">Center for Quantum Networks Trained bot</a>
+        </button>
+        <button class="link-button theme-button row">
+            <img src="https://static.vecteezy.com/system/resources/thumbnails/013/315/779/small/science-paper-illustration-on-a-background-premium-quality-symbols-icons-for-concept-and-graphic-design-vector.jpg" width="30" height="30">
+            <a href="/chattutor">ChatTutor that learns from your input files</a>
+        </button>
+        <!-- https://dkeathley.github.io/S23-6.2410-lab/quNV-Jupyter/T3E3-PARKOUR-Quantum-Sensing-with-Solid-State-Spins.html -->
+        
+        <button class="link-button theme-button row">
+            <img src="https://img.freepik.com/premium-vector/social-media-business-icons_155083-617.jpg?w=360" width="30" height="30">
+            <a href="https://dkeathley.github.io/S23-6.2410-lab/quNV-Jupyter/T3E3-PARKOUR-Quantum-Sensing-with-Solid-State-Spins.html">Embedded form of ChatTutor in an MIT course</a>
+        </button>
+    </div>
+</body>
 </html>
-

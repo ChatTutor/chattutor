@@ -1,10 +1,8 @@
 import openai
 import tiktoken  # Importing tiktoken to count tokens in a string
 
-"""
-The system message provides context to the AI model about its role and how it should respond.
-"""
-system_message = """
+class Tutor:
+    system_message = """
 You are embedded into the Center for Quantum Networks (CQN) website as an Interactive Research Assistant. Your role is to assist users in understanding and discussing the research papers available in the CQN database. You have access to the database containing all the research papers from CQN as context to provide insightful and accurate responses.
 
 - Engage users with polite, concise, and informative replies.
@@ -22,118 +20,144 @@ def ask_question(db, conversation, from_doc=None):
     """Function that responds to an asked question based
     on the current database
 
-    Args:
-        db (VectorDatabase): the db used for the response
-        conversation : List({role: ... , content: ...})
-        from_doc (Doc, optional): Defaults to None.
+        Args:
+            conversation : List({role: ... , content: ...})
+            from_doc (Doc, optional): Defaults to None.
 
-    Yields:
-        chunks of text from the response that are provided as such to achieve
-        a tipewriter effect
-    """
-    print(conversation)
+        Yields:
+            chunks of text from the response that are provided as such to achieve
+            a tipewriter effect
+        """
+        # Ensuring the last message in the conversation is a user's question
+        assert (
+            conversation[-1]["role"] == "user"
+        ), "The final message in the conversation must be a question from the user."
+        conversation = self.truncate_conversation(conversation)
 
-    # Ensuring the last message in the conversation is a user's question
-    assert conversation[-1]["role"] == "user", "The final message in the conversation must be a question from the user."
-    conversation = truncate_conversation(conversation)
+        prompt = conversation[-1]["content"]
 
-    print("truncated conversation:")
-    print(conversation)
+        # Querying the database to retrieve relevant documents to the user's question
+        docs = None
+        if self.embedding_db:
+            docs = self.embedding_db.query(prompt, 6, from_doc)
+            print('DATABASE RESPONSE:', )
 
-    prompt = conversation[-1]["content"]
+        # Creating a chat completion object with OpenAI API to get the model's response
+        messages = conversation
+        if self.embedding_db:
+            messages = [
+                {"role": "system", "content": self.system_message.format(docs=docs)}
+            ] + conversation
+        
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo-16k",
+            messages=messages,
+            temperature=1,
+            frequency_penalty=0.0,
+            presence_penalty=0.0,
+            stream=True,
+        )
 
-    # Querying the database to retrieve relevant documents to the user's question
-    docs = db.query(prompt, 6, from_doc)
-    print('database response:', docs)
+        # For the typewriter effect
+        for chunk in response:
+            yield chunk["choices"][0]["delta"]
 
-    # Creating a chat completion object with OpenAI API to get the model's response
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo-16k",
-        messages=[{"role": "system", "content": system_message.format(docs=docs)}] + conversation,
-        temperature=1,
-        frequency_penalty=0.0,
-        presence_penalty=0.0,
-        stream=True
-    )
-    
-    # For the typewriter effect
-    for chunk in response:
-        yield chunk['choices'][0]['delta']
+    def count_tokens(self, string: str, encoding_name="cl100k_base") -> int:
+        """Counting the number of tokens in a string using the specified encoding
 
+        Args:
+            string (str):
+            encoding_name (str, optional): Defaults to 'cl100k_base'.
 
-def count_tokens(string: str, encoding_name='cl100k_base') -> int:
-    """Counting the number of tokens in a string using the specified encoding
+        Returns:
+            int: number of tokens
+        """
+        encoding = tiktoken.get_encoding(encoding_name)
+        num_tokens = len(encoding.encode(string))
+        return num_tokens
 
-    Args:
-        string (str):
-        encoding_name (str, optional): Defaults to 'cl100k_base'.
+    def truncate_conversation(self, conversation, token_limit=10000):
+        """Truncates the conversation to fit within the token limit
 
-    Returns:
-        int: number of tokens
-    """
-    encoding = tiktoken.get_encoding(encoding_name)
-    num_tokens = len(encoding.encode(string))
-    return num_tokens
+        Args:
+            conversation (List({role: ... , content: ...})): the conversation with the bot
+            token_limit (int, optional): Defaults to 10000.
 
-def truncate_conversation(conversation, token_limit=10000):
-    """Truncates the conversation to fit within the token limit
+        Returns:
+            List({role: ... , content: ...}): the truncated conversation
+        """
+        tokens = 0
+        for i in range(len(conversation) - 1, -1, -1):
+            tokens += self.count_tokens(conversation[i]["content"])
+            if tokens > token_limit:
+                print("reached token limit at index", i)
+                return conversation[i + 1 :]
+        print("total tokens:", tokens)
+        return conversation
 
-    Args:
-        conversation (List({role: ... , content: ...})): the conversation with the bot
-        token_limit (int, optional): Defaults to 10000.
+    def simple_gpt(self, system_message, user_message):
+        """Getting model's response for a simple conversation consisting of a system message and a user message
 
-    Returns:
-        List({role: ... , content: ...}): the truncated conversation
-    """
-    tokens = 0
-    for i in range(len(conversation) - 1, -1, -1):
-        tokens += count_tokens(conversation[i]["content"])
-        if tokens > token_limit: 
-            print("reached token limit at index", i)
-            return conversation[i+1:]
-    print("total tokens:", tokens)
-    return conversation
+        Args:
+            system_message (str)
+            user_message (str)
 
-def simple_gpt(system_message, user_message):
-    """Getting model's response for a simple conversation consisting of a system message and a user message
+        Returns:
+            string : the first choice of response of the model
+        """
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo-16k",
+            messages=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": user_message},
+            ],
+            temperature=1,
+            frequency_penalty=0.0,
+            presence_penalty=0.0,
+            stream=True,
+        )
 
-    Args:
-        system_message (str)
-        user_message (str)
+        return response.choices[0].message.content
 
-    Returns:
-        string : the first choice of response of the model
-    """
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo-16k",
-        messages=[
-            {"role": "system", "content": system_message},
-            {"role": "user", "content": user_message}
-        ],
-        temperature=1,
-        frequency_penalty=0.0,
-        presence_penalty=0.0,
-        stream=True
-    )
+    def conversation_gpt(self, system_message, conversation):
+        """Getting model's response for a conversation with multiple messages
 
-    return response.choices[0].message.content
+        Args:
+            system_message (str)
+            conversation (List({role: ... , content: ...}))
 
-def conversation_gpt(system_message, conversation):
-    """Getting model's response for a conversation with multiple messages
+        Returns:
+            string : the first choice of response of the model
+        """
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo-16k",
+            messages=[{"role": "system", "content": system_message}] + conversation,
+            temperature=1,
+            frequency_penalty=0.0,
+            presence_penalty=0.0,
+            stream=True,
+        )
+        return response.choices[0].message.content
 
-    Args:
-        system_message (str)
-        conversation (List({role: ... , content: ...}))
+    def stream_response_generator(self, conversation, from_doc):
+        """Returns the generator that generates the response stream of ChatTutor.
 
-    Returns:
-        string : the first choice of response of the model
-    """
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo-16k",
-        messages=[{"role": "system", "content": system_message}] + conversation,
-        temperature=1,
-        frequency_penalty=0.0,
-        presence_penalty=0.0,
-        stream=True
-    )
-    return response.choices[0].message.content
+        Args:
+            conversation (List({role: ... , content: ...})): the current conversation
+            from_doc: specify document if necesary, otherwise set to None
+        """
+
+        def generate():
+            # This function generates responses to the questions in real-time and yields the response
+            # along with the time taken to generate it.
+            chunks = ""
+            start_time = time.time()
+            for chunk in self.ask_question(conversation, from_doc):
+                chunk_content = ""
+                if "content" in chunk:
+                    chunk_content = chunk["content"]
+                chunks += chunk_content
+                chunk_time = time.time() - start_time
+                yield f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n\n"
+
+        return generate
