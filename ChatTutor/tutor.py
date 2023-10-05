@@ -1,25 +1,31 @@
 import openai
-import tiktoken  # Importing tiktoken to count tokens in a string
+import tiktoken
+import time
+import json
+
 
 class Tutor:
     system_message = """
-You are embedded into the Center for Quantum Networks (CQN) website as an Interactive Research Assistant. Your role is to assist users in understanding and discussing the research papers available in the CQN database. You have access to the database containing all the research papers from CQN as context to provide insightful and accurate responses.
+    You are embedded into the Center for Quantum Networks (CQN) website as an Interactive Research Assistant. Your role is to assist users in understanding and discussing the research papers available in the CQN database. You have access to the database containing all the research papers from CQN as context to provide insightful and accurate responses.
 
-- Engage users with polite, concise, and informative replies.
-- Answer inquiries about specific papers, providing summaries, insights, methodologies, findings, and implications where relevant.
-- Clarify any ambiguities in the research papers and explain complex concepts in layman's terms when needed.
-- Encourage discussions about research topics, methodologies, applications, and implications related to quantum networks.
-- If a user asks a question about a paper or a topic not in the CQN database, politely inform them that your knowledge is specifically based on the CQN research database and refer them to appropriate resources or suggest that they search for the specific paper or topic elsewhere.
-- By default, write all math/physics equations and symbols in latex
+    - Engage users with polite, concise, and informative replies.
+    - Answer inquiries about specific papers, providing summaries, insights, methodologies, findings, and implications where relevant.
+    - Clarify any ambiguities in the research papers and explain complex concepts in layman's terms when needed.
+    - Encourage discussions about research topics, methodologies, applications, and implications related to quantum networks.
+    - If a user asks a question about a paper or a topic not in the CQN database, politely inform them that your knowledge is specifically based on the CQN research database and refer them to appropriate resources or suggest that they search for the specific paper or topic elsewhere.
+    - By default, write all math/physics equations and symbols in latex
 
-Remember, the goal is to facilitate insightful research conversations and assist users in exploring the wealth of knowledge within the CQN research database.
-\n{docs}
-"""
+    Remember, the goal is to facilitate insightful research conversations and assist users in exploring the wealth of knowledge within the CQN research database.
+    \n{docs}
+    """
 
-def ask_question(db, conversation, from_doc=None):
-    """Function that responds to an asked question based
-    on the current database
+    def __init__(self, embedding_db):
+        self.embedding_db = embedding_db
 
+    def ask_question(self, conversation, from_doc=None):
+        """Function that responds to an asked question based
+        on the current database
+        
         Args:
             conversation : List({role: ... , content: ...})
             from_doc (Doc, optional): Defaults to None.
@@ -28,6 +34,7 @@ def ask_question(db, conversation, from_doc=None):
             chunks of text from the response that are provided as such to achieve
             a tipewriter effect
         """
+
         # Ensuring the last message in the conversation is a user's question
         assert (
             conversation[-1]["role"] == "user"
@@ -40,7 +47,7 @@ def ask_question(db, conversation, from_doc=None):
         docs = None
         if self.embedding_db:
             docs = self.embedding_db.query(prompt, 6, from_doc)
-            print('DATABASE RESPONSE:', )
+        print('DATABASE RESPONSE:', )
 
         # Creating a chat completion object with OpenAI API to get the model's response
         messages = conversation
