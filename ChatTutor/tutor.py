@@ -47,7 +47,7 @@ class Tutor:
         docs = None
         if self.embedding_db:
             docs = self.embedding_db.query(prompt, 6, from_doc)
-        print('DATABASE RESPONSE:', )
+        print('DATABASE RESPONSE:', docs)
 
         # Creating a chat completion object with OpenAI API to get the model's response
         messages = conversation
