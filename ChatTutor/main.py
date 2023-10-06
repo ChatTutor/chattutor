@@ -7,8 +7,10 @@ from extensions import (
     user_db,
     get_random_string,
     generate_unique_name,
+    stream_text,
 )  # Importing the database object from extensions module
 from tutor import Tutor
+from tutor import cqn_system_message, default_system_message
 import json
 import time
 import os
@@ -148,21 +150,23 @@ def ask():
     data = request.json
     conversation = data["conversation"]
     collection_name = data.get("collection")
-    user_collection = data.get('user_collection')
+    collection_desc = data.get("description")
+    multiple = data.get('multiple')
     
     from_doc = data.get("from_doc")
     print(collection_name)
     # Logging whether the request is specific to a document or can be from any document
-    chattutor = Tutor(None)
+    chattutor = Tutor(db)
     if collection_name:
-        db.load_datasource(collection_name)
-        if user_collection:
-            user_db.load_datasource(user_collection)
-            chattutor = Tutor(db, user_db)
+        if multiple == None:
+            name = collection_desc if collection_desc else ""
+            chattutor.add_collection(collection_name, name) 
         else:
-            chattutor = Tutor(db)
-            
-
+            chattutor = Tutor(db, system_message=cqn_system_message)
+            for cname in collection_name:
+                message = f"CQN papers " if cname == "test_embedding" else """Use the following user uploaded files to provide information if asked about content from them. 
+                User uploaded files """
+                chattutor.add_collection(cname, message) 
     generate = chattutor.stream_response_generator(conversation, from_doc)
     return Response(stream_with_context(generate()), content_type="text/event-stream")
 

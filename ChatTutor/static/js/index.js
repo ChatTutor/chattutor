@@ -320,10 +320,11 @@ function fetchClearCollection(collname) {
 
 
 function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding") {
-  let collection_name = "test_embedding"
-  let selected_collection_name = "test_embedding"
+  let collection_name = NaN
+  let selected_collection_name = NaN
   if (selectUploadedCollection && !selectUploadedCollection.options[ selectUploadedCollection.selectedIndex ]) {
     collection_name = NaN
+    console.log("NASPA")
   }
   else if (selectUploadedCollection) {
     selected_collection_name = selectUploadedCollection.options[ selectUploadedCollection.selectedIndex ].value

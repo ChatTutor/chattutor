@@ -326,8 +326,8 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
   }
   const args = {
     "conversation": conversation,
-    "user_collection": selected_collection_name,
-    "collection": collection_name
+    "multiple": true,
+    "collection": [collection_name, selected_collection_name]
   }
   if (embed_mode) args.from_doc = original_file
   fetch('/ask', {
