@@ -580,8 +580,9 @@ select {
 }
 
 .link-button:hover{
-  box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+  box-shadow: rgb(38, 57, 77) 5px 15px 25px -10px;
   transform: scale(1.1);
+  background-color: #eaedee;
 }
 
 .link-button a{
