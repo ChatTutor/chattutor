@@ -47,11 +47,11 @@ class Tutor:
         # Querying the database to retrieve relevant documents to the user's question
         docs = ''
         if self.embedding_db:
-            collection_db_response = 'CQN database context: ' + self.embedding_db.query(prompt, 6, from_doc)
+            collection_db_response = 'CQN database context: ' + self.embedding_db.query(prompt, 3, from_doc)
             docs += collection_db_response + '\n'
             print('COLLECTION DB RESPONSE:', collection_db_response)
         if self.user_db:
-            user_db_response = 'Additional user-uploaded file context: ' + self.user_db.query(prompt,6, from_doc)
+            user_db_response = 'Additional user-uploaded file context: ' + self.user_db.query(prompt, 3, from_doc)
             docs += user_db_response
             print('USER DB RESPONSE:', user_db_response)
 
