@@ -251,10 +251,10 @@ function handleFormSubmit(event) {
   event.preventDefault();
   const msgText = msgerInput.value;
   if (!msgText) return;
-  if (selectUploadedCollection && !selectUploadedCollection.options[ selectUploadedCollection.selectedIndex ]) {
-    alert("Please upload some files for the tutor to learn from!")
-    return
-  }
+  // if (selectUploadedCollection && !selectUploadedCollection.options[ selectUploadedCollection.selectedIndex ]) {
+  //   alert("Please upload some files for the tutor to learn from!")
+  //   return
+  // }
 
   // Disable the send button
   sendBtn.disabled = true;
@@ -317,17 +317,16 @@ function fetchClearCollection(collname) {
 function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding") {
   let collection_name = "test_embedding"
   let selected_collection_name = "test_embedding"
-  if (selectUploadedCollection && !selectUploadedCollection.options[ selectUploadedCollection.selectedIndex ]) {
-    alert("Please upload some files for the tutor to learn from! Click on menu!")
-    return
-  }
-  if (selectUploadedCollection) {
+  // if (selectUploadedCollection && !selectUploadedCollection.options[ selectUploadedCollection.selectedIndex ]) {
+  //   alert("Please upload some files for the tutor to learn from! Click on menu!")
+  //   return
+  // }
+  if (selectUploadedCollection.options.length > 0) {
     selected_collection_name = selectUploadedCollection.options[ selectUploadedCollection.selectedIndex ].value
-  
   }
-  collection_name = selected_collection_name
   const args = {
     "conversation": conversation,
+    "user_collection": selected_collection_name,
     "collection": collection_name
   }
   if (embed_mode) args.from_doc = original_file
