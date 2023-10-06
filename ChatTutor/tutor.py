@@ -94,6 +94,8 @@ class Tutor:
                 {"role": "system", "content": self.system_message.format(docs=docs)}
             ] + conversation
         print(messages, f"Docs: |{docs}|")
+        print('NUMBER OF INPUT TOKENS:', len(tiktoken.get_encoding('cl100k_base').encode(docs)))
+
         error = 0
         try:
             response = openai.ChatCompletion.create(
