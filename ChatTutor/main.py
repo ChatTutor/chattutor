@@ -152,8 +152,10 @@ def ask():
     collection_name = data.get("collection")
     collection_desc = data.get("description")
     multiple = data.get('multiple')
-    
     from_doc = data.get("from_doc")
+    selected_model = data.get('selectedModel')
+
+    print('SELECTED MODEL:', selected_model)
     print(collection_name)
     # Logging whether the request is specific to a document or can be from any document
     chattutor = Tutor(db)
@@ -167,7 +169,7 @@ def ask():
                 message = f"CQN papers " if cname == "test_embedding" else """Use the following user uploaded files to provide information if asked about content from them. 
                 User uploaded files """
                 chattutor.add_collection(cname, message) 
-    generate = chattutor.stream_response_generator(conversation, from_doc)
+    generate = chattutor.stream_response_generator(conversation, from_doc, selected_model)
     return Response(stream_with_context(generate()), content_type="text/event-stream")
 
 @app.route('/addtodb', methods=["POST", "GET"])

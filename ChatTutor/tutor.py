@@ -57,7 +57,7 @@ class Tutor:
         """
         self.collections[name] = desc
 
-    def ask_question(self, conversation, from_doc=None):
+    def ask_question(self, conversation, from_doc=None, selectedModel='gpt-3.5-turbo-16k'):
         """Function that responds to an asked question based
         on the current database and the loaded collections from the database
         
@@ -97,7 +97,7 @@ class Tutor:
         error = 0
         try:
             response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo-16k",
+                model=selectedModel,
                 messages=messages,
                 temperature=1,
                 frequency_penalty=0.0,
@@ -196,7 +196,7 @@ class Tutor:
         )
         return response.choices[0].message.content
 
-    def stream_response_generator(self, conversation, from_doc):
+    def stream_response_generator(self, conversation, from_doc, selectedModel='gpt-3.5-turbo-16k'):
         """Returns the generator that generates the response stream of ChatTutor.
 
         Args:
@@ -209,7 +209,7 @@ class Tutor:
             # along with the time taken to generate it.
             chunks = ""
             start_time = time.time()
-            resp = self.ask_question(conversation, from_doc)
+            resp = self.ask_question(conversation, from_doc, selectedModel)
             for chunk in resp:
                 chunk_content = ""
                 if "content" in chunk:

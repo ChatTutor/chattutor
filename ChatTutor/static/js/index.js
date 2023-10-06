@@ -25,6 +25,7 @@ var conversation = [];
 var original_file = "";
 let lastMessageId = null;
 var stopGeneration = false
+let selectedModel = document.getElementById('modelDropdown').value
 
 
 // Get the send button
@@ -39,6 +40,7 @@ const sendUploadedZipButton = document.getElementById('sendformupload')
 const uploadZipPapersForm = document.getElementById('uploadFileForm')
 const selectUploadedCollection = document.getElementById('selectUploadedCollection')
 const clearformupload = document.getElementById("clearformupload")
+const modelDropdown = document.getElementById('modelDropdown')
 let uploadedCollections = []
 messageInput.addEventListener('input', (event) => {
   console.log('kajk')
@@ -165,6 +167,14 @@ document.addEventListener('DOMContentLoaded', windowIsResizing)
 themeBtn.addEventListener('click', toggleDarkMode)
 
 stopGenButton.addEventListener('click', stopGenerating)
+
+modelDropdown.addEventListener('change', handleModelDropdownChange);
+
+function handleModelDropdownChange(event) {
+  selectedModel = event.target.value;
+  console.log("Selected model:", selectedModel);
+}
+
 
 // I dodn't know if i should install uuidv4 using npm or what should i use
 function uuidv4() {
@@ -340,6 +350,9 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
       "conversation": conversation
     }
   }
+
+  args.selectedModel = selectedModel
+
   if (embed_mode) args.from_doc = original_file
   fetch('/ask', {
     method: 'POST',
