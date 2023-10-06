@@ -31,3 +31,18 @@ def generate_unique_name(desc):
         .replace(":", "n")
         .replace("-", "d")
     )
+
+def stream_text(text, chunk_size = 4, asdict=True):
+    def generate():
+        i = 0
+        d = ""
+        for c in text:
+            i += 1
+            d = d + c
+            if i % chunk_size == 0:
+                if asdict:
+                    yield {"content":d}
+                else:
+                    yield d
+                d = ""
+    return generate()

@@ -2,10 +2,8 @@ import openai
 import tiktoken
 import time
 import json
-
-
-class Tutor:
-    system_message = """
+from extensions import stream_text
+cqn_system_message = """
     You are embedded into the Center for Quantum Networks (CQN) website as an Interactive Research Assistant. Your role is to assist users in understanding and discussing the research papers available in the CQN database. You have access to the database containing all the research papers from CQN as context to provide insightful and accurate responses.
 
     - Engage users with polite, concise, and informative replies.
@@ -19,13 +17,49 @@ class Tutor:
     \n{docs}
     """
 
-    def __init__(self, embedding_db, user_db=None):
+default_system_message = "You are an AI that helps students with questions about a course. Do your best to help the student with their question, using the following helpful context information to inform your response:\n{docs}"
+
+
+class Tutor:
+    """
+        Tutor class
+        
+        Args:
+            embedding_db (VectorDatabase): the db with any or no source loaded 
+            embedding_db_name (str): Description of embedding_db.
+            system_message (str)
+
+        Return:
+            Tutor object with no collections to load from. Use add_collection to add
+            collection to load from. 
+    """
+    def __init__(self, embedding_db, embedding_db_name="CQN database", system_message=default_system_message):
+        """ 
+            Args:
+                embedding_db (VectorDatabase): the db with any or no source loaded 
+                embedding_db_name (str): Description of embedding_db.
+                system_message (str)
+
+            Return:
+                Tutor object with no collections to load from. Use add_collection to add
+                collection to load from. 
+        """
         self.embedding_db = embedding_db
-        self.user_db = user_db
+        self.embedding_db_name = embedding_db_name
+        self.collections = {}
+        self.system_message = system_message
+    
+    def add_collection(self, name, desc):
+        """Adds a collection to self.collections
+            Args:
+                name (str): name of the collection to load form the chromadb (embedding_db)
+                desc (str): description prompted to the model
+        """
+        self.collections[name] = desc
 
     def ask_question(self, conversation, from_doc=None):
         """Function that responds to an asked question based
-        on the current database
+        on the current database and the loaded collections from the database
         
         Args:
             conversation : List({role: ... , content: ...})
@@ -46,35 +80,45 @@ class Tutor:
 
         # Querying the database to retrieve relevant documents to the user's question
         docs = ''
-        if self.embedding_db:
-            collection_db_response = 'CQN database context: ' + self.embedding_db.query(prompt, 3, from_doc)
-            docs += collection_db_response + '\n'
-            print('COLLECTION DB RESPONSE:', collection_db_response)
-        if self.user_db:
-            user_db_response = 'Additional user-uploaded file context: ' + self.user_db.query(prompt, 3, from_doc)
-            docs += user_db_response
-            print('USER DB RESPONSE:', user_db_response)
-
+        for coll_name, coll_desc in self.collections.items():
+            if self.embedding_db:
+                self.embedding_db.load_datasource(coll_name)
+                collection_db_response = f'{coll_desc} context: ' + self.embedding_db.query(prompt, 3, from_doc)
+                docs += collection_db_response + '\n'
+                print('#### COLLECTION DB RESPONSE:', collection_db_response)
+        print("\n\n\n--------SYSTEM MESSAGE", self.system_message, len(self.collections), self.collections, self.embedding_db)
         # Creating a chat completion object with OpenAI API to get the model's response
         messages = conversation
-        if self.embedding_db:
+        if self.embedding_db and len(self.collections) > 0:
             messages = [
                 {"role": "system", "content": self.system_message.format(docs=docs)}
             ] + conversation
+        print(messages, f"Docs: |{docs}|")
+        error = 0
+        try:
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo-16k",
+                messages=messages,
+                temperature=1,
+                frequency_penalty=0.0,
+                presence_penalty=0.0,
+                stream=True,
+            )
         
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo-16k",
-            messages=messages,
-            temperature=1,
-            frequency_penalty=0.0,
-            presence_penalty=0.0,
-            stream=True,
-        )
 
-        # For the typewriter effect
-        for chunk in response:
-            yield chunk["choices"][0]["delta"]
-
+            # For the typewriter effect
+            for chunk in response:
+                yield chunk["choices"][0]["delta"]
+        except:
+            error = 1
+            yield {"content": """Sorry, I am not able to provide a response. 
+                                
+                                One of three things happened:
+                                    - The context you provided was too wide, try to be more concise.
+                                    - The files you uploaded were too large
+                                    - I got disconnected from the server
+                                """}
+            
     def count_tokens(self, string: str, encoding_name="cl100k_base") -> int:
         """Counting the number of tokens in a string using the specified encoding
 
@@ -165,7 +209,8 @@ class Tutor:
             # along with the time taken to generate it.
             chunks = ""
             start_time = time.time()
-            for chunk in self.ask_question(conversation, from_doc):
+            resp = self.ask_question(conversation, from_doc)
+            for chunk in resp:
                 chunk_content = ""
                 if "content" in chunk:
                     chunk_content = chunk["content"]

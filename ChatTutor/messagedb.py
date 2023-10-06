@@ -158,7 +158,7 @@ class MessageDB:
 
                 if current_message['clear_number'] != prev_message['clear_number']:
                     chat_header = f"""
-                        Cleared {clear_number}
+                        Cleared {clear_number} from id {chat_id}
                     """
             else:
                 chat_header = f"""
