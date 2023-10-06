@@ -110,15 +110,33 @@ if(embed_mode) {
   setupEmbedMode();
 }
 
+function getFormattedIntegerFromDate() {
+  let d = Date.now()
+}
+
+function increaseClearNumber() {
+  let clnr = getClearNumber()
+  let clear_number = parseInt(clnr)
+  localStorage.setItem('clear_number', `${clear_number+1}`)
+}
+
+function resetClearNumber() {
+  localStorage.setItem('clear_number', '0')
+}
+
+function getClearNumber() {
+  return localStorage.getItem('clear_number')
+}
+
 function uploadMessageToDB(msg, chat_k) {
     if(msg.content === "") {
         return
     }
-    const data_ = {content: msg.content, role: msg.role, chat_k: chat_k}
+    const data_ = {content: msg.content, role: msg.role, chat_k: chat_k, time_created: `${Date.now()}`, clear_number: getClearNumber()}
     console.log(`DATA: ${JSON.stringify(data_)} `)
     fetch('/addtodb', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data_)})
         .then(() =>{
-            console.log('Andu')
+            console.log('adding to db')
         })
 }
 
@@ -185,6 +203,10 @@ function setThemeOnRefresh() {
 
   interfaceTheme = 'normal'
   setTheme('normal')
+
+  if(getClearNumber() == null) {
+    resetClearNumber()
+  }
 
 }
 // helper function

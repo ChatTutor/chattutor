@@ -4,6 +4,7 @@ from flask import stream_with_context, Response, abort, jsonify
 from flask_cors import CORS  # Importing CORS to handle Cross-Origin Resource Sharing
 from extensions import (
     db,
+    user_db,
     get_random_string,
     generate_unique_name,
 )  # Importing the database object from extensions module
@@ -18,6 +19,7 @@ import loader
 from reader import read_filearray, extract_file
 from datetime import datetime
 from messagedb import MessageDB
+# from vectordatabase import VectorDatabase
 
 
 if 'CHATUTOR_GCP' in os.environ: 
@@ -34,6 +36,7 @@ else:
 app = Flask(__name__)
 CORS(app)  # Enabling CORS for the Flask app to allow requests from different origins
 db.init_db()
+user_db.init_db()
 
 messageDatabase = MessageDB(host='34.41.31.71',
                             user='admin',
@@ -145,14 +148,21 @@ def ask():
     data = request.json
     conversation = data["conversation"]
     collection_name = data.get("collection")
+    user_collection = data.get('user_collection')
+    
     from_doc = data.get("from_doc")
     print(collection_name)
     # Logging whether the request is specific to a document or can be from any document
     chattutor = Tutor(None)
     if collection_name:
         db.load_datasource(collection_name)
-        chattutor = Tutor(db)
-    
+        if user_collection:
+            user_db.load_datasource(user_collection)
+            chattutor = Tutor(db, user_db)
+        else:
+            chattutor = Tutor(db)
+            
+
     generate = chattutor.stream_response_generator(conversation, from_doc)
     return Response(stream_with_context(generate()), content_type="text/event-stream")
 
@@ -169,7 +179,6 @@ def addtodb():
                          'time_created': time_created}
     messageDatabase.insert_message(message_to_upload)
     return Response("inserted!", content_type="text")
-
 
 
 @app.route('/getfromdb', methods=["POST", "GET"])
@@ -209,9 +218,6 @@ def compile_chroma_db():
     token = request.headers.get("Authorization")
     if token != openai.api_key:
         abort(401)  # Unauthorized
-
-
-    loader.init_chroma_db()
 
     loader.init_chroma_db()
     return "Chroma db created successfully", 200

@@ -19,8 +19,9 @@ class Tutor:
     \n{docs}
     """
 
-    def __init__(self, embedding_db):
+    def __init__(self, embedding_db, user_db=None):
         self.embedding_db = embedding_db
+        self.user_db = user_db
 
     def ask_question(self, conversation, from_doc=None):
         """Function that responds to an asked question based
@@ -44,10 +45,15 @@ class Tutor:
         prompt = conversation[-1]["content"]
 
         # Querying the database to retrieve relevant documents to the user's question
-        docs = None
+        docs = ''
         if self.embedding_db:
-            docs = self.embedding_db.query(prompt, 6, from_doc)
-        print('DATABASE RESPONSE:', docs)
+            collection_db_response = 'CQN database context: ' + self.embedding_db.query(prompt, 6, from_doc)
+            docs += collection_db_response + '\n'
+            print('COLLECTION DB RESPONSE:', collection_db_response)
+        if self.user_db:
+            user_db_response = 'Additional user-uploaded file context: ' + self.user_db.query(prompt,6, from_doc)
+            docs += user_db_response
+            print('USER DB RESPONSE:', user_db_response)
 
         # Creating a chat completion object with OpenAI API to get the model's response
         messages = conversation
