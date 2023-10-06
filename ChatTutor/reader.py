@@ -152,9 +152,7 @@ def parse_notebook(path: str, doc: Doc, chunk_chars: int, overlap: int):
         return texts_from_str(text_str, doc, chunk_chars, overlap)
 
 
-def parse_pdf(
-    file_contents: str, doc: Doc, chunk_chars: int, overlap: int
-) -> List[Text]:
+def parse_pdf(file_contents: str, doc: Doc, chunk_chars: int, overlap: int) -> List[Text]:
     """Parses a pdf file and generates texts from its content.
 
     Args:
