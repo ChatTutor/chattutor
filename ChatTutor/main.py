@@ -21,8 +21,10 @@ import loader
 from reader import read_filearray, extract_file
 from datetime import datetime
 from messagedb import MessageDB
+import interpreter
 # from vectordatabase import VectorDatabase
 
+interpreter.auto_run = True
 
 if 'CHATUTOR_GCP' in os.environ: 
     openai.api_key = os.environ['OPENAI_API_KEY']
@@ -182,6 +184,45 @@ def ask():
                 chattutor.add_collection(cname, message) 
     generate = chattutor.stream_response_generator(conversation, from_doc, selected_model)
     return Response(stream_with_context(generate()), content_type="text/event-stream")
+
+
+@app.route("/ask_interpreter", methods=["POST", "GET"])
+def ask_interpreter():
+    """Route that facilitates the asking of questions. The response is generated
+    based on an embedding.
+
+    URLParams:
+        conversation (List({role: ... , content: ...})):  snapshot of the current conversation
+        collection: embedding used for vectorization
+    Yields:
+        response: {data: {time: ..., message: ...}}
+    """
+    data = request.json
+    conversation = data["conversation"]
+    collection_name = data.get("collection")
+    collection_desc = data.get("description")
+    multiple = data.get('multiple')
+    from_doc = data.get("from_doc")
+    selected_model = data.get('selectedModel')
+    if selected_model == None:
+        selected_model = 'gpt-3.5-turbo-16k'
+    print('SELECTED MODEL:', selected_model)
+    print(collection_name)
+    # Logging whether the request is specific to a document or can be from any document
+    chattutor = Tutor(db)
+    if collection_name:
+        if multiple == None:
+            name = collection_desc if collection_desc else ""
+            chattutor.add_collection(collection_name, name) 
+        else:
+            chattutor = Tutor(db, system_message=cqn_system_message)
+            for cname in collection_name:
+                message = f"CQN papers " if cname == "test_embedding" else """Use the following user uploaded files to provide information if asked about content from them. 
+                User uploaded files """
+                chattutor.add_collection(cname, message) 
+    generate = chattutor.stream_interpreter_response_generator(conversation, from_doc, selected_model)
+    return Response(stream_with_context(generate()), content_type="text/event-stream")
+
 
 @app.route('/addtodb', methods=["POST", "GET"])
 def addtodb():
