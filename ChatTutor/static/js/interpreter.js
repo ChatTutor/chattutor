@@ -347,7 +347,7 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
 
   args.selectedModel = selectedModel
 
-  fetch('/ask', {
+  fetch('/ask_interpreter', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -359,6 +359,7 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
     let isFirstMessage = true;
     function read() {
       reader.read().then(({ done, value }) => {
+        console.log('content:',accumulatedContent)
         if (done) {
           // Enable the send button when streaming is done
           sendBtn.disabled = false;
@@ -374,7 +375,7 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
           for (var messageIndex in messages) {
               message = messages[messageIndex]
               if (stopGeneration === false) {
-                  const contentToAppend = message.message.content ? message.message.content : "";
+                  const contentToAppend = message.message.message ? message.message.message : "";
                   accumulatedContent += contentToAppend;
               }
               if (isFirstMessage) {
