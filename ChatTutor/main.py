@@ -1,11 +1,16 @@
-import uuid
-
 import flask
 from flask import Flask, request, redirect, send_from_directory, url_for
-from flask import stream_with_context, Response, abort
+from flask import stream_with_context, Response, abort, jsonify
 from flask_cors import CORS  # Importing CORS to handle Cross-Origin Resource Sharing
-from extensions import db  # Importing the database object from extensions module
-import tutor
+from extensions import (
+    db,
+    user_db,
+    get_random_string,
+    generate_unique_name,
+    stream_text,
+)  # Importing the database object from extensions module
+from tutor import Tutor
+from tutor import cqn_system_message, default_system_message
 import json
 import time
 import os
@@ -13,6 +18,10 @@ import os
 import sqlite3
 import openai
 import loader
+from reader import read_filearray, extract_file
+from datetime import datetime
+from messagedb import MessageDB
+# from vectordatabase import VectorDatabase
 
 
 if 'CHATUTOR_GCP' in os.environ: 
@@ -23,21 +32,19 @@ else:
         yamlenv = yaml.safe_load(f)
     keys = yamlenv["env_variables"]
     print(keys)
-    os.environ['OPENAI_API_KEY'] = keys["OPENAI_API_KEY"]
-    os.environ['ACTIVELOOP_TOKEN'] = keys["ACTIVELOOP_TOKEN"]
+    os.environ["OPENAI_API_KEY"] = keys["OPENAI_API_KEY"]
+    os.environ["ACTIVELOOP_TOKEN"] = keys["ACTIVELOOP_TOKEN"]
 
 app = Flask(__name__)
 CORS(app)  # Enabling CORS for the Flask app to allow requests from different origins
 db.init_db()
+user_db.init_db()
 
-# connection = pymysql.connect(
-#     host='localhost',
-#     user='root',
-#     password='password',
-#     db='mydatabase',
-#     charset='utf8mb4',
-#     cursorclass=pymysql.cursors.DictCursor
-# ) ## for mysql server TO BE USED INSTEAD OF 'con'.
+messageDatabase = MessageDB(host='34.41.31.71',
+                            user='admin',
+                            password='AltaParolaPuternica1245',
+                            database='chatmsg',
+                            statistics_database='sessiondat')
 
 # Only for deleting the db when you first access the site. Can be used for debugging
 presetTables1 = """
@@ -66,7 +73,7 @@ def connect_to_database():
     #     cursorclass=pymysql.cursors.DictCursor
     # )
     # return connection
-    return sqlite3.connect('chat_store.sqlite3')
+    return sqlite3.connect("chat_store.sqlite3")
 
 
 messages_table_Sql = """
@@ -81,9 +88,8 @@ CREATE TABLE IF NOT EXISTS lmessages (
 
 def initialize_ldatabase():
     """Creates the tables if they don't exist"""
-    con = sqlite3.connect('chat_store.sqlite3')
+    con = sqlite3.connect("chat_store.sqlite3")
     cur = con.cursor()
-    #if you want to delete the database when a user acceses the site. (For DEBUGGING purposes only
     # cur.execute(presetTables1)
     # cur.execute(presetTables2)
     cur.execute(chats_table_Sql)
@@ -94,157 +100,171 @@ initialize_ldatabase()
 @app.route("/")
 def index():
     """
-        Serves the landing page of the web application which provides
-        the ChatTutor interface. Users can ask the Tutor questions and it will
-        response with information from its database of papers and information.
-        Redirects the root URL to the index.html in the static folder
+    Serves the landing page of the web application which provides
+    the ChatTutor interface. Users can ask the Tutor questions and it will
+    response with information from its database of papers and information.
+    Redirects the root URL to the index.html in the static folder
     """
-    return redirect(url_for('static', filename='index.html'))
+    return redirect(url_for("static", filename="index.html"))
+
+
+@app.route("/cqn")
+def cqn():
+    """
+    Serves the landing page of the web application which provides
+    the ChatTutor interface. Users can ask the Tutor questions and it will
+    response with information from its database of papers and information.
+    Redirects the root URL to the index.html in the static folder
+    """
+    return redirect(url_for("static", filename="cqn.html"))
+
+
+@app.route("/chattutor")
+def chattutor():
+    """
+    Serves the landing page of the web application which provides
+    the ChatTutor interface. Users can ask the Tutor questions and it will
+    response with information from its database of papers and information.
+    Redirects the root URL to the index.html in the static folder
+    """
+    return redirect(url_for("static", filename="chattutor.html"))
 
 @app.route('/static/<path:path>')
 def serve_static(path):
     """Serving static files from the 'static' directory"""
-    return send_from_directory('static', path)
+    return send_from_directory("static", path)
+
+
 
 @app.route("/ask", methods=["POST", "GET"])
 def ask():
     """Route that facilitates the asking of questions. The response is generated
     based on an embedding.
-    
+
     URLParams:
-        conversation (List({role: ... , content: ...})):  snapshot of the current conversation 
+        conversation (List({role: ... , content: ...})):  snapshot of the current conversation
         collection: embedding used for vectorization
     Yields:
         response: {data: {time: ..., message: ...}}
     """
     data = request.json
     conversation = data["conversation"]
-    collection_name = data["collection"]
+    collection_name = data.get("collection")
+    collection_desc = data.get("description")
+    multiple = data.get('multiple')
     from_doc = data.get("from_doc")
+    selected_model = data.get('selectedModel')
+    if selected_model == None:
+        selected_model = 'gpt-3.5-turbo-16k'
+    print('SELECTED MODEL:', selected_model)
+    print(collection_name)
     # Logging whether the request is specific to a document or can be from any document
-    if(from_doc): print("only from doc", from_doc)
-    else: print("from any doc")
-
-    db.load_datasource(collection_name)
-    def generate():
-        # This function generates responses to the questions in real-time and yields the response
-        # along with the time taken to generate it.
-        chunks = ""
-        start_time = time.time()
-        for chunk in tutor.ask_question(db, conversation, from_doc):
-            chunk_content = ""
-            if 'content' in chunk:
-                chunk_content = chunk['content']
-            chunks += chunk_content
-            chunk_time = time.time() - start_time
-            yield f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n\n"
-    return Response(stream_with_context(generate()), content_type='text/event-stream')
+    chattutor = Tutor(db)
+    if collection_name:
+        if multiple == None:
+            name = collection_desc if collection_desc else ""
+            chattutor.add_collection(collection_name, name) 
+        else:
+            chattutor = Tutor(db, system_message=cqn_system_message)
+            for cname in collection_name:
+                message = f"CQN papers " if cname == "test_embedding" else """Use the following user uploaded files to provide information if asked about content from them. 
+                User uploaded files """
+                chattutor.add_collection(cname, message) 
+    generate = chattutor.stream_response_generator(conversation, from_doc, selected_model)
+    return Response(stream_with_context(generate()), content_type="text/event-stream")
 
 @app.route('/addtodb', methods=["POST", "GET"])
 def addtodb():
     data = request.json
-    content = data['content']
-    role = data['role']
-    chat_k_id = data['chat_k']
-    insert_chat(chat_k_id)
-    message_to_upload = {'content': content, 'role': role, 'chat': chat_k_id}
-    insert_message(message_to_upload)
-    print_for_debug()
-    return Response('inserted!', content_type='text')
+    content = data["content"]
+    role = data["role"]
+    chat_k_id = data["chat_k"]
+    clear_number = data['clear_number']
+    time_created = data['time_created']
+    messageDatabase.insert_chat(chat_k_id)
+    message_to_upload = {"content": content, "role": role, "chat": chat_k_id, 'clear_number': clear_number,
+                         'time_created': time_created}
+    messageDatabase.insert_message(message_to_upload)
+    return Response("inserted!", content_type="text")
+
 
 @app.route('/getfromdb', methods=["POST", "GET"])
 def getfromdb():
     data = request.form
-    username = data.get('lusername', 'nan')
-    passcode = data.get('lpassword', 'nan')
+    username = data.get("lusername", "nan")
+    passcode = data.get("lpassword", "nan")
     print(data)
     print(username, passcode)
     if username == 'root' and passcode == 'admin':
-        with connect_to_database() as con:
-            cur = con.cursor()
-            response = cur.execute('SELECT * FROM lmessages JOIN lchats ON lmessages.chat_key = lchats.chat_id')
-            messages_arr = response.fetchall()
-            renderedString = ""
-            for message in messages_arr:
-                role = message[1]
-                content = message[2]
-                chat_id = message[3]
-                msg_html = f"""
-                    <div class="left-msg">
-                        <div class="msg-bgd">
-                          <div class="msg-bubble">
-                            <div class="msg-info">
-                              <div class="msg-info-name">role: {role}</div>
-                              <div class="msg-info-name">chat_key: {chat_id}</div>
-                            </div>
-
-                            <div class="msg-text">content: {content}</div>
-                          </div>
-                        </div>
-                    </div>
-                """
-                renderedString += msg_html
-
-            return flask.render_template('display_messages.html', renderedString=renderedString)
+        messages_arr = messageDatabase.execute_sql(
+            "SELECT * FROM lmessages ORDER BY chat_key, clear_number, time_created", True)
+        renderedString = messageDatabase.parse_messages(messages_arr)
+        return flask.render_template('display_messages.html', renderedString=renderedString)
     else:
-        return flask.render_template_string('Error, please <a href="/static/display_db.html">Go back</a>')
+        return flask.render_template_string(
+            'Error, please <a href="/static/display_db.html">Go back</a>'
+        )
 
 
-@app.route('/exesql', methods=["POST", "GET"])
+@app.route("/exesql", methods=["POST", "GET"])
 def exesql():
     data = request.json
     username = data['lusername']
     passcode = data['lpassword']
     sqlexec = data['lexesql']
     if username == 'root' and passcode == 'admin':
-        with connect_to_database() as con:
-            cur = con.cursor()
-            response = cur.execute(sqlexec)
-            messages_arr = response.fetchall()
-            return Response(f'{messages_arr}', 200)
+        messages_arr = messageDatabase.execute_sql(sqlexec)
+        return Response(f'{messages_arr}', 200)
     else:
-        return Response('fail', 404)
-
-def print_for_debug():
-    """For debugging purposes. Acceses  the content of the lmessages table"""
-    with connect_to_database() as con:
-        cur = con.cursor()
-        # This accesses the contents in the database ( for messages )
-        response = cur.execute('SELECT * from lmessages')
-        # response = cur.execute('SELECT * from lchats') -- this is for chats.
-        print("DC:", response.fetchall())
+        return Response('wrong password', 404)
 
 
 
-def insert_message(a_message):
-    """This inserts a message into the sqlite3 database."""
-    with connect_to_database() as con:
-        cur = con.cursor()
-        insert_format_lmessages = "INSERT INTO lmessages (role, content, chat_key) VALUES (?, ?, ?)"
-        role = a_message['role']
-        content = a_message['content']
-        chat_key = a_message['chat']
-        cur.execute(insert_format_lmessages, (role, content, chat_key))
-
-
-
-def insert_chat(chat_key):
-    """This inserts a chat into the sqlite3 database, ignoring the command if the chat already exists."""
-    with connect_to_database() as con:
-        cur = con.cursor()
-        insert_format_lchats = "INSERT OR IGNORE INTO lchats (chat_id) VALUES (?)"
-        cur.execute(insert_format_lchats, (chat_key,))
-
-@app.route('/compile_chroma_db', methods=['POST'])
+@app.route("/compile_chroma_db", methods=["POST"])
 def compile_chroma_db():
-    token = request.headers.get('Authorization')
-
+    token = request.headers.get("Authorization")
     if token != openai.api_key:
         abort(401)  # Unauthorized
-    
-    loader.init_chroma_db()
 
+    loader.init_chroma_db()
     return "Chroma db created successfully", 200
+
+
+
+@app.route("/upload_data_to_process", methods=["POST"])
+def upload_data_to_process():
+    file = request.files.getlist("file")
+    print(file)
+    data = request.form
+    desc = data["name"].replace(" ", "-")
+    if len(desc) == 0:
+        desc = "untitled" + "-" + get_random_string(5)
+    resp = {"collection_name": False}
+    print("File,", file)
+    if file[0].filename != "":
+        files = []
+        for f in file:
+            files = files + extract_file(f)
+            print(f"Extracted file {f}")
+        texts = read_filearray(files)
+        # Generating the collection name based on the name provided by user, a random string and the current
+        # date formatted with punctuation replaced
+        collection_name = generate_unique_name(desc)
+
+        db.load_datasource(collection_name)
+        db.add_texts(texts)
+        resp["collection_name"] = collection_name
+
+    return jsonify(resp)
+
+
+@app.route("/delete_uploaded_data", methods=["POST"])
+def delete_uploaded_data():
+    data = request.json
+    collection_name = data["collection"]
+    db.delete_datasource_chroma(collection_name)
+    return jsonify({"deleted": collection_name})
+
 
 if __name__ == "__main__":
     app.run(debug=True)  # Running the app in debug mode
