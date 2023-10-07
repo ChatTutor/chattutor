@@ -176,34 +176,25 @@ class Tutor:
         print('NUMBER OF INPUT TOKENS:', len(tiktoken.get_encoding('cl100k_base').encode(docs)))
 
         error = 0
-        try:
-            response = openai.ChatCompletion.create(
-                model=selectedModel,
-                messages=messages,
-                temperature=1,
-                frequency_penalty=0.0,
-                presence_penalty=0.0,
-                stream=True,
-            )
+        # try:
+        interpreter.system_message = interpreter_system_message
+        interpreter.messages = conversation[:-1]
+        prompt = conversation[-1]["content"]
 
-            interpreter.system_message = interpreter_system_message
-            interpreter.messages = conversation[:-1]
-            prompt = conversation[-1]["content"]
-
-            response = interpreter.chat(prompt, stream=True, display=True)
-        
-            # For the typewriter effect
-            for chunk in response:
-                yield chunk
-        except:
-            error = 1
-            yield {"content": """Sorry, I am not able to provide a response. 
+        response = interpreter.chat(prompt, stream=True, display=True)
+    
+        # For the typewriter effect
+        for chunk in response:
+            yield chunk
+        # except:
+        #     error = 1
+        #     yield {"content": """Sorry, I am not able to provide a response. 
                                 
-                                One of three things happened:
-                                    - The context you provided was too wide, try to be more concise.
-                                    - The files you uploaded were too large
-                                    - I got disconnected from the server
-                                """}
+        #                         One of three things happened:
+        #                             - The context you provided was too wide, try to be more concise.
+        #                             - The files you uploaded were too large
+        #                             - I got disconnected from the server
+        #                         """}
             
     def count_tokens(self, string: str, encoding_name="cl100k_base") -> int:
         """Counting the number of tokens in a string using the specified encoding
