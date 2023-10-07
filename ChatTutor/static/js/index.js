@@ -571,7 +571,7 @@ function formatDate(date) {
   return `${h.slice(-2)}:${m.slice(-2)}`;
 }
 
-function uploadFile() {
+export function uploadFile() {
   let myFormData = new FormData(uploadZipPapersForm)
   const formDataObj = {};
   myFormData.forEach((value, key) => (formDataObj[key] = value));
