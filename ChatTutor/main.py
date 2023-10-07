@@ -129,6 +129,16 @@ def chattutor():
     """
     return redirect(url_for("static", filename="chattutor.html"))
 
+@app.route("/interpreter")
+def interpreter():
+    """
+    Serves the landing page of the web application which provides
+    the ChatTutor interface. Users can ask the Tutor questions and it will
+    response with information from its database of papers and information.
+    Redirects the root URL to the index.html in the static folder
+    """
+    return redirect(url_for("static", filename="interpreter.html"))
+
 @app.route('/static/<path:path>')
 def serve_static(path):
     """Serving static files from the 'static' directory"""
