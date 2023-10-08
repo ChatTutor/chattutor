@@ -151,7 +151,7 @@ class Tutor:
 
         prompt = conversation[-1]["content"]
         for coll_name, coll_desc in self.collections.items():
-            if self.embedding_db:
+            if self.embedding_db and not coll_desc.startswith('CQN papers'):
                 self.embedding_db.load_datasource(coll_name)
                 collection_db_response = f'\n {coll_desc} context: ' + self.embedding_db.query(prompt, 3, from_doc)
                 prompt += collection_db_response
