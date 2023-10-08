@@ -22,6 +22,8 @@ from reader import read_filearray, extract_file
 from datetime import datetime
 from messagedb import MessageDB
 import interpreter
+# import markdown
+
 # from vectordatabase import VectorDatabase
 
 interpreter.auto_run = True
