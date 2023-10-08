@@ -148,8 +148,19 @@ class Tutor:
             chunks of text from the response that are provided as such to achieve
             a tipewriter effect
         """
-        print('prompt=',conversation[-1]["content"])
-        for chunk in interpreter.chat(conversation[-1]["content"], stream=True, display=True):
+
+        prompt = conversation[-1]["content"]
+        for coll_name, coll_desc in self.collections.items():
+            if self.embedding_db:
+                self.embedding_db.load_datasource(coll_name)
+                collection_db_response = f'\n {coll_desc} context: ' + self.embedding_db.query(prompt, 3, from_doc)
+                prompt += collection_db_response
+                print('#### COLLECTION DB RESPONSE:', collection_db_response)
+
+
+        print('prompt=', prompt)
+        print('conversation=',conversation)
+        for chunk in interpreter.chat(prompt, stream=True, display=True):
             yield chunk
 
         yield {'message': ''}
