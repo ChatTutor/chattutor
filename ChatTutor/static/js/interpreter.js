@@ -289,6 +289,17 @@ function loadConversationFromLocalStorage() {
   }
   else conversation = []
   MathJax.typesetPromise();
+
+  const elements = document.querySelectorAll('.msg-text');
+
+    elements.forEach(div => {
+        const text = div.innerHTML;
+        const replacedText = text.replace(/```(.*?)```/g, '<span class="codeSegment"><code class="language-python">$1</code></span>'); // specify the language after "language-"
+        div.innerHTML = replacedText;
+    });
+
+    // Initialize Prism.js
+    Prism.highlightAll();
 }
 
 function loadCollectionsFromLocalStorage() {
