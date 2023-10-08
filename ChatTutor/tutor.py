@@ -178,14 +178,14 @@ class Tutor:
         error = 0
         # try:
         interpreter.system_message = interpreter_system_message
+        interpreter.model = 'gpt-4'
         interpreter.messages = conversation[:-1]
         prompt = conversation[-1]["content"]
 
-        response = interpreter.chat(prompt, stream=True, display=True)
-    
         # For the typewriter effect
-        for chunk in response:
+        for chunk in interpreter.chat(prompt, stream=True, display=True):
             yield chunk
+        
         # except:
         #     error = 1
         #     yield {"content": """Sorry, I am not able to provide a response. 
@@ -309,18 +309,18 @@ class Tutor:
         def generate():
             # This function generates responses to the questions in real-time and yields the response
             # along with the time taken to generate it.
-            chunks = ""
+            chunks = ''
             start_time = time.time()
             resp = self.ask_question_interpreter(conversation, from_doc, selectedModel)
             for chunk in resp:
                 # print('ppppp',chunk)
-                chunk_content = ""
-                if "message" in chunk:
-                    # print('sssssss',chunk["message"])
-                    chunk_content = str(chunk["message"])
-                if "code" in chunk:
-                    # print('qqqqqq',chunk['code'])
-                    chunk_content = str(chunk["code"])
+                chunk_content = ''
+                if 'executing' in chunk:
+                    chunk_content = str(chunk['executing']['code'])
+                if 'code' in chunk:
+                    chunk_content = str(chunk['code'])
+                if 'output' in chunk:
+                    chunk_content = str(chunk['output'])
                 chunks += chunk_content
                 chunk_time = time.time() - start_time
                 print(f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n\n")

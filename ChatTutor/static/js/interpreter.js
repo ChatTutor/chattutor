@@ -245,7 +245,7 @@ function toggleInterfaceMode() {
 
 function clearConversation() {
   conversation = [];
-  localStorage.setItem("cqn-conversation", JSON.stringify([]));
+  localStorage.setItem("interpreter-conversation", JSON.stringify([]));
     reinstantiateChatId()
   var childNodes = msgerChat.childNodes;
   for(var i = childNodes.length - 3; i >= 2; i--){
@@ -283,7 +283,7 @@ function handleFormSubmit(event) {
 
 
 function loadConversationFromLocalStorage() {
-  conversation = JSON.parse(localStorage.getItem("cqn-conversation"))
+  conversation = JSON.parse(localStorage.getItem("interpreter-conversation"))
   if(conversation){
     conversation.forEach(message => {addMessage(message["role"], message["content"], false)})
   }
@@ -359,7 +359,6 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
     let isFirstMessage = true;
     function read() {
       reader.read().then(({ done, value }) => {
-        console.log('content:',accumulatedContent)
         if (done) {
           // Enable the send button when streaming is done
           sendBtn.disabled = false;
@@ -382,17 +381,21 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
                   addMessage("assistant", accumulatedContent, false);
                   isFirstMessage = false;
               } else {
-                  if (typeof (message.message.content) == 'undefined') {
-                      conversation.push({"role": 'assistant', "content": accumulatedContent})
-                      localStorage.setItem("cqn-conversation", JSON.stringify(conversation))
-                  }
+                  let messageTypes = ['language', 'code', 'executing', 'message', 'active_line', 'end_of_execution', 'output']
+                  let finished = messageTypes.every(key => !message.message.hasOwnProperty(key));
+                  console.log(message.message)
+                  // if (finished) {
+                  //   console.log('finished')
+                  //     conversation.push({"role": 'assistant', "content": accumulatedContent})
+                  //     localStorage.setItem("interpreter-conversation", JSON.stringify(conversation))
+                  // }
                   scrollHelper.scrollIntoView()
                   updateLastMessage(accumulatedContent);
               }
               if (stopGeneration === true) {
                   accumulatedContent += " ...Stopped generating";
                   conversation.push({"role": 'assistant', "content": accumulatedContent})
-                  localStorage.setItem("cqn-conversation", JSON.stringify(conversation))
+                  localStorage.setItem("interpreter-conversation", JSON.stringify(conversation))
                   sendBtn.disabled = false;
                   clear.style.display = 'block'
                   stopGenButton.style.display = 'none'
@@ -541,7 +544,7 @@ function addMessage(role, message, updateConversation) {
   msgerChat.scrollTop += 500;
   if(updateConversation){
     conversation.push({"role": role, "content": message})
-    localStorage.setItem("cqn-conversation", JSON.stringify(conversation))
+    localStorage.setItem("interpreter-conversation", JSON.stringify(conversation))
   }
 }
 

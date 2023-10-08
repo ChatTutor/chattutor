@@ -381,6 +381,7 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
                   addMessage("assistant", accumulatedContent, false);
                   isFirstMessage = false;
               } else {
+                console.log('message',message.message)
                   if (typeof (message.message.content) == 'undefined') {
                       conversation.push({"role": 'assistant', "content": accumulatedContent})
                       localStorage.setItem("cqn-conversation", JSON.stringify(conversation))
