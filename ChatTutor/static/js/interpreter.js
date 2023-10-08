@@ -384,11 +384,10 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
                   let messageTypes = ['language', 'code', 'executing', 'message', 'active_line', 'end_of_execution', 'output']
                   let finished = messageTypes.every(key => !message.message.hasOwnProperty(key));
                   console.log(message.message)
-                  // if (finished) {
-                  //   console.log('finished')
-                  //     conversation.push({"role": 'assistant', "content": accumulatedContent})
-                  //     localStorage.setItem("interpreter-conversation", JSON.stringify(conversation))
-                  // }
+                  if (message.message.message == '') {
+                    conversation.push({"role": 'assistant', "content": accumulatedContent})
+                    localStorage.setItem("interpreter-conversation", JSON.stringify(conversation))
+                  }
                   scrollHelper.scrollIntoView()
                   updateLastMessage(accumulatedContent);
               }
