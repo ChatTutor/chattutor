@@ -27,6 +27,7 @@ var original_file = "";
 let lastMessageId = null;
 var stopGeneration = false
 let selectedModel = document.getElementById('modelDropdown').value
+let hideCode = true;
 
 // Get the send button
 const sendBtn = document.getElementById('sendBtn');
@@ -44,7 +45,6 @@ const modelDropdown = document.getElementById('modelDropdown')
 
 let uploadedCollections = []
 messageInput.addEventListener('input', (event) => {
-  console.log('kajk')
   sendBtn.disabled = messageInput.value.length === 0;
 })
 
@@ -53,7 +53,6 @@ stopGenButton.style.display = 'none'
 window.addEventListener('resize', windowIsResizing)
 
 function windowIsResizing() {
-  console.log("resize")
     // the button for choosing themes snaps in place when the window is too small
   if(window.innerWidth < 1200) {
       themeBtnDiv.style.position = 'inherit'
@@ -61,7 +60,6 @@ function windowIsResizing() {
       themeBtnDiv.style.left = '25px'
 
       const arr = document.querySelectorAll('.theme-button')
-      console.log(arr)
       arr.forEach(btn => {
         btn.style.backgroundColor = 'transparent'
         btn.style.color = 'var(--msg-header-txt)'
@@ -81,7 +79,6 @@ function windowIsResizing() {
       themeBtnDiv.style.top = '25px'
       themeBtnDiv.style.left = '25px'
       const arr = document.querySelectorAll('.theme-button')
-      console.log(arr)
       arr.forEach(btn => {
         btn.style.backgroundColor = 'rgb(140, 0, 255)'
         btn.style.color = 'white'
@@ -126,7 +123,7 @@ function uploadMessageToDB(msg, chat_k) {
     console.log(`DATA: ${JSON.stringify(data_)} `)
     fetch('/addtodb', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data_)})
         .then(() =>{
-            console.log('Andu')
+            console.log('Message uploaded')
         })
 }
 
@@ -300,6 +297,13 @@ function loadConversationFromLocalStorage() {
 
     // Initialize Prism.js
     Prism.highlightAll();
+
+    if (hideCode) {
+      var codeBlocks = document.querySelectorAll('.msg-coding');
+      codeBlocks.forEach(function(element) {
+          element.classList.add('hidden');
+      });
+    }
 }
 
 function loadCollectionsFromLocalStorage() {
@@ -380,7 +384,6 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
           return;
         }
         const strValue = new TextDecoder().decode(value);
-        console.log('value',strValue)
         const messages = strValue.split('\n\n').filter(Boolean).map(chunk => JSON.parse(chunk.split('data: ')[1]));
           let message;
           for (var messageIndex in messages) {
@@ -388,8 +391,26 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
               if (stopGeneration === false) {
                   const contentToAppend = message.message.message ? message.message.message : "";
                   accumulatedContent += contentToAppend;
-                  
               }
+              if (message.message.code && hideCode) {
+                console.log('showing code')
+                hideCode = false
+                var codeBlocks = document.querySelectorAll('.msg-coding');
+                console.log(codeBlocks)
+                codeBlocks.forEach(function(element) {
+                    element.classList.remove('hidden');
+                });
+              }
+              else if ((typeof (message.message.code) == 'undefined') && hideCode == false) {
+                console.log('hiding code')
+                hideCode = true
+                var codeBlocks = document.querySelectorAll('.msg-coding');
+                console.log(codeBlocks)
+                codeBlocks.forEach(function(element) {
+                    element.classList.add('hidden');
+                });
+              }
+
               if (isFirstMessage) {
                   addMessage("assistant", accumulatedContent, false);
                   isFirstMessage = false;
@@ -519,23 +540,52 @@ function addMessage(role, message, updateConversation) {
   }
 
   const messageStr = formatMessage(message, role === "assistant")
-
-  const msgHTML = `
+  let msgHTML;
+  if (hideCode || role != 'assistant') {
+    msgHTML = `
     <div class="msg ${side}-msg" id="${messageId}">
-    <div class="msg-bgd">
-      <div class="msg-img" style="background-image: url(${img})"></div>
+      <div class="msg-bgd">
+        <div class="msg-img" style="background-image: url(${img})"></div>
 
-      <div class="msg-bubble">
-        <div class="msg-info">
-          <div class="msg-info-name">${role_name}</div>
-          <div class="msg-info-time">${formatDate(new Date())}</div>
+        <div class="msg-bubble">
+          <div class="msg-info">
+            <div class="msg-info-name">${role_name}</div>
+            <div class="msg-info-time">${formatDate(new Date())}</div>
+          </div>
+
+          <div class="msg-text">${messageStr}</div>
+          
+          <div class="msg-coding hidden">
+            <img class="loading-gif" src="./images/loading.gif">
+            Generating code
+          </div>
         </div>
+        </div>
+      </div>
+    `;
+  }
+  else {
+    msgHTML = `
+    <div class="msg ${side}-msg" id="${messageId}">
+      <div class="msg-bgd">
+        <div class="msg-img" style="background-image: url(${img})"></div>
 
-        <div class="msg-text">${messageStr}</div>
+        <div class="msg-bubble">
+          <div class="msg-info">
+            <div class="msg-info-name">${role_name}</div>
+            <div class="msg-info-time">${formatDate(new Date())}</div>
+          </div>
+
+          <div class="msg-text">${messageStr}</div>
+
+        </div>
+        </div>
       </div>
-      </div>
-    </div>
-  `;
+    `;
+  }
+  
+
+  
 
   clearContainer.insertAdjacentHTML("beforebegin", msgHTML);
 
