@@ -210,8 +210,9 @@ def parse_plaintext_file(file, doc: Doc, chunk_chars: int, overlap: int):
     Returns:
         [Text]: The resulting Texts as an array
     """
-
-    return texts_from_str(file.read(), doc, chunk_chars, overlap)
+    texts = texts_from_str(file, doc, chunk_chars, overlap)
+    print(texts)
+    return texts
 
 
 def parse_notebook_file(file, doc: Doc, chunk_chars: int, overlap: int):
@@ -239,6 +240,16 @@ def parse_notebook_file(file, doc: Doc, chunk_chars: int, overlap: int):
 def texts_from_str(text_str: str, doc: Doc, chunk_chars: int, overlap: int):
     texts = []
     index = 0
+
+    if len(text_str) <= chunk_chars and len(text_str) < overlap:
+        texts.append(
+            Text(
+                text=text_str,
+                name=f"{doc.docname} chunk {index}",
+                doc=doc,
+            )
+        )
+        return texts
 
     while len(text_str) > chunk_chars:
         texts.append(
