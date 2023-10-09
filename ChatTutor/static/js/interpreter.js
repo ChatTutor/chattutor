@@ -380,6 +380,7 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
           return;
         }
         const strValue = new TextDecoder().decode(value);
+        console.log('value',strValue)
         const messages = strValue.split('\n\n').filter(Boolean).map(chunk => JSON.parse(chunk.split('data: ')[1]));
           let message;
           for (var messageIndex in messages) {
@@ -387,13 +388,13 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
               if (stopGeneration === false) {
                   const contentToAppend = message.message.message ? message.message.message : "";
                   accumulatedContent += contentToAppend;
+                  
               }
               if (isFirstMessage) {
                   addMessage("assistant", accumulatedContent, false);
                   isFirstMessage = false;
               } else {
                   let messageTypes = ['language', 'code', 'executing', 'message', 'active_line', 'end_of_execution', 'output']
-                  let finished = messageTypes.every(key => !message.message.hasOwnProperty(key));
                   console.log(message.message)
                   if (message.message.message == '') {
                     conversation.push({"role": 'assistant', "content": accumulatedContent})

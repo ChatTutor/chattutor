@@ -331,7 +331,6 @@ class Tutor:
             start_time = time.time()
             resp = self.ask_question_interpreter(conversation, from_doc, selectedModel)
             for chunk in resp:
-                # print('ppppp',chunk)
                 chunk_content = ''
                 if 'executing' in chunk:
                     chunk_content = str(chunk['executing']['code'])
