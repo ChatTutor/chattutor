@@ -395,20 +395,16 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
               if (message.message.code && hideCode) {
                 console.log('showing code')
                 hideCode = false
-                var codeBlocks = document.querySelectorAll('.msg-coding');
-                console.log(codeBlocks)
-                codeBlocks.forEach(function(element) {
-                    element.classList.remove('hidden');
-                });
+                var divs = document.querySelectorAll('.msg-coding');
+                let lastblock = divs[divs.length - 1];
+                lastblock.classList.remove('hidden');
               }
               else if ((typeof (message.message.code) == 'undefined') && hideCode == false) {
                 console.log('hiding code')
                 hideCode = true
-                var codeBlocks = document.querySelectorAll('.msg-coding');
-                console.log(codeBlocks)
-                codeBlocks.forEach(function(element) {
-                    element.classList.add('hidden');
-                });
+                var divs = document.querySelectorAll('.msg-coding');
+                let lastblock = divs[divs.length - 1];
+                lastblock.classList.add('hidden');
               }
 
               if (isFirstMessage) {
@@ -540,49 +536,28 @@ function addMessage(role, message, updateConversation) {
   }
 
   const messageStr = formatMessage(message, role === "assistant")
-  let msgHTML;
-  if (hideCode || role != 'assistant') {
-    msgHTML = `
-    <div class="msg ${side}-msg" id="${messageId}">
-      <div class="msg-bgd">
-        <div class="msg-img" style="background-image: url(${img})"></div>
+  const msgHTML = `
+  <div class="msg ${side}-msg" id="${messageId}">
+    <div class="msg-bgd">
+      <div class="msg-img" style="background-image: url(${img})"></div>
 
-        <div class="msg-bubble">
-          <div class="msg-info">
-            <div class="msg-info-name">${role_name}</div>
-            <div class="msg-info-time">${formatDate(new Date())}</div>
-          </div>
-
-          <div class="msg-text">${messageStr}</div>
-          
-          <div class="msg-coding hidden">
-            <img class="loading-gif" src="./images/loading.gif">
-            Generating code
-          </div>
+      <div class="msg-bubble">
+        <div class="msg-info">
+          <div class="msg-info-name">${role_name}</div>
+          <div class="msg-info-time">${formatDate(new Date())}</div>
         </div>
+
+        <div class="msg-text">${messageStr}</div>
+        
+        <div class="msg-coding ${hideCode? 'hidden' : ''}">
+          <img class="loading-gif" src="./images/loading.gif">
+          Generating code
         </div>
       </div>
-    `;
-  }
-  else {
-    msgHTML = `
-    <div class="msg ${side}-msg" id="${messageId}">
-      <div class="msg-bgd">
-        <div class="msg-img" style="background-image: url(${img})"></div>
-
-        <div class="msg-bubble">
-          <div class="msg-info">
-            <div class="msg-info-name">${role_name}</div>
-            <div class="msg-info-time">${formatDate(new Date())}</div>
-          </div>
-
-          <div class="msg-text">${messageStr}</div>
-
-        </div>
-        </div>
       </div>
-    `;
-  }
+    </div>
+  `;
+  
   
 
   
