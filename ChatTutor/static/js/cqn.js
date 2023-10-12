@@ -2,7 +2,7 @@
 import {lightMode, darkMode, setProperties} from "./constants.js";
 import {alert} from "./nicealert.js"
 import { clearFileInput } from "./fileupload.js";
-
+// import { setFromDoc, clearFromDoc } from "./from_doc_ext.js";
 const embed_mode = false;
 const clear = document.getElementById('clearBtnId');
 const clearContainer = get('.clear-btn-container');
@@ -285,7 +285,13 @@ function handleFormSubmit(event) {
 function loadConversationFromLocalStorage() {
   conversation = JSON.parse(localStorage.getItem("cqn-conversation"))
   if(conversation){
-    conversation.forEach(message => {addMessage(message["role"], message["content"], false)})
+    conversation.forEach(message => {
+      addMessage(message["role"], message["content"], false)
+      if (message["context_documents"]) {
+        setLatMessageHeader(message["context_documents"])
+
+      }
+    })
   }
   else conversation = []
   MathJax.typesetPromise();
@@ -344,6 +350,7 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
     "collection": [collection_name, selected_collection_name]
   }
   if (embed_mode) args.from_doc = original_file
+  if (READ_FROM_DOC != null) args.from_doc = READ_FROM_DOC
 
   args.selectedModel = selectedModel
 
@@ -357,6 +364,7 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
     const reader = response.body.getReader();
     let accumulatedContent = "";
     let isFirstMessage = true;
+    let context_documents = null;
     function read() {
       reader.read().then(({ done, value }) => {
         if (done) {
@@ -374,20 +382,33 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
           for (var messageIndex in messages) {
               message = messages[messageIndex]
               if (stopGeneration === false) {
+                  if (message.message.valid_docs) {
+                    context_documents = message.message.valid_docs
+                    console.log(context_documents)
+                  }
                   const contentToAppend = message.message.content ? message.message.content : "";
                   accumulatedContent += contentToAppend;
               }
               if (isFirstMessage) {
-                  addMessage("assistant", accumulatedContent, false);
-                  isFirstMessage = false;
+                console.log("added", accumulatedContent)
+                addMessage("assistant", accumulatedContent, false);
+                setLatMessageHeader(context_documents)
+                isFirstMessage = false;
               } else {
                 console.log('message',message.message)
                   if (typeof (message.message.content) == 'undefined') {
-                      conversation.push({"role": 'assistant', "content": accumulatedContent})
+                      conversation.push({"role": 'assistant', "content": accumulatedContent, "context_documents" : context_documents})
                       localStorage.setItem("cqn-conversation", JSON.stringify(conversation))
                   }
+                  console.log("updated", accumulatedContent)
+
                   scrollHelper.scrollIntoView()
                   updateLastMessage(accumulatedContent);
+
+                  if (message.message.error) {
+                    conversation.push({"role": 'assistant', "content": accumulatedContent})
+                    localStorage.setItem("cqn-conversation", JSON.stringify(conversation))
+                  }
               }
               if (stopGeneration === true) {
                   accumulatedContent += " ...Stopped generating";
@@ -457,6 +478,40 @@ function formatMessage(message, makeLists = true) {
   return messageStr
 }
 
+
+
+function setLatMessageHeader(context_documents) {
+  if (lastMessageId) {
+    const lastMessageElement = document.querySelector(`#${lastMessageId} .msg-text`);
+    if (lastMessageElement) {
+      var docs = ''
+      context_documents.forEach(doc => {
+        docs += `<div class="msg-context-doc col ${lastMessageId}-context" data-doc="${doc.metadata.doc}">
+          <div style="align-self: self-start;">
+            <span>${doc.metadata.doc}</span>
+          </div>
+
+          <div class="info col">
+            <div>
+              <div class="askmore context-info col" onclick="setFromDoc('${doc.metadata.doc}')">Ask about</div>
+              <div class="inform context-info col">Info</div>
+            </div>
+          </div>
+        </div>`
+      })
+
+      document.querySelector(`#${lastMessageId}`).innerHTML = `
+        <div class="msg-header-context">${docs}</div>
+        ${document.querySelector(`#${lastMessageId}`).innerHTML}
+      `;
+    } else {
+      console.error('Cannot find the .msg-text element to update.');
+    }
+  } else {
+    console.error('No message has been added yet.');
+  }
+}
+
 function updateLastMessage(newContent) {
   if (lastMessageId) {
     const lastMessageElement = document.querySelector(`#${lastMessageId} .msg-text`);
@@ -483,6 +538,7 @@ function addMessage(role, message, updateConversation) {
     let role_name
     let img
     let side
+
   if(role === "assistant") {
     role_name = BOT_NAME;
     img = BOT_IMG;
@@ -659,3 +715,9 @@ document.addEventListener('readystatechange', function() {
       init();
   }
 });
+
+
+
+document.querySelector(".close-notif").addEventListener('click', e => {
+  clearFromDoc();
+})
