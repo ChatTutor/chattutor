@@ -73,7 +73,7 @@ class Tutor:
         """
         self.collections[name] = desc
 
-    def ask_question(self, conversation, from_doc=None, selectedModel='gpt-3.5-turbo-16k'):
+    def ask_question(self, conversation, from_doc=None, selectedModel='gpt-3.5-turbo-16k', threshold=0.5, limit=3):
         """Function that responds to an asked question based
         on the current database and the loaded collections from the database
         
@@ -95,24 +95,47 @@ class Tutor:
         prompt = conversation[-1]["content"]
 
         # Querying the database to retrieve relevant documents to the user's question
-        docs = ''
+        arr = []
+        # add al docs with distance below threshold to array
         for coll_name, coll_desc in self.collections.items():
             if self.embedding_db:
                 self.embedding_db.load_datasource(coll_name)
-                collection_db_response = f'{coll_desc} context: ' + self.embedding_db.query(prompt, 3, from_doc)
-                docs += collection_db_response + '\n'
-                print('#### COLLECTION DB RESPONSE:', collection_db_response)
-        print("\n\n\n--------SYSTEM MESSAGE", self.system_message, len(self.collections), self.collections, self.embedding_db)
+                documents, metadatas, distances, documents_plain = self.embedding_db.query(prompt, limit, from_doc, metadatas=True)
+                for doc, meta, dist in zip(documents, metadatas, distances):
+                    # if no fromdoc specified, and distance is lowe thhan thersh, add to array of possible related documents
+                    # if from_doc is specified, threshold is redundant as we have only one possible doc
+                    if dist <= threshold or from_doc != None: 
+                        arr.append({
+                            "coll_desc": coll_desc,
+                            "coll_name": coll_name,
+                            "doc": doc,
+                            "metadata": meta,
+                            "distance": dist
+                        })
+        # removing duplicates
+        # arr = list(set(arr))
+        # sort by distance, increasing
+        sorted_docs = sorted(arr, key=lambda el: el["distance"])
+        valid_docs = sorted_docs[:limit]
+        # yield the valid docs to the frontend
+        yield {"content": "", "valid_docs": valid_docs}
+        # stringify the docs and add to context message
+        docs = ''
+        for doc in valid_docs:
+            collection_db_response = f'{coll_desc} context, from {doc["metadata"]["doc"]}: ' + doc["doc"]
+            docs += collection_db_response + '\n'
+            print('#### COLLECTION DB RESPONSE:', collection_db_response)
+        # debug log
+        print("\n\n\nSYSTEM MESSAGE", self.system_message, len(self.collections), self.collections, self.embedding_db)
         # Creating a chat completion object with OpenAI API to get the model's response
-        messages = conversation
+        messages = [{"role": c["role"], "content": c["content"]} for c in conversation]
         if self.embedding_db and len(self.collections) > 0:
             messages = [
                 {"role": "system", "content": self.system_message.format(docs=docs)}
-            ] + conversation
+            ] + messages
         print(messages, f"Docs: |{docs}|")
         print('NUMBER OF INPUT TOKENS:', len(tiktoken.get_encoding('cl100k_base').encode(docs)))
 
-        error = 0
         try:
             response = openai.ChatCompletion.create(
                 model=selectedModel,
@@ -122,20 +145,18 @@ class Tutor:
                 presence_penalty=0.0,
                 stream=True,
             )
-        
-
             # For the typewriter effect
             for chunk in response:
                 yield chunk["choices"][0]["delta"]
         except:
-            error = 1
+            # An error occured
             yield {"content": """Sorry, I am not able to provide a response. 
                                 
                                 One of three things happened:
                                     - The context you provided was too wide, try to be more concise.
                                     - The files you uploaded were too large
-                                    - I got disconnected from the server
-                                """}
+                                    - I got disconnected from the server or I am currently being updated
+                                """, "error": "true"}
             
     def ask_question_interpreter(self, conversation, from_doc=None, selectedModel='gpt-3.5-turbo-16k'):
         """Function that responds to an asked question using open interpreter

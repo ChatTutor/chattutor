@@ -156,7 +156,7 @@ class VectorDatabase:
             documents=[text.text for text in texts],
         )
 
-    def query(self, prompt, n_results, from_doc):
+    def query(self, prompt, n_results, from_doc, metadatas=False, distances=False):
         """Querying the database based on the database provider
 
         Args:
@@ -165,7 +165,9 @@ class VectorDatabase:
             from_doc (Doc) : Select only lines where doc = from_doc
         """
         if self.db_provider == "chroma":
-            data = self.query_chroma(prompt, n_results, from_doc)
+            data = self.query_chroma(prompt, n_results, from_doc, include=["documents", "metadatas", "distances"])
+            if metadatas:
+                return data["documents"][0], data["metadatas"][0], data["distances"][0], " ".join(data["documents"][0])
             return " ".join(data["documents"][0])
         elif self.db_provider == "deeplake_vectordb":
             return self.query_deeplake(prompt, n_results, from_doc)
@@ -174,14 +176,14 @@ class VectorDatabase:
         else:
             raise Exception("db_provider must be one of 'chroma' or 'deeplake'")
 
-    def query_chroma(self, prompt, n_results, from_doc):
-        """Querying Chroma data source with specified query_texts, n_results, and optional where clause"""
+    def query_chroma(self, prompt, n_results, from_doc, include=["documents"]):
+        """Querying Chroma data source with specified query_texts, n_results, and optional where clause""" 
         if from_doc:
             return self.datasource.query(
-                query_texts=prompt, n_results=n_results, where={"doc": from_doc}
+                query_texts=prompt, n_results=n_results, where={"doc": from_doc}, include=include
             )
         else:
-            return self.datasource.query(query_texts=prompt, n_results=6)
+            return self.datasource.query(query_texts=prompt, n_results=n_results, include=include)
 
     def query_deeplake(self, prompt, n_results, from_doc):
         """Querying Deeplake data source with specified embedding_data, embedding_function, k, optional filter, and exec_option"""
