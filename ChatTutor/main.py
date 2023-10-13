@@ -169,8 +169,7 @@ def ask():
     from_doc = data.get("from_doc")
     selected_model = data.get('selectedModel')
     if selected_model == None:
-        # selected_model = 'gpt-3.5-turbo-16k'
-        selected_model = 'gpt-4'
+        selected_model = 'gpt-3.5-turbo-16k'
     print('SELECTED MODEL:', selected_model)
     print(collection_name)
     # Logging whether the request is specific to a document or can be from any document
