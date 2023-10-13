@@ -148,7 +148,9 @@ class Tutor:
             # For the typewriter effect
             for chunk in response:
                 yield chunk["choices"][0]["delta"]
-        except:
+        except Exception as e:
+            import logging
+            logging.error('Error at %s', 'division', exc_info=e)
             # An error occured
             yield {"content": """Sorry, I am not able to provide a response. 
                                 
