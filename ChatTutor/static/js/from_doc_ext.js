@@ -8,6 +8,7 @@ function setFromDoc(doc) {
     READ_FROM_DOC = doc
     document.querySelector("#from-doc").innerHTML = READ_FROM_DOC
     document.querySelector(".notification").classList.remove("hiddenop")
+    document.querySelector(".notification").classList.add("hidden")
 
     document.querySelector(".msger-input").value = `Please tell me more about "${READ_FROM_DOC}".`
     document.querySelector("#sendBtn").disabled = false
@@ -26,6 +27,7 @@ function clearFromDoc() {
     console.log(DOC_INFO)
     document.querySelector("#arxiv-doc").innerHTML = format_docinfo(DOC_INFO)
     document.querySelector(".arxiv-info").classList.remove("hiddenop")
+    document.querySelector(".arxiv-info").classList.remove("hidden")
   }
 
 function format_docinfo(docinfo) {
