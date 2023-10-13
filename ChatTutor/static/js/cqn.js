@@ -493,8 +493,8 @@ function setLatMessageHeader(context_documents) {
 
           <div class="info col">
             <div>
-              <div class="askmore context-info col" onclick="setFromDoc('${doc.metadata.doc}')">Ask about</div>
-              <div class="inform context-info col">Info</div>
+              <div class="askmore context-info col" onclick='setFromDoc(${JSON.stringify(doc.metadata)})'>Ask about</div>
+              <div class="inform context-info col" onclick='setDocInfo(${JSON.stringify(doc.metadata)})'>Info</div>
             </div>
           </div>
         </div>`
@@ -721,3 +721,10 @@ document.addEventListener('readystatechange', function() {
 document.querySelector(".close-notif").addEventListener('click', e => {
   clearFromDoc();
 })
+
+
+
+document.querySelector(".close-arxiv").addEventListener('click', e => {
+  clearDocInfo();
+})
+
