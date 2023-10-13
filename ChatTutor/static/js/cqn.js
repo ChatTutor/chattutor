@@ -481,6 +481,10 @@ function formatMessage(message, makeLists = true) {
 
 
 function setLatMessageHeader(context_documents) {
+  // Remove duplicates
+  context_documents = context_documents.filter((value, index, self) => 
+      self.map(item => item.metadata.docname).indexOf(value.metadata.docname) === index
+  );
   if (lastMessageId) {
     const lastMessageElement = document.querySelector(`#${lastMessageId} .msg-text`);
     if (lastMessageElement) {
