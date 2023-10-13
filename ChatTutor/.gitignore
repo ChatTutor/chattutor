@@ -9,3 +9,5 @@ downloaded_papers
 arxiv_ids.txt
 .env.yaml
 chat_store.sqlite3
+debug.ipynb
+.ipynb_checkpoints/
