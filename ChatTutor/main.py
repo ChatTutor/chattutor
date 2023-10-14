@@ -14,7 +14,7 @@ from core.tutor import cqn_system_message, default_system_message
 import json
 import time
 import os
-print('aaaaaaaaaaaaaaaaaaaaaaaa',os.environ)
+print('lllllllllllllll',os.environ)
 
 from core.reader import URLReader
 from core.definitions import Text
