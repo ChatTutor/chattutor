@@ -27,7 +27,6 @@ import interpreter
 # from vectordatabase import VectorDatabase
 
 interpreter.auto_run = True
-
 if 'CHATUTOR_GCP' in os.environ: 
     openai.api_key = os.environ['OPENAI_API_KEY']
 else:
@@ -35,8 +34,8 @@ else:
     with open('.env.yaml') as f:
         yamlenv = yaml.safe_load(f)
     keys = yamlenv["env_variables"]
-    print(keys)
     os.environ["OPENAI_API_KEY"] = keys["OPENAI_API_KEY"]
+    openai.api_key = keys["OPENAI_API_KEY"]
     os.environ["ACTIVELOOP_TOKEN"] = keys["ACTIVELOOP_TOKEN"]
 
 app = Flask(__name__)
@@ -321,4 +320,4 @@ def delete_uploaded_data():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)  # Running the app in debug mode
+    app.run(debug=True, host='0.0.0.0')  # Running the app in debug mode
