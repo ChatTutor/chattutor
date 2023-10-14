@@ -32,7 +32,8 @@ def generate_unique_name(desc):
         .replace("-", "d")
     )
 
-def stream_text(text, chunk_size = 4, asdict=True):
+
+def stream_text(text, chunk_size=4, asdict=True):
     def generate():
         i = 0
         d = ""
@@ -41,8 +42,9 @@ def stream_text(text, chunk_size = 4, asdict=True):
             d = d + c
             if i % chunk_size == 0:
                 if asdict:
-                    yield {"content":d}
+                    yield {"content": d}
                 else:
                     yield d
                 d = ""
+
     return generate()
