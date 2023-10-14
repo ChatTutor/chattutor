@@ -32,6 +32,189 @@
 
   }
 
+
+.msg {
+    display: flex;
+    flex-direction: column !important;
+  }
+
+.msg .msg-header-context {
+    max-height: 100px;
+    display: flex;
+    flex-direction: row;
+    background-image: var(--right-msg-bg);
+    width: 100%;
+    max-width: 867px;
+    cursor: pointer;
+
+  }
+
+.msg-header-context {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  /* justify-content: start; */
+  align-items: center;
+  white-space: nowrap; /* Prevents the text from wrapping */
+  overflow-x: auto;
+  /* width: 260px; */
+  width: 100%;
+}
+
+.msg-context-doc{
+  border: 1px solid rgba(245, 222, 179, 0);
+  border-radius: 20px;
+  background-color: rgba(183, 130, 242, 1) !important;
+}
+.msg-context-doc:hover{
+  border: 1px solid var(--msg-input-color);
+
+}
+
+.msg-context-text {
+  flex-grow: 1;
+  /* overflow-x: auto; */
+  /* white-space: nowrap; */
+  /* align-self: self-start; */
+  color: #220029; /* Slightly dark grey for contrast */
+  font-family: Arial, sans-serif; /* A simple and readable font */
+  font-size: 14px; /* Adjust as per your design */
+  line-height: 1; /* Space between lines */
+  padding: 5px; /* Space around text */
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.msg-context-text:hover {
+  /* background-color: #f5f5f5; */
+  /* content: attr(data-fulltext);
+  position: absolute;
+  width: max-content;
+  white-space: normal;
+  word-wrap: break-word; */
+  /* background-color: rgba(255,255,255,0.9); */
+  /* z-index: 1; */
+}
+
+.small {
+  font-size: 12px;
+  margin-top: 5px;
+  opacity: 0.5;
+}
+
+.notification {
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+    right: 15px;
+    top: 15px;
+    background-color: var(--right-msg-bg);
+    position: absolute;
+    box-shadow: 0 15px 15px -5px rgba(0, 0, 0, 0.2);
+  z-index: 6000;
+  padding: 15px;
+  max-width: 400px;
+  width: 100vw;
+  text-wrap: wrap;
+  opacity: 1;
+  border-radius: 20px;
+  color: var(--msg-input-color);
+  }
+
+  a {
+    color: var(--msg-input-color);
+
+  }
+
+  .arxiv-info {
+    border-radius: 20px;
+    color: var(--msg-input-color);
+
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+      right: 15px;
+      bottom: 15px;
+      background-color: var(--right-msg-bg);
+      position: absolute;
+      box-shadow: 0 15px 15px -5px rgba(0, 0, 0, 0.2);
+    z-index: 6000;
+    padding: 15px;
+    max-width: 400px;
+    width: 100vw;
+    text-wrap: wrap;
+    opacity: 1;
+    }
+.arxiv-docinfo > div {
+  margin-bottom: 5px !important;
+}
+
+.arxiv-info.hiddenop {
+  transition: all 0.2s ease;
+  opacity: 0;
+
+}
+.notification.hiddenop {
+  transition: all 0.2s ease;
+
+  opacity: 0;
+
+}
+
+.msg-context-doc .info {
+  display: none;
+  position: absolute;
+  transform: translateY(-40px);
+  background-color: var(--right-msg-bg);
+  color: var(--msg-input-color);
+  border: 1px solid var(--msg-input-color);
+  border-radius: 20px;
+  border-bottom-left-radius: 0px;
+  overflow: hidden;
+}
+
+
+.msg-context-doc .info >{
+  background-image: #00000044;
+}
+
+
+.msg-context-doc .context-info{
+  width: 100px;
+  padding: 5px;
+
+}
+
+.msg-context-doc .info div >:hover{
+  background-color: #00000073;
+}
+
+.msg-context-doc:hover .info {
+  display: flex;
+}
+
+.info:hover .info {
+  display: flex;
+}
+
+
+.notification #from-doc, .notification span {
+  margin-left: 5px;
+}
+.msg-context-doc {
+  width: 30%;
+  max-width: 400px;
+  overflow:hidden; 
+  white-space:nowrap; 
+  text-overflow: ellipsis;
+  color:var(--msg-input-color);
+  padding: 5px;
+  margin: 10px;
+  background-color: #00000044;
+}
   html {
     box-sizing: border-box;
   }
@@ -626,7 +809,7 @@ select {
 .area {
   width: 100%;
   height: 100%;
-  border: 4px dashed #000;
+  border: 4px solid #000;
   /* background-image: url("http://kmtlondon.com/img/upload.png"); */
   background-position: center;
   background-repeat: no-repeat;

@@ -165,9 +165,9 @@
                     <div class="container col">
                         <h3>Select Model</h3>
                         <select id="modelDropdown">
-                            <option selected value="gpt-3.5-turbo">GPT-3.5 (4k)</option>
+                            <option value="gpt-3.5-turbo">GPT-3.5 (4k)</option>
                             <option value="gpt-3.5-turbo-16k">GPT-3.5 (16k)</option>
-                            <option value="gpt-4">GPT-4 (8k)</option>
+                            <option selected value="gpt-4">GPT-4 (8k)</option>
                             <option value="gpt-4-32k">GPT-4 (32k)</option>
                         </select>
                     </div>
@@ -189,6 +189,29 @@
                 close
             </span>
             </button>
+        </div>
+        <script src="js/from_doc_ext.js"></script>
+        <div class="notification hiddenop hidden">
+            <button class="close-notif">
+                <span class="nice-btn material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
+                    close
+                </span>
+            </button>
+            <span>Asking more about:</span>
+            <div id="from-doc" style="text-decoration: underline;">
+            </div>
+            <span class="small">Ask questions about content from this paper/file</span>
+
+        </div>
+        <div class="arxiv-info hiddenop hidden">
+            <button class="close-arxiv">
+                <span class="nice-btn material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
+                    close
+                </span>
+            </button>
+            <div id="arxiv-doc">
+    
+            </div>
         </div>
 
           <script src="js/cqn.js" type="module"></script>
