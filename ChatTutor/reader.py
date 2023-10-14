@@ -210,8 +210,8 @@ def parse_plaintext_file(file, doc: Doc, chunk_chars: int, overlap: int):
     Returns:
         [Text]: The resulting Texts as an array
     """
-    texts = texts_from_str(file, doc, chunk_chars, overlap)
-    print(texts)
+    texts = texts_from_str(file.read(), doc, chunk_chars, overlap)
+    # print(texts)
     return texts
 
 
