@@ -2,7 +2,7 @@ import openai
 import tiktoken
 import time
 import json
-from extensions import stream_text
+from core.extensions import stream_text
 import interpreter
 
 cqn_system_message = """
@@ -38,45 +38,140 @@ default_system_message = "You are an AI that helps students with questions about
 
 class Tutor:
     """
-        Tutor class
-        
+    Tutor class
+
+    Args:
+        embedding_db (VectorDatabase): the db with any or no source loaded
+        embedding_db_name (str): Description of embedding_db.
+        system_message (str)
+
+    Return:
+        Tutor object with no collections to load from. Use add_collection to add
+        collection to load from.
+    """
+
+    def __init__(
+        self,
+        embedding_db,
+        embedding_db_name="CQN database",
+        system_message=default_system_message,
+        engineer_prompts=True,
+    ):
+        """
         Args:
-            embedding_db (VectorDatabase): the db with any or no source loaded 
-            embedding_db_name (str): Description of embedding_db.
-            system_message (str)
+            - `embedding_db (VectorDatabase)`: the db with any or no source loaded
+            - `embedding_db_name (str)`: Description of embedding_db.
+            - `system_message (str)`
+            - `engineer_prompts (bool)`: weather the chattutor bot should pull the full context from the last user message before querying.
+            If true, the answering is slower but it is less likely to error, and it has more context so the answers are
+            clearer and more correct. Defaults to True.
 
         Return:
-            Tutor object with no collections to load from. Use add_collection to add
-            collection to load from. 
-    """
-    def __init__(self, embedding_db, embedding_db_name="CQN database", system_message=default_system_message):
-        """ 
-            Args:
-                embedding_db (VectorDatabase): the db with any or no source loaded 
-                embedding_db_name (str): Description of embedding_db.
-                system_message (str)
-
-            Return:
-                Tutor object with no collections to load from. Use add_collection to add
-                collection to load from. 
+            Tutor object with empty collection set. Use add_collection to add
+            collection to load from.
         """
         self.embedding_db = embedding_db
         self.embedding_db_name = embedding_db_name
         self.collections = {}
         self.system_message = system_message
-    
+        self.engineer_prompts = engineer_prompts
+
     def add_collection(self, name, desc):
         """Adds a collection to self.collections
-            Args:
-                name (str): name of the collection to load form the chromadb (embedding_db)
-                desc (str): description prompted to the model
+        Args:
+            name (str): name of the collection to load form the chromadb (embedding_db)
+            desc (str): description prompted to the model
         """
         self.collections[name] = desc
 
-    def ask_question(self, conversation, from_doc=None, selectedModel='gpt-3.5-turbo-16k', threshold=0.5, limit=3):
+    def egineer_prompt(self, conversation, truncating_at=10, context=True):
+        """
+        Args:
+            conversation: current conversation
+            truncating_at: lookback for context (# of messages)
+            context: if False, return last message otherwise engineer the prompt to have full context
+        """
+        # TODO: room for improvement.
+        # context on pronouns:  for example who is "he/she/them/it" when refering to a paper/person
+        if not context:
+            return conversation[-1]["content"], False, False, ""
+        truncated_convo = [
+            f"\n\n{c['role']}: {c['content']}"
+            for c in conversation[-truncating_at:][:-1]
+        ]
+        lastmessage = conversation[-1]["content"]
+        # todo: fix prompt to take context from all messages
+        prompt = conversation[-1]["content"]
+        is_generic_message = self.simple_gpt(
+            f"""
+            You are a model that detects weather a user given message is or isn't a generic message (a greeting or thanks of anything like that). Respond ONLY with YES or NO.
+                - YES if the message is a generic message (a greeting or thanks of anything like that)
+                - NO if the message asks something about a topic, person, scientist, or asks for further explanations on concepts that were discussed above.
+
+            The current conversation between the user and the bot is:
+            
+            {truncated_convo}            
+            """,
+            f"If the usere were to ask this: '{prompt}', would you clasify it as a message that refers to above messages from context? Respond only with YES or NO!",
+        )
+
+        is_furthering_message = self.simple_gpt(
+            f"""
+            You are a model that detects weather a user given message refers to above messages and takes context from them, either by asking about further explanations on a topic discussed previously, or on a topic
+            you just provided answer to. You will respond ONLY with YES or NO.
+                - YES if the user provided message is a message that refers to above messages from context, or if the user refers with pronouns about people mentioned in the above messages,
+                or if the user thanks you for a given information or asks more about it, or invalidates or validates a piece of information you provided 
+                - NO if the message is a standalone message
+            
+            The current conversation between the user and the bot is:
+            
+            {truncated_convo}
+            """,
+            f"If the usere were to ask this: '{prompt}', would you clasify it as a message that refers to above messages from context? Respond only with YES or NO!",
+        )
+
+        get_furthering_message = self.simple_gpt(
+            f"""
+            You are a model that detects weather a user given message refers to above messages and takes context from them, either by asking about further explanations on a topic discussed previously, or on a topic
+            you just provided answer to. You will ONLY respond with:
+                - YES + a small summary of what the user message is refering to, the person the user is refering to if applicable, or the piece of information the user is refering to, if the user provided message is a message that refers to above messages from context, or if the user refers with pronouns about people mentioned in the above messages,
+                or if the user thanks you for a given information or asks more about it, or invalidates or validates a piece of information you provided . You must attach a small summary of what the user message is refering to,
+                but you still have to maintain the user's question and intention. The summary should be rephrased from the view point of the user, as if the user formulated the question to convey the context the user is refering to. This is really important!
+                - NO if the message is a standalone message
+            
+            The current conversation between the user and the bot is:
+            
+            {truncated_convo}
+            """,
+            f"If the usere were to ask this: '{prompt}', would you clasify it as a message that refers to above messages from context? If YES, provide a small summary of what the user would refer to.",
+        )
+
+        print(
+            is_generic_message, is_furthering_message, "|", get_furthering_message, "|"
+        )
+        is_generic_message = is_generic_message.strip() == "YES"
+        is_furthering_message = is_furthering_message.strip() == "YES"
+
+        if not is_furthering_message:
+            get_furthering_message = "NO"
+        if is_furthering_message:
+            print(prompt, "\n\t=>")
+            prompt += f"\n({get_furthering_message[4:]})"
+            print(prompt)
+
+        return prompt, is_generic_message, is_furthering_message, get_furthering_message
+
+    def ask_question(
+        self,
+        conversation,
+        from_doc=None,
+        selectedModel="gpt-3.5-turbo-16k",
+        threshold=0.5,
+        limit=3,
+    ):
         """Function that responds to an asked question based
         on the current database and the loaded collections from the database
-        
+
         Args:
             conversation : List({role: ... , content: ...})
             from_doc (Doc, optional): Defaults to None.
@@ -92,26 +187,48 @@ class Tutor:
         ), "The final message in the conversation must be a question from the user."
         conversation = self.truncate_conversation(conversation)
 
-        prompt = conversation[-1]["content"]
+        truncating_at = 10
 
+        truncated_convo = [
+            f"\n\n{c['role']}: {c['content']}" for c in conversation[-10:][:-1]
+        ]
+        lastmessage = conversation[-1]["content"]
+        # todo: fix prompt to take context from all messages
+        (
+            prompt,
+            is_generic_message,
+            is_furthering_message,
+            get_furthering_message,
+        ) = self.egineer_prompt(
+            conversation, context=self.engineer_prompts
+        )  # if contest is st to False, it is equivalent to conversation[-1]["content"]
         # Querying the database to retrieve relevant documents to the user's question
         arr = []
         # add al docs with distance below threshold to array
         for coll_name, coll_desc in self.collections.items():
+            # if is_generic_message:
+            #    continue
             if self.embedding_db:
                 self.embedding_db.load_datasource(coll_name)
-                documents, metadatas, distances, documents_plain = self.embedding_db.query(prompt, limit, from_doc, metadatas=True)
+                (
+                    documents,
+                    metadatas,
+                    distances,
+                    documents_plain,
+                ) = self.embedding_db.query(prompt, limit, from_doc, metadatas=True)
                 for doc, meta, dist in zip(documents, metadatas, distances):
                     # if no fromdoc specified, and distance is lowe thhan thersh, add to array of possible related documents
                     # if from_doc is specified, threshold is redundant as we have only one possible doc
-                    if dist <= threshold or from_doc != None: 
-                        arr.append({
-                            "coll_desc": coll_desc,
-                            "coll_name": coll_name,
-                            "doc": doc,
-                            "metadata": meta,
-                            "distance": dist
-                        })
+                    if dist <= threshold or from_doc != None:
+                        arr.append(
+                            {
+                                "coll_desc": coll_desc,
+                                "coll_name": coll_name,
+                                "doc": doc,
+                                "metadata": meta,
+                                "distance": dist,
+                            }
+                        )
         # removing duplicates
         # arr = list(set(arr))
         # sort by distance, increasing
@@ -120,13 +237,21 @@ class Tutor:
         # yield the valid docs to the frontend
         yield {"content": "", "valid_docs": valid_docs}
         # stringify the docs and add to context message
-        docs = ''
+        docs = ""
         for doc in valid_docs:
-            collection_db_response = f'{coll_desc} context, from {doc["metadata"]["doc"]}: ' + doc["doc"]
-            docs += collection_db_response + '\n'
-            print('#### COLLECTION DB RESPONSE:', collection_db_response)
+            collection_db_response = (
+                f'{coll_desc} context, from {doc["metadata"]["doc"]}: ' + doc["doc"]
+            )
+            docs += collection_db_response + "\n"
+            # print('#### COLLECTION DB RESPONSE:', collection_db_response)
         # debug log
-        print("\n\n\nSYSTEM MESSAGE", self.system_message, len(self.collections), self.collections, self.embedding_db)
+        print(
+            "\n\n\nSYSTEM MESSAGE",
+            self.system_message,
+            len(self.collections),
+            self.collections,
+            self.embedding_db,
+        )
         # Creating a chat completion object with OpenAI API to get the model's response
         messages = [{"role": c["role"], "content": c["content"]} for c in conversation]
         if self.embedding_db and len(self.collections) > 0:
@@ -134,7 +259,15 @@ class Tutor:
                 {"role": "system", "content": self.system_message.format(docs=docs)}
             ] + messages
         print(messages, f"Docs: |{docs}|")
-        print('NUMBER OF INPUT TOKENS:', len(tiktoken.get_encoding('cl100k_base').encode(docs)))
+        print(
+            "NUMBER OF INPUT TOKENS:",
+            len(tiktoken.get_encoding("cl100k_base").encode(docs)),
+        )
+        print("\t | GENERIC \t | FURTHERING \t | ")
+        print(
+            is_generic_message, is_furthering_message, "|", get_furthering_message, "|"
+        )
+        print("\n\t=>\t", prompt)
 
         try:
             response = openai.ChatCompletion.create(
@@ -150,19 +283,25 @@ class Tutor:
                 yield chunk["choices"][0]["delta"]
         except Exception as e:
             import logging
-            logging.error('Error at %s', 'division', exc_info=e)
+
+            logging.error("Error at %s", "division", exc_info=e)
             # An error occured
-            yield {"content": """Sorry, I am not able to provide a response. 
+            yield {
+                "content": """Sorry, I am not able to provide a response. 
                                 
                                 One of three things happened:
                                     - The context you provided was too wide, try to be more concise.
                                     - The files you uploaded were too large
                                     - I got disconnected from the server or I am currently being updated
-                                """, "error": "true"}
-            
-    def ask_question_interpreter(self, conversation, from_doc=None, selectedModel='gpt-3.5-turbo-16k'):
+                                """,
+                "error": "true",
+            }
+
+    def ask_question_interpreter(
+        self, conversation, from_doc=None, selectedModel="gpt-3.5-turbo-16k"
+    ):
         """Function that responds to an asked question using open interpreter
-        
+
         Args:
             conversation : List({role: ... , content: ...})
             from_doc (Doc, optional): Defaults to None.
@@ -174,20 +313,21 @@ class Tutor:
 
         prompt = conversation[-1]["content"]
         for coll_name, coll_desc in self.collections.items():
-            if self.embedding_db and not coll_desc.startswith('CQN papers'):
+            if self.embedding_db and not coll_desc.startswith("CQN papers"):
                 self.embedding_db.load_datasource(coll_name)
-                collection_db_response = f'\n {coll_desc} context: ' + self.embedding_db.query(prompt, 3, from_doc)
+                collection_db_response = (
+                    f"\n {coll_desc} context: "
+                    + self.embedding_db.query(prompt, 3, from_doc)
+                )
                 prompt += collection_db_response
-                print('#### COLLECTION DB RESPONSE:', collection_db_response)
+                print("#### COLLECTION DB RESPONSE:", collection_db_response)
 
-
-        print('prompt=', prompt)
-        print('conversation=',conversation)
+        print("prompt=", prompt)
+        print("conversation=", conversation)
         for chunk in interpreter.chat(prompt, stream=True, display=True):
             yield chunk
 
-        yield {'message': ''}
-
+        yield {"message": ""}
 
         # # Ensuring the last message in the conversation is a user's question
         # assert (
@@ -226,17 +366,17 @@ class Tutor:
         # # For the typewriter effect
         # for chunk in interpreter.chat(prompt, stream=True, display=True):
         #     yield chunk
-        
+
         # except:
         #     error = 1
-        #     yield {"content": """Sorry, I am not able to provide a response. 
-                                
+        #     yield {"content": """Sorry, I am not able to provide a response.
+
         #                         One of three things happened:
         #                             - The context you provided was too wide, try to be more concise.
         #                             - The files you uploaded were too large
         #                             - I got disconnected from the server
         #                         """}
-            
+
     def count_tokens(self, string: str, encoding_name="cl100k_base") -> int:
         """Counting the number of tokens in a string using the specified encoding
 
@@ -289,7 +429,7 @@ class Tutor:
             temperature=1,
             frequency_penalty=0.0,
             presence_penalty=0.0,
-            stream=True,
+            # stream=True,
         )
 
         return response.choices[0].message.content
@@ -314,7 +454,9 @@ class Tutor:
         )
         return response.choices[0].message.content
 
-    def stream_response_generator(self, conversation, from_doc, selectedModel='gpt-3.5-turbo-16k'):
+    def stream_response_generator(
+        self, conversation, from_doc, selectedModel="gpt-3.5-turbo-16k"
+    ):
         """Returns the generator that generates the response stream of ChatTutor.
 
         Args:
@@ -334,12 +476,14 @@ class Tutor:
                     chunk_content = chunk["content"]
                 chunks += chunk_content
                 chunk_time = time.time() - start_time
-                print(f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n\n")
+                # print(f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n\n")
                 yield f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n\n"
 
         return generate
-    
-    def stream_interpreter_response_generator(self, conversation, from_doc, selectedModel='gpt-3.5-turbo-16k'):
+
+    def stream_interpreter_response_generator(
+        self, conversation, from_doc, selectedModel="gpt-3.5-turbo-16k"
+    ):
         """Returns the generator that generates the response stream of ChatTutor interpreter.
 
         Args:
@@ -350,17 +494,17 @@ class Tutor:
         def generate():
             # This function generates responses to the questions in real-time and yields the response
             # along with the time taken to generate it.
-            chunks = ''
+            chunks = ""
             start_time = time.time()
             resp = self.ask_question_interpreter(conversation, from_doc, selectedModel)
             for chunk in resp:
-                chunk_content = ''
-                if 'executing' in chunk:
-                    chunk_content = str(chunk['executing']['code'])
-                if 'code' in chunk:
-                    chunk_content = str(chunk['code'])
-                if 'output' in chunk:
-                    chunk_content = str(chunk['output'])
+                chunk_content = ""
+                if "executing" in chunk:
+                    chunk_content = str(chunk["executing"]["code"])
+                if "code" in chunk:
+                    chunk_content = str(chunk["code"])
+                if "output" in chunk:
+                    chunk_content = str(chunk["output"])
                 chunks += chunk_content
                 chunk_time = time.time() - start_time
                 print(f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n\n")
