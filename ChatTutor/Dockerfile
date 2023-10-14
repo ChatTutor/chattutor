@@ -28,6 +28,6 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* && rm -rf sqlite-autoconf-34302
 
 RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/sqlite3.conf && ldconfig
 
-# CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
 
-CMD ["python", "main.py"]
+# CMD ["python", "main.py"]
