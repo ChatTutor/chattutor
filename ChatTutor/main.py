@@ -43,7 +43,7 @@ from werkzeug.datastructures import FileStorage
 # from vectordatabase import VectorDatabase
 
 interpreter.auto_run = True
-if "CHATUTOR_GCP" in os.environ or "_CHATUTOR_GCP" in os.environ:
+if "CHATTUTOR_GCP" in os.environ or "_CHATUTOR_GCP" in os.environ:
     openai.api_key = os.environ["OPENAI_API_KEY"]
 else:
     import yaml
