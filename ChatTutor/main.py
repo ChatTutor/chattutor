@@ -14,6 +14,7 @@ from core.tutor import cqn_system_message, default_system_message
 import json
 import time
 import os
+print('aaaaaaaaaaaaaaaaaaaaaaaa',os.environ)
 
 from core.reader import URLReader
 from core.definitions import Text
@@ -42,7 +43,6 @@ from werkzeug.datastructures import FileStorage
 # from vectordatabase import VectorDatabase
 
 interpreter.auto_run = True
-print('aaaaaaaaaaaaaaaaaaaaaaaa',os.environ)
 if "CHATUTOR_GCP" in os.environ or "_CHATUTOR_GCP" in os.environ:
     openai.api_key = os.environ["OPENAI_API_KEY"]
 else:
