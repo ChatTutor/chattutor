@@ -41,12 +41,12 @@ const uploadZipPapersForm = document.getElementById('uploadFileForm')
 const selectUploadedCollection = document.getElementById('selectUploadedCollection')
 const clearformupload = document.getElementById("clearformupload")
 const modelDropdown = document.getElementById('modelDropdown')
-
+const messageDIVInput = document.getElementById('msgInputDiv')
 let uploadedCollections = []
 messageInput.addEventListener('input', (event) => {
-  console.log('kajk')
-  sendBtn.disabled = messageInput.value.length === 0;
-  clear.disabled = !(messageInput.value.length === 0);
+  console.log(messageInput.value.length)
+  sendBtn.disabled = messageInput.value.length === 0 ;
+  clear.disabled = !(messageInput.value.length === 0 );
 })
 
 stopGenButton.style.display = 'none'
@@ -868,11 +868,17 @@ function validateMsgInputAndDisable() {
          addUrlButton.style.display = 'block'
         addUrlButton.innerText = 'Press enter to add'
         sendBtn.disabled = true
+
+        
     } else {
 
         addUrlButton.style.display = 'none'
         sendBtn.disabled = false
     }
+    sendBtn.disabled = messageInput.value.length === 0 ;
+    clear.disabled = !(messageInput.value.length === 0 );
+
+
 }
 
 function inputTextDidChange() {
@@ -927,6 +933,9 @@ function updateEditor() {
 
     msgerDiv.innerHTML = renderText(textContent);
     msgerInput.value = msgerDiv.innerText.replaceAll(' ', ' ')
+
+    sendBtn.disabled = messageInput.value.length === 0 ;
+    clear.disabled = !(messageInput.value.length === 0 );
     restoreSelection(anchorIndex, focusIndex);
 
     validateMsgInputAndDisable()
@@ -990,7 +999,7 @@ function renderText(text) {
       arr[i] = arr[i].trim()
     }
     arr = arr.filter(a => a.length > 0)
-    console.log("ARRRRRR, ", words, arr)
+    console.log("ARRRRRR, ", words, arr, messageInput.value)
 
     // @Andu, arr does not work :( help
     const output = words.map((word, ind, vec) => {
