@@ -119,7 +119,8 @@ class Tutor:
             f"""
             You are a model that detects weather a user given message refers to above messages and takes context from them, either by asking about further explanations on a topic discussed previously, or on a topic
             you just provided answer to. You will respond ONLY with YES or NO.
-                - YES if the user provided message is a message that refers to above messages from context
+                - YES if the user provided message is a message that refers to above messages from context, or if the user refers with pronouns about people mentioned in the above messages,
+                or if the user thanks you for a given information or asks more about it, or invalidates or validates a piece of information you provided 
                 - NO if the message is a standalone message
             
             The current conversation between the user and the bot is:
@@ -133,7 +134,8 @@ class Tutor:
             f"""
             You are a model that detects weather a user given message refers to above messages and takes context from them, either by asking about further explanations on a topic discussed previously, or on a topic
             you just provided answer to. You will ONLY respond with:
-                - YES + a small summary of what the user message is refering to, if the user provided message is a message that refers to above messages from context. You must attach a small summary of what the user message is refering to,
+                - YES + a small summary of what the user message is refering to, the person the user is refering to if applicable, or the piece of information the user is refering to, if the user provided message is a message that refers to above messages from context, or if the user refers with pronouns about people mentioned in the above messages,
+                or if the user thanks you for a given information or asks more about it, or invalidates or validates a piece of information you provided . You must attach a small summary of what the user message is refering to,
                 but you still have to maintain the user's question and intention. The summary should be rephrased from the view point of the user, as if the user formulated the question to convey the context the user is refering to. This is really important!
                 - NO if the message is a standalone message
             
