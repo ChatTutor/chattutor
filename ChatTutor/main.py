@@ -27,7 +27,6 @@ import interpreter
 # from vectordatabase import VectorDatabase
 
 interpreter.auto_run = True
-
 if 'CHATUTOR_GCP' in os.environ: 
     openai.api_key = os.environ['OPENAI_API_KEY']
 else:
@@ -35,8 +34,8 @@ else:
     with open('.env.yaml') as f:
         yamlenv = yaml.safe_load(f)
     keys = yamlenv["env_variables"]
-    print(keys)
     os.environ["OPENAI_API_KEY"] = keys["OPENAI_API_KEY"]
+    openai.api_key = keys["OPENAI_API_KEY"]
     os.environ["ACTIVELOOP_TOKEN"] = keys["ACTIVELOOP_TOKEN"]
 
 app = Flask(__name__)
@@ -169,8 +168,7 @@ def ask():
     from_doc = data.get("from_doc")
     selected_model = data.get('selectedModel')
     if selected_model == None:
-        # selected_model = 'gpt-3.5-turbo-16k'
-        selected_model = 'gpt-4'
+        selected_model = 'gpt-3.5-turbo-16k'
     print('SELECTED MODEL:', selected_model)
     print(collection_name)
     # Logging whether the request is specific to a document or can be from any document
@@ -322,4 +320,4 @@ def delete_uploaded_data():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)  # Running the app in debug mode
+    app.run(debug=True, host='0.0.0.0')  # Running the app in debug mode
