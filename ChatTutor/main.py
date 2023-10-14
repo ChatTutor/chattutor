@@ -15,7 +15,6 @@ import json
 import time
 import os
 print('lllllllllllllll',os.environ)
-
 from core.reader import URLReader
 from core.definitions import Text
 from core.definitions import Doc
