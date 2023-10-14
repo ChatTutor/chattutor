@@ -43,7 +43,7 @@ from werkzeug.datastructures import FileStorage
 
 interpreter.auto_run = True
 
-if "CHATUTOR_GCP" in os.environ:
+if "CHATUTOR_GCP" in os.environ or "_CHATUTOR_GCP" in os.environ:
     openai.api_key = os.environ["OPENAI_API_KEY"]
 else:
     import yaml
