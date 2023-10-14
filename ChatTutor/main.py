@@ -412,4 +412,4 @@ def upload_site_url():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0')  # Running the app in debug mode
+    app.run(debug=True)  # Running the app in debug mode
