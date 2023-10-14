@@ -22,6 +22,13 @@ from reader import read_filearray, extract_file
 from datetime import datetime
 from messagedb import MessageDB
 import interpreter
+from url_reader import URLReader
+from definitions import Text
+from definitions import Doc
+from reader import parse_plaintext_file
+import io
+import uuid
+from werkzeug.datastructures import FileStorage
 # import markdown
 
 # from vectordatabase import VectorDatabase
@@ -312,6 +319,53 @@ def upload_data_to_process():
 
     return jsonify(resp)
 
+@app.route("/upload_site_url", methods=["POST"])
+def upload_site_url():
+    ajson = request.json
+    coll_name = ajson['name']
+    url_to_parse = ajson["url"]
+    print('UTP: ', url_to_parse)
+    collection_name = coll_name
+    resp = {"collection_name": coll_name, "urls": url_to_parse}
+    for surl in url_to_parse:
+        ss = URLReader.parse_url(surl)
+        site_text = f"{ss.encode('utf-8', errors='replace')}"
+        navn = f"thingBoi{uuid.uuid4()}"
+        file = FileStorage(stream=io.BytesIO(bytes(site_text, 'utf-8')), name=navn)
+
+        f_f = (file, navn)
+        doc = Doc(docname=f_f[1], citation="", dockey=f_f[1])
+        texts = parse_plaintext_file(f_f[0], doc=doc, chunk_chars=2000, overlap=100)
+        db.load_datasource(collection_name)
+        db.add_texts(texts)
+    return jsonify(resp)
+
+
+
+
+@app.route("/upload_data_from_drop", methods=["POST"])
+def upload_data_from_drop():
+    cname = request.form.get('collection_name')
+    file = request.files.getlist('file')
+    f_arr = []
+    for fil in file:
+        f_arr.append(fil.filename)
+
+    resp = {"collection_name": cname, "files_uploaded_name": f_arr}
+    if file[0].filename != "":
+        files = []
+        for f in file:
+            files = files + extract_file(f)
+            print(f"Extracted file {f}")
+
+        texts = read_filearray(files)
+        # Generating the collection name based on the name provided by user, a random string and the current
+        # date formatted with punctuation replaced
+        print(cname)
+        db.load_datasource(cname)
+        db.add_texts(texts)
+
+    return jsonify(resp)
 
 @app.route("/delete_uploaded_data", methods=["POST"])
 def delete_uploaded_data():

@@ -277,6 +277,13 @@
 
   }
   .msger-input {
+      display: none;
+    flex: 1;
+    background: var(--msg-input-bg);
+    color: var(--msg-input-color)
+  }
+
+  .msger-input-div {
     flex: 1;
     background: var(--msg-input-bg);
     color: var(--msg-input-color)
@@ -341,7 +348,13 @@
   }
 
   .msger-header-title {
+      display: flex;
+      flex-direction: row;
     margin-top: 3px;
+  }
+
+  .msger-header-title * {
+      margin-right: 10px;
   }
 
 
