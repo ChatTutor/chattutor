@@ -1,4 +1,4 @@
-FROM python:3.11-bullseye
+FROM python:3.11-bookworm
 
 ENV PYTHONUNBUFFERED True
 ENV APP_HOME /app
@@ -18,8 +18,6 @@ RUN apt-get update && apt-get install -y wget build-essential libreadline-dev zl
 # RUN cd sqlite/ && make
 # RUN cp sqlite/sqlite3.[ch] pysqlite3/
 # RUN cd pysqlite3 && python setup.py build_static build
-
-
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
