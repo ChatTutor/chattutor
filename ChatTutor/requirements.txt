@@ -1,4 +1,4 @@
-chromadb==0.4.0
+chromadb>=0.4.0
 deeplake==3.6.15
 Flask==2.3.2
 Flask_Cors==4.0.0
@@ -10,4 +10,4 @@ gunicorn==20.1.0
 google-cloud-storage==2.11.0
 PyPDF2==3.0.1
 pymysql==1.1.0
-open-interpreter==0.1.9
+open-interpreter==0.1.8
