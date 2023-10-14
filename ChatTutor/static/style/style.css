@@ -531,7 +531,13 @@
   }
 
   .msger-header-title {
+      display: flex;
+      flex-direction: row;
     margin-top: 3px;
+  }
+
+  .msger-header-title * {
+      margin-right: 10px;
   }
 
 
