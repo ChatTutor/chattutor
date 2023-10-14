@@ -2,7 +2,7 @@ import openai
 import tiktoken
 import time
 import json
-from extensions import stream_text
+from core.extensions import stream_text
 import interpreter
 
 cqn_system_message = """
@@ -49,12 +49,15 @@ class Tutor:
             Tutor object with no collections to load from. Use add_collection to add
             collection to load from. 
     """
-    def __init__(self, embedding_db, embedding_db_name="CQN database", system_message=default_system_message):
+    def __init__(self, embedding_db, embedding_db_name="CQN database", system_message=default_system_message, engineer_prompts=True):
         """ 
             Args:
                 embedding_db (VectorDatabase): the db with any or no source loaded 
                 embedding_db_name (str): Description of embedding_db.
                 system_message (str)
+                engineer_prompts (bool): waether the chattutor bot should pull the full context from the last user message befor querying. 
+                                        if true, the answering is slower but it is less likely to error, and it has more context so the answers are 
+                                        clearer and more correct. Defaults to True.
 
             Return:
                 Tutor object with no collections to load from. Use add_collection to add
@@ -64,6 +67,7 @@ class Tutor:
         self.embedding_db_name = embedding_db_name
         self.collections = {}
         self.system_message = system_message
+        self.engineer_prompts = engineer_prompts
     
     def add_collection(self, name, desc):
         """Adds a collection to self.collections
@@ -72,6 +76,69 @@ class Tutor:
                 desc (str): description prompted to the model
         """
         self.collections[name] = desc
+        
+    def egineer_prompt(self, conversation, truncating_at=10, context=True):
+        """
+            Args:
+                conversation: current conversation
+                truncating_at: lookback for context (# of messages)
+                context: if False, return last message otherwise engineer the prompt to have full context
+        """
+        if not context:
+            return conversation[-1]["content"], False, False, ""
+        truncated_convo = [f"\n\n{c['role']}: {c['content']}" for c in conversation[-truncating_at:][:-1]]
+        lastmessage = conversation[-1]["content"]
+        # todo: fix prompt to take context from all messages
+        prompt = conversation[-1]["content"]
+        is_generic_message = self.simple_gpt(f"""
+            You are a model that detects weather a user given message is or isn't a generic message (a greeting or thanks of anything like that). Respond ONLY with YES or NO.
+                - YES if the message is a generic message (a greeting or thanks of anything like that)
+                - NO if the message asks something about a topic, person, scientist, or asks for further explanations on concepts that were discussed above.
+
+            The current conversation between the user and the bot is:
+            
+            {truncated_convo}            
+            """,
+            f"If the usere were to ask this: '{prompt}', would you clasify it as a message that refers to above messages from context? Respond only with YES or NO!")
+        
+        is_furthering_message = self.simple_gpt(f"""
+            You are a model that detects weather a user given message refers to above messages and takes context from them, either by asking about further explanations on a topic discussed previously, or on a topic
+            you just provided answer to. You will respond ONLY with YES or NO.
+                - YES if the user provided message is a message that refers to above messages from context
+                - NO if the message is a standalone message
+            
+            The current conversation between the user and the bot is:
+            
+            {truncated_convo}
+            """,
+            f"If the usere were to ask this: '{prompt}', would you clasify it as a message that refers to above messages from context? Respond only with YES or NO!")
+        
+        get_furthering_message = self.simple_gpt(f"""
+            You are a model that detects weather a user given message refers to above messages and takes context from them, either by asking about further explanations on a topic discussed previously, or on a topic
+            you just provided answer to. You will ONLY respond with:
+                - YES + a small summary of what the user message is refering to, if the user provided message is a message that refers to above messages from context. You must attach a small summary of what the user message is refering to,
+                but you still have to maintain the user's question and intention. The summary should be rephrased from the view point of the user, as if the user formulated the question to convey the context the user is refering to. This is really important!
+                - NO if the message is a standalone message
+            
+            The current conversation between the user and the bot is:
+            
+            {truncated_convo}
+            """,
+            f"If the usere were to ask this: '{prompt}', would you clasify it as a message that refers to above messages from context? If YES, provide a small summary of what the user would refer to.")
+        
+        print(is_generic_message, is_furthering_message, "|", get_furthering_message, "|")
+        is_generic_message = (is_generic_message.strip() == "YES")
+        is_furthering_message = (is_furthering_message.strip() == "YES")
+        
+
+        if not is_furthering_message:
+            get_furthering_message="NO"
+        if is_furthering_message:
+            print(prompt, "\n\t=>")
+            prompt += f"\n({get_furthering_message[4:]})"
+            print(prompt)
+        
+        return prompt, is_generic_message, is_furthering_message, get_furthering_message
 
     def ask_question(self, conversation, from_doc=None, selectedModel='gpt-3.5-turbo-16k', threshold=0.5, limit=3):
         """Function that responds to an asked question based
@@ -91,13 +158,19 @@ class Tutor:
             conversation[-1]["role"] == "user"
         ), "The final message in the conversation must be a question from the user."
         conversation = self.truncate_conversation(conversation)
-
-        prompt = conversation[-1]["content"]
-
+        
+        truncating_at = 10
+        
+        truncated_convo = [f"\n\n{c['role']}: {c['content']}" for c in conversation[-10:][:-1]]
+        lastmessage = conversation[-1]["content"]
+        # todo: fix prompt to take context from all messages
+        prompt, is_generic_message, is_furthering_message, get_furthering_message = self.egineer_prompt(conversation, context=self.engineer_prompts) # if contest is st to False, it is equivalent to conversation[-1]["content"]
         # Querying the database to retrieve relevant documents to the user's question
         arr = []
         # add al docs with distance below threshold to array
         for coll_name, coll_desc in self.collections.items():
+            #if is_generic_message:
+            #    continue
             if self.embedding_db:
                 self.embedding_db.load_datasource(coll_name)
                 documents, metadatas, distances, documents_plain = self.embedding_db.query(prompt, limit, from_doc, metadatas=True)
@@ -124,7 +197,7 @@ class Tutor:
         for doc in valid_docs:
             collection_db_response = f'{coll_desc} context, from {doc["metadata"]["doc"]}: ' + doc["doc"]
             docs += collection_db_response + '\n'
-            print('#### COLLECTION DB RESPONSE:', collection_db_response)
+            #print('#### COLLECTION DB RESPONSE:', collection_db_response)
         # debug log
         print("\n\n\nSYSTEM MESSAGE", self.system_message, len(self.collections), self.collections, self.embedding_db)
         # Creating a chat completion object with OpenAI API to get the model's response
@@ -135,6 +208,9 @@ class Tutor:
             ] + messages
         print(messages, f"Docs: |{docs}|")
         print('NUMBER OF INPUT TOKENS:', len(tiktoken.get_encoding('cl100k_base').encode(docs)))
+        print("\t | GENERIC \t | FURTHERING \t | ")
+        print(is_generic_message, is_furthering_message, "|", get_furthering_message, "|")
+        print("\n\t=>\t", prompt)
 
         try:
             response = openai.ChatCompletion.create(
@@ -289,7 +365,7 @@ class Tutor:
             temperature=1,
             frequency_penalty=0.0,
             presence_penalty=0.0,
-            stream=True,
+            #stream=True,
         )
 
         return response.choices[0].message.content
@@ -334,7 +410,7 @@ class Tutor:
                     chunk_content = chunk["content"]
                 chunks += chunk_content
                 chunk_time = time.time() - start_time
-                print(f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n\n")
+                #print(f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n\n")
                 yield f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n\n"
 
         return generate

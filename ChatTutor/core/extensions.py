@@ -2,7 +2,7 @@
     Defines which database is used. One can choose between chroma and deeplake
 """
 
-from vectordatabase import VectorDatabase
+from core.vectordatabase import VectorDatabase
 
 db = VectorDatabase("34.123.154.72:8000", "chroma", hosted=True)
 user_db = VectorDatabase("34.123.154.72:8000", "chroma", hosted=True)

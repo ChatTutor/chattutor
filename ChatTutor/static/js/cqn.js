@@ -416,7 +416,9 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
                   accumulatedContent += " ...Stopped generating";
                   conversation.push({"role": 'assistant', "content": accumulatedContent, "context_documents" : context_documents})
                   localStorage.setItem("cqn-conversation", JSON.stringify(conversation))
-                  sendBtn.disabled = false;
+
+                  sendBtn.disabled = messageInput.value.length == 0;
+                  clear.disabled = !(messageInput.value.length == 0);
                   clear.style.display = 'block'
                   stopGenButton.style.display = 'none'
                   uploadMessageToDB({content: accumulatedContent, role: 'assistant'}, getChatId())
@@ -494,6 +496,8 @@ function setLatMessageHeader(context_documents, lastMessageIdParam, add=true) {
   if (add == false) {
     var docs = ''
       context_documents.forEach(doc => {
+        doc.metadata.summary = 0
+        var data = `${JSON.stringify(doc.metadata).replace("&quot;", '"')}`
         docs += `<div class="msg-context-doc col ${lastMessageIdParam}-context" data-doc="${doc.metadata.doc}">
           <div style="align-self: self-start;">
             <span>${doc.metadata.doc}</span>
@@ -501,8 +505,8 @@ function setLatMessageHeader(context_documents, lastMessageIdParam, add=true) {
 
           <div class="info col">
             <div>
-              <div class="askmore context-info col" onclick='setFromDoc(${JSON.stringify(doc.metadata)})'>Ask about</div>
-              <div class="inform context-info col" onclick='setDocInfo(${JSON.stringify(doc.metadata)})'>Info</div>
+              <div class="askmore context-info col" onclick='setFromDoc(${data})'>Ask about</div>
+              <div class="inform context-info col" onclick='setDocInfo(${data})'>Info</div>
             </div>
           </div>
         </div>`

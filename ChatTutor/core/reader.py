@@ -1,11 +1,11 @@
-from definitions import Doc, Text
+from core.definitions import Doc, Text
 from typing import List
 import os
 import json
 from google.cloud import storage
 from io import BytesIO
 import PyPDF2
-from vectordatabase import VectorDatabase
+from core.vectordatabase import VectorDatabase
 
 
 def read_folder_gcp(bucket_name, folder_name):
