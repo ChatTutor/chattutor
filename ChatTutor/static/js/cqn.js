@@ -46,6 +46,7 @@ let uploadedCollections = []
 messageInput.addEventListener('input', (event) => {
   console.log('kajk')
   sendBtn.disabled = messageInput.value.length === 0;
+  clear.disabled = !(messageInput.value.length === 0);
 })
 
 stopGenButton.style.display = 'none'
@@ -254,11 +255,12 @@ function clearConversation() {
         childNode.parentNode.removeChild(childNode);
       }
   }
-  sendBtn.disabled = false;
 }
 
 function stopGenerating() {
   stopGeneration = true
+  sendBtn.disabled = messageInput.value.length == 0;
+  clear.disabled = !(messageInput.value.length == 0);
 }
 
 function handleFormSubmit(event) {
@@ -272,6 +274,7 @@ function handleFormSubmit(event) {
 
   // Disable the send button
   sendBtn.disabled = true;
+  clear.disabled = false;
   clear.style.display = 'none'
   stopGenButton.style.display = 'block'
 
@@ -286,10 +289,10 @@ function loadConversationFromLocalStorage() {
   conversation = JSON.parse(localStorage.getItem("cqn-conversation"))
   if(conversation){
     conversation.forEach(message => {
-      addMessage(message["role"], message["content"], false)
+      lastMessageId = null
+      addMessage(message["role"], message["content"], false, message["context_documents"])
       if (message["context_documents"]) {
-        setLatMessageHeader(message["context_documents"])
-
+        //setLatMessageHeader(message["context_documents"])
       }
     })
   }
@@ -353,7 +356,6 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
   if (READ_FROM_DOC != null) args.from_doc = READ_FROM_DOC
 
   args.selectedModel = selectedModel
-
   fetch('/ask', {
     method: 'POST',
     headers: {
@@ -369,7 +371,7 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
       reader.read().then(({ done, value }) => {
         if (done) {
           // Enable the send button when streaming is done
-          sendBtn.disabled = false;
+          sendBtn.disabled = messageInput.value.length === 0;
           clear.style.display = 'block'
           stopGenButton.style.display = 'none'
           stopGeneration = false
@@ -412,7 +414,7 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
               }
               if (stopGeneration === true) {
                   accumulatedContent += " ...Stopped generating";
-                  conversation.push({"role": 'assistant', "content": accumulatedContent})
+                  conversation.push({"role": 'assistant', "content": accumulatedContent, "context_documents" : context_documents})
                   localStorage.setItem("cqn-conversation", JSON.stringify(conversation))
                   sendBtn.disabled = false;
                   clear.style.display = 'block'
@@ -420,6 +422,7 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
                   uploadMessageToDB({content: accumulatedContent, role: 'assistant'}, getChatId())
                   scrollHelper.scrollIntoView()
                   updateLastMessage(accumulatedContent);
+
                   break
               }
           }
@@ -427,6 +430,7 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
           read();
         } else {
           stopGeneration = false
+
         }
       }).catch(err => {
         console.error('Stream error:', err);
@@ -480,13 +484,17 @@ function formatMessage(message, makeLists = true) {
 
 
 
-function setLatMessageHeader(context_documents) {
-  if (lastMessageId) {
-    const lastMessageElement = document.querySelector(`#${lastMessageId} .msg-text`);
-    if (lastMessageElement) {
-      var docs = ''
+function setLatMessageHeader(context_documents, lastMessageIdParam, add=true) {
+
+  if (context_documents==false)
+    return ''
+  if (!lastMessageIdParam) {
+    lastMessageIdParam = lastMessageId
+  }
+  if (add == false) {
+    var docs = ''
       context_documents.forEach(doc => {
-        docs += `<div class="msg-context-doc col ${lastMessageId}-context" data-doc="${doc.metadata.doc}">
+        docs += `<div class="msg-context-doc col ${lastMessageIdParam}-context" data-doc="${doc.metadata.doc}">
           <div style="align-self: self-start;">
             <span>${doc.metadata.doc}</span>
           </div>
@@ -499,17 +507,43 @@ function setLatMessageHeader(context_documents) {
           </div>
         </div>`
       })
+      return docs;
+  }
 
-      document.querySelector(`#${lastMessageId}`).innerHTML = `
+
+  if (lastMessageIdParam) {
+    const lastMessageElement = document.querySelector(`#${lastMessageIdParam} .msg-text`);
+    if (lastMessageElement) {
+      var docs = ''
+      context_documents.forEach(doc => {
+        docs += `<div class="msg-context-doc col ${lastMessageIdParam}-context" data-doc="${doc.metadata.doc}">
+          <div style="align-self: self-start;">
+            <span>${doc.metadata.doc}</span>
+          </div>
+
+          <div class="info col">
+            <div>
+              <div class="askmore context-info col" onclick='setFromDoc(${JSON.stringify(doc.metadata)})'>Ask about</div>
+              <div class="inform context-info col" onclick='setDocInfo(${JSON.stringify(doc.metadata)})'>Info</div>
+            </div>
+          </div>
+        </div>`
+      })
+      if (add)
+      document.querySelector(`#${lastMessageIdParam}`).innerHTML = `
         <div class="msg-header-context">${docs}</div>
-        ${document.querySelector(`#${lastMessageId}`).innerHTML}
+        ${document.querySelector(`#${lastMessageIdParam}`).innerHTML}
       `;
+
+      return docs
     } else {
       console.error('Cannot find the .msg-text element to update.');
     }
   } else {
     console.error('No message has been added yet.');
   }
+
+  return ''
 }
 
 function updateLastMessage(newContent) {
@@ -534,7 +568,7 @@ clearformupload.addEventListener("click", ()=>{
 
 
 
-function addMessage(role, message, updateConversation) {
+function addMessage(role, message, updateConversation, lastmessageheader=false) {
     let role_name
     let img
     let side
@@ -564,6 +598,8 @@ function addMessage(role, message, updateConversation) {
 
   const msgHTML = `
     <div class="msg ${side}-msg" id="${messageId}">
+    <div class="msg-header-context">${setLatMessageHeader(lastmessageheader, messageId, false)}</div>
+
     <div class="msg-bgd">
       <div class="msg-img" style="background-image: url(${img})"></div>
 
@@ -599,6 +635,7 @@ function addMessage(role, message, updateConversation) {
     conversation.push({"role": role, "content": message})
     localStorage.setItem("cqn-conversation", JSON.stringify(conversation))
   }
+
 }
 
 
