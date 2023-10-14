@@ -48,13 +48,53 @@
     cursor: pointer;
 
   }
+
+.msg-header-context {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  /* justify-content: start; */
+  align-items: center;
+  white-space: nowrap; /* Prevents the text from wrapping */
+  overflow-x: auto;
+  /* width: 260px; */
+  width: 100%;
+}
+
 .msg-context-doc{
   border: 1px solid rgba(245, 222, 179, 0);
   border-radius: 20px;
+  background-color: rgba(183, 130, 242, 1) !important;
 }
 .msg-context-doc:hover{
-  border: 1px dashed var(--msg-input-color);
+  border: 1px solid var(--msg-input-color);
 
+}
+
+.msg-context-text {
+  flex-grow: 1;
+  /* overflow-x: auto; */
+  /* white-space: nowrap; */
+  /* align-self: self-start; */
+  color: #220029; /* Slightly dark grey for contrast */
+  font-family: Arial, sans-serif; /* A simple and readable font */
+  font-size: 14px; /* Adjust as per your design */
+  line-height: 1; /* Space between lines */
+  padding: 5px; /* Space around text */
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.msg-context-text:hover {
+  /* background-color: #f5f5f5; */
+  /* content: attr(data-fulltext);
+  position: absolute;
+  width: max-content;
+  white-space: normal;
+  word-wrap: break-word; */
+  /* background-color: rgba(255,255,255,0.9); */
+  /* z-index: 1; */
 }
 
 .small {
@@ -130,7 +170,7 @@
   transform: translateY(-40px);
   background-color: var(--right-msg-bg);
   color: var(--msg-input-color);
-  border: 1px dashed var(--msg-input-color);
+  border: 1px solid var(--msg-input-color);
   border-radius: 20px;
   border-bottom-left-radius: 0px;
   overflow: hidden;
@@ -769,7 +809,7 @@ select {
 .area {
   width: 100%;
   height: 100%;
-  border: 4px dashed #000;
+  border: 4px solid #000;
   /* background-image: url("http://kmtlondon.com/img/upload.png"); */
   background-position: center;
   background-repeat: no-repeat;

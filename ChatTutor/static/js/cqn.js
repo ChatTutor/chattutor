@@ -491,8 +491,8 @@ function setLatMessageHeader(context_documents) {
       var docs = ''
       context_documents.forEach(doc => {
         docs += `<div class="msg-context-doc col ${lastMessageId}-context" data-doc="${doc.metadata.doc}">
-          <div style="align-self: self-start;">
-            <span>${doc.metadata.doc}</span>
+          <div class="msg-context-text" style="align-self: self-start;">
+            ${doc.metadata.doc}
           </div>
 
           <div class="info col">
