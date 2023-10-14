@@ -84,7 +84,7 @@ class Tutor:
         """
         self.collections[name] = desc
 
-    def egineer_prompt(self, conversation, truncating_at=10, context=True):
+    def engineer_prompt(self, conversation, truncating_at=10, context=True):
         """
         Args:
             conversation: current conversation
@@ -199,7 +199,7 @@ class Tutor:
             is_generic_message,
             is_furthering_message,
             get_furthering_message,
-        ) = self.egineer_prompt(
+        ) = self.engineer_prompt(
             conversation, context=self.engineer_prompts
         )  # if contest is st to False, it is equivalent to conversation[-1]["content"]
         # Querying the database to retrieve relevant documents to the user's question
