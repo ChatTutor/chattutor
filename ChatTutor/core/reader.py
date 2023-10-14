@@ -214,6 +214,7 @@ def parse_plaintext_file(file, doc: Doc, chunk_chars: int, overlap: int):
     """
     texts = texts_from_str(file.read(), doc, chunk_chars, overlap)
     print(texts)
+    # print(texts)
     return texts
 
 
