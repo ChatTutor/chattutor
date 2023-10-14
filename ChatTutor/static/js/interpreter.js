@@ -46,6 +46,8 @@ const modelDropdown = document.getElementById('modelDropdown')
 let uploadedCollections = []
 messageInput.addEventListener('input', (event) => {
   sendBtn.disabled = messageInput.value.length === 0;
+  clear.disabled = !(messageInput.value.length === 0);
+
 })
 
 stopGenButton.style.display = 'none'
@@ -251,7 +253,6 @@ function clearConversation() {
         childNode.parentNode.removeChild(childNode);
       }
   }
-  sendBtn.disabled = false;
 }
 
 function stopGenerating() {
@@ -269,6 +270,7 @@ function handleFormSubmit(event) {
 
   // Disable the send button
   sendBtn.disabled = true;
+  clear.disabled = false;
   clear.style.display = 'none'
   stopGenButton.style.display = 'block'
 

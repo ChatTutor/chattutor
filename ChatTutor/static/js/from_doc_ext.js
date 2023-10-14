@@ -11,6 +11,8 @@ function setFromDoc(doc) {
     document.querySelector(".notification").classList.add("hidden")
 
     document.querySelector(".msger-input").value = `Please tell me more about "${READ_FROM_DOC}".`
+    document.getElementById('msgInputDiv').innerText = `Please tell me more about "${READ_FROM_DOC}".`
+
     document.querySelector("#sendBtn").disabled = false
   }
   
@@ -19,6 +21,7 @@ function clearFromDoc() {
     READ_FROM_DOC_META = null
     document.querySelector("#from-doc").innerHTML = ""
     document.querySelector(".notification").classList.add("hiddenop")
+    
   }
 
 

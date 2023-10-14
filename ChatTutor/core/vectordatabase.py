@@ -1,7 +1,7 @@
 import chromadb
 from chromadb.utils import embedding_functions
 from typing import List
-from definitions import Text
+from core.definitions import Text
 from deeplake.core.vectorstore import VectorStore
 import openai
 import requests
@@ -148,7 +148,7 @@ class VectorDatabase:
         count = self.datasource.count()
         ids = [str(i) for i in range(count, count + len(texts))]
         print("ids:", ids)
-        print('texts',texts)
+        print("texts", texts)
         print(texts[0].doc.docname)
         self.datasource.add(
             ids=ids,
@@ -165,9 +165,19 @@ class VectorDatabase:
             from_doc (Doc) : Select only lines where doc = from_doc
         """
         if self.db_provider == "chroma":
-            data = self.query_chroma(prompt, n_results, from_doc, include=["documents", "metadatas", "distances"])
+            data = self.query_chroma(
+                prompt,
+                n_results,
+                from_doc,
+                include=["documents", "metadatas", "distances"],
+            )
             if metadatas:
-                return data["documents"][0], data["metadatas"][0], data["distances"][0], " ".join(data["documents"][0])
+                return (
+                    data["documents"][0],
+                    data["metadatas"][0],
+                    data["distances"][0],
+                    " ".join(data["documents"][0]),
+                )
             return " ".join(data["documents"][0])
         elif self.db_provider == "deeplake_vectordb":
             return self.query_deeplake(prompt, n_results, from_doc)
@@ -177,13 +187,18 @@ class VectorDatabase:
             raise Exception("db_provider must be one of 'chroma' or 'deeplake'")
 
     def query_chroma(self, prompt, n_results, from_doc, include=["documents"]):
-        """Querying Chroma data source with specified query_texts, n_results, and optional where clause""" 
+        """Querying Chroma data source with specified query_texts, n_results, and optional where clause"""
         if from_doc:
             return self.datasource.query(
-                query_texts=prompt, n_results=n_results, where={"doc": from_doc}, include=include
+                query_texts=prompt,
+                n_results=n_results,
+                where={"doc": from_doc},
+                include=include,
             )
         else:
-            return self.datasource.query(query_texts=prompt, n_results=n_results, include=include)
+            return self.datasource.query(
+                query_texts=prompt, n_results=n_results, include=include
+            )
 
     def query_deeplake(self, prompt, n_results, from_doc):
         """Querying Deeplake data source with specified embedding_data, embedding_function, k, optional filter, and exec_option"""
