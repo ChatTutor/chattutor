@@ -34,7 +34,7 @@ def embedding_function(texts, model="text-embedding-ada-002"):
 
 # Loading API keys from .env.yaml
 if "CHATUTOR_GCP" in os.environ or "_CHATUTOR_GCP" in os.environ:
-    openai.api_key = os.environ["OPENAI_API_KEY"]
+    openai.api_key = os.environ["_OPENAI_API_KEY"]
 else:
     import yaml
 
