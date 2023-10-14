@@ -263,27 +263,6 @@ function stopGenerating() {
   clear.disabled = !(messageInput.value.length == 0);
 }
 
-// function handleFormSubmit(event) {
-//   event.preventDefault();
-//   const msgText = msgerInput.value;
-//   if (!msgText) return;
-//   // if (selectUploadedCollection && !selectUploadedCollection.options[ selectUploadedCollection.selectedIndex ]) {
-//   //   alert("Please upload some files for the tutor to learn from!")
-//   //   return
-//   // }
-
-//   // Disable the send button
-//   sendBtn.disabled = true;
-//   clear.disabled = false;
-//   clear.style.display = 'none'
-//   stopGenButton.style.display = 'block'
-
-//   addMessage("user", msgText, true);
-//   uploadMessageToDB({role: 'user', content: msgText}, getChatId())
-//   msgerInput.value = "";
-//   queryGPT();
-// }
-
 
 function loadConversationFromLocalStorage() {
   const conversation = JSON.parse(localStorage.getItem("cqn-conversation"))
@@ -301,7 +280,7 @@ function loadConversationFromLocalStorage() {
 }
 
 function loadCollectionsFromLocalStorage() {
-  collections = JSON.parse(localStorage.getItem("uploaded-collections"))//TODO
+  const collections = JSON.parse(localStorage.getItem("uploaded-collections"))//TODO
   if(collections) {
     collections.forEach(collname => {
       addCollectionToFrontEnd(collname)
