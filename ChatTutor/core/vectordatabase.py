@@ -1,7 +1,7 @@
 import chromadb
 from chromadb.utils import embedding_functions
 from typing import List
-from definitions import Text
+from core.definitions import Text
 from deeplake.core.vectorstore import VectorStore
 import openai
 import requests

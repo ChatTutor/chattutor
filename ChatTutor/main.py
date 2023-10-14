@@ -2,25 +2,25 @@ import flask
 from flask import Flask, request, redirect, send_from_directory, url_for
 from flask import stream_with_context, Response, abort, jsonify
 from flask_cors import CORS  # Importing CORS to handle Cross-Origin Resource Sharing
-from extensions import (
+from core.extensions import (
     db,
     user_db,
     get_random_string,
     generate_unique_name,
     stream_text,
 )  # Importing the database object from extensions module
-from tutor import Tutor
-from tutor import cqn_system_message, default_system_message
+from core.tutor import Tutor
+from core.tutor import cqn_system_message, default_system_message
 import json
 import time
 import os
 # import pymysql
 import sqlite3
 import openai
-import loader
-from reader import read_filearray, extract_file
+import core.loader
+from core.reader import read_filearray, extract_file
 from datetime import datetime
-from messagedb import MessageDB
+from core.messagedb import MessageDB
 import interpreter
 # import markdown
 
