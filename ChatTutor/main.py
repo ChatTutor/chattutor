@@ -41,7 +41,7 @@ interpreter.auto_run = True
 if "CHATUTOR_GCP" in os.environ:
     openai.api_key = os.environ["OPENAI_API_KEY"]
 else:
-    import yamlss
+    import yaml
 
     with open(".env.yaml") as f:
         yamlenv = yaml.safe_load(f)
