@@ -998,10 +998,8 @@ function renderText(text) {
             const high = highlights[ihighlight]
             if (word === high.word) {
               if (ihighlight == 0)
-                return `<span style=\"padding: 1px; margin: 0; margin-right: 5px; border-radius: 2px; background-color: ${high.col}; color: black\">${word}`
-              if (ihighlight == highlights.length - 1)
-                return `</span><span style=\"padding: 1px; margin: 0; margin-right: 5px; border-radius: 2px; background-color: ${high.col}; color: black\">${word}</span>`
- 
+                return `</span><span style=\"padding: 1px; margin: 0; margin-right: 5px; border-radius: 2px; background-color: ${high.col}; color: black\">${word}`
+            
               return `</span><span style=\"padding: 1px; margin: 0; margin-right: 5px; border-radius: 2px; background-color: ${high.col}; color: black\">${word}`
             }
 
