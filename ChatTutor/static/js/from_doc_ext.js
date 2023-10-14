@@ -37,16 +37,16 @@ function format_docinfo(docinfo) {
                 <h3>${docinfo.title}</h3>
                 <div class="categories">${docinfo.categories}</div>
                 <br/>
-                <div>Url : <a href = ${docinfo.entry_id}>${docinfo.entry_id}</a> </div>
+                <div>Url: <a href = ${docinfo.entry_id}>${docinfo.entry_id}</a> </div>
                 <br/>
 
-                <div>Authors : ${docinfo.authors}</div>
+                <div>Authors: ${docinfo.authors}</div>
                 <br/>
 
                 <div>Published in ${docinfo.published} </div>
                 <br/>
 
-                <div>DOI : ${docinfo.doi}</div>
+                <div>DOI: ${docinfo.doi}</div>
             </div>
         `
     return `
