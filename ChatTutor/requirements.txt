@@ -12,3 +12,4 @@ PyPDF2
 pymysql
 open-interpreter==0.1.7
 markdown
+beautifulsoup4==4.12.2

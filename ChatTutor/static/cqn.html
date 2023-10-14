@@ -21,9 +21,10 @@
                 <header class="msger-header">
 
                   <div class="msger-header-title">
-                    <i class="fas fa-comment-alt"></i> ChatTutor
-                      <a href="display_db.html" style="color: var(--left-msg-txt)">See db</a>
-                  </div>
+                    <i class="fas fa-comment-alt"></i> <span>ChatTutor</span>
+                    <a href="display_db.html" style="color: var(--left-msg-txt)">See db</a>
+                    <span id="addUrl">Add URL</span>    
+                </div>
                   <div class="msger-header-options">
                     <span><i class="fas fa-cog"></i></span>
                   </div>
@@ -72,6 +73,7 @@
             </main>
             <form class="msger-inputarea">
               <input type="text" class="msger-input" placeholder="Enter your message..." id="msgInput" autocomplete="off">
+              <div contenteditable="true" id="msgInputDiv" class="msger-input-div"> </div>
               <button type="submit" class="msger-send-btn" id="sendBtn">
 
                   <span class="material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
@@ -215,8 +217,10 @@
         </div>
 
           <script src="js/cqn.js" type="module"></script>
+
           <script src="js/fileupload.js" type="module"></script>
-      
+          <script src="js/fileupload_inchat.js"></script>
+
 	</body>
 </html>
 

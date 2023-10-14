@@ -6,7 +6,7 @@ from google.cloud import storage
 from io import BytesIO
 import PyPDF2
 from core.vectordatabase import VectorDatabase
-
+from core.url_reader import URLReader
 
 def read_folder_gcp(bucket_name, folder_name):
     """
@@ -152,7 +152,9 @@ def parse_notebook(path: str, doc: Doc, chunk_chars: int, overlap: int):
         return texts_from_str(text_str, doc, chunk_chars, overlap)
 
 
-def parse_pdf(file_contents: str, doc: Doc, chunk_chars: int, overlap: int) -> List[Text]:
+def parse_pdf(
+    file_contents: str, doc: Doc, chunk_chars: int, overlap: int
+) -> List[Text]:
     """Parses a pdf file and generates texts from its content.
 
     Args:
@@ -210,7 +212,7 @@ def parse_plaintext_file(file, doc: Doc, chunk_chars: int, overlap: int):
     Returns:
         [Text]: The resulting Texts as an array
     """
-    texts = texts_from_str(file, doc, chunk_chars, overlap)
+    texts = texts_from_str(file.read(), doc, chunk_chars, overlap)
     print(texts)
     return texts
 
