@@ -460,6 +460,13 @@
 
   }
   .msger-input {
+    display: none;
+    flex: 1;
+    background: var(--msg-input-bg);
+    color: var(--msg-input-color)
+  }
+
+  .msger-input-div {
     flex: 1;
     background: var(--msg-input-bg);
     color: var(--msg-input-color)
@@ -880,4 +887,21 @@ select {
 
 #nice-alert button {
   margin-top: 20px !important;
+}
+
+.msger-header-title {
+  display: flex;
+  flex-direction: row;
+margin-top: 3px;
+}
+
+.msger-header-title * {
+  margin-right: 10px;
+}
+
+.fileurl {
+  background-color: #00000097;
+  border-left: 1px solid #515151;
+  padding: 0px !important;
+
 }
