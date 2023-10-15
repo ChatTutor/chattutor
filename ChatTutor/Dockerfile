@@ -1,4 +1,4 @@
-FROM python:3.11-bullseye
+FROM python:3.11-bookworm
 
 ENV PYTHONUNBUFFERED True
 ENV APP_HOME /app
