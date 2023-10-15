@@ -12,14 +12,6 @@ COPY . ./
 # Install dependencies
 RUN apt-get update && apt-get install -y wget build-essential libreadline-dev zlib1g-dev
 
-# Download, compile, and install SQLite 3.35.0 or newer from source
-# RUN wget https://www.sqlite.org/src/tarball/sqlite.tar.gz?r=release -O sqlite.tar.gz
-# RUN tar xzf sqlite.tar.gz
-# RUN cd sqlite/ && ./configure
-# RUN cd sqlite/ && make
-# RUN cp sqlite/sqlite3.[ch] pysqlite3/
-# RUN cd pysqlite3 && python setup.py build_static build
-
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
