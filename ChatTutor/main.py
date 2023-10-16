@@ -121,7 +121,6 @@ initialize_ldatabase()
 
 @app.route('/')
 def serve():
-    print('eeeeeeeeeeeee',app.static_folder)
     return send_from_directory(app.static_folder, 'index.html')
 
 
