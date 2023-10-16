@@ -14,7 +14,6 @@ from core.tutor import cqn_system_message, default_system_message
 import json
 import time
 import os
-print('lllllllllllllll',os.environ)
 from core.reader import URLReader
 from core.definitions import Text
 from core.definitions import Doc
@@ -54,7 +53,7 @@ else:
     openai.api_key = keys["OPENAI_API_KEY"]
     os.environ["ACTIVELOOP_TOKEN"] = keys["ACTIVELOOP_TOKEN"]
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='frontend/dist/frontend/', static_url_path='')
 CORS(app)  # Enabling CORS for the Flask app to allow requests from different origins
 db.init_db()
 user_db.init_db()
@@ -120,15 +119,10 @@ def initialize_ldatabase():
 initialize_ldatabase()
 
 
-@app.route("/")
-def index():
-    """
-    Serves the landing page of the web application which provides
-    the ChatTutor interface. Users can ask the Tutor questions and it will
-    response with information from its database of papers and information.
-    Redirects the root URL to the index.html in the static folder
-    """
-    return redirect(url_for("static", filename="index.html"))
+@app.route('/')
+def serve():
+    print('eeeeeeeeeeeee',app.static_folder)
+    return send_from_directory(app.static_folder, 'index.html')
 
 
 @app.route("/cqn")
