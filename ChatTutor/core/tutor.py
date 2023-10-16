@@ -99,9 +99,9 @@ class Tutor:
             f"\n\n{c['role']}: {c['content']}"
             for c in conversation[-truncating_at:][:-1]
         ]
-        lastmessage = conversation[-1]["content"]
         # todo: fix prompt to take context from all messages
         prompt = conversation[-1]["content"]
+        print("Is generic?")
         is_generic_message = self.simple_gpt(
             f"""
             You are a model that detects weather a user given message is or isn't a generic message (a greeting or thanks of anything like that). Respond ONLY with YES or NO.
@@ -114,7 +114,7 @@ class Tutor:
             """,
             f"If the usere were to ask this: '{prompt}', would you clasify it as a message that refers to above messages from context? Respond only with YES or NO!",
         )
-
+        print("Requires context?")
         is_furthering_message = self.simple_gpt(
             f"""
             You are a model that detects weather a user given message refers to above messages and takes context from them, either by asking about further explanations on a topic discussed previously, or on a topic
@@ -129,29 +129,32 @@ class Tutor:
             """,
             f"If the usere were to ask this: '{prompt}', would you clasify it as a message that refers to above messages from context? Respond only with YES or NO!",
         )
-
-        get_furthering_message = self.simple_gpt(
-            f"""
-            You are a model that detects weather a user given message refers to above messages and takes context from them, either by asking about further explanations on a topic discussed previously, or on a topic
-            you just provided answer to. You will ONLY respond with:
-                - YES + a small summary of what the user message is refering to, the person the user is refering to if applicable, or the piece of information the user is refering to, if the user provided message is a message that refers to above messages from context, or if the user refers with pronouns about people mentioned in the above messages,
-                or if the user thanks you for a given information or asks more about it, or invalidates or validates a piece of information you provided . You must attach a small summary of what the user message is refering to,
-                but you still have to maintain the user's question and intention. The summary should be rephrased from the view point of the user, as if the user formulated the question to convey the context the user is refering to. This is really important!
-                - NO if the message is a standalone message
-            
-            The current conversation between the user and the bot is:
-            
-            {truncated_convo}
-            """,
-            f"If the usere were to ask this: '{prompt}', would you clasify it as a message that refers to above messages from context? If YES, provide a small summary of what the user would refer to.",
-        )
+        get_furthering_message = "NO"
+        
+        is_generic_message = is_generic_message.strip() == "YES"
+        is_furthering_message = is_furthering_message.strip() == "YES"
+        
+        print("Get context")
+        if is_furthering_message:
+            get_furthering_message = self.simple_gpt(
+                f"""
+                You are a model that detects weather a user given message refers to above messages and takes context from them, either by asking about further explanations on a topic discussed previously, or on a topic
+                you just provided answer to. You will ONLY respond with:
+                    - YES + a small summary of what the user message is refering to, the person the user is refering to if applicable, or the piece of information the user is refering to, if the user provided message is a message that refers to above messages from context, or if the user refers with pronouns about people mentioned in the above messages,
+                    or if the user thanks you for a given information or asks more about it, or invalidates or validates a piece of information you provided . You must attach a small summary of what the user message is refering to,
+                    but you still have to maintain the user's question and intention. The summary should be rephrased from the view point of the user, as if the user formulated the question to convey the context the user is refering to. This is really important!
+                
+                The current conversation between the user and the bot is:
+                
+                {truncated_convo}
+                """,
+                f"If the usere were to ask this: '{prompt}', would you clasify it as a message that refers to above messages from context? If YES, provide a small summary of what the user would refer to.",
+            )
+        print("Done! Prompt engineered:")
 
         print(
             is_generic_message, is_furthering_message, "|", get_furthering_message, "|"
         )
-        is_generic_message = is_generic_message.strip() == "YES"
-        is_furthering_message = is_furthering_message.strip() == "YES"
-
         if not is_furthering_message:
             get_furthering_message = "NO"
         if is_furthering_message:
@@ -186,13 +189,6 @@ class Tutor:
             conversation[-1]["role"] == "user"
         ), "The final message in the conversation must be a question from the user."
         conversation = self.truncate_conversation(conversation)
-
-        truncating_at = 10
-
-        truncated_convo = [
-            f"\n\n{c['role']}: {c['content']}" for c in conversation[-10:][:-1]
-        ]
-        lastmessage = conversation[-1]["content"]
         # todo: fix prompt to take context from all messages
         (
             prompt,
