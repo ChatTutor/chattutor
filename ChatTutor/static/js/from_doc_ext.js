@@ -8,7 +8,6 @@ function setFromDoc(doc) {
     READ_FROM_DOC = doc
     document.querySelector("#from-doc").innerHTML = READ_FROM_DOC
     document.querySelector(".notification").classList.remove("hiddenop")
-    document.querySelector(".notification").classList.add("hidden")
 
     document.querySelector(".msger-input").value = `Please tell me more about "${READ_FROM_DOC}".`
     document.getElementById('msgInputDiv').innerText = `Please tell me more about "${READ_FROM_DOC}".`
