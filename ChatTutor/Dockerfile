@@ -29,17 +29,13 @@
 FROM node:18.10 AS build-angular
 WORKDIR /app/frontend
 
-# Copy and install Angular app dependencies
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm install
-
-# Copy Angular app source and build
 COPY frontend ./
 RUN npm run build
 
 # ---- Python Setup ----
 FROM python:3.11-bookworm
-
 ENV PYTHONUNBUFFERED True
 ENV APP_HOME /app
 ENV PORT 5000
@@ -53,19 +49,16 @@ RUN apt-get update && apt-get install -y wget build-essential libreadline-dev zl
 COPY --from=build-angular /app/frontend/dist /app/frontend/dist
 
 # Copy backend (Flask) app files
-COPY backend /app/backend
+COPY . ./
 
 # Install Python dependencies
-COPY backend/requirements.txt /app/backend/requirements.txt
-RUN pip install --no-cache-dir -r backend/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Clean up
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* && rm -rf sqlite-autoconf-3430200.tar.gz && rm -rf sqlite-autoconf-3430200
-
 RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/sqlite3.conf && ldconfig
 
-# Start the Flask app
+EXPOSE 5000
 CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
 
-EXPOSE 5000
 
