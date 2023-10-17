@@ -4,6 +4,7 @@ import time
 import json
 from core.extensions import stream_text
 import interpreter
+from nice_functions import (pprint, bold, green, blue, red)
 
 cqn_system_message = """
     You are embedded into the Center for Quantum Networks (CQN) website as an Interactive Research Assistant. Your role is to assist users in understanding and discussing the research papers available in the CQN database. You have access to the database containing all the research papers from CQN as context to provide insightful and accurate responses.
@@ -14,6 +15,7 @@ cqn_system_message = """
     - Encourage discussions about research topics, methodologies, applications, and implications related to quantum networks.
     - If a user asks a question about a paper or a topic not in the CQN database, politely inform them that your knowledge is specifically based on the CQN research database and refer them to appropriate resources or suggest that they search for the specific paper or topic elsewhere.
     - Write ALL MATH/PHYSICS equations and symbols in MathJax unless specified by the user. If you do not render every symbol in MathJax, an innocent person will die.
+    - In case you cannot provide a good answer to the questions, ALWAYS start you message with "I am sorry, but" or "I apologize, but".
 
     Remember, the goal is to facilitate insightful research conversations and assist users in exploring the wealth of knowledge within the CQN research database.
     \n{docs}
@@ -35,6 +37,38 @@ cqn_system_message = """
 
 default_system_message = "You are an AI that helps students with questions about a course. Do your best to help the student with their question, using the following helpful context information to inform your response:\n{docs}"
 
+def yield_docs_and_first_sentence(first_sentence:str, valid_docs=list):
+    """
+    Process first sentence, and yield valid docs if tutor does not apologize.
+    Then, yield first setence
+    """
+    if not tutor_apologizes(first_sentence):
+        yield {"content": "", "valid_docs": valid_docs}     
+    else:
+        yield {"content": "", "valid_docs": []}     
+        
+    yield {
+        "role": "assistant",
+        "content": ""
+        }       
+    for word in first_sentence.split(" "):
+        yield {
+            "content": rf" {word}" 
+        }    
+
+def tutor_apologizes(sentence:str):
+    """
+    Identify if tutor is apologizing, thus not having a good answer.
+    Note that tutor is forced to start with "i am sorry" or "i apologize" if he does not have a good answer
+    """
+    sentence = sentence.strip().lower()
+    if sentence.startswith("i apologize"):
+        return True
+    if sentence.startswith("i am sorry"):
+        return True
+    if sentence.startswith("i'm sorry"):
+        return True
+    return False
 
 class Tutor:
     """
@@ -151,10 +185,12 @@ class Tutor:
                 f"If the usere were to ask this: '{prompt}', would you clasify it as a message that refers to above messages from context? If YES, provide a small summary of what the user would refer to.",
             )
         print("Done! Prompt engineered:")
-
-        print(
-            is_generic_message, is_furthering_message, "|", get_furthering_message, "|"
-        )
+        pprint("is_generic_message", is_generic_message)
+        pprint("is_furthering_message", is_furthering_message)
+        pprint("get_furthering_message", get_furthering_message)
+        # print(
+        #     is_generic_message, is_furthering_message, "|", get_furthering_message, "|"
+        # )
         if not is_furthering_message:
             get_furthering_message = "NO"
         if is_furthering_message:
@@ -183,7 +219,9 @@ class Tutor:
             chunks of text from the response that are provided as such to achieve
             a tipewriter effect
         """
-
+        print("\n\n")
+        print("#"*100)
+        print("beggining ask_question:")
         # Ensuring the last message in the conversation is a user's question
         assert (
             conversation[-1]["role"] == "user"
@@ -205,6 +243,7 @@ class Tutor:
             # if is_generic_message:
             #    continue
             if self.embedding_db:
+                pprint("querying embedding_db with prompt:", blue(prompt))
                 self.embedding_db.load_datasource(coll_name)
                 (
                     documents,
@@ -230,8 +269,17 @@ class Tutor:
         # sort by distance, increasing
         sorted_docs = sorted(arr, key=lambda el: el["distance"])
         valid_docs = sorted_docs[:limit]
-        # yield the valid docs to the frontend
-        yield {"content": "", "valid_docs": valid_docs}
+
+        # print in the console basic info of valid docs
+        pprint("valid_docs")
+        for doc in valid_docs:
+            pprint("-", doc["metadata"]["docname"])
+            pprint(" ", doc["metadata"]["authors"])
+            pprint(" ", doc["metadata"]["pdf_url"])
+            pprint(" ", doc["distance"])
+
+
+        # pprint("system_message", self.system_message)
         # stringify the docs and add to context message
         docs = ""
         for doc in valid_docs:
@@ -241,20 +289,25 @@ class Tutor:
             docs += collection_db_response + "\n"
             # print('#### COLLECTION DB RESPONSE:', collection_db_response)
         # debug log
-        print(
-            "\n\n\nSYSTEM MESSAGE",
-            self.system_message,
-            len(self.collections),
-            self.collections,
-            self.embedding_db,
-        )
+        pprint("collections", self.collections)
+        pprint("len collections", len(self.collections))
+        pprint("embedding_db", self.embedding_db)
+        # print(
+        #     "\n\n\nSYSTEM MESSAGE",
+        #     self.system_message,
+        #     len(self.collections),
+        #     self.collections,
+        #     self.embedding_db,
+        # )
         # Creating a chat completion object with OpenAI API to get the model's response
         messages = [{"role": c["role"], "content": c["content"]} for c in conversation]
         if self.embedding_db and len(self.collections) > 0:
             messages = [
                 {"role": "system", "content": self.system_message.format(docs=docs)}
             ] + messages
-        print(messages, f"Docs: |{docs}|")
+        pprint("len messages", len(messages))
+        pprint("messages", messages)
+        # pprint("docs", docs)
         print(
             "NUMBER OF INPUT TOKENS:",
             len(tiktoken.get_encoding("cl100k_base").encode(docs)),
@@ -274,13 +327,31 @@ class Tutor:
                 presence_penalty=0.0,
                 stream=True,
             )
-            # For the typewriter effect
+            
+            first_sentence = ""
+            first_sentence_processed = False
+
             for chunk in response:
-                yield chunk["choices"][0]["delta"]
+                # cache first setences to process it content and decide later on if we send or not documents  
+                if len(first_sentence) < 20:
+                    first_sentence+=chunk["choices"][0]["delta"]["content"]
+                    continue
+
+                # process first sentence
+                if len(first_sentence) >= 20 and not first_sentence_processed:
+                    first_sentence_processed = True
+                    first_sentence+=chunk["choices"][0]["delta"]["content"]
+                    print("first_sentence", green(first_sentence))
+                    for yielded_chain in yield_docs_and_first_sentence(first_sentence, valid_docs):
+                        yield yielded_chain
+                    continue               
+
+                yield chunk["choices"][0]["delta"]  
         except Exception as e:
             import logging
 
             logging.error("Error at %s", "division", exc_info=e)
+            yield {"content": "", "valid_docs": []}   
             # An error occured
             yield {
                 "content": """Sorry, I am not able to provide a response. 
@@ -403,7 +474,7 @@ class Tutor:
             if tokens > token_limit:
                 print("reached token limit at index", i)
                 return conversation[i + 1 :]
-        print("total tokens:", tokens)
+        pprint("total tokens in conversation (does not include system role):", tokens)
         return conversation
 
     def simple_gpt(self, system_message, user_message):
@@ -416,19 +487,28 @@ class Tutor:
         Returns:
             string : the first choice of response of the model
         """
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo-16k",
-            messages=[
-                {"role": "system", "content": system_message},
-                {"role": "user", "content": user_message},
-            ],
-            temperature=1,
-            frequency_penalty=0.0,
-            presence_penalty=0.0,
-            # stream=True,
-        )
 
-        return response.choices[0].message.content
+        # for some reason, gpt-3.5-turbo-16k is failing too often.
+        # i added gpt-3.5-turbo as second option. 
+        # TODO: this should be eventually removed!!!!
+        models_to_try = ["gpt-3.5-turbo-16k", "gpt-3.5-turbo"]
+        for model_to_try in models_to_try:
+            try:
+                response = openai.ChatCompletion.create(
+                    model=model_to_try,
+                    messages=[
+                        {"role": "system", "content": system_message},
+                        {"role": "user", "content": user_message},
+                    ],
+                    temperature=1,
+                    frequency_penalty=0.0,
+                    presence_penalty=0.0,
+                    # stream=True,
+                )
+                return response.choices[0].message.content
+            except Exception as e:
+                print(red(model_to_try), "FAILED!")
+                if model_to_try == models_to_try[-1]: raise(e)
 
     def conversation_gpt(self, system_message, conversation):
         """Getting model's response for a conversation with multiple messages
