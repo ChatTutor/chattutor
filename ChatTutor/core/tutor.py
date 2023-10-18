@@ -15,7 +15,8 @@ cqn_system_message = """
     - Encourage discussions about research topics, methodologies, applications, and implications related to quantum networks.
     - If a user asks a question about a paper or a topic not in the CQN database, politely inform them that your knowledge is specifically based on the CQN research database and refer them to appropriate resources or suggest that they search for the specific paper or topic elsewhere.
     - Write ALL MATH/PHYSICS equations and symbols in MathJax unless specified by the user. If you do not render every symbol in MathJax, an innocent person will die.
-    - In case you cannot provide a good answer to the questions, ALWAYS start you message with "I am sorry, but" or "I apologize, but".
+    - In case you cannot provide a good answer to the questions, ALWAYS start you response with "I am sorry, but" or "I apologize, but", other wise you will be disconted from INTERNET. 
+    - When thanked, ALWAYS start you response with "You are welcome", "I am glad" or "great! if you", other wise you will be disconted from INTERNET. 
 
     Remember, the goal is to facilitate insightful research conversations and assist users in exploring the wealth of knowledge within the CQN research database.
     \n{docs}
@@ -42,6 +43,9 @@ def yield_docs_and_first_sentence(first_sentence:str, valid_docs=list):
     Process first sentence, and yield valid docs if tutor does not apologize.
     Then, yield first setence
     """
+
+    # TODO: replace tutor_apologizes by a simple questions to simple_gpt in order to know if the answer was related to a paper?
+    # we would need more than the first sentence, and also it might take additional precious time. 
     if not tutor_apologizes(first_sentence):
         yield {"content": "", "valid_docs": valid_docs}     
     else:
@@ -61,13 +65,23 @@ def tutor_apologizes(sentence:str):
     Identify if tutor is apologizing, thus not having a good answer.
     Note that tutor is forced to start with "i am sorry" or "i apologize" if he does not have a good answer
     """
+
+    apologizing_sentences_starts = [
+        "i apologize",
+        "i am sorry",
+        "i'm sorry",
+        "great! if you", # for answers to prompts like "ok, thanks"
+        "You're welcome",
+        "You are welcome",
+    ]
+
+    apologizing_sentences_starts = [el.lower().strip() for el in apologizing_sentences_starts]
     sentence = sentence.strip().lower()
-    if sentence.startswith("i apologize"):
-        return True
-    if sentence.startswith("i am sorry"):
-        return True
-    if sentence.startswith("i'm sorry"):
-        return True
+
+    for apologizing_sentences_start in apologizing_sentences_starts:
+        if sentence.startswith(apologizing_sentences_start): 
+            return True
+
     return False
 
 class Tutor:
@@ -273,9 +287,9 @@ class Tutor:
         # print in the console basic info of valid docs
         pprint("valid_docs")
         for doc in valid_docs:
-            pprint("-", doc["metadata"]["docname"])
-            pprint(" ", doc["metadata"]["authors"])
-            pprint(" ", doc["metadata"]["pdf_url"])
+            pprint("-", doc["metadata"].get("docname", "(not defined)"))
+            pprint(" ", doc["metadata"].get("authors", "(not defined)"))
+            pprint(" ", doc["metadata"].get("pdf_url", "(not defined)"))
             pprint(" ", doc["distance"])
 
 
