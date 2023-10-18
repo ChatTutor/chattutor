@@ -4,7 +4,7 @@ import time
 import json
 from core.extensions import stream_text
 import interpreter
-from nice_functions import (pprint, bold, green, blue, red)
+from nice_functions import (pprint, bold, green, blue, red, time_it)
 
 cqn_system_message = """
     You are embedded into the Center for Quantum Networks (CQN) website as an Interactive Research Assistant. Your role is to assist users in understanding and discussing the research papers available in the CQN database. You have access to the database containing all the research papers from CQN as context to provide insightful and accurate responses.
@@ -236,6 +236,7 @@ class Tutor:
         print("\n\n")
         print("#"*100)
         print("beggining ask_question:")
+        pprint("selectedModel", blue(selectedModel))
         # Ensuring the last message in the conversation is a user's question
         assert (
             conversation[-1]["role"] == "user"
@@ -264,7 +265,8 @@ class Tutor:
                     metadatas,
                     distances,
                     documents_plain,
-                ) = self.embedding_db.query(prompt, limit, from_doc, metadatas=True)
+                ) = time_it(self.embedding_db.query)(prompt, limit, from_doc, metadatas=True)
+                pprint(rf"got {len(documents)} documents")
                 for doc, meta, dist in zip(documents, metadatas, distances):
                     # if no fromdoc specified, and distance is lowe thhan thersh, add to array of possible related documents
                     # if from_doc is specified, threshold is redundant as we have only one possible doc
