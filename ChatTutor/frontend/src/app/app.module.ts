@@ -5,11 +5,15 @@ import { AppRoutingModule } from 'app/app-routing.module';
 import { AppComponent } from 'app/app.component';
 import { MessageComponent } from 'app/message/message.component';
 import { ENDPOINT_TOKEN } from './chat.service';
+import { ChatWindowComponent } from './chat-window/chat-window.component';
+import { InputBoxComponent } from './input-box/input-box.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    MessageComponent
+    MessageComponent,
+    ChatWindowComponent,
+    InputBoxComponent
   ],
   imports: [
     BrowserModule,
