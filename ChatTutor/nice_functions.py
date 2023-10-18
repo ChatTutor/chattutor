@@ -67,6 +67,27 @@ def yellow(some_string):
     return CYELLOW + str(some_string) + CEND
 
 
+# set print stdout to a given color
+def set_to_color(color):
+    if color == "blue":
+        print(CBLUE, end="")
+    if color == "green":
+        print(CGREEN, end="")
+    if color == "gray":
+        print(CGRAY, end="")
+    if color == "under":
+        print(CUNDER, end="")
+    if color == "lgray":
+        print(CLGRAY, end="")
+    elif color == "red":
+        print(CRED, end="")
+    elif color == "yellow":
+        print(CYELLOW, end="")
+    elif color == "white":
+        print(CWHITE, end="")
+    elif color == "end":
+        print(CEND, end="")
+
 # Print colors
 CBLUE = '\033[94m'
 CGREEN = '\033[92m'
@@ -79,3 +100,24 @@ CBOLD = '\033[1m'
 CEND = '\033[0m'
 CUNDER = '\033[4m'
 
+import functools, time
+def time_it(func):
+    @functools.wraps(func)  # preserve information from original funct.
+    def func_wrapper(*args, **kwargs):
+        ts = time.time()
+        result = func(*args, **kwargs)
+        te = time.time()
+        if 'log_time' in kwargs:
+            name = kwargs.get('log_name', func.__name__.upper())
+            kwargs['log_time'][name] = int((te - ts) * 1000)
+        else:
+            dt_s = (te - ts)  # in s
+            dt_ms = (te - ts) * 1000  # in ms
+            set_to_color("yellow")
+            if dt_s < 1:
+                print(f" -- execution time of function '{func.__name__}': {dt_ms:2.4f} ms --")
+            else:
+                print(f" -- execution time of function `{func.__name__}`: {dt_s:2.4f} s --")
+            set_to_color("end")
+        return result
+    return func_wrapper
