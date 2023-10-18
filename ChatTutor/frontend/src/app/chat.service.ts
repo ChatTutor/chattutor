@@ -1,6 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, InjectionToken, Inject } from '@angular/core';
 import { Message, asConversation } from './models/message.model';
 import { ChatTutor } from './models/chattutor.model';
+
+export const ENDPOINT_TOKEN = new InjectionToken<string>('endpoint');
+
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +11,7 @@ import { ChatTutor } from './models/chattutor.model';
 export class ChatService {
   messages: Message[] = [];
   config: ChatTutor = {} as ChatTutor;
-  constructor(public endpoint: string) { }
+  constructor(@Inject(ENDPOINT_TOKEN) public endpoint: string) { }
 
   async sendMessage(message: Message, extra_collection?: string) {
     let convo = asConversation(this.messages)
