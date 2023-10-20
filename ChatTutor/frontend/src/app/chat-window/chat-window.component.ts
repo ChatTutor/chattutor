@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Paper } from 'app/models/paper.model';
 
 @Component({
   selector: 'app-chat-window',
@@ -6,5 +7,14 @@ import { Component } from '@angular/core';
   styleUrls: ['./chat-window.component.css']
 })
 export class ChatWindowComponent {
+  messages:any = [];
+  
+  onSendMessage(messageText: string) {
+    this.messages.push({
+      sender: 'Student',
+      text: messageText,
+      timestamp: new Date().toLocaleTimeString()
+    });
+  }
 
 }

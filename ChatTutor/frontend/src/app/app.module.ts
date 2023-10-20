@@ -9,6 +9,12 @@ import { ChatWindowComponent } from './chat-window/chat-window.component';
 import { InputBoxComponent } from './input-box/input-box.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -19,7 +25,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    FormsModule
   ],
   providers: [
     { provide: ENDPOINT_TOKEN, useValue: 'your_endpoint_url_here' },

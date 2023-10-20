@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-input-box',
@@ -6,5 +6,12 @@ import { Component } from '@angular/core';
   styleUrls: ['./input-box.component.css']
 })
 export class InputBoxComponent {
+  @Output() sendMessage = new EventEmitter<string>();
+  messageText:any = '';
+
+  send() {
+    this.sendMessage.emit(this.messageText);
+    this.messageText = '';  // clear the input after sending
+  }
 
 }
