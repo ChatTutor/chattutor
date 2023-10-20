@@ -1,3 +1,13 @@
-<p>chat-window works!</p>
-<app-message></app-message>
-<app-input-box></app-input-box>
+<div class="chat-container">
+    <div class="header">
+      ChatTutor
+    </div>
+    <div class="messages-container">
+      <!-- Loop over the messages and display each message -->
+      <div *ngFor="let message of messages">
+        <app-message [text]="message.text" [timestamp]="message.timestamp"></app-message>
+      </div>
+    </div>
+    <app-input-box (sendMessage)="onSendMessage($event)"></app-input-box>
+</div>
+  

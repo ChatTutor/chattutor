@@ -1,24 +1,6 @@
-<p>input-box works!</p>
-
-
-<form class="msger-inputarea">
-    <input type="text" class="msger-input" placeholder="Enter your message..." id="msgInput">
-          <div contenteditable="true" id="msgInputDiv" class="msger-input-div"> </div>
-    <button type="submit" class="msger-send-btn" id="sendBtn">
-
-        <span class="material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
-          send
-        </span>
+<mat-form-field class="input-container">
+    <input matInput [(ngModel)]="messageText" placeholder="Enter your message...">
+    <button mat-icon-button matSuffix (click)="send()">
+      <mat-icon>send</mat-icon>
     </button>
-      <button class="clear-btn" id="clearBtnId">
-          <span class="material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
-              delete_forever
-          </span>
-      </button>
-
-      <button class="stop-gen-btn" id="stopBtnId">
-          <span class="material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
-              stop_circle
-          </span>
-      </button>
-  </form>
+</mat-form-field>
