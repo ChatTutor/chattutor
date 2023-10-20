@@ -7,6 +7,7 @@ import { MessageComponent } from 'app/message/message.component';
 import { ENDPOINT_TOKEN } from './chat.service';
 import { ChatWindowComponent } from './chat-window/chat-window.component';
 import { InputBoxComponent } from './input-box/input-box.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { InputBoxComponent } from './input-box/input-box.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    BrowserAnimationsModule
   ],
   providers: [
     { provide: ENDPOINT_TOKEN, useValue: 'your_endpoint_url_here' },
