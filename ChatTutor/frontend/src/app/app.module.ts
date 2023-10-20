@@ -13,7 +13,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
-
+import {MatDividerModule} from '@angular/material/divider';
+import {MatButtonModule} from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,9 @@ import { FormsModule } from '@angular/forms';
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
-    FormsModule
+    FormsModule,
+    MatDividerModule,
+    MatButtonModule,
   ],
   providers: [
     { provide: ENDPOINT_TOKEN, useValue: 'your_endpoint_url_here' },
