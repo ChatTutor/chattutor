@@ -1,5 +1,12 @@
 <div class="message">
-    <p>{{ text }}</p>
-    <span>{{ timestamp }}</span>
-  </div>
+
+    <div *ngIf="message.valid_docs != undefined">
+        <div *ngFor="let document of message.valid_docs">
+            <span>{{ document.metadata.doc }}</span>
+        </div>
+    </div>
+    <span>{{ message.timestamp }}</span>
+    <p>{{ message.content }}</p>
+
+</div>
   

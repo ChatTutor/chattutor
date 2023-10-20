@@ -8,26 +8,11 @@ import { Message } from 'app/models/message.model';
   styleUrls: ['./message.component.css']
 })
 export class MessageComponent {
-  @Input() sender: string='';
-  @Input() text: string='';
-  @Input() timestamp: string='';
+  @Input() message: Message = {} as Message
 
-  message: Message = {} as Message;
 
   constructor(public chat: ChatService) {}
 
-  async sendMessage() {
-    this.message = {
-      message: this.text,
-      from: this.sender,
-      date: new Date()
-    };
-    this.text = '';
-    this.chat.messages.push(this.message);
-    let readableStream = await this.chat.sendMessage(this.message);
-    // push the new message to chat [? ]
-    // this.chat.messages.push (.... readeble stream input)
-    // response from chat tutor
-    return readableStream;
-  }
+    protected readonly JSON = JSON;
+    protected readonly document = document;
 }

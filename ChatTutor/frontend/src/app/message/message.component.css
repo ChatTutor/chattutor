@@ -14,3 +14,8 @@
     background-color: #e0e0e0;
     align-self: flex-end;
 }
+
+.message:nth-child(even) {
+    background-color: var(--color-primary-dark);
+    color: white;
+}
