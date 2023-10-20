@@ -134,7 +134,6 @@ def cqn():
     """
     return redirect(url_for("static", filename="cqn.html"))
 
-
 @app.route("/chattutor")
 def chattutor():
     """
@@ -201,6 +200,7 @@ def ask():
                 User uploaded files """
                 )
                 chattutor.add_collection(cname, message)
+
     generate = chattutor.stream_response_generator(
         conversation, from_doc, selected_model
     )

@@ -15,4 +15,12 @@ export class InputBoxComponent {
     this.messageText = '';  // clear the input after sending
   }
 
+  keyPressed(event: KeyboardEvent) {
+      if (event.key === 'Enter') {
+          this.send()
+      }
+  }
+
+
+
 }

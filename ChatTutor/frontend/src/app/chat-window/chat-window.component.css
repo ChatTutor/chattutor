@@ -11,12 +11,10 @@
     flex-flow: column wrap;
     justify-content: space-between;
     width: 100%;
-    max-width: 867px;
     margin: 25px 10px;
     height: calc(100% - 50px);
-    /*background: var(--msger-bg);*/
-    border-radius: 20px;
     position: relative;
+    background-color: var(--color-primary-light);
 }
 
 
@@ -41,5 +39,6 @@
     gap: 1rem;
     display: flex;
     flex-direction: column;
+    background-color: var(--color-primary-light);
 }
   
