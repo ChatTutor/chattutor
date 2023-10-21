@@ -16,10 +16,7 @@
 }
 
 .message {
-    padding-top: 20px;
-    padding-bottom: 20px;
-    padding-left: 20%;
-    padding-right: 20%;
+    padding: 30px 20%;
     min-width: 400px;
     display: flex;
     flex-direction: column;
