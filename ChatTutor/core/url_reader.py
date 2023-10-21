@@ -13,7 +13,6 @@ class URLReader:
         for tag in soup(['style', 'script']):
             tag.decompose()
         x = " ".join(soup.stripped_strings)
-        print(x)
         return x
 
     def parse_urls(urls: List[str]):

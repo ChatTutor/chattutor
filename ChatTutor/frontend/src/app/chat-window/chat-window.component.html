@@ -8,6 +8,7 @@
         <app-message [message]="message"></app-message>
       </div>
     </div>
+    <app-dataset-chips [files_data]="filesArray" [urls_data]="urlsArray"></app-dataset-chips>
     <app-input-box (sendMessage)="onSendMessage($event)"></app-input-box>
 </div>
   

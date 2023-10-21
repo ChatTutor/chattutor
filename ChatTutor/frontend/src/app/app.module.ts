@@ -16,13 +16,16 @@ import { FormsModule } from '@angular/forms';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from "@angular/material/card";
+import { DatasetChipsComponent } from './dataset-chips/dataset-chips.component';
+import {MatChipsModule} from "@angular/material/chips";
 
 @NgModule({
   declarations: [
     AppComponent,
     MessageComponent,
     ChatWindowComponent,
-    InputBoxComponent
+    InputBoxComponent,
+    DatasetChipsComponent
   ],
     imports: [
         BrowserModule,
@@ -35,6 +38,7 @@ import {MatCardModule} from "@angular/material/card";
         MatDividerModule,
         MatButtonModule,
         MatCardModule,
+        MatChipsModule,
     ],
   providers: [
     { provide: ENDPOINT_TOKEN, useValue: 'your_endpoint_url_here' },
