@@ -5,9 +5,10 @@
     <div class="messages-container">
       <!-- Loop over the messages and display each message -->
       <div *ngFor="let message of messages">
-        <app-message [text]="message.text" [timestamp]="message.timestamp"></app-message>
+        <app-message [message]="message"></app-message>
       </div>
     </div>
+    <app-dataset-chips [files_data]="filesArray" [urls_data]="urlsArray"></app-dataset-chips>
     <app-input-box (sendMessage)="onSendMessage($event)"></app-input-box>
 </div>
   

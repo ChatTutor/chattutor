@@ -1,23 +1,28 @@
 import { Paper } from "./paper.model";
 
 export interface Message {
-    from: string;
-    message: string;
-    date: Date;
+    sender: 'Student' | 'Assistant',
+    timestamp: string,
+    role: 'user' | 'assistant',
+    content: string,
     delay?: Number;
-    papers?: Paper[];
+    valid_docs?: any[];
+}
+
+export interface DataMessage {
+    message: Message,
 }
 
 export function asConversation(messages: Message[]) {
     let conversation:any[] = []
     messages.forEach(mess => {
       let contextdocs:any[] = []
-      mess.papers?.forEach(paper => {
+      mess.valid_docs?.forEach(paper => {
         contextdocs.push(paper)
       })
       conversation.push({
-        "role" : mess.from,
-        "content" : mess.message,
+        "role" : mess.role,
+        "content" : mess.content,
         "context_documents": contextdocs
       })
     })
