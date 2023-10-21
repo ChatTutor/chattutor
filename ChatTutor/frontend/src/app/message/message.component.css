@@ -14,3 +14,31 @@
     background-color: #e0e0e0;
     align-self: flex-end;
 }
+
+.message {
+    padding: 30px 20%;
+    min-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.message.assistant, .message.Assistant {
+    background-color: #00266e28;
+    color: black;
+    align-items: flex-start;
+}
+
+.message .timestamp {
+    align-self: flex-end;
+    font-size: x-small;
+    opacity: 0.8;
+}
+
+.message-docs {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
