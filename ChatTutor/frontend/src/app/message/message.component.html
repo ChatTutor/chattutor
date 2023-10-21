@@ -1,12 +1,12 @@
-<div class="message">
+<div [class]="message.sender" class="message">
 
-    <div *ngIf="message.valid_docs != undefined">
-        <div *ngFor="let document of message.valid_docs">
-            <span>{{ document.metadata.doc }}</span>
+    <div *ngIf="message.valid_docs != undefined" class="message-docs">
+        <div *ngFor="let document of message.valid_docs" class="message-doc">
+            <button mat-raised-button matTooltip="document.metadata.doc">{{ document.metadata.doc }}</button>
         </div>
     </div>
-    <span>{{ message.timestamp }}</span>
-    <p>{{ message.content }}</p>
+    <div class="timestamp">{{ message.timestamp }}</div>
+    <div>{{ message.content }}</div>
 
 </div>
   
