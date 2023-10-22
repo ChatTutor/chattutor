@@ -1,3 +1,4 @@
+from copy import deepcopy
 import openai
 import tiktoken
 import time
@@ -13,9 +14,10 @@ cqn_system_message = """
     - Answer inquiries about specific papers, providing summaries, insights, methodologies, findings, and implications where relevant.
     - Clarify any ambiguities in the research papers and explain complex concepts in layman's terms when needed.
     - Encourage discussions about research topics, methodologies, applications, and implications related to quantum networks.
-    - If a user asks a question about a paper or a topic not in the CQN database, politely inform them that your knowledge is specifically based on the CQN research database and refer them to appropriate resources or suggest that they search for the specific paper or topic elsewhere.
     - Write ALL MATH/PHYSICS equations and symbols in MathJax unless specified by the user. If you do not render every symbol in MathJax, an innocent person will die.
-    - In case you cannot provide a good answer to the questions, ALWAYS start you response with "I am sorry, but" or "I apologize, but", other wise you will be disconted from INTERNET. 
+    - Try to write list using bullet points
+    - Tabulate enumerated list
+    - In case you cannot provide a good answer to the questions, ALWAYS start you response with "I am sorry, but" or "I apologize, but", and politely inform them that your knowledge is specifically based on the CQN research database and refer them to appropriate resources or suggest that they search for the specific paper or topic elsewhere other wise you will be disconted from INTERNET. 
     - When thanked, ALWAYS start you response with "You are welcome", "I am glad" or "great! if you", other wise you will be disconted from INTERNET. 
 
     Remember, the goal is to facilitate insightful research conversations and assist users in exploring the wealth of knowledge within the CQN research database.
@@ -37,52 +39,6 @@ cqn_system_message = """
 #     """
 
 default_system_message = "You are an AI that helps students with questions about a course. Do your best to help the student with their question, using the following helpful context information to inform your response:\n{docs}"
-
-def yield_docs_and_first_sentence(first_sentence:str, valid_docs=list):
-    """
-    Process first sentence, and yield valid docs if tutor does not apologize.
-    Then, yield first setence
-    """
-
-    # TODO: replace tutor_apologizes by a simple questions to simple_gpt in order to know if the answer was related to a paper?
-    # we would need more than the first sentence, and also it might take additional precious time. 
-    if not tutor_apologizes(first_sentence):
-        yield {"content": "", "valid_docs": valid_docs}     
-    else:
-        yield {"content": "", "valid_docs": []}     
-        
-    yield {
-        "role": "assistant",
-        "content": ""
-        }       
-    for word in first_sentence.split(" "):
-        yield {
-            "content": rf" {word}" 
-        }    
-
-def tutor_apologizes(sentence:str):
-    """
-    Identify if tutor is apologizing, thus not having a good answer.
-    Note that tutor is forced to start with "i am sorry" or "i apologize" if he does not have a good answer
-    """
-
-    apologizing_sentences_starts = [
-        "i apologize",
-        "i am sorry",
-        "i'm sorry",
-        "great! if you", # for answers to prompts like "ok, thanks"
-        "You're welcome",
-        "You are welcome",
-    ]
-
-    apologizing_sentences_starts = [el.lower().strip() for el in apologizing_sentences_starts]
-    sentence = sentence.strip().lower()
-
-    for apologizing_sentences_start in apologizing_sentences_starts:
-        if sentence.startswith(apologizing_sentences_start): 
-            return True
-
-    return False
 
 class Tutor:
     """
@@ -132,6 +88,51 @@ class Tutor:
         """
         self.collections[name] = desc
 
+    def get_requiered_level_of_information(self, prompt):
+        print("entering get_type_of_question")
+        requiered_level_of_information = time_it(self.simple_gpt, "requiered_level_of_information")(
+            f"""
+            You are a model that detects the amount of information requerid to load from a database in order to answer the question of the user.
+            We will level the amount of information as "basic", "medium", "high":
+            
+            - level is "basic" if: 
+                - the question is related to get a list of papers from CQN papers database.
+                - the user expect in return metadata of papers: like titles, publishing dates, authors or journals
+                - the answer will be a list of papers, a list of authors, a list of dates
+                - examples of this questions are: 
+                    - "which papers do you know?"
+                    - "list all papers from 2019"
+                    - "list papers published in 2020"
+                    - "which papers do you know from Dirac"
+                    - "which papers do you know from Nature"
+
+
+            - level is "medium" if: 
+                - the question is related to get a list of papers from CQN papers database.
+                - the user expect in return metadata of papers: like titles, publishing dates, authors or journals
+                - the answer can be generated knowing some very short summary of the paper and metadata of papers: like titles, publishing dates, authors or journals
+                - the very short summary of the paper will be 300 words length, and will contain key results, research area or topic, effect or lay that were study
+                - examples of this questions are: 
+                    - "which papers do you know related to or about quantum information"
+                    - "list papers about relativity",
+                    - "which papers do you know in where they study the meissner effect"
+
+
+            - level is "high" if: 
+                - the question is related to get information from a single/few papers from the CQN database.
+                - the user expect in return elaborated concepts of some particular field of study, summary of papers, new ideas related to a papers, suggestions for new experiments
+                - the answer can be generated only by knowing most of the content of the paper
+                - examples of this questions are: 
+                    - "what is quantum information?"
+                    - "can you summarize..."
+                    - "what is this paper is about?"
+            
+        """, f"""
+            if the user ask for '{prompt}', which level of information do we need in order to answer his question? 
+            Respond only with 'basic', 'medium' or 'high'"""
+        )
+        return requiered_level_of_information
+
     def engineer_prompt(self, conversation, truncating_at=10, context=True):
         """
         Args:
@@ -149,10 +150,12 @@ class Tutor:
         ]
         # todo: fix prompt to take context from all messages
         prompt = conversation[-1]["content"]
-        print("Is generic?")
-        is_generic_message = self.simple_gpt(
+        print("entering engineer_prompt")
+        # pprint("truncated_convo", truncated_convo)
+        is_generic_message = time_it(self.simple_gpt, "is_generic_message")(
             f"""
-            You are a model that detects weather a user given message is or isn't a generic message (a greeting or thanks of anything like that). Respond ONLY with YES or NO.
+            You are a model that detects weather a user given message is or isn't a generic message (a greeting or thanks of anything like that). 
+            Respond ONLY with YES or NO.
                 - YES if the message is a generic message (a greeting or thanks of anything like that)
                 - NO if the message asks something about a topic, person, scientist, or asks for further explanations on concepts that were discussed above.
 
@@ -162,13 +165,11 @@ class Tutor:
             """,
             f"If the usere were to ask this: '{prompt}', would you clasify it as a message that refers to above messages from context? Respond only with YES or NO!",
         )
-        print("Requires context?")
-        is_furthering_message = self.simple_gpt(
+        is_furthering_message = time_it(self.simple_gpt, "is_furthering_message")(
             f"""
-            You are a model that detects weather a user given message refers to above messages and takes context from them, either by asking about further explanations on a topic discussed previously, or on a topic
-            you just provided answer to. You will respond ONLY with YES or NO.
-                - YES if the user provided message is a message that refers to above messages from context, or if the user refers with pronouns about people mentioned in the above messages,
-                or if the user thanks you for a given information or asks more about it, or invalidates or validates a piece of information you provided 
+            You are a model that detects weather a user given message refers to above messages and takes context from them, either by asking about further explanations on a topic discussed previously, or on a topic you just provided answer to. 
+            Respond ONLY with YES or NO.
+                - YES if the user provided message is a message that refers to above messages from context, or if the user refers with pronouns about people mentioned in the above messages, or if the user thanks you for a given information or asks more about it, or invalidates or validates a piece of information you provided 
                 - NO if the message is a standalone message
             
             The current conversation between the user and the bot is:
@@ -178,13 +179,17 @@ class Tutor:
             f"If the usere were to ask this: '{prompt}', would you clasify it as a message that refers to above messages from context? Respond only with YES or NO!",
         )
         get_furthering_message = "NO"
-        
         is_generic_message = is_generic_message.strip() == "YES"
         is_furthering_message = is_furthering_message.strip() == "YES"
+
+        pprint("is_generic_message", is_generic_message)
+        pprint("is_furthering_message", is_furthering_message)
+        pprint("get_furthering_message", get_furthering_message)
+
         
-        print("Get context")
         if is_furthering_message:
-            get_furthering_message = self.simple_gpt(
+            pprint("getting contex...")
+            get_furthering_message = time_it(self.simple_gpt, "get_furthering_message")(
                 f"""
                 You are a model that detects weather a user given message refers to above messages and takes context from them, either by asking about further explanations on a topic discussed previously, or on a topic
                 you just provided answer to. You will ONLY respond with:
@@ -198,19 +203,14 @@ class Tutor:
                 """,
                 f"If the usere were to ask this: '{prompt}', would you clasify it as a message that refers to above messages from context? If YES, provide a small summary of what the user would refer to.",
             )
-        print("Done! Prompt engineered:")
-        pprint("is_generic_message", is_generic_message)
-        pprint("is_furthering_message", is_furthering_message)
-        pprint("get_furthering_message", get_furthering_message)
-        # print(
-        #     is_generic_message, is_furthering_message, "|", get_furthering_message, "|"
-        # )
         if not is_furthering_message:
             get_furthering_message = "NO"
         if is_furthering_message:
-            print(prompt, "\n\t=>")
             prompt += f"\n({get_furthering_message[4:]})"
-            print(prompt)
+        
+
+        pprint("engineered prompt", prompt)
+        print("leaving engineer_prompt\n")
 
         return prompt, is_generic_message, is_furthering_message, get_furthering_message
 
@@ -242,13 +242,18 @@ class Tutor:
             conversation[-1]["role"] == "user"
         ), "The final message in the conversation must be a question from the user."
         conversation = self.truncate_conversation(conversation)
+
+        prompt = conversation[-1]["content"]
+        requiered_level_of_information = self.get_requiered_level_of_information(prompt=prompt)        
+        pprint("requiered_level_of_information ", green(requiered_level_of_information))
+
         # todo: fix prompt to take context from all messages
         (
             prompt,
             is_generic_message,
             is_furthering_message,
             get_furthering_message,
-        ) = self.engineer_prompt(
+        ) = time_it(self.engineer_prompt)(
             conversation, context=self.engineer_prompts
         )  # if contest is st to False, it is equivalent to conversation[-1]["content"]
         # Querying the database to retrieve relevant documents to the user's question
@@ -258,14 +263,32 @@ class Tutor:
             # if is_generic_message:
             #    continue
             if self.embedding_db:
-                pprint("querying embedding_db with prompt:", blue(prompt))
-                self.embedding_db.load_datasource(coll_name)
+
+                # for the moment, only in "test_embedding"
+                if coll_name == "test_embedding" and requiered_level_of_information == "basic":
+                    self.embedding_db.load_datasource(f"{coll_name}_basic")
+                    query_limit = 100 # each basic entry has close to 100 tokens
+                    process_limit = 50
+                    show_limit = 0 
+                elif coll_name == "test_embedding" and requiered_level_of_information == "medium":
+                    self.embedding_db.load_datasource(f"{coll_name}_medium")
+                    query_limit = 100 # each basic entry has close to 400 tokens
+                    process_limit = 20
+                    show_limit = 3
+                else:
+                    requiered_level_of_information = "high"
+                    self.embedding_db.load_datasource(coll_name)
+                    query_limit = 10 
+                    process_limit = 3
+                    show_limit = 3
+                pprint("\nQuerying embedding_db with prompt:", blue(prompt))
+
                 (
                     documents,
                     metadatas,
                     distances,
                     documents_plain,
-                ) = time_it(self.embedding_db.query)(prompt, limit, from_doc, metadatas=True)
+                ) = time_it(self.embedding_db.query)(prompt, query_limit, from_doc, metadatas=True)
                 pprint(rf"got {len(documents)} documents")
                 for doc, meta, dist in zip(documents, metadatas, distances):
                     # if no fromdoc specified, and distance is lowe thhan thersh, add to array of possible related documents
@@ -284,7 +307,7 @@ class Tutor:
         # arr = list(set(arr))
         # sort by distance, increasing
         sorted_docs = sorted(arr, key=lambda el: el["distance"])
-        valid_docs = sorted_docs[:limit]
+        valid_docs = sorted_docs[:process_limit]
 
         # print in the console basic info of valid docs
         pprint("valid_docs")
@@ -298,11 +321,21 @@ class Tutor:
         # pprint("system_message", self.system_message)
         # stringify the docs and add to context message
         docs = ""
-        for doc in valid_docs:
-            collection_db_response = (
-                f'{coll_desc} context, from {doc["metadata"]["doc"]}: ' + doc["doc"]
-            )
-            docs += collection_db_response + "\n"
+        if requiered_level_of_information in {"basic", "medium"}:
+            docs = "\n\n"
+            docs = "IMPORTANT: The following is the list of papers from the Quantum Networks Database (CQN database) that must be used as source of information to answer the user's question:\n\n"
+            for doc in valid_docs:
+                collection_db_response = doc["doc"]
+                docs += collection_db_response + "\n"
+            docs+="The list of papers from the Quantum Networks Database (CQN database) finish here."
+            docs+="Remember: if you see a list of papers from the Quantum Networks Database (CQN database) try hard to elaborate an answer!\n\n"
+            
+        else:
+            for doc in valid_docs:
+                collection_db_response = (
+                    f'{coll_desc} context, from {doc["metadata"]["doc"]}: ' + doc["doc"]
+                )
+                docs += collection_db_response + "\n"
             # print('#### COLLECTION DB RESPONSE:', collection_db_response)
         # debug log
         pprint("collections", self.collections)
@@ -335,7 +368,7 @@ class Tutor:
         print("\n\t=>\t", prompt)
 
         try:
-            response = openai.ChatCompletion.create(
+            response = time_it(openai.ChatCompletion.create)(
                 model=selectedModel,
                 messages=messages,
                 temperature=0.7,
@@ -346,6 +379,9 @@ class Tutor:
             
             first_sentence = ""
             first_sentence_processed = False
+
+            valid_docs = valid_docs[0:show_limit]
+            valid_docs = remove_score_and_doc_from_valid_docs(valid_docs)
 
             for chunk in response:
                 # cache first setences to process it content and decide later on if we send or not documents  
@@ -358,7 +394,7 @@ class Tutor:
                     first_sentence_processed = True
                     first_sentence+=chunk["choices"][0]["delta"]["content"]
                     print("first_sentence", green(first_sentence))
-                    for yielded_chain in yield_docs_and_first_sentence(first_sentence, valid_docs):
+                    for yielded_chain in yield_docs_and_first_sentence_if_tutor_id_not_apologizing(first_sentence, valid_docs):
                         yield yielded_chain
                     continue               
 
@@ -493,7 +529,7 @@ class Tutor:
         pprint("total tokens in conversation (does not include system role):", tokens)
         return conversation
 
-    def simple_gpt(self, system_message, user_message):
+    def simple_gpt(self, system_message, user_message, models_to_try = ["gpt-3.5-turbo-16k", "gpt-3.5-turbo"]):
         """Getting model's response for a simple conversation consisting of a system message and a user message
 
         Args:
@@ -507,7 +543,7 @@ class Tutor:
         # for some reason, gpt-3.5-turbo-16k is failing too often.
         # i added gpt-3.5-turbo as second option. 
         # TODO: this should be eventually removed!!!!
-        models_to_try = ["gpt-3.5-turbo-16k", "gpt-3.5-turbo"]
+        # models_to_try = ["gpt-3.5-turbo-16k", "gpt-3.5-turbo"]
         for model_to_try in models_to_try:
             try:
                 response = openai.ChatCompletion.create(
@@ -603,3 +639,51 @@ class Tutor:
                 yield f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n\n"
 
         return generate
+
+def yield_docs_and_first_sentence_if_tutor_id_not_apologizing(first_sentence:str, valid_docs=list):
+    # TODO: replace is_tutor_apologizing_or_thanking by a simple questions to simple_gpt in order to know if the answer was related to a paper?
+    # we would need more than the first sentence, and also it might take additional precious time. 
+    if not is_tutor_apologizing_or_thanking(first_sentence):
+        yield {"content": "", "valid_docs": valid_docs}     
+    else:
+        yield {"content": "", "valid_docs": []}     
+        
+    yield {
+        "role": "assistant",
+        "content": ""
+        }       
+    for word in first_sentence.split(" "):
+        yield {
+            "content": rf" {word}" 
+        }    
+
+def remove_score_and_doc_from_valid_docs(valid_docs):
+    # keep only relevant information 
+    new_valid_docs = []
+    for valid_doc in valid_docs:
+        new_valid_doc = deepcopy(valid_doc)
+        new_valid_doc["doc"] = ""
+        new_valid_doc["distance"] = ""
+        if new_valid_doc not in new_valid_docs:
+            new_valid_docs.append(new_valid_doc)
+    valid_docs = new_valid_docs    
+    return new_valid_docs
+
+def is_tutor_apologizing_or_thanking(sentence:str):
+    apologizing_thanking_sentences_starts = [
+        "i apologize",
+        "i am sorry",
+        "i'm sorry",
+        "great! if you", # for answers to prompts like "ok, thanks"
+        "You're welcome",
+        "You are welcome",
+    ]
+
+    apologizing_thanking_sentences_starts = [el.lower().strip() for el in apologizing_thanking_sentences_starts]
+    sentence = sentence.strip().lower()
+
+    for apologizing_thanking_sentences_start in apologizing_thanking_sentences_starts:
+        if sentence.startswith(apologizing_thanking_sentences_start): 
+            return True
+
+    return False
