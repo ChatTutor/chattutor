@@ -1,10 +1,19 @@
-<mat-chip-listbox>
-    <div *ngFor="let file of files_data">
-        <mat-chip>{{file}}</mat-chip>
-    </div>
+<mat-form-field class="urls-and-files">
+    <mat-label>Write url or drag files</mat-label>
+    <mat-chip-grid #chipGrid aria-label="Write url">
+        <mat-chip-row *ngFor="let file of files_data">
+            <mat-chip>{{file}}</mat-chip>
+        </mat-chip-row>
+        <mat-chip-row *ngFor="let url of urls_data">
+            <mat-chip>{{url}}</mat-chip>
+        </mat-chip-row>
 
-    <div *ngFor="let url of urls_data">
-        <mat-chip>{{url}}</mat-chip>
-    </div>
+        <input placeholder="Add url or drag file"
+           [matChipInputFor]="chipGrid"
+           [matChipInputSeparatorKeyCodes]="[COMMA, SPACE, ENTER]"
+           [matChipInputAddOnBlur]="true"
+           (matChipInputTokenEnd)="add($event)"/>
+    </mat-chip-grid>
 
-</mat-chip-listbox>
+
+</mat-form-field>
