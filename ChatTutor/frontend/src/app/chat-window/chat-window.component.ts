@@ -113,10 +113,10 @@ export class ChatWindowComponent {
         console.log('Reader', reader);
     }
 
-    @HostBinding('style.background') private background = '#eee';
-    @HostBinding('style.border') private borderStyle = '2px dashed';
+    // @HostBinding('style.background') private background = '#eee';
+    @HostBinding('style.border') private borderStyle = '0px solid';
     @HostBinding('style.border-color') private borderColor = '#696D7D';
-    @HostBinding('style.border-radius') private borderRadius = '5px';
+    @HostBinding('style.border-radius') private borderRadius = '0px';
 
     filesArray: Array<File> = []
     urlsArray: Array<string> = []
