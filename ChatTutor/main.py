@@ -10,11 +10,10 @@ from core.extensions import (
     stream_text,
 )  # Importing the database object from extensions module
 from core.tutor import Tutor
-from core.tutor import cqn_system_message, default_system_message
+from core.tutor import cqn_system_message, default_system_message, interpreter_system_message
 import json
 import time
 import os
-print('lllllllllllllll',os.environ)
 from core.reader import URLReader
 from core.definitions import Text
 from core.definitions import Doc
@@ -244,7 +243,7 @@ def ask_interpreter():
             name = collection_desc if collection_desc else ""
             chattutor.add_collection(collection_name, name)
         else:
-            chattutor = Tutor(db, system_message=cqn_system_message)
+            chattutor = Tutor(db, system_message=interpreter_system_message)
             for cname in collection_name:
                 message = (
                     f"CQN papers "
