@@ -101,7 +101,8 @@ CEND = '\033[0m'
 CUNDER = '\033[4m'
 
 import functools, time
-def time_it(func):
+def time_it(func, message = ""):
+    if message != "": message = f" ({blue(message)})"    
     @functools.wraps(func)  # preserve information from original funct.
     def func_wrapper(*args, **kwargs):
         ts = time.time()
@@ -113,11 +114,14 @@ def time_it(func):
         else:
             dt_s = (te - ts)  # in s
             dt_ms = (te - ts) * 1000  # in ms
-            set_to_color("yellow")
             if dt_s < 1:
-                print(f" -- execution time of function '{func.__name__}': {dt_ms:2.4f} ms --")
+                total_time = f"{dt_ms:2.3f} ms"
             else:
-                print(f" -- execution time of function `{func.__name__}`: {dt_s:2.4f} s --")
-            set_to_color("end")
+                total_time = f"{dt_s:2.3f} s"
+            printing_string = yellow(" -- execution time of function ")
+            printing_string+= rf"'{blue(bold(func.__name__))}'"
+            printing_string+=message
+            printing_string+=yellow(rf" --> Took {total_time} --")
+            print(printing_string)
         return result
     return func_wrapper
