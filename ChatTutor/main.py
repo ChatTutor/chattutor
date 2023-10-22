@@ -147,11 +147,12 @@ def cqn():
                 <p>Whether you are looking for papers by a specific author, papers from a particular date or journal, or papers related to a specific topic or subject, I've got you covered. I can also help you find similar papers to ones you already know or even provide paper summaries.</p>
                 <p>Here are some examples of questions you can ask:</p>
                 <ul>
-                    <li>"Can you find papers authored by John Doe?"</li>
-                    <li>"What papers were published in the year 2020?"</li>
-                    <li>"Can you recommend papers related to quantum entanglement?"</li>
-                    <li>"Are there any similar papers to the one titled 'Quantum Computing Advancements'?"</li>
-                    <li>"Can you summarize the paper titled 'Quantum Networking Protocols' for me?"</li>
+                    <li>Can you find papers authored by John Doe?</li>
+                    <li>Can you list all papers present in the CQN db?</li>
+                    <li>What papers were published in the year 2020?</li>
+                    <li>Can you recommend papers related to quantum entanglement?"</li>
+                    <li>Are there any similar papers to the one titled 'Quantum Computing Advancements'?</li>
+                    <li>Can you summarize the paper titled 'Quantum Networking Protocols' for me?</li>
                 </ul>
                 <p>Feel free to explore the CQN research database and ask any questions you may have. I'm here to assist you on your research journey!</p>    
     """
