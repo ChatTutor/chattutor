@@ -16,6 +16,7 @@ HIGH = "high"
 DB_SUMMARY = "db_summary"
 
 questions = [
+    ("list all papers related to Condensed Matter Physics", MEDIUM),
     ("what is quantum information?",HIGH),
     ("What papers were published in the year 2020?", BASIC),
     ("which papers study quantum information",MEDIUM),
