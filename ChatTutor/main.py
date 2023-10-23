@@ -151,7 +151,7 @@ def cqn():
                     <li>Can you list all papers present in the database?</li>
                     <li>Can you find papers authored by Dirk Englund?</li>
                     <li>What papers were published in the year 2020?</li>
-                    <li>Which is the most recent papaer by Dirk Englund?</li>
+                    <li>Which is the most recent paper by Dirk Englund?</li>
                     <li>Can you recommend papers related to quantum entanglement?</li>
                     <li>Are there any similar papers to the one titled 'Entanglement-enhanced testing of multiple quantum hypotheses'?</li>
                     <li>Can you summarize the paper titled 'Quantum Networking Protocols' for me?</li>
