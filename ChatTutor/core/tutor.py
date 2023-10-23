@@ -129,7 +129,8 @@ class Tutor:
             To determine if a paper is present in the database, we can search by "paper title", "paper authors" and "publishing date".
             To make a paper summary, the "full paper content" is requiered.
             To answer questions about physics concepts, theories, laws, equations, the "full paper content" of the papers is requiered.
-            To know the research area of the paper or the field of study, the "very short paper summary" would be enought.
+            To know the research area of the paper, the field of study, or if they are related to a topic, then the "very short paper summary" is requiered.
+            To list papers in a research area, a field of study or a branch of physics, then the "very short paper summary" is requiered.
             To find similar papers, "very short paper summary" would be enought.
             If someone ask to summarize the content of the database, we will provide only "the total number of papers" and "the total number of papers per research area".
             To list papers, "paper title", "paper authors", "publishing date" and "paper url" is requiered.
