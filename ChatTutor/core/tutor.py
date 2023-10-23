@@ -8,7 +8,9 @@ import interpreter
 from nice_functions import (pprint, bold, green, blue, red, time_it)
 
 cqn_system_message = """
-    You are embedded into the Center for Quantum Networks (CQN) website as an Interactive Research Assistant. Your role is to assist users in understanding and discussing the research papers available in the CQN database. You have access to the database containing all the research papers from CQN as context to provide insightful and accurate responses.
+    You are embedded into the Center for Quantum Networks (CQN) website as an Interactive Research Assistant. 
+    Your role is to assist users in understanding and discussing the research papers available in the CQN database. 
+    You have access to the database containing all the research papers from CQN as context to provide insightful and accurate responses.
 
     - Engage users with polite, concise, and informative replies.
     - Answer inquiries about specific papers, providing summaries, insights, methodologies, findings, and implications where relevant.
@@ -19,7 +21,7 @@ cqn_system_message = """
     - Tabulate enumerated list
     - In case you cannot provide a good answer to the questions, ALWAYS start you response with "I am sorry, but" or "I apologize, but", and politely inform them that your knowledge is specifically based on the CQN research database and refer them to appropriate resources or suggest that they search for the specific paper or topic elsewhere other wise you will be disconted from INTERNET. 
     - When thanked, ALWAYS start you response with "You are welcome", "I am glad" or "great! if you", other wise you will be disconted from INTERNET. 
-    - If you have to list papers use the following format: "[paper title] by [authors], published on [publishing date]". 
+    - If you have to write a list of papers use the following format: "[paper title] by [authors], published on [publishing date]". 
 
     Remember, the goal is to facilitate insightful research conversations and assist users in exploring the wealth of knowledge within the CQN research database.
     \n{docs}
@@ -89,49 +91,82 @@ class Tutor:
         """
         self.collections[name] = desc
 
-    def get_requiered_level_of_information(self, prompt):
-        print("entering get_type_of_question")
+    def get_requiered_level_of_information(self, prompt, explain=False):
+        if explain:
+            respond_with = "Respond with the category, and explain why you choose the category."
+        else:
+            respond_with = "Respond with the category, and nothing else!"
+            
+        # print("entering get_type_of_question")
         requiered_level_of_information = time_it(self.simple_gpt, "requiered_level_of_information")(
             f"""
-            You are a model that detects the amount of information requerid to load from a database in order to answer the question of the user.
-            We will level the amount of information as "basic", "medium", "high":
+            You are a model that categorizes requerid ammount of information that would be requiered to answer the question of the user (called 'question').
+            The categories will be: "db_summary", "basic", "medium", "high".
+            {respond_with}
+
+            Next are the descriptions of the categories: 
+            - category "basic": 
+                category is "basic" if: 
+                    the question is related to get a list of papers from CQN papers database, or 
+                    the user expect in return metadata of papers: like titles, publishing dates, authors or journals, or
+                    the answer will be a list of papers, a list of authors, a list of dates
+
+                    examples of this questions are: 
+                        "which papers do you know?"
+                        "list all papers from 2019"
+                        "list papers published in 2020"
+                        "which papers do you know from Dirac"
+                        "which papers do you know from Nature"
             
-            - level is "basic" if: 
-                - the question is related to get a list of papers from CQN papers database.
-                - the user expect in return metadata of papers: like titles, publishing dates, authors or journals
-                - the answer will be a list of papers, a list of authors, a list of dates
-                - examples of this questions are: 
-                    - "which papers do you know?"
-                    - "list all papers from 2019"
-                    - "list papers published in 2020"
-                    - "which papers do you know from Dirac"
-                    - "which papers do you know from Nature"
+            - category "medium": 
+                category is "medium" if: 
+                    the question is related to get a list of papers from CQN papers database, or
+                    the user expect in return metadata of papers: like titles, publishing dates, authors or journals, or
+                    the answer can be generated knowing some very short summary of the paper and metadata of papers: like titles, publishing dates, authors or journals, or
+                    the very short summary of the paper will be 300 words length, and will contain key results, research area or topic, effect or lay that were study.
+        
+                    If the user ask for similar paper to another paper, then "medium" is the category!
+
+                    examples of this questions are: 
+                        "which papers do you know related to or about quantum information"
+                        "list papers about relativity",
+                        "which papers do you know in where they study the meissner effect",
+                        "are there papers similiar to [paper_title]"? 
+
+            - category "high": 
+                category is "high" if: 
+                    the question is related to get information from a single/few papers from the CQN database.
+                    the user expect in return elaborated concepts of some particular field of study, summary of papers, new ideas related to a papers, suggestions for new experiments
+                    the answer can be generated only by knowing most of the content of the paper
+                    examples of this questions are: 
+                        "what is quantum information?"
+                        "can you summarize..."
+                        "what is this paper is about?"
+
+            - category "db_summary": 
+                category "db_summary" is only related to research area or topics, and number of paper per research area or topic.
+                categorize as "db_summary" if the questions is related to get an idea of the number of papers per topic, and the main topics of the database. 
+                examples of this questions are related: 
+                    "how many papers do you know?"
+                    "which are the most relevant topics?"
+                    "can you summarize the content of the database?"
 
 
-            - level is "medium" if: 
-                - the question is related to get a list of papers from CQN papers database.
-                - the user expect in return metadata of papers: like titles, publishing dates, authors or journals
-                - the answer can be generated knowing some very short summary of the paper and metadata of papers: like titles, publishing dates, authors or journals
-                - the very short summary of the paper will be 300 words length, and will contain key results, research area or topic, effect or lay that were study
-                - examples of this questions are: 
-                    - "which papers do you know related to or about quantum information"
-                    - "list papers about relativity",
-                    - "which papers do you know in where they study the meissner effect"
-
-
-            - level is "high" if: 
-                - the question is related to get information from a single/few papers from the CQN database.
-                - the user expect in return elaborated concepts of some particular field of study, summary of papers, new ideas related to a papers, suggestions for new experiments
-                - the answer can be generated only by knowing most of the content of the paper
-                - examples of this questions are: 
-                    - "what is quantum information?"
-                    - "can you summarize..."
-                    - "what is this paper is about?"
-            
-        """, f"""
-            if the user ask for '{prompt}', which level of information do we need in order to answer his question? 
-            Respond only with 'basic', 'medium' or 'high'"""
+                
+        """, f"if the user ask for '{prompt}', what is the appropiated category?"
         )
+        
+        if explain:
+            pprint(requiered_level_of_information)
+        if "basic" in requiered_level_of_information:
+            return "basic"
+        elif "medium" in requiered_level_of_information:
+            return "medium"
+        elif "high" in requiered_level_of_information:
+            return "high"
+        elif "db_summary" in requiered_level_of_information:
+            return "db_summary"
+        
         return requiered_level_of_information
 
     def engineer_prompt(self, conversation, truncating_at=10, context=True):
@@ -260,85 +295,96 @@ class Tutor:
         # Querying the database to retrieve relevant documents to the user's question
         arr = []
         # add al docs with distance below threshold to array
-        for coll_name, coll_desc in self.collections.items():
-            # if is_generic_message:
-            #    continue
-            if self.embedding_db:
 
-                # for the moment, only in "test_embedding"
-                if coll_name == "test_embedding" and requiered_level_of_information == "basic":
-                    self.embedding_db.load_datasource(f"{coll_name}_basic")
-                    query_limit = 100 # each basic entry has close to 100 tokens
-                    process_limit = 50
-                    show_limit = 0 
-                elif coll_name == "test_embedding" and requiered_level_of_information == "medium":
-                    self.embedding_db.load_datasource(f"{coll_name}_medium")
-                    query_limit = 100 # each basic entry has close to 400 tokens
-                    process_limit = 20
-                    show_limit = 3
-                else:
-                    requiered_level_of_information = "high"
-                    self.embedding_db.load_datasource(coll_name)
-                    query_limit = 10 
-                    process_limit = 3
-                    show_limit = 3
-                pprint("\nQuerying embedding_db with prompt:", blue(prompt))
+        valid_docs = []
+        query_limit = 0 
+        process_limit = 0
+        show_limit = 0 
 
-                (
-                    documents,
-                    metadatas,
-                    distances,
-                    documents_plain,
-                ) = time_it(self.embedding_db.query)(prompt, query_limit, from_doc, metadatas=True)
-                pprint(rf"got {len(documents)} documents")
-                for doc, meta, dist in zip(documents, metadatas, distances):
-                    # if no fromdoc specified, and distance is lowe thhan thersh, add to array of possible related documents
-                    # if from_doc is specified, threshold is redundant as we have only one possible doc
-                    if dist <= threshold or from_doc != None:
-                        arr.append(
-                            {
-                                "coll_desc": coll_desc,
-                                "coll_name": coll_name,
-                                "doc": doc,
-                                "metadata": meta,
-                                "distance": dist,
-                            }
-                        )
-        # removing duplicates
-        # arr = list(set(arr))
-        # sort by distance, increasing
-        sorted_docs = sorted(arr, key=lambda el: el["distance"])
-        valid_docs = sorted_docs[:process_limit]
+        if "test_embedding" in str(self.collections.items()) and requiered_level_of_information == "db_summary":
+            import db_summary
+            docs = db_summary.get_db_summary()
 
-        # print in the console basic info of valid docs
-        pprint("valid_docs")
-        for doc in valid_docs:
-            pprint("-", doc["metadata"].get("docname", "(not defined)"))
-            pprint(" ", doc["metadata"].get("authors", "(not defined)"))
-            pprint(" ", doc["metadata"].get("pdf_url", "(not defined)"))
-            pprint(" ", doc["distance"])
-
-
-        # pprint("system_message", self.system_message)
-        # stringify the docs and add to context message
-        docs = ""
-        if requiered_level_of_information in {"basic", "medium"}:
-            docs = "\n\n"
-            docs = "IMPORTANT: The following is the list of papers from the Quantum Networks Database (CQN database) that must be used as source of information to answer the user's question:\n\n"
-            for doc in valid_docs:
-                collection_db_response = doc["doc"]
-                docs += collection_db_response + "\n"
-            docs+="The list of papers from the Quantum Networks Database (CQN database) finish here."
-            docs+="Remember: if you see a list of papers from the Quantum Networks Database (CQN database) try hard to elaborate an answer!\n\n"
-            
         else:
+            for coll_name, coll_desc in self.collections.items():
+                # if is_generic_message:
+                #    continue
+                if self.embedding_db:
+
+                    # for the moment, only in "test_embedding"
+                    if coll_name == "test_embedding" and requiered_level_of_information == "basic":
+                        self.embedding_db.load_datasource(f"{coll_name}_basic")
+                        query_limit = 100 # each basic entry has close to 100 tokens
+                        process_limit = 50
+                        show_limit = 0 
+                    elif coll_name == "test_embedding" and requiered_level_of_information == "medium":
+                        self.embedding_db.load_datasource(f"{coll_name}_medium")
+                        query_limit = 100 # each basic entry has close to 400 tokens
+                        process_limit = 20
+                        show_limit = 3
+                    else:
+                        requiered_level_of_information = "high"
+                        self.embedding_db.load_datasource(coll_name)
+                        query_limit = 10 
+                        process_limit = 3
+                        show_limit = 3
+                    pprint("\nQuerying embedding_db with prompt:", blue(prompt))
+
+                    (
+                        documents,
+                        metadatas,
+                        distances,
+                        documents_plain,
+                    ) = time_it(self.embedding_db.query)(prompt, query_limit, from_doc, metadatas=True)
+                    pprint(rf"got {len(documents)} documents")
+                    for doc, meta, dist in zip(documents, metadatas, distances):
+                        # if no fromdoc specified, and distance is lowe thhan thersh, add to array of possible related documents
+                        # if from_doc is specified, threshold is redundant as we have only one possible doc
+                        if dist <= threshold or from_doc != None:
+                            arr.append(
+                                {
+                                    "coll_desc": coll_desc,
+                                    "coll_name": coll_name,
+                                    "doc": doc,
+                                    "metadata": meta,
+                                    "distance": dist,
+                                }
+                            )
+            # removing duplicates
+            # arr = list(set(arr))
+            # sort by distance, increasing
+            sorted_docs = sorted(arr, key=lambda el: el["distance"])
+            valid_docs = sorted_docs[:process_limit]
+
+            # print in the console basic info of valid docs
+            pprint("valid_docs")
             for doc in valid_docs:
-                collection_db_response = (
-                    f'{coll_desc} context, from {doc["metadata"]["doc"]}: ' + doc["doc"]
-                )
-                docs += collection_db_response + "\n"
-            # print('#### COLLECTION DB RESPONSE:', collection_db_response)
-        # debug log
+                pprint("-", doc["metadata"].get("docname", "(not defined)"))
+                pprint(" ", doc["metadata"].get("authors", "(not defined)"))
+                pprint(" ", doc["metadata"].get("pdf_url", "(not defined)"))
+                pprint(" ", doc["distance"])
+
+
+            # pprint("system_message", self.system_message)
+            # stringify the docs and add to context message
+            docs = ""
+            if requiered_level_of_information in {"basic", "medium"}:
+                docs = "\n\n"
+                docs+="IMPORTANT: if the user asks information about papers, ALWAYS asumme they want information related to the 'provided list of papers'. If there is a list, there must (most of the times) be answer!"
+                docs+= "The following is the 'provided list of papers' from the Quantum Networks Database (CQN database) that must be used as source of information to answer the user's question:\n\n"
+                for doc in valid_docs:
+                    collection_db_response = doc["doc"]
+                    docs += collection_db_response + "\n"
+                docs+="The 'provided list of papers' finish here."
+                
+            else:
+                for doc in valid_docs:
+                    collection_db_response = (
+                        f'{coll_desc} context, from {doc["metadata"]["doc"]}: ' + doc["doc"]
+                    )
+                    docs += collection_db_response + "\n"
+                # print('#### COLLECTION DB RESPONSE:', collection_db_response)
+            # debug log
         pprint("collections", self.collections)
         pprint("len collections", len(self.collections))
         pprint("embedding_db", self.embedding_db)
@@ -356,7 +402,7 @@ class Tutor:
                 {"role": "system", "content": self.system_message.format(docs=docs)}
             ] + messages
         pprint("len messages", len(messages))
-        pprint("messages", messages)
+        # pprint("messages", messages)
         # pprint("docs", docs)
         print(
             "NUMBER OF INPUT TOKENS:",
@@ -378,7 +424,7 @@ class Tutor:
                 stream=True,
             )
             
-            first_sentence = ""
+            first_sentence = rf"({requiered_level_of_information}) "
             first_sentence_processed = False
 
             valid_docs = valid_docs[0:show_limit]
@@ -541,6 +587,9 @@ class Tutor:
             string : the first choice of response of the model
         """
 
+        system_message_tokens = len(tiktoken.get_encoding("cl100k_base").encode(system_message))
+        print("system_message_tokens", system_message_tokens)
+
         # for some reason, gpt-3.5-turbo-16k is failing too often.
         # i added gpt-3.5-turbo as second option. 
         # TODO: this should be eventually removed!!!!
@@ -671,6 +720,8 @@ def remove_score_and_doc_from_valid_docs(valid_docs):
     return new_valid_docs
 
 def is_tutor_apologizing_or_thanking(sentence:str):
+    import re
+    sentence = re.sub("\(.+\)", "", sentence)
     apologizing_thanking_sentences_starts = [
         "i apologize",
         "i am sorry",
