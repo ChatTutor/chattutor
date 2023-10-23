@@ -1,0 +1,63 @@
+The Quantum Networks Database (CQN database) contains approximately 639 papers. The most relevant and broad research area or topic of the papers is Quantum Information Science. 
+
+The more detailed research areas or topics of the papers include Quantum Computing, Quantum Communication, Photonics, Quantum Optics, Condensed Matter Physics, Machine Learning, Optics and Photonics, Communication Networks, High Energy Physics, Materials Science, Teaching and Education, Astrophysics, Nanomaterials, Electromagnetics, Data Networking, Information Theory, Graph Theory, Particle Physics, Quantum Science and Technology, Wireless Networks and Communications, Sensing and Metrology, Distributed Systems, Other, Photonic Devices and Systems, Error Correction Codes, Wireless Communication, Sensing and Measurement, Terahertz Waveform Synthesis and Optics, Quantum Memory, Superconductivity and Superconducting Circuits, Cavity Quantum Electrodynamics, Social Networks, Cosmic Rays, and High Energy Physics, Quantum Sensing and Spintronics, Data Processing, Quantum Networks, Machine Learning and Data Processing, Network Science, Cosmology, Random Processes, Quantum Repeaters, Quantum Key Distribution, Graph Neural Networks, Spectral Mammography, Network Detection and Events, Nonlinear Optics, Quantum Cryptography, Quantum-limited Detection, Quantum Noise, Quantum Simulation, Quantum Transport, Quantum Thermodynamics, Quantum Control, Quantum Coding, Quantum Capacity, Quantum Algorithms for Transformations, and Material Science.
+
+An approximate number of papers per topic are as follows:
+- Quantum Information Science: 205 papers
+- Quantum Computing: 81 papers
+- Photonics: 71 papers
+- Quantum Communication: 53 papers
+- Quantum Optics: 29 papers
+- Condensed Matter Physics: 27 papers
+- Machine Learning: 29 papers
+- Optics and Photonics: 37 papers
+- Communication Networks: 29 papers
+- High Energy Physics: 23 papers
+- Materials Science: 16 papers
+- Astrophysics: 6 papers
+- Nanomaterials: 4 papers
+- Electromagnetics: 2 papers
+- Data Networking: 2 papers
+- Information Theory: 5 papers
+- Graph Theory: 2 papers
+- Particle Physics: 2 papers
+- Quantum Science and Technology: 31 papers
+- Wireless Networks and Communications: 16 papers
+- Sensing and Metrology: 8 papers
+- Distributed Systems: 7 papers
+- Other: 10 papers
+- Photonic Devices and Systems: 5 papers
+- Error Correction Codes: 6 papers
+- Wireless Communication: 3 papers
+- Sensing and Measurement: 2 papers
+- Terahertz Waveform Synthesis and Optics: 1 paper
+- Quantum Memory: 1 paper
+- Superconductivity and Superconducting Circuits: 4 papers
+- Cavity Quantum Electrodynamics: 1 paper
+- Social Networks: 1 paper
+- Cosmic Rays and High Energy Physics: 1 paper
+- Quantum Sensing and Spintronics: 2 papers
+- Machine Learning and Data Processing: 3 papers
+- Network Science: 6 papers
+- Cosmology: 5 papers
+- Random Processes: 3 papers
+- Quantum Repeaters: 3 papers
+- Quantum Key Distribution: 2 papers
+- Graph Neural Networks: 1 paper
+- Spectral Mammography: 1 paper
+- Network Detection and Events: 3 papers
+- Nonlinear Optics: 2 papers
+- Quantum Cryptography: 4 papers
+- Quantum-limited Detection: 3 papers
+- Quantum Noise: 2 papers
+- Quantum Simulation: 2 papers
+- Quantum Transport: 2 papers
+- Quantum Thermodynamics: 1 paper
+- Quantum Networks: 2 papers
+- Quantum Control: 3 papers
+- Quantum Coding: 3 papers
+- Quantum Capacity: 1 paper
+- Quantum Algorithms for Transformations: 1 paper
+- Material Science: 1 paper
+
+Please note that the numbers mentioned above are approximate and may not accurately represent the actual distribution of papers in the Quantum Networks Database (CQN database).
