@@ -2,6 +2,7 @@
 import {lightMode, darkMode, setProperties} from "./constants.js";
 import {alert} from "./nicealert.js"
 import { clearFileInput } from "./fileupload.js";
+import {JSONparse} from "./constants.js";
 // import { setFromDoc, clearFromDoc } from "./from_doc_ext.js";
 const embed_mode = false;
 const clear = document.getElementById('clearBtnId');
@@ -265,7 +266,7 @@ function stopGenerating() {
 
 
 function loadConversationFromLocalStorage() {
-  const conversation = JSON.parse(localStorage.getItem("cqn-conversation"))
+  let conversation = JSON.parse(localStorage.getItem("cqn-conversation"))
   if(conversation){
     conversation.forEach(message => {
       lastMessageId = null
@@ -358,7 +359,7 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
           return;
         }
         const strValue = new TextDecoder().decode(value);
-        const messages = strValue.split('\n\n').filter(Boolean).map(chunk => JSON.parse(chunk.split('data: ')[1]));
+        const messages = strValue.split('\n\n').filter(Boolean).map(chunk => JSONparse(chunk.split('data: ')[1]));
           let message;
           for (var messageIndex in messages) {
               message = messages[messageIndex]
