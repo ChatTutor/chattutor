@@ -54,7 +54,8 @@ else:
     os.environ["ACTIVELOOP_TOKEN"] = keys["ACTIVELOOP_TOKEN"]
 
 app = Flask(__name__)
-CORS(app)  # Enabling CORS for the Flask app to allow requests from different origins
+CORS(app, resources={r"/ask": {"origins": "https://barosandu.github.io"}})
+# CORS(app)  # Enabling CORS for the Flask app to allow requests from different origins
 db.init_db()
 user_db.init_db()
 
