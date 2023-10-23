@@ -16,7 +16,7 @@ HIGH = "high"
 DB_SUMMARY = "db_summary"
 
 questions = [
-    ("Which is the most recent papaer by Dirk Englund?", BASIC),
+    ("Which is the most recent paper by Dirk Englund?", BASIC),
     ("Is the paper ''Entanglement-enhanced testing of multiple quantum hypotheses' in the database?", BASIC),
     ("Is the paper 'the reality is comming' in the database?", BASIC),
     ("what is quantum information?",HIGH),
