@@ -336,6 +336,7 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
   if (READ_FROM_DOC != null) args.from_doc = READ_FROM_DOC
 
   args.selectedModel = selectedModel
+  document.querySelector(".loading-message").style = "display: flex;"
   fetch('/ask', {
     method: 'POST',
     headers: {
@@ -414,17 +415,22 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
           stopGeneration = false
 
         }
+        document.querySelector(".loading-message").style = "display: none;"
       }).catch(err => {
         console.error('Stream error:', err);
         sendBtn.disabled = false;
         clear.style.display = 'block'
         stopGenButton.style.display = 'none'
         stopGeneration = false
+        document.querySelector(".loading-message").style = "display: none;"
+
       });
       MathJax.typesetPromise();
     }
     read();
     // MathJax.typesetPromise();
+    document.querySelector(".loading-message").style = "display: none;"
+
   }).catch(err => {
     console.error('Fetch error:', err);
     // Enable the send button in case of an error
@@ -432,6 +438,8 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
     clear.style.display = 'block'
     stopGenButton.style.display = 'none'
     stopGeneration = false
+    document.querySelector(".loading-message").style = "display: none;"
+
   });
 }
 
