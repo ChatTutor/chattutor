@@ -1,0 +1,6 @@
+.urls-and-files {
+    padding-left: 30px;
+    padding-right: 30px;
+    width: calc( 100% - 60px );
+    font-size: small;
+}
