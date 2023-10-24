@@ -5,10 +5,13 @@
         <link rel="stylesheet" href="./style/style.css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 		<meta name="viewport" content="initial-scale=1, width=device-width">
+         <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css" rel="stylesheet" />
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script type="text/javascript" id="MathJax-script" async
+    <!-- <script type="text/javascript" id="MathJax-script" async
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-</script>
+</script> -->
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn" crossorigin="anonymous">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous" 
@@ -59,7 +62,7 @@
                             </div>
 
                             <div class="msg-text">
-                                Welcome to ChatTutor, feel free to ask any questions about this lesson.
+                                Welcome to ChatTutor Interpreter, feel free to request any task.
                             </div>
                         </div>
                     </div>
@@ -70,14 +73,11 @@
                 <div style="background-color: black;" id="scrollHelper">
                     <!-- Helper for keeping scrolling  -->
                 </div>
-                <div class="loading-message" style="display: none;">
-                    <img src="https://media.tenor.com/_62bXB8gnzoAAAAi/loading.gif" width="20" height="20"/>
-                </div>
             </main>
             <form class="msger-inputarea">
-              <input type="text" class="msger-input" placeholder="Enter your message..." id="msgInput">
-              <div contenteditable="true" id="msgInputDiv" class="msger-input-div"> </div>
-                <button type="submit" class="msger-send-btn" id="sendBtn">
+            <input type="text" class="msger-input" placeholder="Enter your message..." id="msgInput">
+                <div contenteditable="true" id="msgInputDiv" class="msger-input-div"> </div>
+            <button type="submit" class="msger-send-btn" id="sendBtn">
 
                   <span class="material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
                     send
@@ -194,9 +194,36 @@
               </span>
             </button>
           </div>
+          <div class="notification hiddenop">
+            <button class="close-notif">
+                <span class="nice-btn material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
+                    close
+                </span>
+            </button>
+            <span>Asking more about:</span>
+            <div id="from-doc" style="text-decoration: underline;">
+            </div>
+            <span class="small">Ask questions about content from this paper/file</span>
 
-          <script src="js/index.js" type="module"></script>
+        </div>
+        <script src="js/from_doc_ext.js"></script>
+
+        <div class="arxiv-info hiddenop hidden">
+            <button class="close-arxiv">
+                <span class="nice-btn material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
+                    close
+                </span>
+            </button>
+            <div id="arxiv-doc">
+    
+            </div>
+        </div>
+
+          <script src="js/interpreter.js" type="module"></script>
           <script src="js/fileupload.js" type="module"></script>
+          <script src="js/fileupload_inchat.js"></script>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-python.min.js"></script> <!-- for Python highlighting, you can include other languages too -->
 
       
 	</body>

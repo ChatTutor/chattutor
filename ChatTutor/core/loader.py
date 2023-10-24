@@ -9,8 +9,8 @@ from google.cloud import storage
 import yaml
 from time import sleep
 
-from reader import read_folder, read_folder_gcp
-from vectordatabase import VectorDatabase
+from core.reader import read_folder, read_folder_gcp
+from core.vectordatabase import VectorDatabase
 
 
 # Splits a list into n (roughly) equal parts

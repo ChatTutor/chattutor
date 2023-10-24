@@ -2,7 +2,7 @@
 
 <html lang="en">
 	<head>
-        <link rel="stylesheet" href="./style/style.css">
+        <link rel="stylesheet" href="/static/style/style.css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 		<meta name="viewport" content="initial-scale=1, width=device-width">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -21,8 +21,9 @@
                 <header class="msger-header">
 
                   <div class="msger-header-title">
-                    <i class="fas fa-comment-alt"></i> ChatTutor
+                    <i class="fas fa-comment-alt"></i> <span>ChatTutor</span>
                       <a href="display_db.html" style="color: var(--left-msg-txt)">See db</a>
+                      <span id="addUrl">Add URL</span>
                   </div>
                   <div class="msger-header-options">
                     <span><i class="fas fa-cog"></i></span>
@@ -58,7 +59,7 @@
                             </div>
 
                             <div class="msg-text">
-                                Welcome! Feel free to ask any questions about CQN research papers.
+                                {{welcoming_message|safe}}
                             </div>
                         </div>
                     </div>
@@ -69,9 +70,13 @@
                 <div style="background-color: black;" id="scrollHelper">
                     <!-- Helper for keeping scrolling  -->
                 </div>
+                <div class="loading-message" style="display: none;">
+                    <img src="https://media.tenor.com/_62bXB8gnzoAAAAi/loading.gif" width="20" height="20"/>
+                </div>
             </main>
             <form class="msger-inputarea">
               <input type="text" class="msger-input" placeholder="Enter your message..." id="msgInput">
+                    <div contenteditable="true" id="msgInputDiv" class="msger-input-div"> </div>
               <button type="submit" class="msger-send-btn" id="sendBtn">
 
                   <span class="material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
@@ -166,8 +171,8 @@
                         <h3>Select Model</h3>
                         <select id="modelDropdown">
                             <option value="gpt-3.5-turbo">GPT-3.5 (4k)</option>
-                            <option selected value="gpt-3.5-turbo-16k">GPT-3.5 (16k)</option>
-                            <option value="gpt-4">GPT-4 (8k)</option>
+                            <option value="gpt-3.5-turbo-16k">GPT-3.5 (16k)</option>
+                            <option selected value="gpt-4">GPT-4 (8k)</option>
                             <option value="gpt-4-32k">GPT-4 (32k)</option>
                         </select>
                     </div>
@@ -190,10 +195,36 @@
             </span>
             </button>
         </div>
+        <div class="notification hiddenop">
+            <button class="close-notif">
+                <span class="nice-btn material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
+                    close
+                </span>
+            </button>
+            <span>Only answering questions about:</span>
+            <div id="from-doc" style="text-decoration: underline;">
+            </div>
+            <span class="small">Ask questions strictly about content from this paper/file</span>
 
-          <script src="js/cqn.js" type="module"></script>
-          <script src="js/fileupload.js" type="module"></script>
-      
+        </div>
+        <script src="/static/js/from_doc_ext.js"></script>
+
+        <div class="arxiv-info hiddenop hidden">
+            <button class="close-arxiv">
+                <span class="nice-btn material-symbols-outlined" style="font-size: 15px !important; padding: 0 !important; margin: 0 !important; vertical-align: middle">
+                    close
+                </span>
+            </button>
+            <div id="arxiv-doc">
+    
+            </div>
+        </div>
+
+          <script src="/static/js/cqn.js" type="module"></script>
+
+          <script src="/static/js/fileupload.js" type="module"></script>
+          <script src="/static/js/fileupload_inchat.js"></script>
+
 	</body>
 </html>
 

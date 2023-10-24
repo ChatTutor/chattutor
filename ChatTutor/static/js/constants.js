@@ -47,6 +47,15 @@ export const lightMode = {
 
 }
 
+export function JSONparse(exp, or='') {
+    try {
+        let a = JSON.parse(exp)
+        return a;
+    } catch (e) {
+        return or;
+    }
+}
+
 export const darkMode = {
   body_bg: 'linear-gradient(135deg, #3e3c46 0%, #17232c 100%)',
   msger_bg: '#2d2d2d',

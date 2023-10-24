@@ -3,7 +3,6 @@ import {lightMode, darkMode, setProperties} from "./constants.js";
 import {alert} from "./nicealert.js"
 import { clearFileInput } from "./fileupload.js";
 import { JSONparse } from "./jsonparse.js";
-// import { setFromDoc, clearFromDoc } from "./from_doc_ext.js";
 const embed_mode = false;
 const clear = document.getElementById('clearBtnId');
 const clearContainer = get('.clear-btn-container');
@@ -28,6 +27,7 @@ var original_file = "";
 let lastMessageId = null;
 var stopGeneration = false
 let selectedModel = document.getElementById('modelDropdown').value
+let hideCode = true;
 
 // Get the send button
 const sendBtn = document.getElementById('sendBtn');
@@ -42,7 +42,7 @@ const uploadZipPapersForm = document.getElementById('uploadFileForm')
 const selectUploadedCollection = document.getElementById('selectUploadedCollection')
 const clearformupload = document.getElementById("clearformupload")
 const modelDropdown = document.getElementById('modelDropdown')
-const messageDIVInput = document.getElementById('msgInputDiv')
+
 let uploadedCollections = []
 messageInput.addEventListener('input', (event) => {
   console.log(messageInput.value.length)
@@ -55,7 +55,6 @@ stopGenButton.style.display = 'none'
 window.addEventListener('resize', windowIsResizing)
 
 function windowIsResizing() {
-  console.log("resize")
     // the button for choosing themes snaps in place when the window is too small
   if(window.innerWidth < 1200) {
       themeBtnDiv.style.position = 'inherit'
@@ -63,7 +62,6 @@ function windowIsResizing() {
       themeBtnDiv.style.left = '25px'
 
       const arr = document.querySelectorAll('.theme-button')
-      console.log(arr)
       arr.forEach(btn => {
         btn.style.backgroundColor = 'transparent'
         btn.style.color = 'var(--msg-header-txt)'
@@ -83,7 +81,6 @@ function windowIsResizing() {
       themeBtnDiv.style.top = '25px'
       themeBtnDiv.style.left = '25px'
       const arr = document.querySelectorAll('.theme-button')
-      console.log(arr)
       arr.forEach(btn => {
         btn.style.backgroundColor = 'rgb(140, 0, 255)'
         btn.style.color = 'white'
@@ -128,7 +125,7 @@ function uploadMessageToDB(msg, chat_k) {
     console.log(`DATA: ${JSON.stringify(data_)} `)
     fetch('/addtodb', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data_)})
         .then(() =>{
-            console.log('Andu')
+            console.log('Message uploaded')
         })
 }
 
@@ -247,7 +244,7 @@ function toggleInterfaceMode() {
 
 function clearConversation() {
   conversation = [];
-  localStorage.setItem("cqn-conversation", JSON.stringify([]));
+  localStorage.setItem("interpreter-conversation", JSON.stringify([]));
     reinstantiateChatId()
   var childNodes = msgerChat.childNodes;
   for(var i = childNodes.length - 3; i >= 2; i--){
@@ -264,9 +261,30 @@ function stopGenerating() {
   clear.disabled = !(messageInput.value.length == 0);
 }
 
+// function handleFormSubmit(event) {
+//   event.preventDefault();
+//   const msgText = msgerInput.value;
+//   if (!msgText) return;
+//   // if (selectUploadedCollection && !selectUploadedCollection.options[ selectUploadedCollection.selectedIndex ]) {
+//   //   alert("Please upload some files for the tutor to learn from!")
+//   //   return
+//   // }
+
+//   // Disable the send button
+//   sendBtn.disabled = true;
+//   clear.disabled = false;
+//   clear.style.display = 'none'
+//   stopGenButton.style.display = 'block'
+
+//   addMessage("user", msgText, true);
+//   uploadMessageToDB({role: 'user', content: msgText}, getChatId())
+//   msgerInput.value = "";
+//   queryGPT();
+// }
+
 
 function loadConversationFromLocalStorage() {
-  let conversation = JSON.parse(localStorage.getItem("cqn-conversation"))
+  conversation = JSON.parse(localStorage.getItem("interpreter-conversation"))
   if(conversation){
     conversation.forEach(message => {
       lastMessageId = null
@@ -278,10 +296,28 @@ function loadConversationFromLocalStorage() {
   }
   else conversation = []
   MathJax.typesetPromise();
+
+  const elements = document.querySelectorAll('.msg-text');
+
+    elements.forEach(div => {
+        const text = div.innerHTML;
+        const replacedText = text.replace(/```(.*?)```/g, '<span class="codeSegment"><code class="language-python">$1</code></span>'); // specify the language after "language-"
+        div.innerHTML = replacedText;
+    });
+
+    // Initialize Prism.js
+    Prism.highlightAll();
+
+    if (hideCode) {
+      var codeBlocks = document.querySelectorAll('.msg-coding');
+      codeBlocks.forEach(function(element) {
+          element.classList.add('hidden');
+      });
+    }
 }
 
 function loadCollectionsFromLocalStorage() {
-  const collections = JSON.parse(localStorage.getItem("uploaded-collections"))//TODO
+  collections = JSON.parse(localStorage.getItem("uploaded-collections"))//TODO
   if(collections) {
     collections.forEach(collname => {
       addCollectionToFrontEnd(collname)
@@ -333,11 +369,10 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
     "collection": [collection_name, selected_collection_name]
   }
   if (embed_mode) args.from_doc = original_file
-  if (READ_FROM_DOC != null) args.from_doc = READ_FROM_DOC
 
   args.selectedModel = selectedModel
-  document.querySelector(".loading-message").style = "display: flex;"
-  fetch('/ask', {
+
+  fetch('/ask_interpreter', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -359,78 +394,88 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
             uploadMessageToDB({content: accumulatedContent, role: 'assistant'}, getChatId())
           return;
         }
+        console.log(value.length)
         const strValue = new TextDecoder().decode(value);
         const messages = strValue.split('\n\n').filter(Boolean).map(chunk => JSONparse(chunk.split('data: ')[1]));
           let message;
+          try {
           for (var messageIndex in messages) {
               message = messages[messageIndex]
+              console.log('message:',message)
               if (stopGeneration === false) {
-                  if (message.message.valid_docs) {
-                    context_documents = message.message.valid_docs
-                    console.log(context_documents)
-                  }
-                  const contentToAppend = message.message.content ? message.message.content : "";
+                if (message.message.valid_docs) {
+                  context_documents = message.message.valid_docs
+                  console.log(context_documents)
+                }
+                  let contentToAppend = message.message.message ? message.message.message : "";
+                  contentToAppend += message.message.code ? message.message.code : "";
+                  contentToAppend += message.code ? message.code : "";
                   accumulatedContent += contentToAppend;
               }
-              if (isFirstMessage) {
-                console.log("added", accumulatedContent)
-                addMessage("assistant", accumulatedContent, false);
-                setLatMessageHeader(context_documents)
-                isFirstMessage = false;
-              } else {
-                console.log('message',message.message)
-                  if (typeof (message.message.content) == 'undefined') {
-                      conversation.push({"role": 'assistant', "content": accumulatedContent, "context_documents" : context_documents})
-                      localStorage.setItem("cqn-conversation", JSON.stringify(conversation))
-                  }
-                  console.log("updated", accumulatedContent)
+              if (message.message.code && hideCode) {
+                console.log('showing code')
+                hideCode = false
+                var divs = document.querySelectorAll('.msg-coding');
+                let lastblock = divs[divs.length - 1];
+                lastblock.classList.remove('hidden');
+              }
+              else if ((typeof (message.message.code) == 'undefined') && hideCode == false) {
+                console.log('hiding code')
+                hideCode = true
+                var divs = document.querySelectorAll('.msg-coding');
+                let lastblock = divs[divs.length - 1];
+                lastblock.classList.add('hidden');
+              }
 
+              if (isFirstMessage) {
+                setLatMessageHeader(context_documents)
+                  addMessage("assistant", accumulatedContent, false);
+                  isFirstMessage = false;
+              } else {
+                  let messageTypes = ['language', 'code', 'executing', 'message', 'active_line', 'end_of_execution', 'output']
+                  console.log(message.message)
+                  if (message.message.message == '   ') {
+                    conversation.push({"role": 'assistant', "content": accumulatedContent, "context_documents" : context_documents})
+                    localStorage.setItem("interpreter-conversation", JSON.stringify(conversation))
+                  }
                   scrollHelper.scrollIntoView()
                   updateLastMessage(accumulatedContent);
-
-                  if (message.message.error) {
-                    conversation.push({"role": 'assistant', "content": accumulatedContent})
-                    localStorage.setItem("cqn-conversation", JSON.stringify(conversation))
-                  }
               }
               if (stopGeneration === true) {
                   accumulatedContent += " ...Stopped generating";
                   conversation.push({"role": 'assistant', "content": accumulatedContent, "context_documents" : context_documents})
-                  localStorage.setItem("cqn-conversation", JSON.stringify(conversation))
-
+                  localStorage.setItem("interpreter-conversation", JSON.stringify(conversation))
                   sendBtn.disabled = messageInput.value.length == 0;
                   clear.disabled = !(messageInput.value.length == 0);
+                  
                   clear.style.display = 'block'
                   stopGenButton.style.display = 'none'
                   uploadMessageToDB({content: accumulatedContent, role: 'assistant'}, getChatId())
                   scrollHelper.scrollIntoView()
                   updateLastMessage(accumulatedContent);
-
                   break
               }
+          }}
+          catch(error) {
+            console.log(error)
           }
+
         if(stopGeneration === false) {
           read();
         } else {
           stopGeneration = false
-
         }
-        document.querySelector(".loading-message").style = "display: none;"
       }).catch(err => {
         console.error('Stream error:', err);
         sendBtn.disabled = false;
         clear.style.display = 'block'
         stopGenButton.style.display = 'none'
         stopGeneration = false
-        document.querySelector(".loading-message").style = "display: none;"
-
       });
       MathJax.typesetPromise();
     }
     read();
     // MathJax.typesetPromise();
-    document.querySelector(".loading-message").style = "display: none;"
-
   }).catch(err => {
     console.error('Fetch error:', err);
     // Enable the send button in case of an error
@@ -438,8 +483,6 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
     clear.style.display = 'block'
     stopGenButton.style.display = 'none'
     stopGeneration = false
-    document.querySelector(".loading-message").style = "display: none;"
-
   });
 }
 
@@ -561,11 +604,10 @@ clearformupload.addEventListener("click", ()=>{
 
 
 
-function addMessage(role, message, updateConversation, lastmessageheader=false) {
+function addMessage(role, message, updateConversation) {
     let role_name
     let img
     let side
-
   if(role === "assistant") {
     role_name = BOT_NAME;
     img = BOT_IMG;
@@ -588,11 +630,8 @@ function addMessage(role, message, updateConversation, lastmessageheader=false) 
   }
 
   const messageStr = formatMessage(message, role === "assistant")
-
   const msgHTML = `
-    <div class="msg ${side}-msg" id="${messageId}">
-    <div class="msg-header-context">${setLatMessageHeader(lastmessageheader, messageId, false)}</div>
-
+  <div class="msg ${side}-msg" id="${messageId}">
     <div class="msg-bgd">
       <div class="msg-img" style="background-image: url(${img})"></div>
 
@@ -603,10 +642,19 @@ function addMessage(role, message, updateConversation, lastmessageheader=false) 
         </div>
 
         <div class="msg-text">${messageStr}</div>
+        
+        <div class="msg-coding ${hideCode? 'hidden' : ''}">
+          <img class="loading-gif" src="./images/loading.gif">
+          Generating code
+        </div>
       </div>
       </div>
     </div>
   `;
+  
+  
+
+  
 
   clearContainer.insertAdjacentHTML("beforebegin", msgHTML);
 
@@ -626,9 +674,8 @@ function addMessage(role, message, updateConversation, lastmessageheader=false) 
   msgerChat.scrollTop += 500;
   if(updateConversation){
     conversation.push({"role": role, "content": message})
-    localStorage.setItem("cqn-conversation", JSON.stringify(conversation))
+    localStorage.setItem("interpreter-conversation", JSON.stringify(conversation))
   }
-
 }
 
 
