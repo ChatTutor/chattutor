@@ -2,7 +2,7 @@
 import {lightMode, darkMode, setProperties} from "./constants.js";
 import {alert} from "./nicealert.js"
 import { clearFileInput } from "./fileupload.js";
-import {JSONparse} from "./constants.js";
+import { JSONparse } from "./jsonparse.js";
 const embed_mode = false;
 const clear = document.getElementById('clearBtnId');
 const clearContainer = get('.clear-btn-container');
