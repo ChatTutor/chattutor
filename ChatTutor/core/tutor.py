@@ -321,21 +321,23 @@ class Tutor:
                 #    continue
                 if self.embedding_db:
 
+                    keep_only_first_x_tokens_for_processing = None # none means all
                     if coll_name == "test_embedding" and required_level_of_information == "basic":
                         self.embedding_db.load_datasource(f"{coll_name}_basic")
-                        query_limit = 100 # each basic entry has close to 100 tokens
-                        process_limit = 50
+                        query_limit = 100 
+                        process_limit = 20 # each basic entry has close to 100 tokens
                         show_limit = 0 
                     elif coll_name == "test_embedding" and required_level_of_information == "medium":
                         self.embedding_db.load_datasource(f"{coll_name}_medium")
-                        query_limit = 100 # each basic entry has close to 400 tokens
-                        process_limit = 20
+                        query_limit = 100 
+                        process_limit = 10 # each basic entry has close to 350 tokens
+                        keep_only_first_x_tokens_for_processing = 200
                         show_limit = 3
                     else:
                         required_level_of_information = "high"
                         self.embedding_db.load_datasource(coll_name)
                         query_limit = 10 
-                        process_limit = 3
+                        process_limit = 3 # each is close to 800
                         show_limit = 3
                         
                         if metadata_from_paper_titles_from_prompt and len(metadata_from_paper_titles_from_prompt) == 1:
@@ -389,13 +391,11 @@ class Tutor:
                 docs+="IMPORTANT: if the user asks information about papers, ALWAYS asumme they want information related to the provided list of papers. All these papers belong to the Quantum Networks Database (CQN database). If there is a list, there must (most of the times) be answer!"
                 docs+= "The following is the list of papers from the Quantum Networks Database (CQN database) that must be used as source of information to answer the user's question:\n\n"
                 for doc in valid_docs:
-                    collection_db_response = doc["doc"]
+                    doc_content = truncate_to_x_number_of_tokens (doc["doc"], keep_only_first_x_tokens_for_processing)
+                    collection_db_response = doc_content
                     docs += collection_db_response + "\n"
                 docs+="The 'provided list of papers' finish here."
-                
             else:
-
-                
                 for doc in valid_docs:
 
                     doc_title_or_file_name = doc["metadata"].get("title", None) or doc["metadata"].get("doc", None)
@@ -404,7 +404,11 @@ class Tutor:
                     if doc["metadata"].get("authors"):
                         doc_authors = doc["metadata"].get("authors")
                         doc_authors+=rf" by '{doc_authors}'"
-                    doc_reference = "-"*100 + f"\n Paper Title:'{doc_title_or_file_name}'{doc_authors}: {doc_content}\n\n"
+
+                    doc_content = rf"Paper Title:'{doc_title_or_file_name}'{doc_authors}: {doc_content}"
+                    doc_content = truncate_to_x_number_of_tokens (doc_content, keep_only_first_x_tokens_for_processing)
+                    
+                    doc_reference = "-"*100 + f"\n{doc_content}\n\n"
                     docs += doc_reference
                 # print('#### COLLECTION DB RESPONSE:', collection_db_response)
             # debug log
@@ -425,8 +429,8 @@ class Tutor:
             ] + messages
         pprint("len messages", len(messages))
         pprint("messages", messages)
-        total_tokens =  len(tiktoken.get_encoding("cl100k_base").encode(str(messages)))
-        docs_tokens =   len(tiktoken.get_encoding("cl100k_base").encode(docs))
+        total_tokens =  get_number_of_tokens(str(messages))
+        docs_tokens =   get_number_of_tokens(docs)
         pprint("total_tokens", total_tokens)
         pprint("docs_tokens", docs_tokens)
         # pprint("docs", docs)
@@ -712,6 +716,18 @@ def yield_docs_and_first_sentence_if_tutor_id_not_apologizing(first_sentence:str
             "content": rf" {word}" 
         }    
 
+def truncate_to_x_number_of_tokens(string, num_of_tokens=None):
+    if num_of_tokens == None or num_of_tokens==0: 
+        return string
+    cut_string = ""
+    string = string.split(" ")
+    current_num_of_tokens = 0
+    while current_num_of_tokens < num_of_tokens:
+        if not string: break
+        current_num_of_tokens = get_number_of_tokens(cut_string)
+        cut_string+= " " + string.pop(0)
+    return cut_string
+
 def remove_score_and_doc_from_valid_docs(valid_docs):
     # keep only relevant information 
     new_valid_docs = []
@@ -723,6 +739,9 @@ def remove_score_and_doc_from_valid_docs(valid_docs):
             new_valid_docs.append(new_valid_doc)
     valid_docs = new_valid_docs    
     return new_valid_docs
+
+def get_number_of_tokens(string):
+    return len(tiktoken.get_encoding("cl100k_base").encode(str(string)))
 
 def is_tutor_apologizing_or_thanking(sentence:str):
     import re
