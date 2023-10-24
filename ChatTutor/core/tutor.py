@@ -424,7 +424,8 @@ class Tutor:
                 stream=True,
             )
             
-            first_sentence = rf"({requiered_level_of_information}) "
+            # first_sentence = rf"({requiered_level_of_information}) "
+            first_sentence = ""
             first_sentence_processed = False
 
             valid_docs = valid_docs[0:show_limit]
