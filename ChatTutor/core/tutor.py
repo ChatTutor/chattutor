@@ -513,34 +513,35 @@ class Tutor:
         prompt = conversation[-1]["content"]
         arr = []
         for coll_name, coll_desc in self.collections.items():
-            if self.embedding_db:
-                self.embedding_db.load_datasource(coll_name)
-                (
-                    documents,
-                    metadatas,
-                    distances,
-                    documents_plain,
-                ) = time_it(self.embedding_db.query)(prompt, 3, from_doc, metadatas=True)
+            if not coll_desc.startswith('CQN papers'):
+                if self.embedding_db:
+                    self.embedding_db.load_datasource(coll_name)
+                    (
+                        documents,
+                        metadatas,
+                        distances,
+                        documents_plain,
+                    ) = time_it(self.embedding_db.query)(prompt, 3, from_doc, metadatas=True)
 
-                collection_db_response = (
-                    f"\n {coll_desc} context: "
-                    + self.embedding_db.query(prompt, 3, from_doc)
-                )
-                for doc, meta, dist in zip(documents, metadatas, distances):
-                    # if no fromdoc specified, and distance is lowe thhan thersh, add to array of possible related documents
-                    # if from_doc is specified, threshold is redundant as we have only one possible doc
-                    if dist <= 0.5 or from_doc != None:
-                        arr.append(
-                            {
-                                "coll_desc": coll_desc,
-                                "coll_name": coll_name,
-                                "doc": doc,
-                                "metadata": meta,
-                                "distance": dist,
-                            }
-                        )
-                prompt += collection_db_response
-                print("#### COLLECTION DB RESPONSE:", collection_db_response)
+                    collection_db_response = (
+                        f"\n {coll_desc} context: "
+                        + self.embedding_db.query(prompt, 3, from_doc)
+                    )
+                    for doc, meta, dist in zip(documents, metadatas, distances):
+                        # if no fromdoc specified, and distance is lowe thhan thersh, add to array of possible related documents
+                        # if from_doc is specified, threshold is redundant as we have only one possible doc
+                        if dist <= 0.5 or from_doc != None:
+                            arr.append(
+                                {
+                                    "coll_desc": coll_desc,
+                                    "coll_name": coll_name,
+                                    "doc": doc,
+                                    "metadata": meta,
+                                    "distance": dist,
+                                }
+                            )
+                    prompt += collection_db_response
+                    print("#### COLLECTION DB RESPONSE:", collection_db_response)
         sorted_docs = sorted(arr, key=lambda el: el["distance"])
         valid_docs = sorted_docs[:3]
 
