@@ -94,7 +94,7 @@ class Tutor:
 
     def get_paper_titles_from_prompt(self, prompt):
         # print("entering get_type_of_question")
-        paper_titles_from_prompt = time_it(self.simple_gpt, "requiered_level_of_information")(
+        paper_titles_from_prompt = time_it(self.simple_gpt, "required_level_of_information")(
             f"""
            You will get a question, or a summary of a conversation between a bot and a user. 
            Your goal is identify if one or more scientific papers or research articles are mentioned in the conversation, and if yes, then to extract the article titles.
@@ -106,13 +106,13 @@ class Tutor:
         temperature=0.5)
         return paper_titles_from_prompt
 
-    def get_requiered_level_of_information(self, prompt, explain=False):
+    def get_required_level_of_information(self, prompt, explain=False):
         respond_with = ""
         if explain:
             respond_with = "Explain why"
             
         # print("entering get_type_of_question")
-        requiered_level_of_information = time_it(self.simple_gpt, "requiered_level_of_information")(
+        required_level_of_information = time_it(self.simple_gpt, "required_level_of_information")(
             f"""
             There is a database of papers, containing:
                 - "paper title"
@@ -127,26 +127,26 @@ class Tutor:
             These 8 elements of the list are what we call "pieces of information"    
 
             To determine if a paper is present in the database, we can search by "paper title", "paper authors" and "publishing date".
-            To make a paper summary, the "full paper content" is requiered.
-            To answer questions about physics concepts, theories, laws, equations, the "full paper content" of the papers is requiered.
-            To know the research area of the paper, the field of study, or if they are related to a topic, then the "very short paper summary" is requiered.
-            To list papers in a research area, a field of study or a branch of physics, then the "very short paper summary" is requiered.
+            To make a paper summary, the "full paper content" is required.
+            To answer questions about physics concepts, theories, laws, equations, the "full paper content" of the papers is required.
+            To know the research area of the paper, the field of study, or if they are related to a topic, then the "very short paper summary" is required.
+            To list papers in a research area, a field of study or a branch of physics, then the "very short paper summary" is required.
             To find similar papers, "very short paper summary" would be enought.
             If someone ask to summarize the content of the database, we will provide only "the total number of papers" and "the total number of papers per research area".
-            To list papers, "paper title", "paper authors", "publishing date" and "paper url" is requiered.
+            To list papers, "paper title", "paper authors", "publishing date" and "paper url" is required.
             {respond_with}            
         """, 
-        f"""if the user ask for "{prompt}", which "pieces of information" are requiered to answer his questions. Just mention what is necessary, nothing else""",
+        f"""if the user ask for "{prompt}", which "pieces of information" are required to answer his questions. Just mention what is necessary, nothing else""",
         temperature=0.5)
         
         if explain:
-            pprint(requiered_level_of_information)
-        requiered_level_of_information = requiered_level_of_information.lower()
-        if "full paper content" in requiered_level_of_information:
+            pprint(required_level_of_information)
+        required_level_of_information = required_level_of_information.lower()
+        if "full paper content" in required_level_of_information:
             return "high"
-        elif "paper summary" in requiered_level_of_information:
+        elif "paper summary" in required_level_of_information:
             return "medium"
-        elif "the total number" in requiered_level_of_information:
+        elif "the total number" in required_level_of_information:
             return "db_summary"
         else:
             return "basic"
@@ -284,8 +284,8 @@ class Tutor:
         conversation = self.truncate_conversation(conversation)
 
         prompt = conversation[-1]["content"]
-        requiered_level_of_information = self.get_requiered_level_of_information(prompt=prompt)        
-        pprint("requiered_level_of_information ", green(requiered_level_of_information))
+        required_level_of_information = self.get_required_level_of_information(prompt=prompt)        
+        pprint("required_level_of_information ", green(required_level_of_information))
 
         # todo: fix prompt to take context from all messages
         (
@@ -311,7 +311,7 @@ class Tutor:
         process_limit = 0
         show_limit = 0 
 
-        if "test_embedding" in str(self.collections.items()) and requiered_level_of_information == "db_summary":
+        if "test_embedding" in str(self.collections.items()) and required_level_of_information == "db_summary":
             import db_summary
             docs = db_summary.get_db_summary()
 
@@ -321,18 +321,18 @@ class Tutor:
                 #    continue
                 if self.embedding_db:
 
-                    if coll_name == "test_embedding" and requiered_level_of_information == "basic":
+                    if coll_name == "test_embedding" and required_level_of_information == "basic":
                         self.embedding_db.load_datasource(f"{coll_name}_basic")
                         query_limit = 100 # each basic entry has close to 100 tokens
                         process_limit = 50
                         show_limit = 0 
-                    elif coll_name == "test_embedding" and requiered_level_of_information == "medium":
+                    elif coll_name == "test_embedding" and required_level_of_information == "medium":
                         self.embedding_db.load_datasource(f"{coll_name}_medium")
                         query_limit = 100 # each basic entry has close to 400 tokens
                         process_limit = 20
                         show_limit = 3
                     else:
-                        requiered_level_of_information = "high"
+                        required_level_of_information = "high"
                         self.embedding_db.load_datasource(coll_name)
                         query_limit = 10 
                         process_limit = 3
@@ -384,7 +384,7 @@ class Tutor:
             # pprint("system_message", self.system_message)
             # stringify the docs and add to context message
             docs = ""
-            if requiered_level_of_information in {"basic", "medium"}:
+            if required_level_of_information in {"basic", "medium"}:
                 docs = "\n\n"
                 docs+="IMPORTANT: if the user asks information about papers, ALWAYS asumme they want information related to the provided list of papers. All these papers belong to the Quantum Networks Database (CQN database). If there is a list, there must (most of the times) be answer!"
                 docs+= "The following is the list of papers from the Quantum Networks Database (CQN database) that must be used as source of information to answer the user's question:\n\n"
@@ -450,7 +450,7 @@ class Tutor:
                 stream=True,
             )
             
-            # first_sentence = rf"({requiered_level_of_information}) "
+            # first_sentence = rf"({required_level_of_information}) "
             first_sentence = ""
             first_sentence_processed = False
 
