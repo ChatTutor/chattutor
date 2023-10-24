@@ -911,3 +911,10 @@ margin-top: 3px;
   padding: 0px !important;
 
 }
+
+.loading-message {
+  width: 100%;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}

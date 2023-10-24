@@ -339,6 +339,8 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
   args.selectedModel = selectedModel
 
   if (embed_mode) args.from_doc = original_file
+  document.querySelector(".loading-message").style = "display: flex;"
+
   fetch('/ask', {
     method: 'POST',
     headers: {
@@ -398,12 +400,16 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
         } else {
           stopGeneration = false
         }
+        document.querySelector(".loading-message").style = "display: none;"
+
       }).catch(err => {
         console.error('Stream error:', err);
         sendBtn.disabled = false;
         clear.style.display = 'block'
         stopGenButton.style.display = 'none'
         stopGeneration = false
+        document.querySelector(".loading-message").style = "display: none;"
+
       });
     }
     read();
@@ -414,6 +420,8 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
     clear.style.display = 'block'
     stopGenButton.style.display = 'none'
     stopGeneration = false
+    document.querySelector(".loading-message").style = "display: none;"
+
   });
 }
 
