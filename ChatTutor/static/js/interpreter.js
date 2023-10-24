@@ -398,6 +398,7 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
         const strValue = new TextDecoder().decode(value);
         const messages = strValue.split('\n\n').filter(Boolean).map(chunk => JSONparse(chunk.split('data: ')[1]));
           let message;
+          try {
           for (var messageIndex in messages) {
               message = messages[messageIndex]
               if (stopGeneration === false) {
@@ -451,6 +452,9 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
                   updateLastMessage(accumulatedContent);
                   break
               }
+          }}
+          catch(error) {
+            console.log(error)
           }
 
         if(stopGeneration === false) {
