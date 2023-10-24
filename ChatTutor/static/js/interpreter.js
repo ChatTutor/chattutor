@@ -394,7 +394,10 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
             uploadMessageToDB({content: accumulatedContent, role: 'assistant'}, getChatId())
           return;
         }
+        console.log(value.length)
         const strValue = new TextDecoder().decode(value);
+        console.log('strValue', strValue.length)
+        try {
         const messages = strValue.split('\n\n').filter(Boolean).map(chunk => JSON.parse(chunk.split('data: ')[1]));
           let message;
           for (var messageIndex in messages) {
@@ -429,7 +432,7 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
               } else {
                   let messageTypes = ['language', 'code', 'executing', 'message', 'active_line', 'end_of_execution', 'output']
                   console.log(message.message)
-                  if (message.message.message == '') {
+                  if (message.message.message == '   ') {
                     conversation.push({"role": 'assistant', "content": accumulatedContent, "context_documents" : context_documents})
                     localStorage.setItem("interpreter-conversation", JSON.stringify(conversation))
                   }
@@ -450,6 +453,9 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
                   updateLastMessage(accumulatedContent);
                   break
               }
+          }}
+          catch(error) {
+            console.log(error)
           }
         if(stopGeneration === false) {
           read();

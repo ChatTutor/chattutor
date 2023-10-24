@@ -545,64 +545,11 @@ class Tutor:
         print("conversation=", conversation)
         for chunk in interpreter.chat(prompt, stream=True, display=True):
             chunk['valid_docs'] = valid_docs
+            print(len(chunk))
             yield chunk
 
-        yield {"message": ""}
+        yield {"message": "   "}
 
-
-        # removing duplicates
-        # arr = list(set(arr))
-        # sort by distance, increasing
-        sorted_docs = sorted(arr, key=lambda el: el["distance"])
-        valid_docs = sorted_docs[:3]
-
-        # # Ensuring the last message in the conversation is a user's question
-        # assert (
-        #     conversation[-1]["role"] == "user"
-        # ), "The final message in the conversation must be a question from the user."
-        # conversation = self.truncate_conversation(conversation)
-
-        # prompt = conversation[-1]["content"]
-
-        # # Querying the database to retrieve relevant documents to the user's question
-        # docs = ''
-        # for coll_name, coll_desc in self.collections.items():
-        #     if self.embedding_db:
-        #         self.embedding_db.load_datasource(coll_name)
-        #         collection_db_response = f'{coll_desc} context: ' + self.embedding_db.query(prompt, 3, from_doc)
-        #         docs += collection_db_response + '\n'
-        #         print('#### COLLECTION DB RESPONSE:', collection_db_response)
-        # print("\n\n\n--------SYSTEM MESSAGE", self.system_message, len(self.collections), self.collections, self.embedding_db)
-        # # Creating a chat completion object with OpenAI API to get the model's response
-        # messages = conversation
-        # if self.embedding_db and len(self.collections) > 0:
-        #     messages = [
-        #         {"role": "system", "content": self.system_message.format(docs=docs)}
-        #     ] + conversation
-        # print(messages, f"Docs: |{docs}|")
-        # print('NUMBER OF INPUT TOKENS:', len(tiktoken.get_encoding('cl100k_base').encode(docs)))
-
-        # error = 0
-        # # try:
-        # interpreter.system_message = interpreter_system_message
-        # interpreter.model = 'gpt-4'
-        # # interpreter.model = 'gpt-3.5-turbo'
-        # # interpreter.messages = conversation[:-1]
-        # prompt = conversation[-1]["content"]
-
-        # # For the typewriter effect
-        # for chunk in interpreter.chat(prompt, stream=True, display=True):
-        #     yield chunk
-
-        # except:
-        #     error = 1
-        #     yield {"content": """Sorry, I am not able to provide a response.
-
-        #                         One of three things happened:
-        #                             - The context you provided was too wide, try to be more concise.
-        #                             - The files you uploaded were too large
-        #                             - I got disconnected from the server
-        #                         """}
 
     def count_tokens(self, string: str, encoding_name="cl100k_base") -> int:
         """Counting the number of tokens in a string using the specified encoding

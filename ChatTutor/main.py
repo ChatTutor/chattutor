@@ -296,7 +296,7 @@ def ask_interpreter():
     generate = chattutor.stream_interpreter_response_generator(
         conversation, from_doc, selected_model
     )
-    return Response(stream_with_context(generate()), content_type="text/event-stream")
+    return stream_with_context(generate())
 
 
 @app.route("/addtodb", methods=["POST", "GET"])
