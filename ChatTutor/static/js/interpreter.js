@@ -45,9 +45,9 @@ const modelDropdown = document.getElementById('modelDropdown')
 
 let uploadedCollections = []
 messageInput.addEventListener('input', (event) => {
-  sendBtn.disabled = messageInput.value.length === 0;
-  clear.disabled = !(messageInput.value.length === 0);
-
+  console.log(messageInput.value.length)
+  sendBtn.disabled = messageInput.value.length === 0 ;
+  clear.disabled = !(messageInput.value.length === 0 );
 })
 
 stopGenButton.style.display = 'none'
@@ -257,34 +257,42 @@ function clearConversation() {
 
 function stopGenerating() {
   stopGeneration = true
+  sendBtn.disabled = messageInput.value.length == 0;
+  clear.disabled = !(messageInput.value.length == 0);
 }
 
-function handleFormSubmit(event) {
-  event.preventDefault();
-  const msgText = msgerInput.value;
-  if (!msgText) return;
-  // if (selectUploadedCollection && !selectUploadedCollection.options[ selectUploadedCollection.selectedIndex ]) {
-  //   alert("Please upload some files for the tutor to learn from!")
-  //   return
-  // }
+// function handleFormSubmit(event) {
+//   event.preventDefault();
+//   const msgText = msgerInput.value;
+//   if (!msgText) return;
+//   // if (selectUploadedCollection && !selectUploadedCollection.options[ selectUploadedCollection.selectedIndex ]) {
+//   //   alert("Please upload some files for the tutor to learn from!")
+//   //   return
+//   // }
 
-  // Disable the send button
-  sendBtn.disabled = true;
-  clear.disabled = false;
-  clear.style.display = 'none'
-  stopGenButton.style.display = 'block'
+//   // Disable the send button
+//   sendBtn.disabled = true;
+//   clear.disabled = false;
+//   clear.style.display = 'none'
+//   stopGenButton.style.display = 'block'
 
-  addMessage("user", msgText, true);
-  uploadMessageToDB({role: 'user', content: msgText}, getChatId())
-  msgerInput.value = "";
-  queryGPT();
-}
+//   addMessage("user", msgText, true);
+//   uploadMessageToDB({role: 'user', content: msgText}, getChatId())
+//   msgerInput.value = "";
+//   queryGPT();
+// }
 
 
 function loadConversationFromLocalStorage() {
   conversation = JSON.parse(localStorage.getItem("interpreter-conversation"))
   if(conversation){
-    conversation.forEach(message => {addMessage(message["role"], message["content"], false)})
+    conversation.forEach(message => {
+      lastMessageId = null
+      addMessage(message["role"], message["content"], false, message["context_documents"])
+      if (message["context_documents"]) {
+        //setLatMessageHeader(message["context_documents"])
+      }
+    })
   }
   else conversation = []
   MathJax.typesetPromise();
@@ -374,11 +382,12 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
     const reader = response.body.getReader();
     let accumulatedContent = "";
     let isFirstMessage = true;
+    let context_documents = null;
     function read() {
       reader.read().then(({ done, value }) => {
         if (done) {
           // Enable the send button when streaming is done
-          sendBtn.disabled = false;
+          sendBtn.disabled = messageInput.value.length === 0;
           clear.style.display = 'block'
           stopGenButton.style.display = 'none'
           stopGeneration = false
@@ -391,6 +400,10 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
           for (var messageIndex in messages) {
               message = messages[messageIndex]
               if (stopGeneration === false) {
+                if (message.message.valid_docs) {
+                  context_documents = message.message.valid_docs
+                  console.log(context_documents)
+                }
                   const contentToAppend = message.message.message ? message.message.message : "";
                   accumulatedContent += contentToAppend;
               }
@@ -410,13 +423,14 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
               }
 
               if (isFirstMessage) {
+                setLatMessageHeader(context_documents)
                   addMessage("assistant", accumulatedContent, false);
                   isFirstMessage = false;
               } else {
                   let messageTypes = ['language', 'code', 'executing', 'message', 'active_line', 'end_of_execution', 'output']
                   console.log(message.message)
                   if (message.message.message == '') {
-                    conversation.push({"role": 'assistant', "content": accumulatedContent})
+                    conversation.push({"role": 'assistant', "content": accumulatedContent, "context_documents" : context_documents})
                     localStorage.setItem("interpreter-conversation", JSON.stringify(conversation))
                   }
                   scrollHelper.scrollIntoView()
@@ -424,9 +438,11 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
               }
               if (stopGeneration === true) {
                   accumulatedContent += " ...Stopped generating";
-                  conversation.push({"role": 'assistant', "content": accumulatedContent})
+                  conversation.push({"role": 'assistant', "content": accumulatedContent, "context_documents" : context_documents})
                   localStorage.setItem("interpreter-conversation", JSON.stringify(conversation))
-                  sendBtn.disabled = false;
+                  sendBtn.disabled = messageInput.value.length == 0;
+                  clear.disabled = !(messageInput.value.length == 0);
+                  
                   clear.style.display = 'block'
                   stopGenButton.style.display = 'none'
                   uploadMessageToDB({content: accumulatedContent, role: 'assistant'}, getChatId())
@@ -488,6 +504,73 @@ function formatMessage(message, makeLists = true) {
 
   }
   return messageStr
+}
+
+
+function setLatMessageHeader(context_documents, lastMessageIdParam, add=true) {
+
+  if (context_documents==false)
+    return ''
+  if (!lastMessageIdParam) {
+    lastMessageIdParam = lastMessageId
+  }
+  if (add == false) {
+    var docs = ''
+      context_documents.forEach(doc => {
+        // TO not break HTML
+        doc.metadata["summary"] = 0
+
+        var data = `${JSON.stringify(doc.metadata).replace("&quot;", '"')}`
+        docs += `<div class="msg-context-doc col ${lastMessageIdParam}-context" data-doc="${doc.metadata.doc}">
+          <div style="align-self: self-start;">
+            <span>${doc.metadata.doc}</span>
+          </div>
+
+          <div class="info col">
+            <div>
+              <div class="askmore context-info col" onclick='setFromDoc(${data})'>Ask about</div>
+              <div class="inform context-info col" onclick='setDocInfo(${data})'>Info</div>
+            </div>
+          </div>
+        </div>`
+      })
+      return docs;
+  }
+
+
+  if (lastMessageIdParam) {
+    const lastMessageElement = document.querySelector(`#${lastMessageIdParam} .msg-text`);
+    if (lastMessageElement) {
+      var docs = ''
+      context_documents.forEach(doc => {
+        docs += `<div class="msg-context-doc col ${lastMessageIdParam}-context" data-doc="${doc.metadata.doc}">
+          <div style="align-self: self-start;">
+            <span>${doc.metadata.doc}</span>
+          </div>
+
+          <div class="info col">
+            <div>
+              <div class="askmore context-info col" onclick='setFromDoc(${JSON.stringify(doc.metadata)})'>Ask about</div>
+              <div class="inform context-info col" onclick='setDocInfo(${JSON.stringify(doc.metadata)})'>Info</div>
+            </div>
+          </div>
+        </div>`
+      })
+      if (add)
+      document.querySelector(`#${lastMessageIdParam}`).innerHTML = `
+        <div class="msg-header-context">${docs}</div>
+        ${document.querySelector(`#${lastMessageIdParam}`).innerHTML}
+      `;
+
+      return docs
+    } else {
+      console.error('Cannot find the .msg-text element to update.');
+    }
+  } else {
+    console.error('No message has been added yet.');
+  }
+
+  return ''
 }
 
 function updateLastMessage(newContent) {
@@ -700,3 +783,361 @@ document.addEventListener('readystatechange', function() {
       init();
   }
 });
+
+
+
+document.querySelector(".close-notif").addEventListener('click', e => {
+  clearFromDoc();
+})
+
+
+
+document.querySelector(".close-arxiv").addEventListener('click', e => {
+  clearDocInfo();
+})
+
+// -------- inchat
+
+const addUrlButton = document.getElementById('addUrl')
+let file_array_to_send = undefined
+let collectionName = undefined
+const msgerDiv = document.getElementById('msgInputDiv')
+function setNewCollection() {
+    collectionName = `${uuidv4()}`.substring(0,10)
+}
+
+setNewCollection()
+
+async function uploadSiteUrl() {
+    let str = validateUrls()
+    addUrlButton.innerText = 'Adding urls...'
+    if (str === undefined) {
+        return;
+    }
+
+    let data_ = {url: str, name: collectionName}
+    let response = await fetch('/upload_site_url', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data_)})
+    let res_json = await response.json()
+    console.log('Created collection', res_json)
+    let created_collection_name = res_json['collection_name']
+    console.log("Created collection " + created_collection_name)
+    addUrlButton.innerText = 'Done adding urls'
+    return res_json
+
+}
+
+
+let the_file_arr = undefined
+
+msgerDiv.addEventListener('drop', e => {
+    e.preventDefault()
+    const transfer = e.dataTransfer
+    const files = transfer.files
+    if (the_file_arr === undefined) {
+        the_file_arr = [...files]
+    } else {
+        the_file_arr = [...the_file_arr, ...files]
+    }
+
+    const the_files = [...files]
+    for (const ind in the_files) {
+        const file = the_files[ind]
+        msgerDiv.innerHTML += ` :file: ${file.name} `
+    }
+    updateEditor()
+})
+
+function validateUrls() {
+    let arr = []
+    if (msgerInput.value.includes(':url:') || msgerInput.value.includes(':file:')) {
+
+    } else {
+        return undefined
+    }
+    console.log(msgerInput.value)
+    var inputval = msgerInput.value
+    console.log(inputval)
+
+    let strs = inputval.split(' ')
+    console.log(strs)
+    let sw = 0
+    var index = 0
+    while (index < strs.length) {
+        const _str = strs[index]
+
+        if (_str === ":url:" && index + 1 < strs.length) {
+          arr = [...arr, strs[index + 1]]
+        } else if (_str.includes(":url:")) {
+          var aux = _str.split(":url:")
+          console.log(aux)
+          arr = [...arr, aux[1].split('').splice(1).join('')]
+        }
+        index ++;
+        // if(sw == 1 && _str !== ':file:' && _str != ':url:' && _str.length > 3) {
+        //     arr = [...arr, _str]
+        // }
+        // if (_str === ':url:') {
+        //     sw = 1
+        // } else if(_str === ':file:') {
+        //     sw = 0
+        // }
+    }
+    console.log("URL/FILES",arr)
+    return arr;
+
+
+}
+
+function validateMsgInputAndDisable() {
+    let str = validateUrls()
+
+    if(str !== undefined) {
+         addUrlButton.style.display = 'block'
+        addUrlButton.innerText = 'Press enter to add'
+        sendBtn.disabled = true
+
+        
+    } else {
+
+        addUrlButton.style.display = 'none'
+        sendBtn.disabled = false
+    }
+    sendBtn.disabled = messageInput.value.length === 0 ;
+    clear.disabled = !(messageInput.value.length === 0 );
+
+
+}
+
+function inputTextDidChange() {
+    let inner = msgerInput.innerHTML
+    validateMsgInputAndDisable()
+    console.log('val:', msgerInput.value)
+}
+
+msgerInput.addEventListener('input', inputTextDidChange)
+
+
+
+// EO New code
+
+
+function getTextSegments(element) {
+    const textSegments = [];
+    Array.from(element.childNodes).forEach((node) => {
+        switch(node.nodeType) {
+            case Node.TEXT_NODE:
+                textSegments.push({text: node.nodeValue, node});
+                break;
+
+            case Node.ELEMENT_NODE:
+                textSegments.splice(textSegments.length, 0, ...(getTextSegments(node)));
+                break;
+
+            default:
+                throw new Error(`Unexpected node type: ${node.nodeType}`);
+        }
+    });
+    return textSegments;
+}
+
+function updateEditor() {
+
+    const sel = window.getSelection();
+    const textSegments = getTextSegments(msgerDiv);
+    const textContent = textSegments.map(({text}) => text).join('');
+    let anchorIndex = null;
+    let focusIndex = null;
+    let currentIndex = 0;
+    textSegments.forEach(({text, node}) => {
+        if (node === sel.anchorNode) {
+            anchorIndex = currentIndex + sel.anchorOffset;
+        }
+        if (node === sel.focusNode) {
+            focusIndex = currentIndex + sel.focusOffset;
+        }
+        currentIndex += text.length;
+    });
+
+    msgerDiv.innerHTML = renderText(textContent);
+    msgerInput.value = msgerDiv.innerText.replaceAll(' ', ' ')
+
+    sendBtn.disabled = messageInput.value.length === 0 ;
+    clear.disabled = !(messageInput.value.length === 0 );
+    restoreSelection(anchorIndex, focusIndex);
+
+    validateMsgInputAndDisable()
+    if(the_file_arr !== undefined) {
+        file_array_to_send = the_file_arr.filter((elem) => {
+            return msgerInput.value.includes(elem.name)
+        })
+        console.log(file_array_to_send)
+    }
+}
+
+function restoreSelection(absoluteAnchorIndex, absoluteFocusIndex) {
+    const sel = window.getSelection();
+    const textSegments = getTextSegments(msgerDiv);
+    let anchorNode = msgerDiv;
+    let anchorIndex = 0;
+    let focusNode = msgerDiv;
+    let focusIndex = 0;
+    let currentIndex = 0;
+    textSegments.forEach(({text, node}) => {
+        const startIndexOfNode = currentIndex;
+        const endIndexOfNode = startIndexOfNode + text.length;
+        if (startIndexOfNode <= absoluteAnchorIndex && absoluteAnchorIndex <= endIndexOfNode) {
+            anchorNode = node;
+            anchorIndex = absoluteAnchorIndex - startIndexOfNode;
+        }
+        if (startIndexOfNode <= absoluteFocusIndex && absoluteFocusIndex <= endIndexOfNode) {
+            focusNode = node;
+            focusIndex = absoluteFocusIndex - startIndexOfNode;
+        }
+        currentIndex += text.length;
+    });
+
+    sel.setBaseAndExtent(anchorNode,anchorIndex,focusNode,focusIndex);
+}
+
+
+const highlights = [{word: ":url:", col: "#00000043"}, {word: ":file:", col: "#00000040"}]
+function renderText(text) {
+    var words = text.split(/(\s+)/);
+    var arr = new Array()
+    var lastf = undefined
+    var el = undefined
+    var windex = 0
+    words.forEach( f=> {
+      if (f == ":url:" || f == ":file:" || windex == words.length - 1) {
+        if (el !== undefined && lastf !== undefined)
+          arr.push(el)
+        if (f != undefined)
+          arr.push(f)
+      } else if (lastf == ":url:" || lastf == ":file:"){
+        el = f
+      } else {
+        el = el + f
+      }
+
+      lastf = f
+      windex ++
+    })
+    for (var i = 0; i < arr.length; ++i) {
+      arr[i] = arr[i].trim()
+    }
+    arr = arr.filter(a => a.length > 0)
+    console.log("ARRRRRR, ", words, arr, messageInput.value)
+
+    // @Andu, arr does not work :( help
+    const output = words.map((word, ind, vec) => {
+        for (const ihighlight in highlights) {
+            const high = highlights[ihighlight]
+            if (word === high.word) {
+              if (ihighlight == 0)
+                return `</span><span style=\"padding: 1px; margin: 0; margin-right: 5px; border-radius: 2px; background-color: ${high.col}; color: black\">${word}`
+            
+              return `</span><span style=\"padding: 1px; margin: 0; margin-right: 5px; border-radius: 2px; background-color: ${high.col}; color: black\">${word}`
+            }
+
+
+
+            if(ind >= 2) {
+                if (words[ind - 2] === ":file:" && file_array_to_send !== undefined) {
+                    console.log(words[ind-1], file_array_to_send)
+                    if(file_array_to_send.some((elem) => {return elem.name === word})) {
+                        return `<span style=\"padding: 1px; margin: 0; border-radius: 2px; background-color: #a1e8a1; color: black\">${word}</span>`
+                    }
+                }
+            }
+        }
+        return word
+    })
+    return output.join('');
+}
+
+msgerDiv.addEventListener('input', updateEditor)
+
+updateEditor()
+
+msgerDiv.onkeydown = function(e) {
+    if (e.key === "Enter") {
+        e.preventDefault()
+        handleFormSubmit_noEvent()
+        msgerDiv.innerText = ""
+        msgerInput.value = ""
+
+    }
+}
+
+async function handleFormSubmit(event) {
+  event.preventDefault();
+  await handleFormSubmit_noEvent();
+}
+
+const COLLECTION_NAME = undefined
+
+async function handleFileUpload() {
+    addUrlButton.style.display = 'block'
+    addUrlButton.innerText = 'Uploading files...'
+    const body = file_array_to_send
+    let form_data = new FormData()
+    form_data.append('collection_name', collectionName)
+    for (const ind in file_array_to_send) {
+        form_data.append('file', file_array_to_send[ind])
+    }
+    const response = await fetch('/upload_data_from_drop', {method: 'POST', headers: {'Accept': 'multipart/form-data'}, body: form_data})
+
+    const coll = await response.json()
+
+    addUrlButton.innerText = 'Done uploading files'
+    return coll
+}
+async function handleFormSubmit_noEvent() {
+    const msgText = msgerInput.value;
+    if (msgText.startsWith(':url:') || msgText.startsWith(':file:')) {
+        let url_array = undefined
+        let fil_array = undefined
+        if(msgText.includes(':url:')) {
+            const s_json = await uploadSiteUrl()
+            url_array = s_json['urls']
+        }
+        if(msgText.includes(':file:') && file_array_to_send !== undefined) {
+            const f_json = await handleFileUpload()
+            fil_array = f_json['files_uploaded_name']
+        }
+
+
+        if (url_array !== undefined) {
+            for (const i in url_array) {
+                msgerDiv.innerHTML += `<span style="margin: 0; padding: 0">uploaded_urls: ${url_array[i]} </span>`
+            }
+        }
+
+
+         if (fil_array !== undefined) {
+            for (const  i in fil_array) {
+                msgerDiv.innerHTML += `<span style="margin: 0; padding: 0">uploaded_files: ${fil_array[i]} </span>`
+            }
+        }
+
+
+        addCollectionToFrontEnd(collectionName)
+        return;
+    }
+  if (!msgText) return;
+  // if (selectUploadedCollection && !selectUploadedCollection.options[ selectUploadedCollection.selectedIndex ]) {
+  //   alert("Please upload some files for the tutor to learn from!")
+  //   return
+  // }
+
+  // Disable the send button
+  sendBtn.disabled = true;
+  clear.style.display = 'none'
+  stopGenButton.style.display = 'block'
+
+  addMessage("user", msgText, true);
+  uploadMessageToDB({role: 'user', content: msgText}, getChatId())
+  msgerInput.value = "";
+  queryGPT();
+}
+// EO new code
