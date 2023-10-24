@@ -39,6 +39,8 @@ root_folder (named chattutor)
    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
    pip install -r requirements.txt
 ```
+Alternatively, use docker:
+```docker build -t chattutor .;docker run -p 5000:5000 chattutor```
 
 3. **Run the flask application**
 ```

@@ -2,31 +2,39 @@ import pymysql
 import uuid
 import datetime
 
+
 class MessageSchema:
-    mes_id = ''
-    role = ''
-    content = ''
-    chat_key = ''
+    mes_id = ""
+    role = ""
+    content = ""
+    chat_key = ""
     clear_number = 0
-    time_created = ''
+    time_created = ""
 
     def convert_to_dictionary(self):
-        return {'mes_id': self.mes_id, 'role': self.role, 'content': self.content, 'chat_key': self.chat_key, 'clear_number': self.clear_number, 'time_created': self.clear_number}
+        return {
+            "mes_id": self.mes_id,
+            "role": self.role,
+            "content": self.content,
+            "chat_key": self.chat_key,
+            "clear_number": self.clear_number,
+            "time_created": self.clear_number,
+        }
 
 
 class ChatSchema:
-    chat_id = ''
+    chat_id = ""
 
     def convert_to_dictionary(self):
-        return {'chat_id': self.chat_id}
+        return {"chat_id": self.chat_id}
 
 
 class MessageDB:
-    host = ''
-    user = ''
-    password = ''
-    db = ''
-    statisticsdb=''
+    host = ""
+    user = ""
+    password = ""
+    db = ""
+    statisticsdb = ""
 
     # Only for deleting the db when you first access the site. Can be used for debugging
     presetTables1 = """
@@ -53,8 +61,6 @@ class MessageDB:
         FOREIGN KEY (chat_key) REFERENCES lchats (chat_id)
         )"""
 
-
-
     def __init__(self, host, user, password, database, statistics_database):
         self.host = host
         self.user = user
@@ -69,8 +75,8 @@ class MessageDB:
             user=self.user,
             password=self.password,
             db=self.db,
-            charset='utf8mb4',
-            cursorclass=pymysql.cursors.DictCursor
+            charset="utf8mb4",
+            cursorclass=pymysql.cursors.DictCursor,
         )
 
         return connection
@@ -81,8 +87,8 @@ class MessageDB:
             user=self.user,
             password=self.password,
             db=self.statisticsdb,
-            charset='utf8mb4',
-            cursorclass=pymysql.cursors.DictCursor
+            charset="utf8mb4",
+            cursorclass=pymysql.cursors.DictCursor,
         )
 
         return connection
@@ -101,11 +107,11 @@ class MessageDB:
         """This inserts a message into the sqlite3 database. the message must be sent as a dictionary"""
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
-            role = a_message['role']
-            content = a_message['content']
-            chat_key = a_message['chat']
-            clear_number = a_message['clear_number']
-            time_created = a_message['time_created']
+            role = a_message["role"]
+            content = a_message["content"]
+            chat_key = a_message["chat"]
+            clear_number = a_message["clear_number"]
+            time_created = a_message["time_created"]
             insert_format_lmessages = f"INSERT INTO lmessages (mes_id ,role, content, chat_key, clear_number, time_created) VALUES ('{uuid.uuid4()}','{role}', %s, '{chat_key}', {clear_number}, '{time_created}')"
             cur.execute(insert_format_lmessages, (content,))
             con.commit()
@@ -127,36 +133,38 @@ class MessageDB:
             return messages_arr
 
     def parse_messages(self, messages_arr):
-        renderedString = ('<table class="messages-table"> <tr style="background-color: rgb(140, 0, 255); color: white"> '
-                          '<th> Role </th>'
-                          '<th> Content </th>'
-                          '<th> Number of clears </th>'
-                          '<th> Time </th>'
-                          '<th> Chat id </th>'
-                          ' </tr>')
+        renderedString = (
+            '<table class="messages-table"> <tr style="background-color: rgb(140, 0, 255); color: white"> '
+            "<th> Role </th>"
+            "<th> Content </th>"
+            "<th> Number of clears </th>"
+            "<th> Time </th>"
+            "<th> Chat id </th>"
+            " </tr>"
+        )
         i = 0
         for message in messages_arr:
-            role = message['role']
-            content = message['content']
-            chat_id = message['chat_key']
-            clear_number = message['clear_number']
-            time_cr = message['time_created']
-            style = 'font-size: 10px; background-color: var(--msg-input-bg); overflow: hidden; padding: 2px; border-radius: 2px'
-            side = 'left'
-            if role != 'assistant':
-                side = 'right'
+            role = message["role"]
+            content = message["content"]
+            chat_id = message["chat_key"]
+            clear_number = message["clear_number"]
+            time_cr = message["time_created"]
+            style = "font-size: 10px; background-color: var(--msg-input-bg); overflow: hidden; padding: 2px; border-radius: 2px"
+            side = "left"
+            if role != "assistant":
+                side = "right"
 
             chat_header = ""
 
             if i != 0:
                 current_message = messages_arr[i]
                 prev_message = messages_arr[i - 1]
-                if current_message['chat_key'] != prev_message['chat_key']:
+                if current_message["chat_key"] != prev_message["chat_key"]:
                     chat_header = f"""
                         Chat id: {chat_id}
                     """
 
-                if current_message['clear_number'] != prev_message['clear_number']:
+                if current_message["clear_number"] != prev_message["clear_number"]:
                     chat_header = f"""
                         Cleared {clear_number} from id {chat_id}
                     """
@@ -187,7 +195,5 @@ class MessageDB:
                        """
             renderedString += msg_html
 
-        renderedString += '</table>'
+        renderedString += "</table>"
         return renderedString
-
-

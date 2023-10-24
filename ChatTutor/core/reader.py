@@ -1,12 +1,12 @@
-from definitions import Doc, Text
+from core.definitions import Doc, Text
 from typing import List
 import os
 import json
 from google.cloud import storage
 from io import BytesIO
 import PyPDF2
-from vectordatabase import VectorDatabase
-
+from core.vectordatabase import VectorDatabase
+from core.url_reader import URLReader
 
 def read_folder_gcp(bucket_name, folder_name):
     """
@@ -152,7 +152,9 @@ def parse_notebook(path: str, doc: Doc, chunk_chars: int, overlap: int):
         return texts_from_str(text_str, doc, chunk_chars, overlap)
 
 
-def parse_pdf(file_contents: str, doc: Doc, chunk_chars: int, overlap: int) -> List[Text]:
+def parse_pdf(
+    file_contents: str, doc: Doc, chunk_chars: int, overlap: int
+) -> List[Text]:
     """Parses a pdf file and generates texts from its content.
 
     Args:
@@ -210,8 +212,11 @@ def parse_plaintext_file(file, doc: Doc, chunk_chars: int, overlap: int):
     Returns:
         [Text]: The resulting Texts as an array
     """
-
-    return texts_from_str(file.read(), doc, chunk_chars, overlap)
+    print('qqqqqqqqq', file)
+    texts = texts_from_str(file, doc, chunk_chars, overlap)
+    print(texts)
+    # print(texts)
+    return texts
 
 
 def parse_notebook_file(file, doc: Doc, chunk_chars: int, overlap: int):
@@ -239,6 +244,16 @@ def parse_notebook_file(file, doc: Doc, chunk_chars: int, overlap: int):
 def texts_from_str(text_str: str, doc: Doc, chunk_chars: int, overlap: int):
     texts = []
     index = 0
+
+    if len(text_str) <= chunk_chars and len(text_str) < overlap:
+        texts.append(
+            Text(
+                text=text_str,
+                name=f"{doc.docname} chunk {index}",
+                doc=doc,
+            )
+        )
+        return texts
 
     while len(text_str) > chunk_chars:
         texts.append(
