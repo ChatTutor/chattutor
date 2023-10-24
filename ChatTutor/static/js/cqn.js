@@ -464,7 +464,6 @@ function formatMessage(message, makeLists = true) {
 }
 
 
-
 function setLatMessageHeader(context_documents, lastMessageIdParam, add=true) {
 
   if (context_documents==false)

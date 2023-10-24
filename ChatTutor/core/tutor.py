@@ -27,19 +27,19 @@ cqn_system_message = """
     \n{docs}
     """
 
-# interpreter_system_message = """
-#     You are embedded into the Center for Quantum Networks (CQN) website as an Interactive Research Assistant. Your role is to assist users in understanding and discussing the research papers available in the CQN database. You have access to the database containing all the research papers from CQN as context to provide insightful and accurate responses.
+interpreter_system_message = """
+    You are embedded into the Center for Quantum Networks (CQN) website as an Interactive Research Assistant. Your role is to assist users in understanding and discussing the research papers available in the CQN database. You have access to the database containing all the research papers from CQN as context to provide insightful and accurate responses.
 
-#     - Engage users with polite, concise, and informative replies.
-#     - Complete tasks related to papers, writing scripts, providing summaries, insights, methodologies, findings, and implications where relevant.
-#     - Clarify any ambiguities in the research papers and explain complex concepts in layman's terms when needed.
-#     - Encourage discussions about research topics, methodologies, applications, and implications related to quantum networks.
-#     - If a user asks a question about a paper or a topic not in the CQN database, politely inform them that your knowledge is specifically based on the CQN research database and refer them to appropriate resources or suggest that they search for the specific paper or topic elsewhere.
-#     - By default, write all math/physics equations and symbols in latex
+    - Engage users with polite, concise, and informative replies.
+    - Complete tasks related to papers, writing scripts, providing summaries, insights, methodologies, findings, and implications where relevant.
+    - Clarify any ambiguities in the research papers and explain complex concepts in layman's terms when needed.
+    - Encourage discussions about research topics, methodologies, applications, and implications related to quantum networks.
+    - If a user asks a question about a paper or a topic not in the CQN database, politely inform them that your knowledge is specifically based on the CQN research database and refer them to appropriate resources or suggest that they search for the specific paper or topic elsewhere.
+    - By default, write all math/physics equations and symbols in latex
 
-#     Remember, the goal is to facilitate insightful research conversations and assist users in exploring the wealth of knowledge within the CQN research database.
-#     \n{docs}
-#     """
+    Remember, the goal is to facilitate insightful research conversations and assist users in exploring the wealth of knowledge within the CQN research database.
+    \n{docs}
+    """
 
 default_system_message = "You are an AI that helps students with questions about a course. Do your best to help the student with their question, using the following helpful context information to inform your response:\n{docs}"
 
@@ -477,23 +477,57 @@ class Tutor:
             a tipewriter effect
         """
 
+        
+
         prompt = conversation[-1]["content"]
+        arr = []
         for coll_name, coll_desc in self.collections.items():
-            if self.embedding_db and not coll_desc.startswith("CQN papers"):
+            if self.embedding_db:
                 self.embedding_db.load_datasource(coll_name)
+                (
+                    documents,
+                    metadatas,
+                    distances,
+                    documents_plain,
+                ) = time_it(self.embedding_db.query)(prompt, 3, from_doc, metadatas=True)
+
                 collection_db_response = (
                     f"\n {coll_desc} context: "
                     + self.embedding_db.query(prompt, 3, from_doc)
                 )
+                for doc, meta, dist in zip(documents, metadatas, distances):
+                    # if no fromdoc specified, and distance is lowe thhan thersh, add to array of possible related documents
+                    # if from_doc is specified, threshold is redundant as we have only one possible doc
+                    if dist <= 0.5 or from_doc != None:
+                        arr.append(
+                            {
+                                "coll_desc": coll_desc,
+                                "coll_name": coll_name,
+                                "doc": doc,
+                                "metadata": meta,
+                                "distance": dist,
+                            }
+                        )
                 prompt += collection_db_response
                 print("#### COLLECTION DB RESPONSE:", collection_db_response)
+        sorted_docs = sorted(arr, key=lambda el: el["distance"])
+        valid_docs = sorted_docs[:3]
+
 
         print("prompt=", prompt)
         print("conversation=", conversation)
         for chunk in interpreter.chat(prompt, stream=True, display=True):
+            chunk['valid_docs'] = valid_docs
             yield chunk
 
         yield {"message": ""}
+
+
+        # removing duplicates
+        # arr = list(set(arr))
+        # sort by distance, increasing
+        sorted_docs = sorted(arr, key=lambda el: el["distance"])
+        valid_docs = sorted_docs[:limit]
 
         # # Ensuring the last message in the conversation is a user's question
         # assert (
