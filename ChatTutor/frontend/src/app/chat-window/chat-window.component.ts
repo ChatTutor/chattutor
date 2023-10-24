@@ -13,14 +13,6 @@ export class ChatWindowComponent {
     collections: string[] = ['test_embedding']
 
     async onSendMessage(messageText: string) {
-        if(messageText.includes('url')) {
-            // let urls = JSON.parse(messageText);
-            let urls = JSON.parse(messageText)
-            let resp = await this.sendURLsToBackend(urls["urls"], 'files_collection')
-
-
-            return;
-        }
         this.messages.push({
             sender: 'Student',
             timestamp: new Date().toLocaleTimeString(),
@@ -184,4 +176,6 @@ export class ChatWindowComponent {
         this.urlsArray = [...this.urlsArray, ...res_json['urls']]
         return {message: 'success', json_obj: res_json}
     }
+
+
 }

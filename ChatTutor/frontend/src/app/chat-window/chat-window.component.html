@@ -1,19 +1,20 @@
 <div class="chat-container">
-    <div class="chat-header-helper">
-      <header class="chat-header">
+    <div class="chat-messages">
         <div class="chat-header-title">
-          ChatTutor
+            ChatTutor
+        </div>
+        <!-- Loop over the messages and display each message -->
+        <div *ngFor="let message of messages">
+            <app-message [message]="message"></app-message>
         </div>
 
-      </header>
     </div>
-    <div class="messages-container">
-      <!-- Loop over the messages and display each message -->
-      <div *ngFor="let message of messages">
-        <app-message [message]="message"></app-message>
-      </div>
+    <div>
+        <app-dataset-chips [files_data]="filesArray" [urls_data]="urlsArray"
+                           (added_urls_event)="sendURLsToBackend([$event], 'files_collection')"></app-dataset-chips>
+
+        <app-input-box (sendMessage)="onSendMessage($event)"></app-input-box>
+
     </div>
-    <app-dataset-chips [files_data]="filesArray" [urls_data]="urlsArray"></app-dataset-chips>
-    <app-input-box (sendMessage)="onSendMessage($event)"></app-input-box>
 </div>
   
