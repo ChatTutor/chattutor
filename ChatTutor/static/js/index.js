@@ -2,6 +2,7 @@
 import {lightMode, darkMode, setProperties} from "./constants.js";
 import {alert} from "./nicealert.js"
 import { clearFileInput } from "./fileupload.js";
+import { JSONparse } from "./jsonparse.js";
 const embed_mode = false;
 const clear = document.getElementById('clearBtnId');
 const clearContainer = get('.clear-btn-container');
@@ -378,7 +379,7 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
           return;
         }
         const strValue = new TextDecoder().decode(value);
-        const messages = strValue.split('\n\n').filter(Boolean).map(chunk => JSON.parse(chunk.split('data: ')[1]));
+        const messages = strValue.split('\n\n').filter(Boolean).map(chunk => JSONparse(chunk.split('data: ')[1]));
           let message;
           for (var messageIndex in messages) {
               message = messages[messageIndex]

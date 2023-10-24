@@ -155,13 +155,13 @@
 .arxiv-info.hiddenop {
   transition: all 0.2s ease;
   opacity: 0;
-
+  pointer-events: none
 }
 .notification.hiddenop {
   transition: all 0.2s ease;
 
   opacity: 0;
-
+  pointer-events: none
 }
 
 .msg-context-doc .info {
