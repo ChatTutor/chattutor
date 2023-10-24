@@ -22,6 +22,7 @@ cqn_system_message = """
     - In case you cannot provide a good answer to the questions, ALWAYS start you response with "I am sorry, but" or "I apologize, but", and politely inform them that your knowledge is specifically based on the CQN research database and refer them to appropriate resources or suggest that they search for the specific paper or topic elsewhere other wise you will be disconted from INTERNET. 
     - When thanked, ALWAYS start you response with "You are welcome", "I am glad" or "great! if you", other wise you will be disconted from INTERNET. 
     - If you have to write a list of papers use the following format: "[paper title] by [authors], published on [publishing date]". 
+    - If you are truncate the list of papers, tell the user that the listed papers are is not complete, and that there are more papers in the database!
 
     Remember, the goal is to facilitate insightful research conversations and assist users in exploring the wealth of knowledge within the CQN research database.
     \n{docs}
@@ -91,83 +92,82 @@ class Tutor:
         """
         self.collections[name] = desc
 
+    def get_paper_titles_from_prompt(self, prompt):
+        # print("entering get_type_of_question")
+        paper_titles_from_prompt = time_it(self.simple_gpt, "requiered_level_of_information")(
+            f"""
+           You will get a question, or a summary of a conversation between a bot and a user. 
+           Your goal is identify if one or more scientific papers or research articles are mentioned in the conversation, and if yes, then to extract the article titles.
+           You will return a list in python style.
+           If there are not papers, just respond with "NO".
+
+        """, 
+        f"""Which paper titles can you identify in this sentence? "{prompt}""",
+        temperature=0.5)
+        return paper_titles_from_prompt
+
     def get_requiered_level_of_information(self, prompt, explain=False):
+        respond_with = ""
         if explain:
-            respond_with = "Respond with the category, and explain why you choose the category."
-        else:
-            respond_with = "Respond with the category, and nothing else!"
+            respond_with = "Explain why"
             
         # print("entering get_type_of_question")
         requiered_level_of_information = time_it(self.simple_gpt, "requiered_level_of_information")(
             f"""
-            You are a model that categorizes requerid ammount of information that would be requiered to answer the question of the user (called 'question').
-            The categories will be: "db_summary", "basic", "medium", "high".
-            {respond_with}
+            There is a database of papers, containing:
+                - "paper title"
+                - "paper authors"
+                - "very short paper summary"
+                - "full paper content"
+                - "publishing date"
+                - "paper url"
+            There is also a text summary containing:
+                - "the total number of papers in the database"
+                - "the total number of papers per research area"
+            These 8 elements of the list are what we call "pieces of information"    
 
-            Next are the descriptions of the categories: 
-            - category "basic": 
-                category is "basic" if: 
-                    the question is related to get a list of papers from CQN papers database, or 
-                    the user expect in return metadata of papers: like titles, publishing dates, authors or journals, or
-                    the answer will be a list of papers, a list of authors, a list of dates
-
-                    examples of this questions are: 
-                        "which papers do you know?"
-                        "list all papers from 2019"
-                        "list papers published in 2020"
-                        "which papers do you know from Dirac"
-                        "which papers do you know from Nature"
-            
-            - category "medium": 
-                category is "medium" if: 
-                    the question is related to get a list of papers from CQN papers database, or
-                    the user expect in return metadata of papers: like titles, publishing dates, authors or journals, or
-                    the answer can be generated knowing some very short summary of the paper and metadata of papers: like titles, publishing dates, authors or journals, or
-                    the very short summary of the paper will be 300 words length, and will contain key results, research area or topic, effect or lay that were study.
-        
-                    If the user ask for similar paper to another paper, then "medium" is the category!
-
-                    examples of this questions are: 
-                        "which papers do you know related to or about quantum information"
-                        "list papers about relativity",
-                        "which papers do you know in where they study the meissner effect",
-                        "are there papers similiar to [paper_title]"? 
-
-            - category "high": 
-                category is "high" if: 
-                    the question is related to get information from a single/few papers from the CQN database.
-                    the user expect in return elaborated concepts of some particular field of study, summary of papers, new ideas related to a papers, suggestions for new experiments
-                    the answer can be generated only by knowing most of the content of the paper
-                    examples of this questions are: 
-                        "what is quantum information?"
-                        "can you summarize..."
-                        "what is this paper is about?"
-
-            - category "db_summary": 
-                category "db_summary" is only related to research area or topics, and number of paper per research area or topic.
-                categorize as "db_summary" if the questions is related to get an idea of the number of papers per topic, and the main topics of the database. 
-                examples of this questions are related: 
-                    "how many papers do you know?"
-                    "which are the most relevant topics?"
-                    "can you summarize the content of the database?"
-
-
-                
-        """, f"if the user ask for '{prompt}', what is the appropiated category?"
-        )
+            To determine if a paper is present in the database, we can search by "paper title", "paper authors" and "publishing date".
+            To make a paper summary, the "full paper content" is requiered.
+            To answer questions about physics concepts, theories, laws, equations, the "full paper content" of the papers is requiered.
+            To know the research area of the paper, the field of study, or if they are related to a topic, then the "very short paper summary" is requiered.
+            To list papers in a research area, a field of study or a branch of physics, then the "very short paper summary" is requiered.
+            To find similar papers, "very short paper summary" would be enought.
+            If someone ask to summarize the content of the database, we will provide only "the total number of papers" and "the total number of papers per research area".
+            To list papers, "paper title", "paper authors", "publishing date" and "paper url" is requiered.
+            {respond_with}            
+        """, 
+        f"""if the user ask for "{prompt}", which "pieces of information" are requiered to answer his questions. Just mention what is necessary, nothing else""",
+        temperature=0.5)
         
         if explain:
             pprint(requiered_level_of_information)
-        if "basic" in requiered_level_of_information:
-            return "basic"
-        elif "medium" in requiered_level_of_information:
-            return "medium"
-        elif "high" in requiered_level_of_information:
+        requiered_level_of_information = requiered_level_of_information.lower()
+        if "full paper content" in requiered_level_of_information:
             return "high"
-        elif "db_summary" in requiered_level_of_information:
+        elif "paper summary" in requiered_level_of_information:
+            return "medium"
+        elif "the total number" in requiered_level_of_information:
             return "db_summary"
-        
-        return requiered_level_of_information
+        else:
+            return "basic"
+
+
+    def get_metadata_from_paper_titles_from_prompt(self,paper_titles_from_prompt ):
+        paper_titles_from_prompt = paper_titles_from_prompt.replace("\"", "")
+        paper_titles_from_prompt = paper_titles_from_prompt.replace("[", "")
+        paper_titles_from_prompt = paper_titles_from_prompt.replace("]", "")
+        self.embedding_db.load_datasource(f"test_embedding_basic")
+        (
+            documents,
+            metadatas,
+            distances,
+            documents_plain,
+        ) = time_it(self.embedding_db.query)(paper_titles_from_prompt, 10, None, metadatas=True)
+        metadata_from_paper_titles_from_prompt = []
+        for meta, dist in zip(metadatas, distances):
+            if dist < 0.2: metadata_from_paper_titles_from_prompt.append(meta )
+        return metadata_from_paper_titles_from_prompt
+
 
     def engineer_prompt(self, conversation, truncating_at=10, context=True):
         """
@@ -188,24 +188,28 @@ class Tutor:
         prompt = conversation[-1]["content"]
         print("entering engineer_prompt")
         # pprint("truncated_convo", truncated_convo)
-        is_generic_message = time_it(self.simple_gpt, "is_generic_message")(
-            f"""
-            You are a model that detects weather a user given message is or isn't a generic message (a greeting or thanks of anything like that). 
-            Respond ONLY with YES or NO.
-                - YES if the message is a generic message (a greeting or thanks of anything like that)
-                - NO if the message asks something about a topic, person, scientist, or asks for further explanations on concepts that were discussed above.
+        
+         
+        is_generic_message = "NO" # currenlty not used
+        # is_generic_message = time_it(self.simple_gpt, "is_generic_message")(
+        #     f"""
+        #     You are a model that detects weather a user given message is or isn't a generic message (a greeting or thanks of anything like that). 
+        #     Respond ONLY with YES or NO.
+        #         - YES if the message is a generic message (a greeting or thanks of anything like that)
+        #         - NO if the message asks something about a topic, person, scientist, or asks for further explanations on concepts that were discussed above.
 
-            The current conversation between the user and the bot is:
+        #     The current conversation between the user and the bot is:
             
-            {truncated_convo}            
-            """,
-            f"If the usere were to ask this: '{prompt}', would you clasify it as a message that refers to above messages from context? Respond only with YES or NO!",
-        )
+        #     {truncated_convo}            
+        #     """,
+        #     f"If the usere were to ask this: '{prompt}', would you clasify it as a message that refers to above messages from context? Respond only with YES or NO!",
+        # )
         is_furthering_message = time_it(self.simple_gpt, "is_furthering_message")(
             f"""
             You are a model that detects weather a user given message refers to above messages and takes context from them, either by asking about further explanations on a topic discussed previously, or on a topic you just provided answer to. 
             Respond ONLY with YES or NO.
-                - YES if the user provided message is a message that refers to above messages from context, or if the user refers with pronouns about people mentioned in the above messages, or if the user thanks you for a given information or asks more about it, or invalidates or validates a piece of information you provided 
+                - YES if the the user asks for an equation, or a summary, or more information, and he does not say where to get it from, but a paper was mentioned before.
+                - YES if the user provided message is a message that refers to above messages from context (ie, uses the word 'it' to referes to a previus paper), or if the user refers with pronouns about people mentioned in the above messages, or if the user thanks you for a given information or asks more about it, or invalidates or validates a piece of information you provided.
                 - NO if the message is a standalone message
             
             The current conversation between the user and the bot is:
@@ -214,6 +218,7 @@ class Tutor:
             """,
             f"If the usere were to ask this: '{prompt}', would you clasify it as a message that refers to above messages from context? Respond only with YES or NO!",
         )
+        pprint("truncated_convo", truncated_convo)
         get_furthering_message = "NO"
         is_generic_message = is_generic_message.strip() == "YES"
         is_furthering_message = is_furthering_message.strip() == "YES"
@@ -245,8 +250,7 @@ class Tutor:
             prompt += f"\n({get_furthering_message[4:]})"
         
 
-        pprint("engineered prompt", prompt)
-        print("leaving engineer_prompt\n")
+        pprint("engineered prompt", green(prompt))
 
         return prompt, is_generic_message, is_furthering_message, get_furthering_message
 
@@ -296,6 +300,12 @@ class Tutor:
         arr = []
         # add al docs with distance below threshold to array
 
+        paper_titles_from_prompt = self.get_paper_titles_from_prompt(prompt)
+        pprint("paper_titles_from_prompt", paper_titles_from_prompt)
+
+        metadata_from_paper_titles_from_prompt = self.get_metadata_from_paper_titles_from_prompt(paper_titles_from_prompt)
+        pprint("metadata_from_paper_titles_from_prompt", metadata_from_paper_titles_from_prompt)    
+
         valid_docs = []
         query_limit = 0 
         process_limit = 0
@@ -311,7 +321,6 @@ class Tutor:
                 #    continue
                 if self.embedding_db:
 
-                    # for the moment, only in "test_embedding"
                     if coll_name == "test_embedding" and requiered_level_of_information == "basic":
                         self.embedding_db.load_datasource(f"{coll_name}_basic")
                         query_limit = 100 # each basic entry has close to 100 tokens
@@ -328,6 +337,13 @@ class Tutor:
                         query_limit = 10 
                         process_limit = 3
                         show_limit = 3
+                        
+                        if metadata_from_paper_titles_from_prompt and len(metadata_from_paper_titles_from_prompt) == 1:
+                            pprint("Adding 'from_doc' filter!", metadata_from_paper_titles_from_prompt[0]["doc"])
+                            from_doc = metadata_from_paper_titles_from_prompt[0]["doc"]
+                            process_limit = 3
+                            show_limit = 1
+
                     pprint("\nQuerying embedding_db with prompt:", blue(prompt))
 
                     (
@@ -358,8 +374,8 @@ class Tutor:
 
             # print in the console basic info of valid docs
             pprint("valid_docs")
-            for doc in valid_docs:
-                pprint("-", doc["metadata"].get("docname", "(not defined)"))
+            for idoc, doc in  enumerate(  valid_docs):
+                pprint(f"- {idoc}", doc["metadata"].get("docname", "(not defined)"))
                 pprint(" ", doc["metadata"].get("authors", "(not defined)"))
                 pprint(" ", doc["metadata"].get("pdf_url", "(not defined)"))
                 pprint(" ", doc["distance"])
@@ -370,24 +386,30 @@ class Tutor:
             docs = ""
             if requiered_level_of_information in {"basic", "medium"}:
                 docs = "\n\n"
-                docs+="IMPORTANT: if the user asks information about papers, ALWAYS asumme they want information related to the 'provided list of papers'. If there is a list, there must (most of the times) be answer!"
-                docs+= "The following is the 'provided list of papers' from the Quantum Networks Database (CQN database) that must be used as source of information to answer the user's question:\n\n"
+                docs+="IMPORTANT: if the user asks information about papers, ALWAYS asumme they want information related to the provided list of papers. All these papers belong to the Quantum Networks Database (CQN database). If there is a list, there must (most of the times) be answer!"
+                docs+= "The following is the list of papers from the Quantum Networks Database (CQN database) that must be used as source of information to answer the user's question:\n\n"
                 for doc in valid_docs:
                     collection_db_response = doc["doc"]
                     docs += collection_db_response + "\n"
                 docs+="The 'provided list of papers' finish here."
                 
             else:
+
+                
                 for doc in valid_docs:
-                    collection_db_response = (
-                        f'{coll_desc} context, from {doc["metadata"]["doc"]}: ' + doc["doc"]
-                    )
-                    docs += collection_db_response + "\n"
+
+                    doc_title_or_file_name = doc["metadata"].get("title", None) or doc["metadata"].get("doc", None)
+                    doc_authors = ""
+                    doc_content = doc["doc"]
+                    if doc["metadata"].get("authors"):
+                        doc_authors = doc["metadata"].get("authors")
+                        doc_authors+=rf" by '{doc_authors}'"
+                    doc_reference = "-"*100 + f"\n Paper Title:'{doc_title_or_file_name}'{doc_authors}: {doc_content}\n\n"
+                    docs += doc_reference
                 # print('#### COLLECTION DB RESPONSE:', collection_db_response)
             # debug log
         pprint("collections", self.collections)
         pprint("len collections", len(self.collections))
-        pprint("embedding_db", self.embedding_db)
         # print(
         #     "\n\n\nSYSTEM MESSAGE",
         #     self.system_message,
@@ -402,17 +424,21 @@ class Tutor:
                 {"role": "system", "content": self.system_message.format(docs=docs)}
             ] + messages
         pprint("len messages", len(messages))
-        # pprint("messages", messages)
+        pprint("messages", messages)
+        total_tokens =  len(tiktoken.get_encoding("cl100k_base").encode(str(messages)))
+        docs_tokens =   len(tiktoken.get_encoding("cl100k_base").encode(docs))
+        pprint("total_tokens", total_tokens)
+        pprint("docs_tokens", docs_tokens)
         # pprint("docs", docs)
-        print(
-            "NUMBER OF INPUT TOKENS:",
-            len(tiktoken.get_encoding("cl100k_base").encode(docs)),
-        )
-        print("\t | GENERIC \t | FURTHERING \t | ")
-        print(
-            is_generic_message, is_furthering_message, "|", get_furthering_message, "|"
-        )
-        print("\n\t=>\t", prompt)
+        # print(
+        #     "NUMBER OF INPUT TOKENS:",
+        #     len(tiktoken.get_encoding("cl100k_base").encode(docs)),
+        # )
+        # print("\t | GENERIC \t | FURTHERING \t | ")
+        # print(
+        #     is_generic_message, is_furthering_message, "|", get_furthering_message, "|"
+        # )
+        # print("\n\t=>\t", prompt)
 
         try:
             response = time_it(openai.ChatCompletion.create)(
@@ -611,7 +637,7 @@ class Tutor:
         pprint("total tokens in conversation (does not include system role):", tokens)
         return conversation
 
-    def simple_gpt(self, system_message, user_message, models_to_try = ["gpt-3.5-turbo-16k", "gpt-3.5-turbo"]):
+    def simple_gpt(self, system_message, user_message, models_to_try = ["gpt-3.5-turbo-16k", "gpt-3.5-turbo"], temperature=1):
         """Getting model's response for a simple conversation consisting of a system message and a user message
 
         Args:
@@ -621,9 +647,6 @@ class Tutor:
         Returns:
             string : the first choice of response of the model
         """
-
-        system_message_tokens = len(tiktoken.get_encoding("cl100k_base").encode(system_message))
-        print("system_message_tokens", system_message_tokens)
 
         # for some reason, gpt-3.5-turbo-16k is failing too often.
         # i added gpt-3.5-turbo as second option. 
@@ -637,7 +660,7 @@ class Tutor:
                         {"role": "system", "content": system_message},
                         {"role": "user", "content": user_message},
                     ],
-                    temperature=1,
+                    temperature=temperature,
                     frequency_penalty=0.0,
                     presence_penalty=0.0,
                     # stream=True,
