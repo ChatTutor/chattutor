@@ -554,7 +554,7 @@ class Tutor:
         # arr = list(set(arr))
         # sort by distance, increasing
         sorted_docs = sorted(arr, key=lambda el: el["distance"])
-        valid_docs = sorted_docs[:limit]
+        valid_docs = sorted_docs[:3]
 
         # # Ensuring the last message in the conversation is a user's question
         # assert (
