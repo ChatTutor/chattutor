@@ -401,12 +401,15 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
           try {
           for (var messageIndex in messages) {
               message = messages[messageIndex]
+              console.log('message:',message)
               if (stopGeneration === false) {
                 if (message.message.valid_docs) {
                   context_documents = message.message.valid_docs
                   console.log(context_documents)
                 }
-                  const contentToAppend = message.message.message ? message.message.message : "";
+                  let contentToAppend = message.message.message ? message.message.message : "";
+                  contentToAppend += message.message.code ? message.message.code : "";
+                  contentToAppend += message.code ? message.code : "";
                   accumulatedContent += contentToAppend;
               }
               if (message.message.code && hideCode) {
