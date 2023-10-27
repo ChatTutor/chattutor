@@ -5,5 +5,5 @@ export interface ChatTutor {
     selectedModel:  "gpt-3.5-turbo-16k" | "gpt-3.5-turbo-8k",
     multiple: boolean,
     collection: string[] | ['test_embedding']
-
+    from_doc?: string
 }
