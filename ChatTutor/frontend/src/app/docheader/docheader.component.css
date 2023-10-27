@@ -1,0 +1,15 @@
+.docheader {
+    /* position: fixed;
+    top: 10px;
+    right: 10px; */
+    /* max-width: 18%; */
+}
+
+.docheader mat-card {
+    box-shadow: none !important;
+    border-radius: 20px;
+}
+
+.docheader mat-card-option {
+    margin: 10px;
+}

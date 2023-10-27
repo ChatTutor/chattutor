@@ -1,12 +1,24 @@
-<div [class]="message.sender" class="message">
+<div class="message-container" [class]="message.sender">
+    <div class="message">
+        <div class="timestamp">{{ message.timestamp }}</div>
+    
+        <div *ngIf="message.valid_docs != undefined" class="message-docs">
+            <mat-chip-listbox *ngFor="let doc of message.valid_docs; let docindex = index" class="message-doc">
+                <app-paper-chip [document]="doc"
+                (onRestrict)="doc_restrictContext($event)"
+                (click)="activatePaper(docindex)"
+                [active]="docindex == activePaperIndex"></app-paper-chip>
+            </mat-chip-listbox>
+        </div>
+        <div [innerHTML]="message.content"></div>
 
-    <div *ngIf="message.valid_docs != undefined" class="message-docs">
-        <mat-chip-grid *ngFor="let document of message.valid_docs" class="message-doc">
-            <mat-chip class="mchip">{{ document.metadata.doc }}</mat-chip>
-        </mat-chip-grid>
     </div>
-    <div class="timestamp">{{ message.timestamp }}</div>
-    <div>{{ message.content }}</div>
-
+    <div class="paper-info">
+        <div *ngIf="(activePaperIndex >= 0) && message.valid_docs">
+            <app-docheader [document]="message.valid_docs[activePaperIndex]" [showHeader]="false"
+            (onFocus)="doc_restrictContext($event)"
+            ></app-docheader>
+        </div>
+    </div>
 </div>
   

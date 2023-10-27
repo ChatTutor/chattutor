@@ -1,30 +1,40 @@
 .message-container {
     flex: 1;
     overflow-y: auto;
-}
-.chatbot-message, .user-message {
-    padding: 10px;
-    margin: 5px;
-    border-radius: 5px;
-}
-.chatbot-message {
-    background-color: #f5f5f5;
-}
-.user-message {
-    background-color: #e0e0e0;
-    align-self: flex-end;
+    display: flex;
+    flex-direction: row;
 }
 
 .message {
-    padding: 30px 20%;
+    padding: 30px;
+    padding-left: 20%;
     min-width: 400px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    flex-grow: 1;
 }
 
-.message.assistant, .message.Assistant {
-    background-color: #00266e28;
+.paper-info {
+    width: 18%;
+    min-width: 18%;
+    max-width: 18%;
+    margin: 1%;
+}
+
+/* .paper-info mat-card {
+    background-color: #e0e0e0;
+} */
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.message-container.assistant, .message-container.Assistant {
+    background-color: #00266e09;
     color: black;
     align-items: flex-start;
 }
@@ -38,9 +48,20 @@
 .message-docs {
     display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: center;
     width: 100%;
     overflow: scroll;
 }
 
+.mchip {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.message > * {
+    margin-top: 5px;
+}
+
+
+.message app-paper-chip{
+    margin: 10px;
+}

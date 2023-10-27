@@ -18,6 +18,10 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from "@angular/material/card";
 import { DatasetChipsComponent } from './dataset-chips/dataset-chips.component';
 import {MatChipsModule} from "@angular/material/chips";
+import { DocheaderComponent } from './docheader/docheader.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { PaperChipComponent } from './paper-chip/paper-chip.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +29,9 @@ import {MatChipsModule} from "@angular/material/chips";
     MessageComponent,
     ChatWindowComponent,
     InputBoxComponent,
-    DatasetChipsComponent
+    DatasetChipsComponent,
+    DocheaderComponent,
+    PaperChipComponent,
   ],
     imports: [
         BrowserModule,
@@ -39,6 +45,8 @@ import {MatChipsModule} from "@angular/material/chips";
         MatButtonModule,
         MatCardModule,
         MatChipsModule,
+        MatTooltipModule,
+        MatProgressSpinnerModule
     ],
   providers: [
     { provide: ENDPOINT_TOKEN, useValue: 'your_endpoint_url_here' },
