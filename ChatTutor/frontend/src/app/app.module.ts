@@ -22,6 +22,9 @@ import { DocheaderComponent } from './docheader/docheader.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PaperChipComponent } from './paper-chip/paper-chip.component';
+import { ChatTutorWrapperComponent } from './chat-tutor-wrapper/chat-tutor-wrapper.component';
+import { CQNChatTutorWrapperComponent } from './cqnchat-tutor-wrapper/cqnchat-tutor-wrapper.component';
+import {HashLocationStrategy, LocationStrategy} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -32,6 +35,8 @@ import { PaperChipComponent } from './paper-chip/paper-chip.component';
     DatasetChipsComponent,
     DocheaderComponent,
     PaperChipComponent,
+    ChatTutorWrapperComponent,
+    CQNChatTutorWrapperComponent,
   ],
     imports: [
         BrowserModule,
@@ -49,7 +54,7 @@ import { PaperChipComponent } from './paper-chip/paper-chip.component';
         MatProgressSpinnerModule
     ],
   providers: [
-    { provide: ENDPOINT_TOKEN, useValue: 'your_endpoint_url_here' },
+      {provide: LocationStrategy, useValue: HashLocationStrategy}
   ],
   bootstrap: [AppComponent]
 })
