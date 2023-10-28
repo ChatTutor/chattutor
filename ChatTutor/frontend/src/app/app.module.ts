@@ -25,6 +25,7 @@ import { PaperChipComponent } from './paper-chip/paper-chip.component';
 import { ChatTutorWrapperComponent } from './chat-tutor-wrapper/chat-tutor-wrapper.component';
 import { CQNChatTutorWrapperComponent } from './cqnchat-tutor-wrapper/cqnchat-tutor-wrapper.component';
 import {HashLocationStrategy, LocationStrategy, PathLocationStrategy} from "@angular/common";
+import { LandingPageComponent } from './landing-page/landing-page.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import {HashLocationStrategy, LocationStrategy, PathLocationStrategy} from "@ang
     PaperChipComponent,
     ChatTutorWrapperComponent,
     CQNChatTutorWrapperComponent,
+    LandingPageComponent,
   ],
     imports: [
         BrowserModule,
