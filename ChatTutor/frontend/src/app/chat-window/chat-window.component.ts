@@ -11,7 +11,7 @@ import { WStatus } from 'app/models/windowstatus.enum';
 })
 export class ChatWindowComponent {
     messages: Message[] = [];
-    @Input() collections: string[] | undefined = undefined
+    @Input() collections: string[] | undefined = ['test_embedding']
     @Input() restrictToDocument: any = undefined
     @Input() type: any
     documentInfo: any = undefined
@@ -79,12 +79,15 @@ export class ChatWindowComponent {
     }
 
     async onSendMessage(messageText: string) {
+        console.log("Updated message");
         this.messages.push({
             sender: 'Student',
             timestamp: new Date().toLocaleTimeString(),
             role: 'user',
             content: messageText,
         });
+        console.log(this.messages);
+
         this.askForMessage().then(() => {
             console.log('Asked!')
         })
@@ -100,14 +103,14 @@ export class ChatWindowComponent {
         const reader = response.body!.getReader()
 
         async function read(element: ChatWindowComponent): Promise<void> {
-            console.log(reader, "aaaa");
+            //console.log(reader, "aaaa");
             let par = await reader.read()
             if (par.done) {
                 stop_gen = false
                 return
             }
             const string_value = new TextDecoder().decode(par.value)
-            console.log(string_value)
+            //console.log(string_value)
 
             const the_messages: DataMessage[] =
                 string_value.split('\n\n')
@@ -163,11 +166,13 @@ export class ChatWindowComponent {
 
             }
         }
+        console.log("Messages", this.messages);
+
         this.setStatus(WStatus.GeneratingMessage)
         await read(this)
         this.clearStatus()
-        console.log(this.messages);
-        console.log('Reader', reader);
+        console.log("Messages", this.messages);
+        //console.log('Reader', reader);
     }
 
     @HostBinding('style.border') private borderStyle = '0px solid';

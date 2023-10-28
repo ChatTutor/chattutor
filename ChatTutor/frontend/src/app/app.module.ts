@@ -24,7 +24,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PaperChipComponent } from './paper-chip/paper-chip.component';
 import { ChatTutorWrapperComponent } from './chat-tutor-wrapper/chat-tutor-wrapper.component';
 import { CQNChatTutorWrapperComponent } from './cqnchat-tutor-wrapper/cqnchat-tutor-wrapper.component';
-import {HashLocationStrategy, LocationStrategy} from "@angular/common";
+import {HashLocationStrategy, LocationStrategy, PathLocationStrategy} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -54,7 +54,7 @@ import {HashLocationStrategy, LocationStrategy} from "@angular/common";
         MatProgressSpinnerModule
     ],
   providers: [
-      {provide: LocationStrategy, useValue: HashLocationStrategy}
+    { provide: ENDPOINT_TOKEN, useValue: 'your_endpoint_url_here' },
   ],
   bootstrap: [AppComponent]
 })
