@@ -121,6 +121,7 @@ initialize_ldatabase()
 
 @app.route('/')
 def serve():
+    print("Hey")
     return send_from_directory(app.static_folder, 'index.html')
 
 
@@ -156,10 +157,10 @@ def interpreter():
     return redirect(url_for("static", filename="interpreter.html"))
 
 
-@app.route("/static/<path:path>")
-def serve_static(path):
-    """Serving static files from the 'static' directory"""
-    return send_from_directory("static", path)
+# @app.route("/static/<path:path>")
+# def serve_static(path):
+#     """Serving static files from the 'static' directory"""
+#     return send_from_directory("static", path)
 
 
 @app.route("/ask", methods=["POST", "GET"])
@@ -406,7 +407,9 @@ def upload_site_url():
 
 
 
-
+@app.route('/cqnchattutor')
+def angular():
+    return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)  # Running the app in debug mode

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, HostBinding, HostListener, Output} from '@angular/core';
+import {Component, EventEmitter, HostBinding, HostListener, Input, Output} from '@angular/core';
 import {Paper} from 'app/models/paper.model';
 import {DataMessage, Message} from "../models/message.model";
 import {ChatTutor} from "../models/chattutor.model";
@@ -11,8 +11,9 @@ import { WStatus } from 'app/models/windowstatus.enum';
 })
 export class ChatWindowComponent {
     messages: Message[] = [];
-    collections: string[] = ['test_embedding']
-    restrictToDocument: any = undefined
+    @Input() collections: string[] | undefined = undefined
+    @Input() restrictToDocument: any = undefined
+    @Input() type: any
     documentInfo: any = undefined
     loadingFiles: boolean = false
     status: WStatus = WStatus.Idle
@@ -57,7 +58,10 @@ export class ChatWindowComponent {
             conversation: this.messages,
             selectedModel: "gpt-3.5-turbo-16k",
             multiple: true,
-            collection: this.collections
+        }
+
+        if (this.collections) {
+            args.collection = this.collections
         }
 
         if (this.restrictToDocument != undefined) {
@@ -214,8 +218,12 @@ export class ChatWindowComponent {
             body: form_data
         })
         const coll = await response.json()
-        if (!this.collections.includes('files_collection')) {
-            this.collections.push('files_collection')
+        if(coll['message'] == 'error') {
+            this.setStatus(WStatus.UploadedContent)
+            return {message: 'error'}
+        }
+        if (!this.collections?.includes('files_collection')) {
+            this.collections?.push('files_collection')
         }
         this.filesArray = [...this.filesArray, ...coll['files_uploaded_name']]
         this.setStatus(WStatus.UploadedContent)
@@ -230,10 +238,16 @@ export class ChatWindowComponent {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data_)
         })
-        if (!this.collections.includes('files_collection')) {
-            this.collections.push('files_collection')
-        }
         let res_json = await response.json()
+        console.log('Res_json', res_json)
+        if(res_json['message'] == 'error') {
+            this.setStatus(WStatus.UploadedContent)
+            return {message: 'failure'}
+        }
+        if (!this.collections?.includes('files_collection')) {
+            this.collections?.push('files_collection')
+        }
+
         this.urlsArray = [...this.urlsArray, ...res_json['urls']]
         this.setStatus(WStatus.UploadedContent)
 
