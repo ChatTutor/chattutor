@@ -19,6 +19,9 @@ export class ChatWindowComponent {
     status: WStatus = WStatus.Idle
     endpoint: string = "/ask"
 
+    pleaseStopGeneratingConvo: boolean = false
+
+
     setStatus(status: WStatus) {
         this.status = status
     }
@@ -29,6 +32,10 @@ export class ChatWindowComponent {
 
     restrict(document: any) {
         this.restrictToDocument = document
+    }
+
+    stopGeneratingConvo() {
+        this.pleaseStopGeneratingConvo = true
     }
 
     clearRestriction() {
@@ -78,14 +85,24 @@ export class ChatWindowComponent {
         return response
     }
 
+    async addMessageToDB(message: Message) {
+        let msg = message
+        msg.time_created = msg.timestamp
+        msg.chat_k = 'To set chat id'
+        msg.clear_number = '0'
+        const response = await fetch('addtodb', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(msg)})
+    }
+
     async onSendMessage(messageText: string) {
         console.log("Updated message");
-        this.messages.push({
+        const ms: Message = {
             sender: 'Student',
             timestamp: new Date().toLocaleTimeString(),
             role: 'user',
             content: messageText,
-        });
+        }
+        this.messages.push(ms);
+        await this.addMessageToDB(ms)
         console.log(this.messages);
 
         this.askForMessage().then(() => {
@@ -101,7 +118,7 @@ export class ChatWindowComponent {
         let accumulated_content = ""
         let context_documents: any[]
         const reader = response.body!.getReader()
-
+        let msg_in_progress: Message | undefined = undefined
         async function read(element: ChatWindowComponent): Promise<void> {
             //console.log(reader, "aaaa");
             let par = await reader.read()
@@ -136,14 +153,14 @@ export class ChatWindowComponent {
                     if (typeof (content_to_append) != 'undefined') {
                         accumulated_content += content_to_append
                     } else {
-                        console.log('Uploaded message')
+                        await element.addMessageToDB(msg_in_progress!)
                     }
                 }
                 if (is_first) {
                     // Add message to database
                     is_first = false
 
-                    let msg_in_progress: Message = {
+                    msg_in_progress = {
                         sender: 'Assistant',
                         timestamp: new Date().toLocaleTimeString(),
                         role: 'assistant',
@@ -155,6 +172,7 @@ export class ChatWindowComponent {
                 } else {
                     const ind = element.messages.length
                     element.messages[ind - 1].content = formatMessage(accumulated_content)
+                    msg_in_progress = element.messages[ind - 1]
                 }
                 if (stop_gen) {
                     accumulated_content += ' ...Stopped generating';
@@ -172,6 +190,7 @@ export class ChatWindowComponent {
         await read(this)
         this.clearStatus()
         console.log("Messages", this.messages);
+
         //console.log('Reader', reader);
     }
 

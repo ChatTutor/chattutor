@@ -26,6 +26,10 @@ import { ChatTutorWrapperComponent } from './chat-tutor-wrapper/chat-tutor-wrapp
 import { CQNChatTutorWrapperComponent } from './cqnchat-tutor-wrapper/cqnchat-tutor-wrapper.component';
 import {HashLocationStrategy, LocationStrategy, PathLocationStrategy} from "@angular/common";
 import { LandingPageComponent } from './landing-page/landing-page.component';
+import { ChattutorDatabaseComponent } from './chattutor-database/chattutor-database.component';
+import { MessageInsideDatabaseComponent } from './message-inside-database/message-inside-database.component';
+import {MatTableModule} from "@angular/material/table";
+import {MatPaginatorModule} from "@angular/material/paginator";
 
 @NgModule({
   declarations: [
@@ -39,7 +43,8 @@ import { LandingPageComponent } from './landing-page/landing-page.component';
     ChatTutorWrapperComponent,
     CQNChatTutorWrapperComponent,
     LandingPageComponent,
-  ],
+    ChattutorDatabaseComponent,
+    MessageInsideDatabaseComponent,],
     imports: [
         BrowserModule,
         AppRoutingModule,
@@ -53,7 +58,9 @@ import { LandingPageComponent } from './landing-page/landing-page.component';
         MatCardModule,
         MatChipsModule,
         MatTooltipModule,
-        MatProgressSpinnerModule
+        MatProgressSpinnerModule,
+        MatTableModule,
+        MatPaginatorModule
     ],
   providers: [
     { provide: ENDPOINT_TOKEN, useValue: 'your_endpoint_url_here' },

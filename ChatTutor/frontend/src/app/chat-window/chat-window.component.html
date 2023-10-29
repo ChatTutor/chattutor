@@ -27,7 +27,7 @@
         <app-dataset-chips [files_data]="filesArray" [urls_data]="urlsArray"
                            (added_urls_event)="sendURLsToBackend([$event], 'files_collection')"
                            [status]="status"></app-dataset-chips>
-        <app-input-box (sendMessage)="onSendMessage($event)" (clearConvo)="clearConversation()"></app-input-box>
+        <app-input-box (sendMessage)="onSendMessage($event)" (clearConvo)="clearConversation()" (stopConvo)="stopGeneratingConvo()"></app-input-box>
 
     </div>
 
