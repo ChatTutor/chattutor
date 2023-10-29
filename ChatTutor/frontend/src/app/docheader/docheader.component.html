@@ -1,0 +1,40 @@
+<div class="docheader">
+    <div *ngIf="document != undefined">
+        <mat-card class="example-card">
+            <mat-card-header>
+                <div *ngIf="document.metadata.entry_id">
+                    <mat-card-subtitle>Paper</mat-card-subtitle>
+                </div>
+                <div *ngIf="!document.metadata.entry_id">
+                    <mat-card-subtitle>File/URL</mat-card-subtitle>
+                </div>
+                <mat-card-title>{{document.metadata.doc}}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content *ngIf="document.metadata.entry_id">
+                <a href="{{document.metadata.entry_id}}">
+                    <span *ngIf="document.metadata.title">
+                        {{document.metadata.title}}
+                    </span>
+                </a>
+                <div>
+                    <div *ngIf="document.metadata.authors">
+                        <p>Authored by {{document.metadata.authors}}</p>
+                    </div>
+
+                    <div *ngIf="document.metadata.published">
+                        <p>Published at {{document.metadata.published}}</p>
+                    </div>
+
+                    <div *ngIf="document.metadata.links">
+                        <p>{{document.metadata.links}}</p>
+                    </div>
+                </div>
+              <mat-divider></mat-divider>
+            </mat-card-content>
+            <mat-card-actions>
+                <button mat-button (click)="focusOnDocument()" *ngIf="!showHeader">FOCUS ON</button>
+                <button mat-button (click)="closeInfoBox()" *ngIf="showHeader">CLOSE</button>
+            </mat-card-actions>
+          </mat-card>
+    </div>
+</div>

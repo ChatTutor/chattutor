@@ -8,6 +8,8 @@ import {Component, Output, EventEmitter} from '@angular/core';
 })
 export class InputBoxComponent {
     @Output() sendMessage = new EventEmitter<string>();
+    @Output() clearConvo = new EventEmitter<string>()
+    @Output() stopConvo = new EventEmitter<string>()
     messageText: any = '';
 
     send() {
@@ -21,5 +23,12 @@ export class InputBoxComponent {
         }
     }
 
+    clearChat() {
+        this.clearConvo.emit('');;
+    }
+
+    stopChat() {
+        this.stopConvo.emit('')
+    }
 
 }
