@@ -1,0 +1,6 @@
+.input-container {
+    width: calc(100% - 60px);
+    padding-left: 30px;
+    padding-right: 30px;
+
+}

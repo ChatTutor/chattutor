@@ -1,5 +1,5 @@
 import flask
-from flask import Flask, request, redirect, send_from_directory, url_for
+from flask import Flask, request, redirect, send_from_directory, url_for, render_template
 from flask import stream_with_context, Response, abort, jsonify
 from flask_cors import CORS
 from nice_functions import pprint, time_it 
@@ -46,9 +46,9 @@ from core.openai_tools import load_api_keys
 load_api_keys()
 
 
-app = Flask(__name__)
-CORS(app, resources={r"/ask": {"origins": "https://barosandu.github.io"}})
-# CORS(app)  # Enabling CORS for the Flask app to allow requests from different origins
+
+app = Flask(__name__, static_folder='frontend/dist/frontend/', static_url_path='')
+CORS(app, resources={r"/ask": {"origins": "https://barosandu.github.io"}})  # Enabling CORS for the Flask app to allow requests from different origins
 db.init_db()
 user_db.init_db()
 
@@ -113,15 +113,13 @@ def initialize_ldatabase():
 initialize_ldatabase()
 
 
-@app.route("/")
-def index():
-    """
-    Serves the landing page of the web application which provides
-    the ChatTutor interface. Users can ask the Tutor questions and it will
-    response with information from its database of papers and information.
-    Redirects the root URL to the index.html in the static folder
-    """
-    return redirect(url_for("static", filename="index.html"))
+# @app.route('/')
+# @app.route('/cqnchattutor')
+# def serve():
+#     print("Hey")
+#     return render_template(f"{app.static_folder}/index.html")
+
+
 
 
 @app.route("/cqn")
@@ -181,7 +179,6 @@ def cqn():
         "cqn.html", welcoming_message=welcoming_message
     )
 
-
 @app.route("/chattutor")
 def chattutor():
     """
@@ -204,10 +201,10 @@ def interpreter():
     return redirect(url_for("static", filename="interpreter.html"))
 
 
-@app.route("/static/<path:path>")
-def serve_static(path):
-    """Serving static files from the 'static' directory"""
-    return send_from_directory("static", path)
+# @app.route("/static/<path:path>")
+# def serve_static(path):
+#     """Serving static files from the 'static' directory"""
+#     return send_from_directory("static", path)
 
 
 @app.route("/ask", methods=["POST", "GET"])
@@ -248,6 +245,7 @@ def ask():
                 User uploaded files """
                 )
                 chattutor.add_collection(cname, message)
+
     generate = chattutor.stream_response_generator(
         conversation, from_doc, selected_model
     )
@@ -341,6 +339,23 @@ def getfromdb():
         )
 
 
+@app.route("/getfromdbng", methods=["POST", "GET"])
+def getfromdbng():
+    data = request.json
+    username = data.get("lusername", "nan")
+    passcode = data.get("lpassword", "nan")
+    print(data)
+    print(username, passcode)
+    if username == "root" and passcode == "admin":
+        messages_arr = messageDatabase.execute_sql(
+            "SELECT * FROM lmessages ORDER BY chat_key, clear_number, time_created",
+            True,
+        )
+        return jsonify({'message': 'success', 'messages': messages_arr})
+    else:
+        return jsonify({'message': 'error'})
+
+
 @app.route("/exesql", methods=["POST", "GET"])
 def exesql():
     data = request.json
@@ -394,27 +409,30 @@ def upload_data_to_process():
 
 @app.route("/upload_data_from_drop", methods=["POST"])
 def upload_data_from_drop():
-    cname = request.form.get('collection_name')
-    file = request.files.getlist('file')
-    f_arr = []
-    for fil in file:
-        f_arr.append(fil.filename)
+    try:
+        cname = request.form.get('collection_name')
+        file = request.files.getlist('file')
+        f_arr = []
+        for fil in file:
+            f_arr.append(fil.filename)
 
-    resp = {"collection_name": cname, "files_uploaded_name": f_arr}
-    if file[0].filename != "":
-        files = []
-        for f in file:
-            files = files + extract_file(f)
-            print(f"Extracted file {f}")
+        resp = {"collection_name": cname, "files_uploaded_name": f_arr}
+        if file[0].filename != "":
+            files = []
+            for f in file:
+                files = files + extract_file(f)
+                print(f"Extracted file {f}")
 
-        texts = read_filearray(files)
-        # Generating the collection name based on the name provided by user, a random string and the current
-        # date formatted with punctuation replaced
-        print(cname)
-        db.load_datasource(cname)
-        db.add_texts(texts)
+            texts = read_filearray(files)
+            # Generating the collection name based on the name provided by user, a random string and the current
+            # date formatted with punctuation replaced
+            print(cname)
+            db.load_datasource(cname)
+            db.add_texts(texts)
 
-    return jsonify(resp)
+        return jsonify(resp)
+    except Exception as e:
+        return jsonify({'message': 'error'})
 
 @app.route("/delete_uploaded_data", methods=["POST"])
 def delete_uploaded_data():
@@ -425,30 +443,57 @@ def delete_uploaded_data():
 
 @app.route("/upload_site_url", methods=["POST"])
 def upload_site_url():
-    ajson = request.json
-    coll_name = ajson['name']
-    url_to_parse = ajson["url"]
-    print('UTP: ', url_to_parse)
-    collection_name = coll_name
-    resp = {"collection_name": coll_name, "urls": url_to_parse}
-    for surl in url_to_parse:
-        ss = URLReader.parse_url(surl)        
-        site_text = f"{ss.encode('utf-8', errors='replace')}"
-        navn = f"thingBoi{uuid.uuid4()}"
-        file = FileStorage(stream=io.BytesIO(bytes(site_text, 'utf-8')), name=navn)
+    try:
+        ajson = request.json
+        coll_name = ajson['name']
+        url_to_parse = ajson["url"]
+        print('UTP: ', url_to_parse)
+        collection_name = coll_name
+        resp = {"collection_name": coll_name, "urls": url_to_parse}
+        for surl in url_to_parse:
+            ss = URLReader.parse_url(surl)
+            site_text = f"{ss.encode('utf-8', errors='replace')}"
+            navn = f"thingBoi{uuid.uuid4()}"
+            file = FileStorage(stream=io.BytesIO(bytes(site_text, 'utf-8')), name=navn)
 
-        f_f = (file, navn)
-        doc = Doc(docname=f_f[1], citation="", dockey=f_f[1])
-        texts = parse_plaintext_file(f_f[0], doc=doc, chunk_chars=2000, overlap=100)
-        db.load_datasource(collection_name)
-        db.add_texts(texts)
-    return jsonify(resp)
+            f_f = (file, navn)
+            doc = Doc(docname=f_f[1], citation="", dockey=f_f[1])
+            texts = parse_plaintext_file(f_f[0], doc=doc, chunk_chars=2000, overlap=100)
+            db.load_datasource(collection_name)
+            db.add_texts(texts)
+        return jsonify(resp)
+    except Exception as e:
+        return jsonify({'message': 'error'})
 
 
 
+__angular_paths = []
+__angular_default_path = "index.html"
+__root = app.static_folder
 
+@app.errorhandler(404)
+def not_found_error(error):
+    return send_from_directory(__root, "index.html")
 
+print("Running @ ", __root)
 
+for root, subdirs, files in os.walk(__root):
+    if len(root) > len(__root):
+        root += "/"
+
+    for file in files:
+        relativePath = str.replace(root + file, __root, "")
+        __angular_paths.append(relativePath)
+    print("Angular paths: [ ", __angular_paths, " ]")
+
+# Special trick to capture all remaining routes
+@app.route('/<path:path>')
+@app.route('/', defaults={'path': ''})
+def angular(path):    
+    if path not in __angular_paths:
+        path = __angular_default_path
+    
+    return send_from_directory(__root, path)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)  # Running the app in debug mode
