@@ -298,6 +298,23 @@ def getfromdb():
         )
 
 
+@app.route("/getfromdbng", methods=["POST", "GET"])
+def getfromdbng():
+    data = request.json
+    username = data.get("lusername", "nan")
+    passcode = data.get("lpassword", "nan")
+    print(data)
+    print(username, passcode)
+    if username == "root" and passcode == "admin":
+        messages_arr = messageDatabase.execute_sql(
+            "SELECT * FROM lmessages ORDER BY chat_key, clear_number, time_created",
+            True,
+        )
+        return jsonify({'message': 'success', 'messages': messages_arr})
+    else:
+        return jsonify({'message': 'error'})
+
+
 @app.route("/exesql", methods=["POST", "GET"])
 def exesql():
     data = request.json

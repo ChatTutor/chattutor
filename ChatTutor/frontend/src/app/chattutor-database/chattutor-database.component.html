@@ -1,0 +1,37 @@
+<div *ngIf="success_message === '' || success_message === 'error'">
+    <div class="my-form-center">
+    <div class="my-form">
+        <input [(ngModel)]="username">
+        <input [(ngModel)]="password">
+        <button (click)="submitForm()">Submit</button>
+    </div>
+    </div>
+</div>
+<div *ngIf="success_message === 'success'">
+    <p>success</p>
+    <table mat-table [dataSource]="table_data">
+        <ng-container matColumnDef="content">
+            <th mat-header-cell *matHeaderCellDef> Content </th>
+            <td mat-cell *matCellDef="let msg"> {{msg.content}} </td>
+        </ng-container>
+        <ng-container matColumnDef="role">
+            <th mat-header-cell *matHeaderCellDef> Role </th>
+            <td mat-cell *matCellDef="let msg"> {{msg.role}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
+    </table>
+
+
+</div>
+<mat-paginator #paginator [pageSizeOptions]="[2, 4, 6]"
+        showFirstLastButtons></mat-paginator>
+
+<div *ngIf="success_message === 'error'">
+    <p>Error!</p>
+</div>
+
+<div *ngIf="success_message === 'wait'">
+    <p>Wait</p>
+</div>

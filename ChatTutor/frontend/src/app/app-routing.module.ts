@@ -3,11 +3,15 @@ import { RouterModule, Routes } from '@angular/router';
 import {CQNChatTutorWrapperComponent} from "./cqnchat-tutor-wrapper/cqnchat-tutor-wrapper.component";
 import {ChatTutorWrapperComponent} from "./chat-tutor-wrapper/chat-tutor-wrapper.component";
 import { LandingPageComponent } from './landing-page/landing-page.component';
+import {ChattutorDatabaseComponent} from "./chattutor-database/chattutor-database.component";
 
 const routes: Routes = [
   {path: '', component: LandingPageComponent},
-  {path: 'cqnchattutor', component: CQNChatTutorWrapperComponent}
+  {path: 'cqnchattutor', component: CQNChatTutorWrapperComponent},
+    {path: 'chattutordatabase', component: ChattutorDatabaseComponent},
+    {path: 'chattutord', component: ChatTutorWrapperComponent}
 ];
+
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

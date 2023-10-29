@@ -5,8 +5,11 @@ export interface Message {
     timestamp: string,
     role: 'user' | 'assistant',
     content: string,
-    delay?: Number;
-    valid_docs?: any[];
+    delay?: Number,
+    valid_docs?: any[],
+    chat_k?: string,
+    clear_number?: string,
+    time_created?: string,
 }
 
 export interface DataMessage {

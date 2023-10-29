@@ -7,6 +7,7 @@
     font-size: 20px;
     text-align: center;
     line-height: 300px;
+
   }
   
   .menu {
@@ -41,22 +42,36 @@
   }
   
   .feature-1 {
-    background-color: #F5CF8E;
+    background-color: #00d6ff;
   }
   
   .feature-2 {
-    background-color: #F09A9D;
+    background-color: #0090de;
   }
   
   .feature-3 {
-    background-color: #C8C6FA;
+    background-color: #005dbe;
   }
   
   .footer {
     color: #f4f4f4;
     background-color: #333333;
   }
-  
+
+  a {
+      color: white;
+      text-decoration: none;
+  }
+
+  a:hover {
+      text-decoration: underline;
+  }
+
+  a:visited {
+      color: white;
+      text-decoration: none;
+  }
+
   /* Tablet Styles */
   @media only screen and (max-width: 960px) {
     .sign-up,
