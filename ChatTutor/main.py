@@ -466,7 +466,6 @@ def upload_site_url():
         return jsonify({'message': 'error'})
 
 
-
 __angular_paths = []
 __angular_default_path = "index.html"
 __root = app.static_folder
