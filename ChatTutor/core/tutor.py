@@ -6,7 +6,7 @@ import json
 from core.extensions import stream_text
 import interpreter
 from nice_functions import (pprint, bold, green, blue, red, time_it)
-
+ 
 cqn_system_message = """
     You are embedded into the Center for Quantum Networks (CQN) website as an Interactive Research Assistant. 
     Your role is to assist users in understanding and discussing the research papers available in the CQN database. 
