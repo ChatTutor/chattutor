@@ -230,6 +230,8 @@ def ask():
     selected_model = data.get("selectedModel")
     if selected_model == None:
         selected_model = 'gpt-3.5-turbo-16k'
+    # TEMP CHANGE
+    selected_model = 'gpt-4'
     print('SELECTED MODEL:', selected_model)
     print(collection_name)
     # Logging whether the request is specific to a document or can be from any document
