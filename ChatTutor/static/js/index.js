@@ -411,6 +411,7 @@ function queryGPT(fromuploaded=false, uploaded_collection_name="test_embedding")
         document.querySelector(".loading-message").style = "display: none;"
 
       });
+      MathJax.typesetPromise();
     }
     read();
   }).catch(err => {
