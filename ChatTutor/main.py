@@ -1,5 +1,5 @@
 import flask
-from flask import Flask, request, redirect, send_from_directory, url_for
+from flask import Flask, request, redirect, send_from_directory, url_for, render_template
 from flask import stream_with_context, Response, abort, jsonify
 from flask_cors import CORS  # Importing CORS to handle Cross-Origin Resource Sharing
 from core.extensions import (
@@ -119,9 +119,13 @@ def initialize_ldatabase():
 initialize_ldatabase()
 
 
-@app.route('/')
-def serve():
-    return send_from_directory(app.static_folder, 'index.html')
+# @app.route('/')
+# @app.route('/cqnchattutor')
+# def serve():
+#     print("Hey")
+#     return render_template(f"{app.static_folder}/index.html")
+
+
 
 
 @app.route("/cqn")
@@ -156,10 +160,10 @@ def interpreter():
     return redirect(url_for("static", filename="interpreter.html"))
 
 
-@app.route("/static/<path:path>")
-def serve_static(path):
-    """Serving static files from the 'static' directory"""
-    return send_from_directory("static", path)
+# @app.route("/static/<path:path>")
+# def serve_static(path):
+#     """Serving static files from the 'static' directory"""
+#     return send_from_directory("static", path)
 
 
 @app.route("/ask", methods=["POST", "GET"])
@@ -294,6 +298,23 @@ def getfromdb():
         )
 
 
+@app.route("/getfromdbng", methods=["POST", "GET"])
+def getfromdbng():
+    data = request.json
+    username = data.get("lusername", "nan")
+    passcode = data.get("lpassword", "nan")
+    print(data)
+    print(username, passcode)
+    if username == "root" and passcode == "admin":
+        messages_arr = messageDatabase.execute_sql(
+            "SELECT * FROM lmessages ORDER BY chat_key, clear_number, time_created",
+            True,
+        )
+        return jsonify({'message': 'success', 'messages': messages_arr})
+    else:
+        return jsonify({'message': 'error'})
+
+
 @app.route("/exesql", methods=["POST", "GET"])
 def exesql():
     data = request.json
@@ -405,8 +426,33 @@ def upload_site_url():
 
 
 
+__angular_paths = []
+__angular_default_path = "index.html"
+__root = app.static_folder
 
+@app.errorhandler(404)
+def not_found_error(error):
+    return send_from_directory(__root, "index.html")
 
+print("Running @ ", __root)
+
+for root, subdirs, files in os.walk(__root):
+    if len(root) > len(__root):
+        root += "/"
+
+    for file in files:
+        relativePath = str.replace(root + file, __root, "")
+        __angular_paths.append(relativePath)
+    print("Angular paths: [ ", __angular_paths, " ]")
+
+# Special trick to capture all remaining routes
+@app.route('/<path:path>')
+@app.route('/', defaults={'path': ''})
+def angular(path):    
+    if path not in __angular_paths:
+        path = __angular_default_path
+    
+    return send_from_directory(__root, path)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)  # Running the app in debug mode

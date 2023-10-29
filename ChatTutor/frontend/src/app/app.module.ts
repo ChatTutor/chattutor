@@ -18,6 +18,18 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from "@angular/material/card";
 import { DatasetChipsComponent } from './dataset-chips/dataset-chips.component';
 import {MatChipsModule} from "@angular/material/chips";
+import { DocheaderComponent } from './docheader/docheader.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { PaperChipComponent } from './paper-chip/paper-chip.component';
+import { ChatTutorWrapperComponent } from './chat-tutor-wrapper/chat-tutor-wrapper.component';
+import { CQNChatTutorWrapperComponent } from './cqnchat-tutor-wrapper/cqnchat-tutor-wrapper.component';
+import {HashLocationStrategy, LocationStrategy, PathLocationStrategy} from "@angular/common";
+import { LandingPageComponent } from './landing-page/landing-page.component';
+import { ChattutorDatabaseComponent } from './chattutor-database/chattutor-database.component';
+import { MessageInsideDatabaseComponent } from './message-inside-database/message-inside-database.component';
+import {MatTableModule} from "@angular/material/table";
+import {MatPaginatorModule} from "@angular/material/paginator";
 
 @NgModule({
   declarations: [
@@ -25,8 +37,14 @@ import {MatChipsModule} from "@angular/material/chips";
     MessageComponent,
     ChatWindowComponent,
     InputBoxComponent,
-    DatasetChipsComponent
-  ],
+    DatasetChipsComponent,
+    DocheaderComponent,
+    PaperChipComponent,
+    ChatTutorWrapperComponent,
+    CQNChatTutorWrapperComponent,
+    LandingPageComponent,
+    ChattutorDatabaseComponent,
+    MessageInsideDatabaseComponent,],
     imports: [
         BrowserModule,
         AppRoutingModule,
@@ -39,6 +57,10 @@ import {MatChipsModule} from "@angular/material/chips";
         MatButtonModule,
         MatCardModule,
         MatChipsModule,
+        MatTooltipModule,
+        MatProgressSpinnerModule,
+        MatTableModule,
+        MatPaginatorModule
     ],
   providers: [
     { provide: ENDPOINT_TOKEN, useValue: 'your_endpoint_url_here' },

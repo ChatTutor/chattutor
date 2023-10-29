@@ -26,6 +26,7 @@ COPY . ./
 
 # Install Python dependencies -- TODO: remove --no-cache-dir
 RUN pip install --no-cache-dir -r requirements.txt
+# RUN pip install -r requirements.txt
 
 # Clean up
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* && rm -rf sqlite-autoconf-3430200.tar.gz && rm -rf sqlite-autoconf-3430200
