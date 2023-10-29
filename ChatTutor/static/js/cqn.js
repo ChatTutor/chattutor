@@ -1048,7 +1048,6 @@ async function handleFileUpload() {
         form_data.append('file', file_array_to_send[ind])
     }
     const response = await fetch('/upload_data_from_drop', {method: 'POST', headers: {'Accept': 'multipart/form-data'}, body: form_data})
-
     const coll = await response.json()
 
     addUrlButton.innerText = 'Done uploading files'

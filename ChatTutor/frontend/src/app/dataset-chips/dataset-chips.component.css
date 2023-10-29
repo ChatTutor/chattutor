@@ -1,0 +1,24 @@
+.urls-and-files {
+    padding-left: 30px;
+    padding-right: 30px;
+    width: calc( 100% - 60px );
+    font-size: small;
+}
+
+.urls-and-files.large {
+    min-height: 200px;
+    pointer-events: none;
+
+}
+
+.urls-and-files {
+    transition: all 0.2s ease;
+}
+
+.urls-and-files.large {
+    pointer-events: none;
+}
+
+.urls-and-files.large *{
+    pointer-events: none;
+}

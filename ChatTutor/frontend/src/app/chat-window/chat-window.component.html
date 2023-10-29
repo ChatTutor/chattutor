@@ -1,0 +1,38 @@
+<div class="chat-container" [class]="status == WStatus.DragOver ? 'chat-container dragover' : 'chat-container normal'">
+    <div class="chat-messages">
+        <div class="chat-header-title">
+            <h3>ChatTutor</h3>
+            <div *ngIf="restrictToDocument != undefined">
+                Restriced to <span>{{restrictToDocument.metadata.doc}}</span>
+                <button mat-button (click)="clearRestriction()">
+                    <mat-icon>cancel</mat-icon>
+                </button>
+            </div>
+        </div>
+        <!-- Loop over the messages and display each message -->
+        <div class="chat-body">
+            <div *ngFor="let message of messages">
+                <app-message [message]="message"
+                (updateContextRestriction)="restrict($event)"
+                ></app-message>
+            </div>
+            <div *ngIf="status == WStatus.LoadingMessage">
+                <mat-chip style="margin: 20px;">
+                    <mat-spinner [diameter]="15"></mat-spinner>
+                </mat-chip>
+            </div>
+        </div>
+    </div>
+    <div class="input-section">
+        <app-dataset-chips [files_data]="filesArray" [urls_data]="urlsArray"
+                           (added_urls_event)="sendURLsToBackend([$event], 'files_collection')"
+                           [status]="status"></app-dataset-chips>
+        <app-input-box (sendMessage)="onSendMessage($event)" (clearConvo)="clearConversation()" (stopConvo)="stopGeneratingConvo()"></app-input-box>
+
+    </div>
+
+
+    
+    <!-- <app-docheader (onClose)="clearInfo()" [document]="documentInfo"></app-docheader> -->
+</div>
+  

@@ -40,7 +40,10 @@ root_folder (named chattutor)
    pip install -r requirements.txt
 ```
 Alternatively, use docker:
-```docker build -t chattutor .;docker run -p 5000:5000 chattutor```
+```sh
+docker build -t chattutor .
+docker run -p 5000:5000 chattutor
+```
 
 3. **Run the flask application**
 ```

@@ -1,0 +1,96 @@
+/* Desktop Styles */
+
+  
+.section {
+    width: 100%;
+    font-weight: 700;
+    font-size: 20px;
+    text-align: center;
+    line-height: 300px;
+
+  }
+  
+  .menu {
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+
+    line-height: 80px;
+    position: sticky;
+    top: 0;
+  }
+  
+  .hero {
+    line-height: 400px;
+    background-color: #ffffff;
+  }
+  
+  .feature-1,
+  .feature-2,
+  .feature-3 {
+    width: 33.3%;
+    display: inline-block;
+  }
+  
+  .sign-up {
+    background-color: #D6E9FE;
+    line-height: 100px;
+  }
+  
+  .content {
+    background-color: #EAEDF0;
+    line-height: 600px;
+  }
+  
+  .feature-1 {
+    background-color: #00d6ff;
+  }
+  
+  .feature-2 {
+    background-color: #0090de;
+  }
+  
+  .feature-3 {
+    background-color: #005dbe;
+  }
+  
+  .footer {
+    color: #f4f4f4;
+    background-color: #333333;
+  }
+
+  a {
+      color: white;
+      text-decoration: none;
+  }
+
+  a:hover {
+      text-decoration: underline;
+  }
+
+  a:visited {
+      color: white;
+      text-decoration: none;
+  }
+
+  /* Tablet Styles */
+  @media only screen and (max-width: 960px) {
+    .sign-up,
+    .feature-1,
+    .feature-2,
+    .feature-3 {
+      width: 50%;
+    }
+  
+    .sign-up {
+      display: inline-block;
+      line-height: 300px;
+      order: 1;
+    }
+  
+    .footer,
+    .feature-1,
+    .feature-2,
+    .feature-3 {
+      order: 2;
+    }
+  }
