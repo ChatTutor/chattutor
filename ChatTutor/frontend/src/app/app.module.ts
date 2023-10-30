@@ -30,6 +30,7 @@ import { ChattutorDatabaseComponent } from './chattutor-database/chattutor-datab
 import { MessageInsideDatabaseComponent } from './message-inside-database/message-inside-database.component';
 import {MatTableModule} from "@angular/material/table";
 import {MatPaginatorModule} from "@angular/material/paginator";
+import { MathjaxComponent } from './mathjax/mathjax.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import {MatPaginatorModule} from "@angular/material/paginator";
     CQNChatTutorWrapperComponent,
     LandingPageComponent,
     ChattutorDatabaseComponent,
-    MessageInsideDatabaseComponent,],
+    MessageInsideDatabaseComponent,
+    MathjaxComponent,],
     imports: [
         BrowserModule,
         AppRoutingModule,
@@ -60,8 +62,7 @@ import {MatPaginatorModule} from "@angular/material/paginator";
         MatTooltipModule,
         MatProgressSpinnerModule,
         MatTableModule,
-        MatPaginatorModule
-    ],
+        MatPaginatorModule    ],
   providers: [
     { provide: ENDPOINT_TOKEN, useValue: 'your_endpoint_url_here' },
   ],
