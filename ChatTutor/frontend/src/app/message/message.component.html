@@ -10,8 +10,9 @@
                 [active]="docindex == activePaperIndex"></app-paper-chip>
             </mat-chip-listbox>
         </div>
-        <div [innerHTML]="message.content"></div>
-
+        <!-- <div [innerHTML]="message.content"></div> -->
+        <app-mathjax [content]='message.content' class="box"></app-mathjax>
+        <!-- <ng-katex-html [html]="message.conten"></ng-katex-html> -->
     </div>
     <div class="paper-info">
         <div *ngIf="(activePaperIndex >= 0) && message.valid_docs">
