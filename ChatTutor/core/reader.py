@@ -7,6 +7,10 @@ from io import BytesIO
 import PyPDF2
 from core.vectordatabase import VectorDatabase
 from core.url_reader import URLReader
+import requests
+from requests import Timeout
+import time
+import shutil
 
 def read_folder_gcp(bucket_name, folder_name):
     """
@@ -151,53 +155,156 @@ def parse_notebook(path: str, doc: Doc, chunk_chars: int, overlap: int):
 
         return texts_from_str(text_str, doc, chunk_chars, overlap)
 
+def mathpix_api_call(file):
+    options = {
+        "conversion_formats": {"docx": False, "tex.zip": True},
+        "math_inline_delimiters": ["$", "$"],
+        "rm_spaces": True
+    }
 
-def parse_pdf(
-    file_contents: str, doc: Doc, chunk_chars: int, overlap: int
-) -> List[Text]:
-    """Parses a pdf file and generates texts from its content.
+    head = {
+        "app_id": "axiomaticai_d58508",
+        "app_key": "4fab240b627e9f59d9303e7dab76aa52283244fee98b37f451125343a8c67325"
+    }
 
-    Args:
-        path (str): path to the file
-        doc (Doc): Doc object that the Text objects will comply to
-        chunk_chars (int): size of chunks
-        overlap (int): overlap of chunks
+    # print(file)
 
-    Returns:
-        List(Text): The resulting Texts as an array
-    """
+    # Send
+    r = requests.post("https://api.mathpix.com/v3/pdf",
+                      headers=head,
+                      data={
+                          "options_json": json.dumps(options)
+                      },
+                      files={
+                          "file": open(file, "rb")
+                      }
+                      )
+    pdf_id = json.loads(r.content).get('pdf_id')
+    print('Mathpix submission successful, PDF_id:' + pdf_id)
+    # Code is going to ping the server until the file is ready.
+    response = ''
+    url = "https://api.mathpix.com/v3/pdf/" + pdf_id + ".tex"
+    timeout_seconds = 3
+    max_retries = 100
+    for attempt in range(1, max_retries + 1):
+        try:
+            response = requests.get(url, headers=head, timeout=timeout_seconds)
+            print(response)
+            # Check if the request was successful (status code 200)
+            if response.status_code == 200:
+                # Process the response or save it to a file as needed
+                print(f"Request successful on attempt {attempt}")
+                break  # Exit the loop if successful
+            else:
+                print(f"Failed to retrieve the file on attempt {attempt}. Status code: {response.status_code}")
+        except Timeout:
+            # Handle timeout, optionally you can print a message
+            print(f"Request timed out on attempt {attempt}. Retrying...")
+        # Introduce a delay before the next attempt, longer for consecutive attempts
+        time.sleep(1 + attempt)
+    # Make temp folder
+    if not os.path.exists('Mathpix/'):
+        os.makedirs('Mathpix/')
+    # Write tex.zip
+    path = 'Mathpix/' + pdf_id + ".tex.zip"
+    with open(path, "wb") as f:
+        f.write(response.content)
+    # Unzip tex.zip
+    with zipfile.ZipFile(path) as zf:
+        zf.extractall('Mathpix/')
+    # Getting text from .tex
+    with open('Mathpix/' + pdf_id + '/' + pdf_id + ".tex", 'rb') as f:
+        text_str = f.read()
+    # Cleanup, not saving images for now
+    shutil.rmtree('Mathpix/')
 
-    # pdfFileObj = open(path, "rb")
-    pdfReader = PyPDF2.PdfReader(BytesIO(file_contents))
-    # pdfReader = PyPDF2.PdfReader(file_contents)
-    split = ""
-    pages: List[str] = []
-    texts: List[Text] = []
-    for i, page in enumerate(pdfReader.pages):
-        split += page.extract_text()
-        pages.append(str(i + 1))
+    return text_str
 
-        while len(split) > chunk_chars:
-            # pretty formatting of pages (e.g. 1-3, 4, 5-7)
-            pg = "-".join([pages[0], pages[-1]])
 
-            # print(split[:chunk_chars])
-            text = [
-                Text(
-                    text=split[:chunk_chars], name=f"{doc.docname} pages {pg}", doc=doc
-                )
-            ]
-            # database.add_texts_chroma(text)
-            texts.append(text[0])
-            split = split[chunk_chars - overlap :]
-            pages = [str(i + 1)]
-    if len(split) > overlap:
-        pg = "-".join([pages[0], pages[-1]])
-        texts.append(
-            Text(text=split[:chunk_chars], name=f"{doc.docname} pages {pg}", doc=doc)
-        )
-    # pdfFileObj.close()
+def parse_pdf(file, doc: Doc, chunk_chars: int, overlap: int):
+    print('mmmmmmmmmm')
+
+    # Recover PDF through reader. Not ideal, but don't know what the path to the PDF is.
+    # Ideally just pass the original PDF path to the API
+
+    pdfReader = PyPDF2.PdfReader(BytesIO(file))
+
+    # Create a new PDF writer
+    pdfWriter = PyPDF2.PdfWriter()
+
+    # Iterate through the pages of the original PDF and add them to the new PDF
+    for page_num in range(len(pdfReader.pages)):
+        page = pdfReader.pages[page_num]  # Use getPage method instead of pages
+        pdfWriter.add_page(page)
+
+    # Create a BytesIO object to store the new PDF
+    output_pdf = BytesIO()
+
+    # Write the new PDF to the BytesIO object
+    pdfWriter.write(output_pdf)
+
+    # Save the new PDF to a file
+    with open("mathpix_send.pdf", "wb") as output_file:
+        print('Pdf recovered')
+        output_file.write(output_pdf.getvalue())
+
+    # API call
+    text_str = mathpix_api_call("mathpix_send.pdf")
+
+    # Cleanup
+    os.remove("mathpix_send.pdf")
+
+    # Overlaps
+    texts = texts_from_str(text_str, doc, chunk_chars, overlap)
+
     return texts
+
+# def parse_pdf(
+#     file_contents: str, doc: Doc, chunk_chars: int, overlap: int
+# ) -> List[Text]:
+#     """Parses a pdf file and generates texts from its content.
+#
+#     Args:
+#         path (str): path to the file
+#         doc (Doc): Doc object that the Text objects will comply to
+#         chunk_chars (int): size of chunks
+#         overlap (int): overlap of chunks
+#
+#     Returns:
+#         List(Text): The resulting Texts as an array
+#     """
+#
+#     # pdfFileObj = open(path, "rb")
+#     pdfReader = PyPDF2.PdfReader(BytesIO(file_contents))
+#     # pdfReader = PyPDF2.PdfReader(file_contents)
+#     split = ""
+#     pages: List[str] = []
+#     texts: List[Text] = []
+#     for i, page in enumerate(pdfReader.pages):
+#         split += page.extract_text()
+#         pages.append(str(i + 1))
+#
+#         while len(split) > chunk_chars:
+#             # pretty formatting of pages (e.g. 1-3, 4, 5-7)
+#             pg = "-".join([pages[0], pages[-1]])
+#
+#             # print(split[:chunk_chars])
+#             text = [
+#                 Text(
+#                     text=split[:chunk_chars], name=f"{doc.docname} pages {pg}", doc=doc
+#                 )
+#             ]
+#             # database.add_texts_chroma(text)
+#             texts.append(text[0])
+#             split = split[chunk_chars - overlap :]
+#             pages = [str(i + 1)]
+#     if len(split) > overlap:
+#         pg = "-".join([pages[0], pages[-1]])
+#         texts.append(
+#             Text(text=split[:chunk_chars], name=f"{doc.docname} pages {pg}", doc=doc)
+#         )
+#     # pdfFileObj.close()
+#     return texts
 
 
 def parse_plaintext_file(file, doc: Doc, chunk_chars: int, overlap: int):
