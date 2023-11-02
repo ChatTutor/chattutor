@@ -1,0 +1,25 @@
+
+.mchip{
+    padding: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
+    cursor: pointer;
+    transition: all .2s ease;
+    border-radius: 20px;
+    margin: 5px;
+}
+.mchip.selected{
+    background-color: aqua;
+}
+
+.mchip {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    max-width: 200px;
+
+}
+
+.mchip.selected::before{
+    content: '❯';
+}

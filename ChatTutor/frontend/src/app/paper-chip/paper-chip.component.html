@@ -1,12 +1,18 @@
-<div>
-    <mat-chip-option class="mchip" color="accent" [selected]="active">
-        {{ document.metadata.doc }}
+<div class="col">
+    <div class="mchip" color="accent" [class.selected]="active">
+        <span class="elipsis">{{ document.metadata.doc }}</span>
     
-        <button mat-button (click)="restrictContext()" matTooltip="Restrict context to this document">
+        <!-- <button mat-button (click)="restrictContext()" matTooltip="Restrict context to this document">
             <mat-icon>code</mat-icon>
-        </button>
+        </button> -->
         <!-- <button mat-button  (click)="toggleInfo()" matTooltip="Show information about this document">
             <mat-icon>info</mat-icon>
         </button> -->
-    </mat-chip-option>
+    </div>
+    <!-- <div *ngIf="active">
+
+        <app-docheader [document]="document" [showHeader]="false" 
+        (onFocus)="restrictContext()"
+></app-docheader>
+    </div> -->
 </div>

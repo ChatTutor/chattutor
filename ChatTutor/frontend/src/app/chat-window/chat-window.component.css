@@ -123,3 +123,9 @@
     bottom: 0;
     backdrop-filter: blur(4px);
 }
+
+mat-form-field{
+    width: 60%;
+    align-self: center;
+    justify-self: center;
+}
