@@ -5,7 +5,7 @@ ChatTutor is an AI kernel currently being trained on data from quantum related p
 ## Overview
 This project is the web application for ChatTutor.
 
-- production (main branch) hosted at [https://chattutor-git-nbqjgewnea-uc.a.run.app](https://chattutor-git-nbqjgewnea-uc.a.run.app)
+- production (main branch) hosted at [chattutor.org](chattutor.org)
 - testing (beta-main branch) hosted at [https://beta-chattutor-nbqjgewnea-uc.a.run.app/static/index.html](https://beta-chattutor-nbqjgewnea-uc.a.run.app/static/index.html)
 
 ## Usage
