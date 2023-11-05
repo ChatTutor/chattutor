@@ -7,6 +7,10 @@
     padding-right: calc(20% + 15px);
 }
 
+.input-container {
+    justify-content: flex-end;
+}
+
 button:disabled{
     color: rgb(136, 136, 136);
 }
@@ -39,3 +43,4 @@ button {
     border-radius: 10px !important;
     transition: all 0.2s ease-in-out;
 }
+
