@@ -17,7 +17,6 @@ have the following format:
 env_variables:
     CHATUTOR_GCP: TRUE
     OPENAI_API_KEY: <>
-    ACTIVELOOP_TOKEN: <>
 ```
 
 The project file tree should look like this:
