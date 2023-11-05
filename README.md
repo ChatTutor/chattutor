@@ -12,10 +12,6 @@ This project is the web application for ChatTutor.
 
 ## Usage
 
-[for jupyer book] To install Chattutor in jupyter book, run chattutor_setup containing chattutor.css	chattutor.html	chattutor.js	install.py into the root directory. Run  "pythyon chattutor_setup/install.py" to put code to call chattutor into the files located by the script. 
-
-
-
 1. Navigate to the **ChatTutor** folder and insert the **.env.yaml** file which should
 have the following format:
 
@@ -99,6 +95,10 @@ Open a web browser and navigate to http://127.0.0.1:5000/ to interact with the a
 ## Configuration
 - API keys for OpenAI and Deep Lake are loaded from keys.json.
 - Ensure that this file is correctly populated with the necessary keys before running the application.
+
+## For Jupyter Book Web Deployment
+
+To install Chattutor in a jupyter book, cd into chattutor_setup directory containing chattutor.css	chattutor.html	chattutor.js	install.py into the root directory. Run  "python chattutor_setup/install.py" to put chattutor code into the files located by the script. 
 
 ## Acknowledgements
 Chattutor V1 was developed by Dirk Englund for the Spring 6.2410 course "Quantum Systems Engineering" at MIT.  It was further developed with Hank Stennes, H. Chuck Choi, and Hunter Kemeny in the summer of 2023, and late in the summer they were joined by Aatmik Mallya, Adrian Alexandru Ariton, and a growing team of developers under guidance by Hunter with a cohort of key developers (see github commit).
