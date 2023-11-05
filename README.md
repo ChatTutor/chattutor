@@ -1,6 +1,10 @@
 # ChatTutor
 
-ChatTutor is an AI kernel currently being trained on data from quantum related papers at the Center for Quantum Networks. It aims to provide students with information about scientists, citations and scientific discoveries or improvements. 
+Chattutor V1 was developed by Dirk Englund for the Spring 6.2410 course "Quantum Systems Engineering" at MIT.  It was further developed with Hank Stennes, H. Chuck Choi, and Hunter Kemeny in the summer of 2023, and late in the summer they were joined by Aatmik Mallya, Adrian Alexandru Ariton, and a growing team of developers under guidance by Hunter with a cohort of key developers (see github commit).
+
+Note by Dirk - "What happens if we don’t act? Generative AI could mark the greatest revolution in education since the era of the Enlightenment. A transformation will happen, one way or the other.  What is still undecided is is *how* this revolution will happen: will it be open, equitable, .. will it put science and openness first? Will it be open-access? Will these educational tools be based in free societies?  If we act now, we have a first-mover advantage to shape the future. 
+
+The goal with Chattutor going forward is to develop an AI-agent capable of teaching and bringing together resaerch communictions, ranging from uninformed learners to industry professionals, undergraduates, and graduate students. The goal is for this AI-agent to possess deep domain-specific and hierarchical and trust-weighted knowledge. "
 
 ## Overview
 This project is the web application for ChatTutor.
