@@ -12,7 +12,7 @@ This project is the web application for ChatTutor.
 
 ## Usage
 
-[for jupyer book] To install Chattutor in jupyter book, run chattutor_setup containing chattutor.css	chattutor.html	chattutor.js	install.py into the root directory. Run  "pythyon chattutor_setup/install.py" to put code to call chattutor into the files located by the script. 
+[for jupyer book] To install Chattutor in jupyter book, enter the chattutor_setup folder containing chattutor.css	chattutor.html	chattutor.js	install.py into the root directory. Run  "pythyon chattutor_setup/install.py" to put code to call chattutor into the files located by the script. 
 
 
 
