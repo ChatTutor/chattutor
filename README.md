@@ -93,3 +93,6 @@ Open a web browser and navigate to http://127.0.0.1:5000/ to interact with the a
 ## Configuration
 - API keys for OpenAI and Deep Lake are loaded from keys.json.
 - Ensure that this file is correctly populated with the necessary keys before running the application.
+
+## Acknowledgements
+Thanks to Hank Stennes for getting this project off the ground!
