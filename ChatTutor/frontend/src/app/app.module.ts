@@ -30,6 +30,8 @@ import { ChattutorDatabaseComponent } from './chattutor-database/chattutor-datab
 import { MessageInsideDatabaseComponent } from './message-inside-database/message-inside-database.component';
 import {MatTableModule} from "@angular/material/table";
 import {MatPaginatorModule} from "@angular/material/paginator";
+import { CourseInputComponent } from './course-input/course-input.component';
+import { UrlLabelComponent } from './url-label/url-label.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +46,9 @@ import {MatPaginatorModule} from "@angular/material/paginator";
     CQNChatTutorWrapperComponent,
     LandingPageComponent,
     ChattutorDatabaseComponent,
-    MessageInsideDatabaseComponent,],
+    MessageInsideDatabaseComponent,
+    CourseInputComponent,
+    UrlLabelComponent,],
     imports: [
         BrowserModule,
         AppRoutingModule,

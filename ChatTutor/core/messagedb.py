@@ -61,6 +61,30 @@ class MessageDB:
         FOREIGN KEY (chat_key) REFERENCES lchats (chat_id)
         )"""
 
+    create_course_name = """
+    CREATE TABLE IF NOT EXISTS lcourses (
+        course_id varchar(250) PRIMARY KEY,
+        name text NOT NULL,
+        proffessor text not null,
+        mainpage text not null,
+        collectionname text not null
+        )"""
+
+    create_section_name = """
+        CREATE TABLE IF NOT EXISTS lsections (
+            section_id varchar(250) PRIMARY KEY,
+            pulling_from text not null
+            )"""
+
+    create_relationship_between_sections_and_courses = """
+        CREATE TABLE IF NOT EXISTS rsectionscourses (
+            section_id varchar(250) not null ,
+            course_id varchar(250) not null,
+            FOREIGN KEY (section_id(250)) REFERENCES lsections(section_id(250)),
+            FOREIGN KEY (course_id(250)) REFERENCES lcourses(course_id(250)),
+            UNIQUE (section_id, course_id)
+            )"""
+
     def __init__(self, host, user, password, database, statistics_database):
         self.host = host
         self.user = user
@@ -102,6 +126,10 @@ class MessageDB:
         # cur.execute(presetTables2)
         cur.execute(self.chats_table_Sql)
         cur.execute(self.messages_table_Sql)
+        cur.execute(self.create_course_name)
+        cur.execute(self.create_section_name)
+        cur.execute(self.create_relationship_between_sections_and_courses)
+        con.commit()
 
     def insert_message(self, a_message):
         """This inserts a message into the sqlite3 database. the message must be sent as a dictionary"""
@@ -122,6 +150,26 @@ class MessageDB:
             insert_format_lchats = ""
             cur.execute(f"INSERT IGNORE INTO lchats (chat_id) VALUES ('{chat_key}')")
             con.commit()
+
+
+    def insert_course(self, course_id, name, proffessor, mainpage, collectionname):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"INSERT IGNORE INTO lcourses (course_id, name, proffessor, mainpage, collectionname) VALUES ('{course_id}', '{name}', '{proffessor}', '{mainpage}', '{collectionname}')")
+            con.commit()
+
+    def insert_section(self, section_id, pulling_from):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"INSERT IGNORE INTO lsections (section_id, pulling_from) VALUES ('{section_id}', '{pulling_from}')")
+            con.commit()
+
+    def establish_course_section_relationship(self, section_id, course_id):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"INSERT IGNORE INTO rsectionscourses (section_id, course_id) VALUES ('{section_id}', '{course_id}')")
+            con.commit()
+
 
     def execute_sql(self, sqlexec, commit=True):
         with self.connect_to_messages_database() as con:

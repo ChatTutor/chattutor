@@ -1,0 +1,12 @@
+<div>
+    <input style="border: none; border-radius: 5px; padding: 10px; background: dodgerblue; color: white" [(ngModel)]="urltoparse" placeholder="url to parse">
+    <input style="border: none; border-radius: 5px; padding: 10px; background: dodgerblue; color: white" [(ngModel)]="collectionname" placeholder="collection name">
+    <input style="border: none; border-radius: 5px; padding: 10px; background: dodgerblue; color: white" [(ngModel)]="course_name" placeholder="course name">
+    <input style="border: none; border-radius: 5px; padding: 10px; background: dodgerblue; color: white" [(ngModel)]="proffessor" placeholder="proffessor name">
+    <button type="submit" name="submit" (click)="submitUrlScrape()" style="border: none; border-radius: 5px; padding: 10px; background: dodgerblue; color: white">Submit url</button>
+    <div style="width: 1vw; display: flex; flex-direction: column; justify-content: center; align-content: center;">
+        <div *ngFor="let url of parsed_urls_array">
+            <app-url-label [url_name]="url"></app-url-label>
+        </div>
+    </div>
+</div>

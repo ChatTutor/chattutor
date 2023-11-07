@@ -212,10 +212,24 @@ def parse_plaintext_file(file, doc: Doc, chunk_chars: int, overlap: int):
     Returns:
         [Text]: The resulting Texts as an array
     """
-    print('qqqqqqqqq', file)
     texts = texts_from_str(file, doc, chunk_chars, overlap)
     print(texts)
-    # print(texts)
+    return texts
+
+
+def parse_plaintext_file_read(file, doc: Doc, chunk_chars: int, overlap: int):
+    """Parses a plain text file and generates texts from its content.
+
+    Args:
+        file: File
+        doc (Doc): Doc object that the Text objects will comply to
+        chunk_chars (int): size of chunks
+        overlap (int): overlap of chunks
+
+    Returns:
+        [Text]: The resulting Texts as an array
+    """
+    texts = texts_from_str(file.read(), doc, chunk_chars, overlap)
     return texts
 
 

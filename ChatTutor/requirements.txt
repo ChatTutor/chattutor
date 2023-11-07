@@ -13,3 +13,5 @@ pymysql==1.1.0
 open-interpreter==0.1.9
 beautifulsoup4==4.12.2
 Werkzeug==3.0.0
+flask-login
+scrapy
