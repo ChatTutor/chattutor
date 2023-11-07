@@ -1,12 +1,41 @@
-<div>
-    <input style="border: none; border-radius: 5px; padding: 10px; background: dodgerblue; color: white" [(ngModel)]="urltoparse" placeholder="url to parse">
-    <input style="border: none; border-radius: 5px; padding: 10px; background: dodgerblue; color: white" [(ngModel)]="collectionname" placeholder="collection name">
-    <input style="border: none; border-radius: 5px; padding: 10px; background: dodgerblue; color: white" [(ngModel)]="course_name" placeholder="course name">
-    <input style="border: none; border-radius: 5px; padding: 10px; background: dodgerblue; color: white" [(ngModel)]="proffessor" placeholder="proffessor name">
-    <button type="submit" name="submit" (click)="submitUrlScrape()" style="border: none; border-radius: 5px; padding: 10px; background: dodgerblue; color: white">Submit url</button>
-    <div style="width: 1vw; display: flex; flex-direction: column; justify-content: center; align-content: center;">
-        <div *ngFor="let url of parsed_urls_array">
-            <app-url-label [url_name]="url"></app-url-label>
+
+  <mat-stepper
+    class="example-stepper">
+    <mat-step label="Fill out you course info">
+        <div class="urldiv">
+            <mat-form-field>
+                <mat-label>Proffessor</mat-label>
+                <input matInput [(ngModel)]="proffessor" placeholder="proffessor name">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Course Name/ID</mat-label>
+                <input matInput [(ngModel)]="course_name" placeholder="course name">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Course Main Page</mat-label>
+                <input matInput [(ngModel)]="urltoparse" placeholder="url to parse">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Custom Course Collection Name/UUID</mat-label>
+                <input matInput [(ngModel)]="collectionname" placeholder="collection name">
+            </mat-form-field>
+            <button mat-button color="primary" matStepperNext type="submit" name="submit" (click)="submitUrlScrape()">Submit url</button>
+
         </div>
-    </div>
-</div>
+    </mat-step>
+    <mat-step label="Wait for us to scrape your course">
+        <div *ngIf="!is_ready">
+           <p>This will take up to 5 minutes, do not refresh the page!</p>
+        </div>
+        <mat-accordion>
+            <div *ngFor="let url of parsed_sections">
+                <app-url-label [url_name]="url['section_url']" [section_info]="url"></app-url-label>
+            </div>
+            <div *ngIf="!is_ready">
+                <mat-spinner [diameter]="15"></mat-spinner>
+            </div>
+        </mat-accordion>
+
+    </mat-step>
+
+  </mat-stepper>
