@@ -18,6 +18,10 @@ from core.extensions import get_random_string
 class URLReader:
     depth = 1
     node_degree = {}
+
+    spider_urls: [str] = []
+    degree: int = 0
+    visited: {str: bool} = {}
     
     def __init__(self):
         self.depth = 1
@@ -40,10 +44,6 @@ class URLReader:
         for url in urls:
             x = URLReader.parse_url(url)
             x += "\n\n"
-
-    spider_urls: [str] = []
-    degree: int = 0
-    visited: {str: bool} = {}
 
     def please_spider(self, max_nr, urltoapp, save_to_database, collection_name, andu_db: MessageDB, course_name, proffessor):
         self.spider_urls = []
@@ -108,6 +108,5 @@ class URLReader:
                                                 'section_url': g,
                                                 'course_chroma_collection': collection_name
                                             })}\n\n"""
-        # yield f"""data: {json.dumps({'done'})}\n\n"""
 
 

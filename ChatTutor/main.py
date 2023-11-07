@@ -396,7 +396,7 @@ def urlcrawler():
     proffessor: str = data.get('proffessor', 'No professor')
     collection_name: str = data.get('collection_name', f"{uuid.uuid4()}")
     url_r = URLReader(depth=1)
-    return Response(stream_with_context(url_r.please_spider(max_nr=7, urltoapp=url, save_to_database=db, collection_name=collection_name, andu_db=messageDatabase, course_name=course_name, proffessor=proffessor)), content_type="text/event-stream")
+    return Response(stream_with_context(url_r.please_spider(max_nr=15, urltoapp=url, save_to_database=db, collection_name=collection_name, andu_db=messageDatabase, course_name=course_name, proffessor=proffessor)), content_type="text/event-stream")
 
 
 @app.route("/getfromdbng", methods=["POST", "GET"])
