@@ -1,7 +1,7 @@
 import re
 import uuid
 from typing import List
-
+import json
 from bs4 import BeautifulSoup
 import requests
 import io
@@ -13,9 +13,20 @@ from core.definitions import Text
 from core.definitions import Doc
 from core.messagedb import MessageDB
 from core.reader import parse_plaintext_file, parse_plaintext_file_read
-
+from core.extensions import get_random_string
 
 class URLReader:
+    depth = 1
+    node_degree = {}
+    
+    def __init__(self):
+        self.depth = 1
+        self.node_degree = {}
+    
+    def __init__(self, depth):
+        self.depth = depth
+        self.node_degree = {}
+    
     def parse_url(url: str):
         page = requests.get(url)
         soup = BeautifulSoup(page.content, 'html.parser')
@@ -38,28 +49,41 @@ class URLReader:
         self.spider_urls = []
         self.visited = {}
         self.spider_urls.append(urltoapp)
+        self.node_degree[urltoapp] = 0
+        course_id = f'{uuid.uuid4()}'
+        andu_db.insert_course(course_id=course_id, name=course_name, proffessor=proffessor, mainpage=urltoapp, collectionname=collection_name)
         while len(self.spider_urls) > 0:
             url = self.spider_urls.pop(0)
+            if self.node_degree[url] > self.depth:
+                self.node_degree = {}
+                self.spider_urls = []
+                self.visited = {}
+                return
             self.visited[url] = 1
             self.degree += 1
             if (self.degree > max_nr):
                 self.spider_urls = []
                 self.visited = {}
-                break
+                return
             page = requests.get(url)
             soup = BeautifulSoup(page.content, 'html.parser')
             hrefs = soup.find_all('a', href=True)
-            course_id = f'{uuid.uuid4()}'
-            yield course_id
-            for href in hrefs:
+            for href in hrefs: 
+                self.degree += 1
+                if (self.degree > max_nr):
+                    self.node_degree = {}
+                    self.spider_urls = []
+                    self.visited = {}
+                    return
                 g = ''
                 shr = href['href']
                 if shr[0:7] == "http://" or shr[0:8] == "https://":  # if url be havin' http://
                     g = shr
                 else:
                     g = url + shr
-
+                print("Ga: ", g)
                 if not (self.visited.get(g) and self.visited[g] == 1):
+                    self.node_degree[g] = self.node_degree[url] + 1
                     self.spider_urls.append(g)
                     # add to chromadb
                     ss = URLReader.parse_url(g)
@@ -76,7 +100,14 @@ class URLReader:
                     save_to_database.add_texts(texts)
                     # add to andu_db
 
-                    andu_db.insert_course(course_id=course_id, name=course_name, proffessor=proffessor, mainpage=urltoapp, collectionname=collection_name)
-                    yield g
+                    section_id = navn + get_random_string(7)
+                    andu_db.insert_section(section_id=section_id, pulling_from="")
+                    andu_db.establish_course_section_relationship(section_id=section_id, course_id=course_id) #....
+                    yield f"""data: {json.dumps({'section_id': section_id,
+                                                'course_id': course_id,
+                                                'section_url': g,
+                                                'course_chroma_collection': collection_name
+                                            })}\n\n"""
+        # yield f"""data: {json.dumps({'done'})}\n\n"""
 
 

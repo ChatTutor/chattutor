@@ -1,9 +1,18 @@
-urldiv {
-    background-color: red;
+.urldiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
-
-a-input {
+.urldiv mat-form-field {
+    width: calc(60vw - 60px) !important;
+}
+.a-input {
     border: none;
     background-color: #0090de;
     color: white;
+}
+
+.urldiv {
+    margin: 30px;
 }

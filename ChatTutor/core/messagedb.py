@@ -80,8 +80,8 @@ class MessageDB:
         CREATE TABLE IF NOT EXISTS rsectionscourses (
             section_id varchar(250) not null ,
             course_id varchar(250) not null,
-            FOREIGN KEY (section_id(250)) REFERENCES lsections(section_id(250)),
-            FOREIGN KEY (course_id(250)) REFERENCES lcourses(course_id(250)),
+            FOREIGN KEY (section_id) REFERENCES lsections(section_id),
+            FOREIGN KEY (course_id) REFERENCES lcourses(course_id),
             UNIQUE (section_id, course_id)
             )"""
 

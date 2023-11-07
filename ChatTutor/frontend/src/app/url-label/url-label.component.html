@@ -1,6 +1,24 @@
-<div style="width:1vw; display: flex; flex-direction: row; justify-content: center; align-items: center;">
-    <div style="max-width: 500px; white-space: nowrap; background: #0090de; color: white; border-radius: 5px; padding: 10px; margin:5px; overflow: scroll">
-        <span>{{ url_name }}</span>
-    </div>
-    <span><a style="color: black; text-decoration: underline" [href]="url_name">Access</a></span>
+<div class="urllabel">
+    <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <span>Section active on <a [href]="url_name" target="_blank">{{url_name}}</a></span>
+        </mat-panel-title>
+          <mat-panel-description>
+            
+        </mat-panel-description>
+        </mat-expansion-panel-header>
+        <p>Page(Section) Info:</p>
+        <ul>
+            <li>Section Document Id: {{section_info['section_id']}} (used as from_doc)</li>
+            <li>Course DB-Id: {{section_info['section_id']}}</li>
+            <li>Course Embedding Collection Name: {{section_info['course_chroma_collection']}}</li>
+            <li>Section URL: {{section_info['section_url']}}</li>
+        </ul>
+        <p>Information available to ChatTutor:</p>
+        <ul>
+            <li>{{url_name}}</li>
+        </ul>
+
+    </mat-expansion-panel>
 </div>

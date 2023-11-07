@@ -32,6 +32,8 @@ import {MatTableModule} from "@angular/material/table";
 import {MatPaginatorModule} from "@angular/material/paginator";
 import { CourseInputComponent } from './course-input/course-input.component';
 import { UrlLabelComponent } from './url-label/url-label.component';
+import {MatStepperModule} from '@angular/material/stepper';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 @NgModule({
   declarations: [
@@ -64,7 +66,9 @@ import { UrlLabelComponent } from './url-label/url-label.component';
         MatTooltipModule,
         MatProgressSpinnerModule,
         MatTableModule,
-        MatPaginatorModule
+        MatPaginatorModule,
+        MatStepperModule,
+        MatExpansionModule
     ],
   providers: [
     { provide: ENDPOINT_TOKEN, useValue: 'your_endpoint_url_here' },

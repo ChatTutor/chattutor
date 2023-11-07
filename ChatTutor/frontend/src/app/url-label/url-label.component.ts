@@ -7,5 +7,5 @@ import {Component, Input} from '@angular/core';
 })
 export class UrlLabelComponent {
     @Input() url_name: string = ''
-
+    @Input() section_info: any = []
 }
