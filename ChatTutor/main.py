@@ -38,7 +38,7 @@ import io
 import uuid
 from werkzeug.datastructures import FileStorage
 # import markdown
-
+import flask_login
 # from vectordatabase import VectorDatabase
 
 interpreter.auto_run = True
@@ -48,9 +48,69 @@ load_api_keys()
 
 
 app = Flask(__name__, static_folder='frontend/dist/frontend/', static_url_path='')
+app.secret_key = "fhslcigiuchsvjksvjksgkgs"
 CORS(app, resources={r"/ask": {"origins": "https://barosandu.github.io"}})  # Enabling CORS for the Flask app to allow requests from different origins
 db.init_db()
 user_db.init_db()
+loginmanager = flask_login.LoginManager()
+loginmanager.init_app(app)
+
+# users mock db
+users = {'andubandu@icloud.com': {'password': 'andu'}}
+
+class User(flask_login.UserMixin):
+    pass
+
+
+
+@loginmanager.user_loader
+def user_loader(email):
+    if email in users:
+        return
+    user = User()
+    user.id = email
+    return user
+
+@loginmanager.request_loader
+def request_loader(request):
+    email = request.form.get('email')
+    if email not in users:
+        return
+
+    user = User()
+    user.id = email
+    return user
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if flask.request.method == 'GET':
+        return '''
+                   <form action='login' method='POST'>
+                    <input type='text' name='email' id='email' placeholder='email'/>
+                    <input type='password' name='password' id='password' placeholder='password'/>
+                    <input type='submit' name='submit'/>
+                   </form>
+                   '''
+    email = flask.request.form['email']
+    if email in users and flask.request.form['password'] == users[email]['password']:
+        user = User()
+        user.id = email
+        flask_login.login_user(user)
+        return flask.redirect(flask.url_for('protected'))
+    return 'fake'
+
+@app.route('/protected')
+def protected():
+    return 'Logged in as: ' + flask_login.current_user.id
+
+@loginmanager.unauthorized_handler
+def unauthorized_handler():
+    return 'Unauthorized', 401
+
+@app.route('/logout')
+def logout():
+    flask_login.logout_user()
+    return 'Logged out'
 
 messageDatabase = MessageDB(
     host="34.41.31.71",
@@ -59,6 +119,8 @@ messageDatabase = MessageDB(
     database="chatmsg",
     statistics_database="sessiondat",
 )
+
+messageDatabase.initialize_ldatabase()
 
 # Only for deleting the db when you first access the site. Can be used for debugging
 presetTables1 = """
@@ -100,17 +162,7 @@ CREATE TABLE IF NOT EXISTS lmessages (
     )"""
 
 
-def initialize_ldatabase():
-    """Creates the tables if they don't exist"""
-    con = sqlite3.connect("chat_store.sqlite3")
-    cur = con.cursor()
-    # cur.execute(presetTables1)
-    # cur.execute(presetTables2)
-    cur.execute(chats_table_Sql)
-    cur.execute(messages_table_Sql)
 
-
-initialize_ldatabase()
 
 
 # @app.route('/')
@@ -118,9 +170,6 @@ initialize_ldatabase()
 # def serve():
 #     print("Hey")
 #     return render_template(f"{app.static_folder}/index.html")
-
-
-
 
 @app.route("/cqn")
 def cqn():
@@ -297,6 +346,7 @@ def ask_interpreter():
     return stream_with_context(generate())
 
 
+
 @app.route("/addtodb", methods=["POST", "GET"])
 def addtodb():
     data = request.json
@@ -337,6 +387,16 @@ def getfromdb():
         return flask.render_template_string(
             'Error, please <a href="/static/display_db.html">Go back</a>'
         )
+
+@app.route("/urlcrawler", methods=["POST", "GET"])
+def urlcrawler():
+    data = request.json
+    url: str = data.get('url_to_parse', 'https://www.google.com')
+    course_name: str = data.get('course_name', 'No course')
+    proffessor: str = data.get('proffessor', 'No professor')
+    collection_name: str = data.get('collection_name', f"{uuid.uuid4()}")
+    url_r = URLReader()
+    return Response(stream_with_context(url_r.please_spider(max_nr=7, urltoapp=url, save_to_database=db, collection_name=collection_name, andu_db=messageDatabase, course_name=course_name, proffessor=proffessor)), content_type="text/event-stream")
 
 
 @app.route("/getfromdbng", methods=["POST", "GET"])
