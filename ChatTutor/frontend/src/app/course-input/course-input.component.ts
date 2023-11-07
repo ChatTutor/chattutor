@@ -13,16 +13,19 @@ export class CourseInputComponent {
     course_name: string = ''
     proffessor: string = ''
     is_ready: boolean = false
+    url_collection_name: string = ''
     async submitUrlScrape() {
         let data = JSON.stringify({url_to_parse: this.urltoparse, collection_name: this.collectionname, coursename: this.course_name, proffessor: this.proffessor})
         let response = await fetch('/urlcrawler', {method: 'POST', headers:{'Content-Type':'application/json'}, body: data})
         const reader = response.body!.getReader()
         let fulldata = ''
         let added_sections : any = {}
+        let course_chroma_col = ''
         async function read(element: CourseInputComponent): Promise<void> {
             let par = await reader.read()
             if(par.done) {
                 element.is_ready = true
+                element.url_collection_name = course_chroma_col
                 return;
             }
 
@@ -46,6 +49,7 @@ export class CourseInputComponent {
                     element.parsed_urls_array.push(section['section_url'])
                     element.parsed_sections.push(section)
                     added_sections[section['section_id']] = 1
+                    course_chroma_col = section['course_chroma_collection']
                 }
             })
             

@@ -45,6 +45,13 @@ class URLReader:
             x = URLReader.parse_url(url)
             x += "\n\n"
 
+    def is_valid_url(self, url: str) -> bool:
+        inerzis = ['.py', '.exe', '(0)']
+        for i in inerzis:
+            if url.endswith(i):
+                return False
+        return True
+
     def please_spider(self, max_nr, urltoapp, save_to_database, collection_name, andu_db: MessageDB, course_name, proffessor):
         self.spider_urls = []
         self.visited = {}
@@ -69,12 +76,7 @@ class URLReader:
             soup = BeautifulSoup(page.content, 'html.parser')
             hrefs = soup.find_all('a', href=True)
             for href in hrefs: 
-                self.degree += 1
-                if (self.degree > max_nr):
-                    self.node_degree = {}
-                    self.spider_urls = []
-                    self.visited = {}
-                    return
+
                 g = ''
                 shr = href['href']
                 if shr[0:7] == "http://" or shr[0:8] == "https://":  # if url be havin' http://
@@ -82,7 +84,13 @@ class URLReader:
                 else:
                     g = url + shr
                 print("Ga: ", g)
-                if not (self.visited.get(g) and self.visited[g] == 1):
+                if (not (self.visited.get(g) and self.visited[g] == 1)) and self.is_valid_url(g) :
+                    self.degree += 1
+                    if self.degree > max_nr:
+                        self.node_degree = {}
+                        self.spider_urls = []
+                        self.visited = {}
+                        return
                     self.node_degree[g] = self.node_degree[url] + 1
                     self.spider_urls.append(g)
                     # add to chromadb

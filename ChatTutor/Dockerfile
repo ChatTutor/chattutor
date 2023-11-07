@@ -25,7 +25,8 @@ COPY --from=build-angular /app/frontend/dist /app/frontend/dist
 COPY . ./
 
 # Install Python dependencies -- TODO: remove --no-cache-dir
-RUN pip install --no-cache-dir -r requirements.txt
+#RUN #pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 # RUN pip install -r requirements.txt
 
 # Clean up
