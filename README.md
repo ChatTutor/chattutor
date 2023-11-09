@@ -69,7 +69,7 @@ Open a web browser and navigate to http://127.0.0.1:5000/ to interact with the a
 ### 3. **Database Interaction**
    - **File**: `database.py`
      - Defines the `VectorDatabase` class.
-     - Responsible for interacting with different database providers like Chroma and Deeplake.
+     - Responsible for interacting with different database providers like Chroma.
      - Handles loading of data sources, adding texts, and performing queries.
    -  **File**: `definitions.py`
      - Defines basic classes for parsing the dataset
@@ -92,7 +92,7 @@ Open a web browser and navigate to http://127.0.0.1:5000/ to interact with the a
      - Defines the interface for the chat bot.
 
 ## Configuration
-- API keys for OpenAI and Deep Lake are loaded from keys.json.
+- API key for OpenAI loaded from keys.json.
 - Ensure that this file is correctly populated with the necessary keys before running the application.
 
 ## For Jupyter Book Web Deployment
