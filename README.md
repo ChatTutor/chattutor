@@ -1,12 +1,22 @@
 # ChatTutor
+![Code Size](https://img.shields.io/github/languages/code-size/ChatTutor/chattutor)
+![Repo Size](https://img.shields.io/github/repo-size/ChatTutor/chattutor)
 
-The goal of Chattutor is to develop an AI-agent capable of teaching and bringing together resaerch communictions, ranging from uninformed learners to industry professionals, undergraduates, and graduate students. The goal is for this AI-agent to possess deep domain-specific and hierarchical and trust-weighted knowledge. 
+ChatTutor is an AI-agent capable of teaching and research communications, ranging from uninformed learners to industry professionals, undergraduates, and graduate students. We aim for ChatTutor to possess deep domain-specific, hierarchical, and trust-weighted knowledge. 
 
 ## Overview
-This project is the web application for ChatTutor.
+![GitHub last commit](https://img.shields.io/github/last-commit/ChatTutor/chattutor)
 
 - production (main branch) hosted at [chattutor.org](https://chattutor.org)
 - testing (beta-main branch) hosted at [https://beta-chattutor-nbqjgewnea-uc.a.run.app](https://beta-chattutor-nbqjgewnea-uc.a.run.app)
+
+## License
+[![license](https://img.shields.io/badge/GitHub-GPL--3.0-informational)](https://www.gnu.org/licenses/gpl-3.0.en.html)
+
+ChatTutor is an educational project. It is licensed under the GNU General Public License version 3.0 (GPL-3.0), which guarantees end users the freedom to run, study, share, and modify the software. 
+
+See the LICENSE.txt file for more details.
+
 
 ## Usage
 
@@ -16,7 +26,7 @@ have the following format:
 ```yaml
 env_variables:
     CHATUTOR_GCP: false
-    OPENAI_API_KEY: <>
+    OPENAI_API_KEY: <your_openai_api_key>
 ```
 
 The project file tree should look like this:
@@ -54,42 +64,39 @@ Open a web browser and navigate to http://127.0.0.1:5000/ to interact with the a
 
 ### 1. **Flask Application**
    - **File**: `main.py`
-     - Hosts a Flask application that serves static files and handles routes.
-     - The `ask` route interacts with the `tutor` module to respond to user queries.
+     - Hosts a Flask application that serves **various** static files and handles **HTTP** routes.
+     - The `ask` route **facilitates interaction** with the `tutor` module to **formulate** responses to user queries.
    - **File**: `extensions.py`
-     - Defines which database is used
-
+     - Defines **the configuration for the selected** database **service**.
 
 ### 2. **Tutor Module**
    - **File**: `tutor.py`
-     - Contains functions to interact with the OpenAI API.
-     - Generates responses based on user queries and conversation context.
-
+     - Contains **core** functions to **interface with** the OpenAI API.
+     - **Crafts** responses based on user queries and **maintains** conversation context.
 
 ### 3. **Database Interaction**
    - **File**: `database.py`
-     - Defines the `VectorDatabase` class.
-     - Responsible for interacting with different database providers like Chroma and Deeplake.
-     - Handles loading of data sources, adding texts, and performing queries.
-   -  **File**: `definitions.py`
-     - Defines basic classes for parsing the dataset
-
+     - Defines the `VectorDatabase` class **for managing vectorized data**.
+     - **Facilitates** interaction with **various** database providers such as Chroma and Deeplake.
+     - **Manages** the loading of data sources, **the addition of new texts**, and **execution of** queries.
+   - **File**: `definitions.py`
+     - Defines **fundamental** classes for **data structure and** parsing **of the** dataset.
 
 ### 4. **Text Reading and Parsing**
    - **File**: `loader.py`
-     - Run this file to compute the embeddings for the dataset and send it to the cloud.
-     - Utilizes `reader.py` to parse each file in the dataset.
+     - **Execute** this file to **generate** embeddings for the dataset and **upload them to a cloud-based service**.
+     - Utilizes `reader.py` to **systematically** parse each file in the dataset.
    - **File**: `reader.py`
-     - Contains functions to read folders and parse files of different types (PDF, plaintext, Jupyter notebooks) into text chunks.
-     - Utilizes different parsing strategies for different file types.
-
+     - Contains functions to read directories and parse files of **varied formats** (PDF, plaintext, Jupyter notebooks) into **discrete** text chunks.
+     - **Employs** specialized parsing strategies for **each** file type.
 
 ### 5. **Frontend Components**
    - **File**: `index.js`
-     - Handles user interactions on the client side.
-     - Manages the conversation, sends user messages to the server, and updates the chat with responses.
- - **File**: `index.html`
-     - Defines the interface for the chat bot.
+     - **Manages** user interactions on the client side.
+     - **Orchestrates** the conversation flow, **transmits** user messages to the server, and **refreshes** the chat interface with responses.
+   - **File**: `index.html`
+     - Defines the **graphical user interface (GUI)** for the chatbot.
+
 
 ## Configuration
 - API keys for OpenAI and Deep Lake are loaded from keys.json.
@@ -100,4 +107,6 @@ Open a web browser and navigate to http://127.0.0.1:5000/ to interact with the a
 To install Chattutor in a jupyter book, cd into chattutor_setup directory containing chattutor.css	chattutor.html	chattutor.js	install.py into the root directory. Run  "python chattutor_setup/install.py" to put chattutor code into the files located by the script. 
 
 ## Acknowledgements
-Chattutor V1 was developed by Dirk Englund for the Spring 6.2410 course "Quantum Systems Engineering" at MIT.  It was further developed with Hank Stennes, Hyeongrak "Chuck" Choi, and Hunter Kemeny in the summer of 2023, and late in the summer they were joined by Aatmik Mallya, Adrian Alexandru Ariton, and a growing team of developers under guidance by Hunter with a cohort of key developers (see github commit).
+![MIT](https://img.shields.io/badge/RLE-MIT-violet)
+
+ChatTutor V1 was developed by Dirk Englund for the Spring 6.2410 course "Quantum Systems Engineering" at MIT. It was further developed with Hank Stennes, Hyeongrak "Chuck" Choi, and Hunter Kemeny in the summer of 2023, and late in the summer they were joined by Aatmik Mallya, Adrian Alexandru Ariton, and a growing team of developers organized by Hunter and a cohort of key developers.
