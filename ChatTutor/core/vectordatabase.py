@@ -64,13 +64,13 @@ class VectorDatabase:
         if self.db_provider in self.__valid_db_providers:
             pass
         else:
-            raise ValueError(f"{self.db_provider} not valid. valid providers are {self.__valid_db_providers__}")
+            raise ValueError(f"{self.db_provider} not valid. valid providers are {self.__valid_db_providers}")
 
     def __init__(self, path, db_provider="chroma", hosted=True):
-        self.__raise_exception_if_not_valid_db_provider(db_provider)        
         self.path = path
         self.hosted = hosted
         self.db_provider = db_provider
+        self.__raise_exception_if_not_valid_db_provider()        
 
     def init_db(self):
         """Initializing the database client if the provider is 'chroma'"""
