@@ -44,7 +44,6 @@ else:
     keys = yamlenv["env_variables"]
     print(keys)
     os.environ["OPENAI_API_KEY"] = keys["OPENAI_API_KEY"]
-    os.environ["ACTIVELOOP_TOKEN"] = keys["ACTIVELOOP_TOKEN"]
 
 
 class VectorDatabase:
