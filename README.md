@@ -17,9 +17,8 @@ have the following format:
 
 ```yaml
 env_variables:
-    CHATUTOR_GCP: TRUE
+    CHATUTOR_GCP: false
     OPENAI_API_KEY: <>
-    ACTIVELOOP_TOKEN: <>
 ```
 
 The project file tree should look like this:

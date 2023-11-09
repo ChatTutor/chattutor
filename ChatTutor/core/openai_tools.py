@@ -12,4 +12,3 @@ def load_api_keys():
         keys = yamlenv["env_variables"]
         os.environ["OPENAI_API_KEY"] = keys["OPENAI_API_KEY"]
         openai.api_key = keys["OPENAI_API_KEY"]
-        os.environ["ACTIVELOOP_TOKEN"] = keys["ACTIVELOOP_TOKEN"]
