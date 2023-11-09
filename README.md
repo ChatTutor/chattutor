@@ -1,4 +1,6 @@
-# ChatTutor
+# AI-Augmented Education Rooted in Truth and Verifiability
+
+Project 1: ChatTutor
 
 The goal of Chattutor is to develop an AI-agent capable of teaching and bringing together resaerch communictions, ranging from uninformed learners to industry professionals, undergraduates, and graduate students. The goal is for this AI-agent to possess deep domain-specific and hierarchical and trust-weighted knowledge. 
 
