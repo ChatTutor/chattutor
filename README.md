@@ -1,8 +1,6 @@
 # ChatTutor
 
-Generative AI could mark the greatest change in education since the Enlightenment. A transformation will happen, one way or the other.  What is still undecided is is *how* this revolution will happen: will it be open, equitable, .. will it put science and openness first? Will it be open-access? Will these educational tools be based in free societies?  If we act now, we have a first-mover advantage to shape the future. 
-
-The goal with Chattutor going forward is to develop an AI-agent capable of teaching and bringing together resaerch communictions, ranging from uninformed learners to industry professionals, undergraduates, and graduate students. The goal is for this AI-agent to possess deep domain-specific and hierarchical and trust-weighted knowledge. 
+The goal of Chattutor is to develop an AI-agent capable of teaching and bringing together resaerch communictions, ranging from uninformed learners to industry professionals, undergraduates, and graduate students. The goal is for this AI-agent to possess deep domain-specific and hierarchical and trust-weighted knowledge. 
 
 ## Overview
 This project is the web application for ChatTutor.
