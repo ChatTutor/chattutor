@@ -3,7 +3,7 @@
 import pytest
 
 def test_1():
-    assert 1 == 1
+    assert 1 == 2
 
 # def test_wrong_db_provider():
 #     with pytest.raises(TypeError):
