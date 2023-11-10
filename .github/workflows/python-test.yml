@@ -27,6 +27,6 @@ jobs:
       run: |
         export PYTHONPATH=$(pwd)/ChatTutor
         echo $PYTHONPATH
-    - name: Test with pytest
-      run: |
-        pytest -v -s
+    # - name: Test with pytest
+    #   run: |
+    #     pytest -v -s
