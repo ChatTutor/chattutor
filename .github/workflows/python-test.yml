@@ -29,4 +29,5 @@ jobs:
         echo "PYTHONPATH=$PYTHONPATH" >> $GITHUB_ENV        
     - name: Test with pytest
       run: |
+        cd ChatTutor
         pytest -v -s
