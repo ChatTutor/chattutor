@@ -1,8 +1,8 @@
 name: ChatTutor
 
 on:
-  push:
-    branches: [ "feat/test_pull_request" ]
+  # push:
+  #   branches: [ "feat/test_pull_request" ]
   pull_request:
     branches: [ "feat/test_pull_request" ]
 
