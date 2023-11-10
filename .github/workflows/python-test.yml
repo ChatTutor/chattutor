@@ -2,9 +2,9 @@ name: ChatTutor
 
 on:
   # push:
-  #   branches: [ "feat/test_pull_request" ]
+  #   branches: [ "main" ]
   pull_request:
-    branches: [ "feat/test_pull_request" ]
+    branches: [ "main" ]
 
 permissions:
   contents: read
