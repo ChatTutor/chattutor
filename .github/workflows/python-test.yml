@@ -26,8 +26,7 @@ jobs:
     - name: Set python path
       run: |
         export PYTHONPATH=$(pwd)/ChatTutor
-        echo $PYTHONPATH
+        echo "PYTHONPATH=$PYTHONPATH" >> $GITHUB_ENV        
     - name: Test with pytest
       run: |
-        cd ChatTutor
         pytest -v -s
