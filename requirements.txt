@@ -13,3 +13,4 @@ open-interpreter==0.1.9
 beautifulsoup4==4.12.2
 Werkzeug==3.0.0
 pytest
+flake8
