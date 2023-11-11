@@ -4,7 +4,7 @@ on:
   # push:
   #   branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "beta-main" ]
 
 permissions:
   contents: read
@@ -27,6 +27,10 @@ jobs:
       run: |
         export PYTHONPATH=$(pwd)/ChatTutor
         echo "PYTHONPATH=$PYTHONPATH" >> $GITHUB_ENV        
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude ChatTutor/venv
     - name: Test with pytest
       run: |
         cd ChatTutor
