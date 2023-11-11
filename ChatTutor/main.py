@@ -26,7 +26,6 @@ from werkzeug.datastructures import FileStorage
 # import pymysql
 import sqlite3
 import openai
-import core.loader
 from core.reader import read_filearray, extract_file,parse_plaintext_file
 from datetime import datetime
 from core.messagedb import MessageDB
@@ -358,6 +357,8 @@ def exesql():
 
 @app.route("/compile_chroma_db", methods=["POST"])
 def compile_chroma_db():
+    from core import loader
+
     token = request.headers.get("Authorization")
     if token != openai.api_key:
         abort(401)  # Unauthorized
