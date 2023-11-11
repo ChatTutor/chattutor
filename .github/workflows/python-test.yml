@@ -1,11 +1,11 @@
 name: ChatTutor
 
 on:
-  # push:
-  #   branches: [ "main" ]
-  pull_request:
-    branches: [ "main", "beta-main" ]
-
+  push:
+    branches: [ "feat/pytest_on_pull_requests" ]
+  # pull_request:
+  #   branches: [ "main", "beta-main" ]
+      
 permissions:
   contents: read
 
