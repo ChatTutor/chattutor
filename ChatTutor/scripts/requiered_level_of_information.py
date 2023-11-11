@@ -36,7 +36,7 @@ questions = [
 ]
 
 for question, expected_answer in questions:
-    r = tutor.get_requiered_level_of_information(question, explain = False)
+    r = tutor.get_required_level_of_information(question, explain = False)
     pprint(r,expected_answer, question)
     sleep(1)
 
