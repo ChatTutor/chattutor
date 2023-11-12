@@ -231,12 +231,14 @@ def ask():
     print(collection_name)
     # Logging whether the request is specific to a document or can be from any document
     chattutor = Tutor(db)
-    if collection_name:
+    if collection_name and collection_name != []:
         if multiple == None:
             name = collection_desc if collection_desc else ""
             chattutor.add_collection(collection_name, name)
         else:
-            chattutor = Tutor(db, system_message=cqn_system_message)
+            chattutor = Tutor(db, system_message=default_system_message)
+            if "test_embedding" in collection_name:
+                chattutor = Tutor(db, system_message=cqn_system_message)
             for cname in collection_name:
                 message = (
                     f"CQN papers "
