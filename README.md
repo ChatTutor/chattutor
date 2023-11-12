@@ -19,7 +19,7 @@ See the LICENSE.txt file for more details.
 
 ## Configuration
 
-First, clone this repository. Thenm navigate to the **ChatTutor** folder and create an **.env.yaml** file which should
+First, clone this repository. Then navigate to the **ChatTutor** folder and create an **.env.yaml** file which should
 have the following format:
 
 ```yaml
