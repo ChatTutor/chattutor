@@ -34,6 +34,10 @@ export class InputBoxComponent implements OnChanges{
         this.canClear = false;
         this.sendMessage.emit(this.messageText);
         this.messageText = '';  // clear the input after sending
+        setTimeout(() => {
+            this.messageText = '';  // clear the input after sending
+        }, 10);
+
     }
 
     keyPressed(event: KeyboardEvent) {
