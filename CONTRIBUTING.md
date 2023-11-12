@@ -1,8 +1,5 @@
 # Contributing
 
-In addition to the general guidelines there are specific details for
-contributing to terra, these are documented below.
-
 ### Contents
 * [Pull request checklist](#pull-request-checklist)
 * [Test](#test)
@@ -11,7 +8,6 @@ contributing to terra, these are documented below.
   * [Branches](#branches)
 * [Using dependencies](#using-dependencies)
   * [Adding a requirement](#adding-a-requirement)
-
 
 ### Pull request checklist
 
@@ -121,6 +117,8 @@ in Github to track work for specific releases. The features or other changes
 that we want to include in a release will be tagged and discussed in Github.
 As we're preparing a new release we'll document what has changed since the
 previous version in the release notes.
+
+If you are new to ChatTutor and would like to help develop the project, please take a look at [good first issue](https://github.com/ChatTutor/chattutor/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22) which are typically the simplest available to work on, perfect for newcomers. They should already be fully scoped, with a clear approach outlined in the descriptions. 
 
 ### Branches
 
