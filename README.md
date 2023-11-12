@@ -2,7 +2,7 @@
 ![Code Size](https://img.shields.io/github/languages/code-size/ChatTutor/chattutor)
 ![Repo Size](https://img.shields.io/github/repo-size/ChatTutor/chattutor)
 
-ChatTutor is an AI-agent capable of teaching and research communications, ranging from uninformed learners to industry professionals, undergraduates, and graduate students. We aim for ChatTutor to possess deep domain-specific, hierarchical, and trust-weighted knowledge. 
+ChatTutor is an AI-agent capable of teaching and research communications, ranging from new learners to industry professionals, undergraduates, and graduate students. We aim for ChatTutor to possess deep domain-specific, hierarchical, and trust-weighted knowledge. 
 
 ## Overview
 ![GitHub last commit](https://img.shields.io/github/last-commit/ChatTutor/chattutor)
@@ -20,7 +20,7 @@ See the LICENSE.txt file for more details.
 
 ## Usage
 
-1. Navigate to the **ChatTutor** folder and insert the **.env.yaml** file which should
+1. Navigate to the **ChatTutor** folder and create an **.env.yaml** file which should
 have the following format:
 
 ```yaml
@@ -102,9 +102,10 @@ Open a web browser and navigate to http://127.0.0.1:5000/ to interact with the a
 - API key for OpenAI loaded from keys.json.
 - Ensure that this file is correctly populated with the necessary keys before running the application.
 
-## For Jupyter Book Web Deployment
+## Contribution Guidelines
 
-To install Chattutor in a jupyter book, cd into chattutor_setup directory containing chattutor.css	chattutor.html	chattutor.js	install.py into the root directory. Run  "python chattutor_setup/install.py" to put chattutor code into the files located by the script. 
+If you'd like to contribute to ChatTutor, please take a look at our
+[contribution guidelines](CONTRIBUTING.md). We use [GitHub issues](https://github.com/ChatTutor/chattutor/issues) for tracking requests and bugs. 
 
 ## Acknowledgements
 ![MIT](https://img.shields.io/badge/RLE-MIT-violet)
