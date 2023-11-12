@@ -19,7 +19,7 @@ See the LICENSE.txt file for more details.
 
 ## Configuration
 
-Navigate to the **ChatTutor** folder and create an **.env.yaml** file which should
+First, clone this repository. Thenm navigate to the **ChatTutor** folder and create an **.env.yaml** file which should
 have the following format:
 
 ```yaml
@@ -27,6 +27,7 @@ env_variables:
     CHATUTOR_GCP: false
     OPENAI_API_KEY: <your_openai_api_key>
 ```
+If you would like an OpenAI API key for the purposes of developing our repository, please reach out to hkemeny@mit.edu
 
 The project file tree should look like this:
 
