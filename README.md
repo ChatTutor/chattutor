@@ -17,10 +17,9 @@ ChatTutor is an educational project. It is licensed under the GNU General Public
 
 See the LICENSE.txt file for more details.
 
+## Configuration
 
-## Usage
-
-1. Navigate to the **ChatTutor** folder and create an **.env.yaml** file which should
+Navigate to the **ChatTutor** folder and create an **.env.yaml** file which should
 have the following format:
 
 ```yaml
@@ -40,9 +39,12 @@ root_folder (named chattutor)
       |- ...
 |- README.md
 |- requirements.txt
+|- ...
 ```
 
-2. **Setup Virtual Environment and Install Dependencies**
+## Usage
+
+1. **Setup Virtual Environment and Install Dependencies**
 ```sh
    python -m venv .venv       # python3 -m venv .venv
    source .venv/bin/activate  # On Windows use `venv\Scripts\activate`
@@ -51,13 +53,13 @@ root_folder (named chattutor)
 Alternatively, use docker:
 ```docker build -t chattutor .;docker run -p 5000:5000 chattutor```
 
-3. **Run the flask application**
+2. **Run the flask application**
 ```
    cd ChatTutor
    python main.py
 ```
 
-4. **Interact with ChatTutor:**
+3. **Interact with ChatTutor:**
 Open a web browser and navigate to http://127.0.0.1:5000/ to interact with the application. Use the provided interface to ask questions and receive responses based on the loaded data sources.
 
 ## Components
@@ -96,11 +98,6 @@ Open a web browser and navigate to http://127.0.0.1:5000/ to interact with the a
      - **Orchestrates** the conversation flow, **transmits** user messages to the server, and **refreshes** the chat interface with responses.
    - **File**: `index.html`
      - Defines the **graphical user interface (GUI)** for the chatbot.
-
-
-## Configuration
-- API key for OpenAI loaded from keys.json.
-- Ensure that this file is correctly populated with the necessary keys before running the application.
 
 ## Contribution Guidelines
 
