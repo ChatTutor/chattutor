@@ -1,3 +1,4 @@
+from typing import List
 import flask
 from flask import Flask, request, redirect, send_from_directory, url_for, render_template
 from flask import stream_with_context, Response, abort, jsonify
@@ -15,7 +16,6 @@ from core.tutor import cqn_system_message, default_system_message, interpreter_s
 import json
 import time
 import os
-from core.reader import URLReader
 from core.definitions import Text
 from core.definitions import Doc
 from core.reader import parse_plaintext_file
@@ -27,7 +27,7 @@ from werkzeug.datastructures import FileStorage
 import sqlite3
 import openai
 import core.loader
-from core.reader import read_filearray, extract_file,parse_plaintext_file
+from core.reader import URLReader, read_array_of_content_filename_tuple, extract_file,parse_plaintext_file
 from datetime import datetime
 from core.messagedb import MessageDB
 import interpreter
@@ -381,20 +381,23 @@ def compile_chroma_db():
 
 @app.route("/upload_data_to_process", methods=["POST"])
 def upload_data_to_process():
-    file = request.files.getlist("file")
-    print(file)
-    data = request.form
-    desc = data["name"].replace(" ", "-")
+    file_store_list: List[FileStorage]
+    file_store_list = request.files.getlist("file")
+    print("number of files", len(file_store_list))
+    
+    desc = request.form.get("name", "").replace(" ", "-")
     if len(desc) == 0:
         desc = "untitled" + "-" + get_random_string(5)
     resp = {"collection_name": False}
-    print("File,", file)
-    if file[0].filename != "":
-        files = []
-        for f in file:
-            files = files + extract_file(f)
-            print(f"Extracted file {f}")
-        texts = read_filearray(files)
+    collection_name = request.form.get("collection_name", "")
+    
+    if file_store_list[0].filename != "":
+        array_of_content_filename_tuple = []
+        for f in file_store_list:
+            print(f"Extracted file", f.filename)
+            array_of_content_filename_tuple.extend( extract_file(f) )
+
+        texts = read_array_of_content_filename_tuple(array_of_content_filename_tuple)
         # Generating the collection name based on the name provided by user, a random string and the current
         # date formatted with punctuation replaced
         collection_name = generate_unique_name(desc)
@@ -423,12 +426,12 @@ def upload_data_from_drop():
                 files = files + extract_file(f)
                 print(f"Extracted file {f}")
 
-            texts = read_filearray(files)
-            # Generating the collection name based on the name provided by user, a random string and the current
-            # date formatted with punctuation replaced
-            print(cname)
-            db.load_datasource(cname)
-            db.add_texts(texts)
+        texts = read_array_of_content_filename_tuple(files)
+        # Generating the collection name based on the name provided by user, a random string and the current
+        # date formatted with punctuation replaced
+        print(cname)
+        db.load_datasource(cname)
+        db.add_texts(texts)
 
         return jsonify(resp)
     except Exception as e:

@@ -149,7 +149,7 @@ class VectorDatabase:
         count = self.datasource.count()
         ids = [str(i) for i in range(count, count + len(texts))]
         print("ids:", ids)
-        print("texts", texts)
+        # print("texts", texts)
         print(texts[0].doc.docname)
         self.datasource.add(
             ids=ids,
