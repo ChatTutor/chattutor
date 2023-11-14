@@ -1,4 +1,10 @@
 <div class="chat-container" [class]="status == WStatus.DragOver ? 'chat-container dragover' : 'chat-container normal'">
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+      </script>
+      <script type="text/javascript"
+        src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+      </script>
     <div class="chat-messages">
         <div class="chat-header-title">
             <h3>ChatTutor</h3>
@@ -27,7 +33,7 @@
         <app-dataset-chips [files_data]="filesArray" [urls_data]="urlsArray"
                            (added_urls_event)="sendURLsToBackend([$event], 'files_collection')"
                            [status]="status"></app-dataset-chips>
-        <app-input-box (sendMessage)="onSendMessage($event)" (clearConvo)="clearConversation()" (stopConvo)="stopGeneratingConvo()"></app-input-box>
+        <app-input-box (sendMessage)="onSendMessage($event)" (clearConvo)="clearConversation()" (stopConvo)="stopGeneratingConvo()" [status]="status"></app-input-box>
 
     </div>
 

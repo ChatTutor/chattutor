@@ -1,6 +1,46 @@
 .input-container {
-    width: calc(100% - 60px);
+    width: calc(60% - 30px);
     padding-left: 30px;
     padding-right: 30px;
-
+    width: calc( 60% - 30px );
+    padding-left: calc(20% + 15px);
+    padding-right: calc(20% + 15px);
 }
+
+.input-container {
+    justify-content: flex-end;
+}
+
+button:disabled{
+    color: rgb(136, 136, 136);
+}
+
+button.b1:not(:disabled) {
+    background-color: #3f51b5;
+    color: white;
+    
+}
+
+button.b2:disabled {
+    width: 0px !important;
+    height: 0px !important;
+    padding: 0;
+    overflow: hidden;
+}
+
+
+button.b1:not(:disabled):hover {
+    background-color: #364499;
+    color: white;
+    
+}
+
+.icon-display {
+    transform: scale(.8);
+ }
+
+button {
+    border-radius: 10px !important;
+    transition: all 0.2s ease-in-out;
+}
+

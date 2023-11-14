@@ -17,3 +17,30 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+.mat-mdc-text-field-wrapper, .mdc-text-field{
+    border-radius: 10px !important;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px !important;
+}
+.hide .mat-mdc-text-field-wrapper {
+    padding: 0;
+}
+
+.mat-mdc-text-field-wrapper, .mdc-text-field--focused{
+    border: none !important;
+}
+
+.mdc-text-field--filled, .mdc-text-field--focused {
+    --mdc-filled-text-field-active-indicator-height: 0px !important;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}

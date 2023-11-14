@@ -34,8 +34,8 @@
 .chat-header-helper::before {
     content: "";
     position: absolute;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    /* backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px); */
     /* background-color: rgba(41,41,41,0.75); */
     top: 0;
     left: 0;
@@ -79,7 +79,7 @@
     /* background-color: #c9d0de; */
     background-color: white;
     box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
-    backdrop-filter: blur(4px);
+    /* backdrop-filter: blur(4px); */
 }
 
 .chat-header-title * {
@@ -121,5 +121,11 @@
     position: fixed;
     width: 100%;
     bottom: 0;
-    backdrop-filter: blur(4px);
+    /* backdrop-filter: blur(4px); */
+}
+
+mat-form-field{
+    width: 60%;
+    align-self: center;
+    justify-self: center;
 }
