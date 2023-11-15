@@ -23,6 +23,7 @@ export class CourseInputComponent {
         let course_chroma_col = ''
         async function read(element: CourseInputComponent): Promise<void> {
             let par = await reader.read()
+            // return;
             if(par.done) {
                 element.is_ready = true
                 element.url_collection_name = course_chroma_col
@@ -31,8 +32,8 @@ export class CourseInputComponent {
 
 
             const string_value = new TextDecoder().decode(par.value)
-            console.log(string_value)
-            fulldata += string_value
+            // console.log("SVAL:",string_value)
+            fulldata += ('\n\n' + string_value)
             const data:any[] = fulldata.split('\n\n')
                 .filter(Boolean)
                 .map(chunk => {
@@ -43,14 +44,24 @@ export class CourseInputComponent {
                     }
                     return spl
                 })
+
+            console.log("DATA: ", data)
+            console.log("FULL DATA: ", fulldata)
+            console.log("SVA: ", string_value)
+
+
+
             
-            data.forEach(section => {
-                if (added_sections[section['section_id']] != 1) {
+            data.forEach(sectionarr => {
+               sectionarr.forEach((section: any) => {
+                   if (added_sections[section['section_id']] != 1) {
                     element.parsed_urls_array.push(section['section_url'])
                     element.parsed_sections.push(section)
                     added_sections[section['section_id']] = 1
                     course_chroma_col = section['course_chroma_collection']
                 }
+               })
+
             })
             
             await read(element)

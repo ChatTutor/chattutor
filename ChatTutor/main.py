@@ -15,7 +15,6 @@ from core.tutor import cqn_system_message, default_system_message, interpreter_s
 import json
 import time
 import os
-from core.reader import URLReader
 from core.definitions import Text
 from core.definitions import Doc
 from core.reader import parse_plaintext_file
@@ -31,7 +30,7 @@ from core.reader import read_filearray, extract_file,parse_plaintext_file
 from datetime import datetime
 from core.messagedb import MessageDB
 import interpreter
-from url_reader import URLReader
+from url_reader import URLReaderCls
 from core.definitions import Text
 from core.definitions import Doc
 import io
@@ -395,8 +394,17 @@ def urlcrawler():
     course_name: str = data.get('course_name', 'No course')
     proffessor: str = data.get('proffessor', 'No professor')
     collection_name: str = data.get('collection_name', f"{uuid.uuid4()}")
-    url_r = URLReader(depth=1)
-    return Response(stream_with_context(url_r.please_spider(max_nr=15, urltoapp=url, save_to_database=db, collection_name=collection_name, andu_db=messageDatabase, course_name=course_name, proffessor=proffessor)), content_type="text/event-stream")
+
+    url_r = URLReaderCls(1, 50)
+    url_r.set_thread_count(10)
+    url_r.set_bfs_thread_count(10)
+
+    course_id = f'{uuid.uuid4()}'
+    print("crawling...")
+    return Response(stream_with_context(
+        url_r.new_spider_function(urltoapp=url, save_to_database=db, collection_name=collection_name,
+                                  andu_db=messageDatabase, course_name=course_name, proffessor=proffessor,
+                                  course_id=course_id)))
 
 
 @app.route("/getfromdbng", methods=["POST", "GET"])
