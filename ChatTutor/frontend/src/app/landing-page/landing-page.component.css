@@ -2,11 +2,11 @@
 
 
 .section {
-    width: 100%;
+    width: calc(100% - 40px);
     font-weight: 700;
     font-size: 20px;
     text-align: center;
-    line-height: 300px;
+    padding: 20px;
     background-color: rgb(241, 241, 241) !important;
 
 }
@@ -22,8 +22,8 @@
 
 .body {
     background-color: rgb(241, 241, 241);
-    width: 100vw;
-    height: 100vh;
+    min-width: 100vw;
+    min-height: 100vh;
 }
 
 .hero {
@@ -41,8 +41,12 @@
 .all-of-them {
     display: flex;
     align-items: center;
+    justify-content: center;
     flex-direction: column;
     color: black !important;
+    width: 100vw;
+    padding-top: 100px;
+    min-height: calc(100vh - 220px);
 }
 
 .all-of-them div {
