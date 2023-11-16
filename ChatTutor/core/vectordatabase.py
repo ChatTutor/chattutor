@@ -160,16 +160,20 @@ class VectorDatabase:
         )
 
     def add_texts_chroma_lock(self, texts: List[Text], lock: Lock):
-        """Adding texts to Chroma data source with specified ids, metadatas, and documents
+        """Adding texts to Chroma data source with specified ids, metadatas, and documents,
+            for parallel url spidering
 
         Args:
             texts (List[Text]): Texts to add to database
+            lock (Lock): the threading lock
         """
         lock.acquire()
         count = self.datasource.count()
         lock.release()
         ids = [str(i) for i in range(count, count + len(texts))]
         print("ids:", ids)
+        print("text lens " , len(texts))
+        # print(texts)
         # print("texts", texts)
         # print(texts[0].doc.docname)
         self.datasource.add(

@@ -395,8 +395,8 @@ def urlcrawler():
     proffessor: str = data.get('proffessor', 'No professor')
     collection_name: str = data.get('collection_name', f"{uuid.uuid4()}")
 
-    url_r = URLReaderCls(1, 50)
-    url_r.set_thread_count(10)
+    url_r = URLReaderCls(1, 100)
+    url_r.set_thread_count(20)
     url_r.set_bfs_thread_count(10)
 
     course_id = f'{uuid.uuid4()}'

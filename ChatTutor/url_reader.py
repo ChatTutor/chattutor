@@ -1,10 +1,12 @@
 import random
 import re
+import string
 import uuid
 from threading import Lock, Thread
 from typing import List
 import json
 from bs4 import BeautifulSoup
+import bs4
 import requests
 import io
 import uuid
@@ -22,7 +24,7 @@ from core.url_reader import URLReader
 class URLReaderCls:
     depth = 1
     node_degree = {}
-    max_number_of_urls = 20
+    max_number_of_urls: int
     TH_COUNT: int
     BFS_TH_COUNT: int
 
@@ -33,7 +35,13 @@ class URLReaderCls:
 
     def parse_url(url: str):
         page = requests.get(url)
-        soup = BeautifulSoup(page.content, 'html.parser')
+        if page.status_code != 200:
+            return ""
+
+        content_page_no = page.content.decode('utf-8', 'ignore')
+        content_page = ''.join(i for i in content_page_no if i in string.printable)
+
+        soup = BeautifulSoup(content_page, 'html.parser')
         for tag in soup(['style', 'script']):
             tag.decompose()
         x = " ".join(soup.stripped_strings)
@@ -42,7 +50,7 @@ class URLReaderCls:
 
     def parse_urls(urls: List[str]):
         for url in urls:
-            x = URLReader.parse_url(url)
+            x = URLReaderCls.parse_url(url)
             x += "\n\n"
 
     spider_urls: [str] = []
@@ -68,6 +76,9 @@ class URLReaderCls:
         s_urls = []
 
         page = requests.get(urltoapp)
+        if page.status_code != 200:
+            return
+
         soup = BeautifulSoup(page.content, 'html.parser')
         hrefs = soup.find_all('a', href=True)
         print("hrefs: ", hrefs, "\n\n\n")
@@ -133,9 +144,11 @@ class URLReaderCls:
         lock.release()
 
         print("parse " + strv)
-        ss = URLReader.parse_url(strv)
+        ss = URLReaderCls.parse_url(strv)
+        if ss == "":
+            return
 
-        site_text = f"{ss.encode('utf-8', errors='replace')}"
+        site_text = f"{ss.encode('utf-8', errors='ignore')}"
         navn = re.sub(r'[^A-Za-z0-9\-_]', '_', strv)
         file = FileStorage(stream=io.BytesIO(bytes(site_text, 'utf-8')), name=navn)
         f_f = (file, navn)
