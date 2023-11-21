@@ -10,6 +10,11 @@ import PyPDF2
 from core.vectordatabase import VectorDatabase
 from core.url_reader import URLReader
 
+import shutil
+import requests
+import yaml
+import time
+
 def read_folder_gcp(bucket_name, folder_name):
     """
     Reads the contents of a folder in a GCS bucket and parses each file according to its type,
@@ -94,7 +99,7 @@ def read_folder(path):
 def read_array_of_content_filename_tuple(array_of_content_filename_tuple):
     """
     Args:
-        array_of_content_filename_tuple: 
+        array_of_content_filename_tuple:
             Array of tuples [(content, filename)]
 
     """
@@ -155,7 +160,154 @@ def parse_notebook(path: str, doc: Doc, chunk_chars: int, overlap: int):
         return texts_from_str(text_str, doc, chunk_chars, overlap)
 
 
-def parse_pdf(
+def mathpix_api_call(file):
+    options = {
+        "conversion_formats": {"docx": False, "tex.zip": True},
+        "math_inline_delimiters": ["$", "$"],
+        "rm_spaces": True
+    }
+
+    print('getcwd:      ', os.getcwd())
+    print('__file__:    ', __file__)
+
+    parent_directory = os.path.dirname(os.getcwd())
+    env_file_path = os.path.join(parent_directory, '/app/', '.env.yaml')
+
+    print(parent_directory)
+    print(env_file_path)
+
+    try:
+        # Read the .env.yaml file
+        with open(env_file_path, 'r') as envfile:
+            env_data = yaml.safe_load(envfile)
+
+            mathpix_api_key = env_data.get('env_variables', {}).get('MATHPIX_API_KEY')
+            if mathpix_api_key:
+                print(f"MATHPIX_API_KEY found.")
+            else:
+                print("MATHPIX_API_KEY not found in .env.yaml")
+
+            mathpix_api_id = env_data.get('env_variables', {}).get('MATHPIX_API_ID')
+            if mathpix_api_id:
+                print(f"MATHPIX_API_ID found.")
+            else:
+                print("MATHPIX_API_ID not found in .env.yaml")
+
+    except FileNotFoundError:
+        print(f".env.yaml file not found in the 'app' directory.")
+
+    head = {
+        "app_id": mathpix_api_id,
+        "app_key": mathpix_api_key
+    }
+
+    # Send
+    r = requests.post("https://api.mathpix.com/v3/pdf",
+                      headers=head,
+                      data={
+                          "options_json": json.dumps(options)
+                      },
+                      files={
+                          "file": open(file, "rb")
+                      }
+                      )
+    pdf_id = json.loads(r.content).get('pdf_id')
+    print('Mathpix submission successful, PDF_id:' + pdf_id)
+    # Code is going to ping the server until the file is ready.
+    response = ''
+    url = "https://api.mathpix.com/v3/pdf/" + pdf_id + ".tex"
+    timeout_seconds = 5
+    max_retries = 100
+    success = False
+
+    for attempt in range(1, max_retries + 1):
+        try:
+            response = requests.get(url, headers=head, timeout=timeout_seconds)
+            # Check if the request was successful (status code 200)
+            if response.status_code == 200:
+                # Process the response or save it to a file as needed
+                print(f"Request successful on attempt {attempt}")
+                success = True
+                break  # Exit the loop if successful
+            else:
+                print(f"Waiting for the API response, attempt {attempt}.")
+        except requests.Timeout:
+            # Handle timeout, optionally you can print a message
+            print(f"Request timed out on attempt {attempt}. Retrying...")
+        # Introduce a delay before the next attempt, longer for consecutive attempts
+        time.sleep(2)
+
+    # Make temp folder
+    if success:
+        print("Mathpix recovery successful.")
+        if not os.path.exists('Mathpix/'):
+            os.makedirs('Mathpix/')
+        # Write tex.zip
+        path = 'Mathpix/' + pdf_id + ".tex.zip"
+        with open(path, "wb") as f:
+            f.write(response.content)
+        # Unzip tex.zip
+        with zipfile.ZipFile(path) as zf:
+            zf.extractall('Mathpix/')
+        # Getting text from .tex
+        with open('Mathpix/' + pdf_id + '/' + pdf_id + ".tex", 'rb') as f:
+            text_str = f.read()
+        # Cleanup, not saving images for now
+        shutil.rmtree('Mathpix/')
+    else:
+        print("Mathpix recovery failed.")
+        text_str = ''
+        success = False
+
+    return text_str
+
+
+def parse_pdf(file, doc: Doc, chunk_chars: int, overlap: int):
+    print('mmmmmmmmmm')
+
+    # Recover PDF through reader. Not ideal, but don't know what the path to the PDF is.
+    # Ideally just pass the original PDF path to the API
+
+    pdfReader = PyPDF2.PdfReader(BytesIO(file))
+
+    # Create a new PDF writer
+    pdfWriter = PyPDF2.PdfWriter()
+
+    # Iterate through the pages of the original PDF and add them to the new PDF
+    for page_num in range(len(pdfReader.pages)):
+        page = pdfReader.pages[page_num]  # Use getPage method instead of pages
+        pdfWriter.add_page(page)
+
+# Create a BytesIO object to store the new PDF
+    output_pdf = BytesIO()
+
+    # Write the new PDF to the BytesIO object
+    pdfWriter.write(output_pdf)
+
+    # Save the new PDF to a file
+    with open("mathpix_send.pdf", "wb") as output_file:
+        print('Pdf recovered')
+        output_file.write(output_pdf.getvalue())
+
+    # API call
+    try:
+        text_str = mathpix_api_call("mathpix_send.pdf")
+    except:
+        text_str = ''
+
+    if text_str == '':
+        print('Mathpix API call failed, calling legacy PDF parser.')
+        texts = parse_pdf_legacy(file, doc, 2000, 100)
+    else:
+        # Overlaps
+        texts = texts_from_str(text_str, doc, chunk_chars, overlap)
+
+    # Cleanup
+    os.remove("mathpix_send.pdf")
+
+    return texts
+
+def parse_pdf_legacy(
     file_contents: str, doc: Doc, chunk_chars: int, overlap: int
 ) -> List[Text]:
     """Parses a pdf file and generates texts from its content.
