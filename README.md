@@ -18,6 +18,8 @@ env_variables:
     CHATUTOR_GCP: TRUE
     OPENAI_API_KEY: <>
     ACTIVELOOP_TOKEN: <>
+    MATHPIX_API_ID: <>
+    MATHPIX_API_KEY: <>
 ```
 
 The project file tree should look like this:
