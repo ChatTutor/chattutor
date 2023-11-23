@@ -47,7 +47,7 @@ load_api_keys()
 
 app = Flask(__name__)
 # CORS(app, resources={r"/ask": {"origins": "https://barosandu.github.io"}})
-CORS(app, origins=["https://barosandu.github.io", "https://pymit6101-nbqjgewnea-uc.a.run.app/fall23/calendar"])
+CORS(app, origins=["https://barosandu.github.io", "https://pymit6101-nbqjgewnea-uc.a.run.app"])
 # CORS(app)  # Enabling CORS for the Flask app to allow requests from different origins
 db.init_db()
 user_db.init_db()
