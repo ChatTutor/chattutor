@@ -169,18 +169,19 @@ class VectorDatabase:
         """
         lock.acquire()
         count = self.datasource.count()
-        lock.release()
+
         ids = [str(i) for i in range(count, count + len(texts))]
-        print("ids:", ids)
-        print("text lens " , len(texts))
-        # print(texts)
-        # print("texts", texts)
-        # print(texts[0].doc.docname)
+        lock.release()
         self.datasource.add(
             ids=ids,
             metadatas=[{"doc": text.doc.docname} for text in texts],
             documents=[text.text for text in texts],
         )
+        # print(texts)
+        # print("texts", texts)
+        # print(texts[0].doc.docname
+
+
 
     def query(self, prompt, n_results, from_doc, metadatas=False, distances=False):
         """Querying the database based on the database provider

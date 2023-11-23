@@ -398,7 +398,7 @@ def urlcrawler():
     url_r = URLReaderCls(1, 200)
     url_r.set_thread_count(25)
     url_r.set_bfs_thread_count(20)
-
+    url_r.MAX_LEVEL_PARQ = 2
     course_id = f'{uuid.uuid4()}'
     print("crawling...")
     return Response(stream_with_context(
@@ -519,7 +519,7 @@ def upload_site_url():
         collection_name = coll_name
         resp = {"collection_name": coll_name, "urls": url_to_parse}
         for surl in url_to_parse:
-            ss = URLReader.parse_url(surl)
+            ss = URLReaderCls.parse_url(surl)
             site_text = f"{ss.encode('utf-8', errors='replace')}"
             navn = f"thingBoi{uuid.uuid4()}"
             file = FileStorage(stream=io.BytesIO(bytes(site_text, 'utf-8')), name=navn)

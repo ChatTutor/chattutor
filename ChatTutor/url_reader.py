@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 import bs4
 import requests
 import io
+from urllib.parse import urlparse, ParseResult
 import uuid
 
 from flask import jsonify
@@ -27,6 +28,7 @@ class URLReaderCls:
     max_number_of_urls: int
     TH_COUNT: int
     BFS_TH_COUNT: int
+    MAX_LEVEL_PARQ: int
 
     def __init__(self, depth, max_number_of_urls):
         self.depth = depth
@@ -34,7 +36,10 @@ class URLReaderCls:
         self.max_number_of_urls = max_number_of_urls
 
     def parse_url(url: str):
-        page = requests.get(url)
+        try:
+            page = requests.get(url)
+        except:
+            return ""
         if page.status_code != 200:
             return ""
 
@@ -45,7 +50,7 @@ class URLReaderCls:
         for tag in soup(['style', 'script']):
             tag.decompose()
         x = " ".join(soup.stripped_strings)
-        print(x)
+        # print(x)
         return x
 
     def parse_urls(urls: List[str]):
@@ -70,7 +75,6 @@ class URLReaderCls:
         urltoapp = self.spider_urls.pop(0)
         self.visited[urltoapp] = True
         self.all_urls.append(urltoapp)
-        self.node_degree[urltoapp] = 0
 
         lock.release()
         s_urls = []
@@ -81,20 +85,36 @@ class URLReaderCls:
 
         soup = BeautifulSoup(page.content, 'html.parser')
         hrefs = soup.find_all('a', href=True)
-        print("hrefs: ", hrefs, "\n\n\n")
+
+        adom: ParseResult = urlparse(url2app)
+        dom = adom.netloc
+        httpdom = adom.scheme + "://" + adom.netloc
+
+        print("dom: ", httpdom)
+        print("MAX_PARURL: ", self.MAX_LEVEL_PARQ)
+
         for href in hrefs:
-            print("href:", href)
             shr = href['href']
-            if shr[0:7] == "http://" or shr[0:8] == "https://":  # if url be havin' http://
-                g = shr
+
+            if ("http://" in shr or "https://" in shr) and httpdom not in shr:  # if url be havin' http://
+                g = "NO"
+            elif httpdom not in shr:
+                if shr[0] == "/":
+                    g = httpdom + shr
+                else:
+                    g = httpdom + "/" + shr
             else:
-                g = url2app + shr
-            if 'license' not in g:
-                print("g: " + g)
-                lock.acquire()
-                if not self.visited.get(g):
-                    s_urls.append(g)
-                lock.release()
+                g = shr
+
+            if g != "NO" and '/#' not in g:
+                if 'license' not in g and "login" not in g:
+                    print("g: " + g)
+                    lock.acquire()
+                    if not self.visited.get(g):
+                        self.node_degree[g] = self.node_degree[urltoapp] + 1
+                        if self.node_degree[g] < 3:
+                            s_urls.append(g)
+                    lock.release()
 
         lock.acquire()
         for g in s_urls:
@@ -164,8 +184,10 @@ class URLReaderCls:
 
 
         print("adding texts... ", strv)
-
-        chroma_db.add_texts_chroma_lock(texts, lock=lock)
+        try:
+            chroma_db.add_texts_chroma_lock(texts, lock=lock)
+        except:
+            print("error")
         print("added texts...")
 
         # add to andu_db
