@@ -451,6 +451,17 @@ def upload_site_url():
 
 
 
+@app.route("/api/v1/static/chattutor.min.js")
+def serve_static_api():
+    """Serving static files from the 'api' directory"""
+    return app.send_static_file("api/chattutor.min.js")
+
+@app.route("/api/v1/static/chattutor.style")
+def serve_style_api():
+    """Serving static files from the 'api' directory"""
+    return app.send_static_file("api/chattutor.style.css")
+
+
 
 
 
