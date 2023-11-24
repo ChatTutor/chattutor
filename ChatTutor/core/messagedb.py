@@ -176,7 +176,7 @@ class MessageDB:
             styl_td = ""
             i = i + 1
 
-            timstp = int(time_cr)
+            timstp = 1000
 
             tr_header = ""
             if chat_header != "":
