@@ -107,5 +107,5 @@ If you'd like to contribute to ChatTutor, please take a look at our
 
 ## Acknowledgements
 ![MIT](https://img.shields.io/badge/RLE-MIT-violet)
-
-ChatTutor V1 was developed by Dirk Englund for the Spring 6.2410 course "Quantum Systems Engineering" at MIT. It was further developed with Hank Stennes, Hyeongrak "Chuck" Choi, and Hunter Kemeny in the summer of 2023, and late in the summer they were joined by Aatmik Mallya, Adrian Alexandru Ariton, and a growing team of developers organized by Hunter and a cohort of key developers.
+ 
+ChatTutor V1 was developed by Dirk Englund for the Spring 6.2410 course "Quantum Systems Engineering" at MIT. It was further developed with Hank Stennes, Hyeongrak "Chuck" Choi, and Hunter Kemeny in the summer of 2023, and late in the summer they were joined by Aatmik Mallya, Adrian and Alexandru Ariton, and a growing team of developers organized by Hunter and a cohort of key developers.
