@@ -34,6 +34,8 @@ import { CourseInputComponent } from './course-input/course-input.component';
 import { UrlLabelComponent } from './url-label/url-label.component';
 import {MatStepperModule} from '@angular/material/stepper';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
+import { CourseDashboardComponent } from './course-dashboard/course-dashboard.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +52,9 @@ import {MatExpansionModule} from '@angular/material/expansion';
     ChattutorDatabaseComponent,
     MessageInsideDatabaseComponent,
     CourseInputComponent,
-    UrlLabelComponent,],
+    UrlLabelComponent,
+    UserDashboardComponent,
+    CourseDashboardComponent,],
     imports: [
         BrowserModule,
         AppRoutingModule,

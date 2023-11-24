@@ -84,6 +84,24 @@ class MessageDB:
             FOREIGN KEY (course_id) REFERENCES lcourses(course_id),
             UNIQUE (section_id, course_id)
             )"""
+            
+    user_table_Sql = """
+        CREATE TABLE IF NOT EXISTS lusers (
+            username varchar(100) PRIMARY KEY,
+            email varchar(100),
+            password varchar(100),
+        )
+        """
+
+    relationship_users_courses = """
+        CREATE TABLE IF NOT EXISTS ruserscourses (
+            username varchar(250) not null ,
+            course_id varchar(250) not null,
+            FOREIGN KEY (username) REFERENCES lusers(username),
+            FOREIGN KEY (course_id) REFERENCES lcourses(course_id),
+            UNIQUE (username, course_id)
+        )
+    """
 
     def __init__(self, host, user, password, database, statistics_database):
         self.host = host
@@ -91,7 +109,41 @@ class MessageDB:
         self.password = password
         self.db = database
         self.statisticsdb = statistics_database
-
+        
+    def insert_user(self, user):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            print(f"INSERT IGNORE INTO lusers (username, email, password) VALUES ('{user.username}', '{user.email}', '{user.password_hash.decode('utf-8') }')")
+            cur.execute(f"INSERT IGNORE INTO lusers (username, email, password) VALUES ('{user.username}', '{user.email}', '{user.password_hash.decode('utf-8') }')")
+            con.commit()
+            
+    def get_user(self, username):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"SELECT * FROM lusers WHERE username = '{username}'")
+            users = cur.fetchall()
+            return users
+        
+    def insert_user_to_course(self, username, course_id):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"INSERT IGNORE INTO ruserscourses (username, course_id) VALUES ('{username}', '{course_id}')")
+            con.commit()
+            
+    def get_user_courses(self, username):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"SELECT * FROM lcourses WHERE course_id IN (SELECT course_id FROM ruserscourses WHERE username = '{username}')")
+            courses = cur.fetchall()
+            return courses
+    
+    def get_courses_sections(self, course_id):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"SELECT * FROM rsectionscourses WHERE course_id = '{course_id}'")
+            sections = cur.fetchall()
+            return sections
+    
     def connect_to_messages_database(self):
         """Function that connects to the database"""
         connection = pymysql.connect(
@@ -170,6 +222,11 @@ class MessageDB:
             cur.execute(f"INSERT IGNORE INTO rsectionscourses (section_id, course_id) VALUES ('{section_id}', '{course_id}')")
             con.commit()
 
+    def update_section_add_fromdoc(self, section_id, from_doc):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"UPDATE lsections SET pulling_from = concat(pulling_from, '{'$'+from_doc}') WHERE section_id = '{section_id}'")
+            con.commit()
 
     def execute_sql(self, sqlexec, commit=True):
         with self.connect_to_messages_database() as con:

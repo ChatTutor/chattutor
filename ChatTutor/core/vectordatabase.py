@@ -169,8 +169,8 @@ class VectorDatabase:
         """
         lock.acquire()
         count = self.datasource.count()
-
         ids = [str(i) for i in range(count, count + len(texts))]
+        # print(ids, count)
         lock.release()
         self.datasource.add(
             ids=ids,
@@ -192,10 +192,11 @@ class VectorDatabase:
             from_doc (Doc) : Select only lines where doc = from_doc
         """
         if self.db_provider == "chroma":
+            print(from_doc)
             data = self.query_chroma(
                 prompt,
-                n_results,
-                from_doc,
+                n_results=n_results,
+                from_doc=from_doc,
                 include=["documents", "metadatas", "distances"],
             )
             if metadatas:
@@ -216,17 +217,36 @@ class VectorDatabase:
     def query_chroma(self, prompt, n_results, from_doc, include=["documents"]):
         """Querying Chroma data source with specified query_texts, n_results, and optional where clause"""
         if from_doc:
-            return self.datasource.query(
-                query_texts=prompt,
-                n_results=n_results,
-                where={"doc": from_doc},
-                include=include,
-            )
+            if hasattr(from_doc, '__len__') and (not isinstance(from_doc, str)):
+               return self.datasource.query(
+                    query_texts=prompt,
+                    n_results=n_results,
+                    where={"doc": {"$in": from_doc}},
+                    include=include,
+                ) 
+            else:
+                return self.datasource.query(
+                    query_texts=prompt,
+                    n_results=n_results,
+                    where={"doc": from_doc},
+                    include=include,
+                )
         else:
             return self.datasource.query(
                 query_texts=prompt, n_results=n_results, include=include
             )
 
+    def get_chroma(self, n_results, from_doc, include=["documents"]):
+        """Querying Chroma data source with specified query_texts, n_results, and optional where clause"""
+        if from_doc:
+            return self.datasource.get(
+                where={"doc": from_doc},
+                include=include,
+            )
+        else:
+            return self.datasource.get(
+                include=include
+            )
     def query_deeplake(self, prompt, n_results, from_doc):
         """Querying Deeplake data source with specified embedding_data, embedding_function, k, optional filter, and exec_option"""
         if from_doc:

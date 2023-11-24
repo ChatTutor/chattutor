@@ -21,12 +21,12 @@ from core.reader import parse_plaintext_file
 import io
 import uuid
 from werkzeug.datastructures import FileStorage
-
+import re
 # import pymysql
 import sqlite3
 import openai
 import core.loader
-from core.reader import read_filearray, extract_file,parse_plaintext_file
+from core.reader import read_filearray, extract_file,parse_plaintext_file_read
 from datetime import datetime
 from core.messagedb import MessageDB
 import interpreter
@@ -51,65 +51,6 @@ app.secret_key = "fhslcigiuchsvjksvjksgkgs"
 CORS(app, resources={r"/ask": {"origins": "https://barosandu.github.io"}})  # Enabling CORS for the Flask app to allow requests from different origins
 db.init_db()
 user_db.init_db()
-loginmanager = flask_login.LoginManager()
-loginmanager.init_app(app)
-
-# users mock db
-users = {'andubandu@icloud.com': {'password': 'andu'}}
-
-class User(flask_login.UserMixin):
-    pass
-
-
-
-@loginmanager.user_loader
-def user_loader(email):
-    if email in users:
-        return
-    user = User()
-    user.id = email
-    return user
-
-@loginmanager.request_loader
-def request_loader(request):
-    email = request.form.get('email')
-    if email not in users:
-        return
-
-    user = User()
-    user.id = email
-    return user
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if flask.request.method == 'GET':
-        return '''
-                   <form action='login' method='POST'>
-                    <input type='text' name='email' id='email' placeholder='email'/>
-                    <input type='password' name='password' id='password' placeholder='password'/>
-                    <input type='submit' name='submit'/>
-                   </form>
-                   '''
-    email = flask.request.form['email']
-    if email in users and flask.request.form['password'] == users[email]['password']:
-        user = User()
-        user.id = email
-        flask_login.login_user(user)
-        return flask.redirect(flask.url_for('protected'))
-    return 'fake'
-
-@app.route('/protected')
-def protected():
-    return 'Logged in as: ' + flask_login.current_user.id
-
-@loginmanager.unauthorized_handler
-def unauthorized_handler():
-    return 'Unauthorized', 401
-
-@app.route('/logout')
-def logout():
-    flask_login.logout_user()
-    return 'Logged out'
 
 messageDatabase = MessageDB(
     host="34.41.31.71",
@@ -388,7 +329,28 @@ def getfromdb():
         )
 
 @app.route("/urlcrawler", methods=["POST", "GET"])
+@flask_login.login_required
 def urlcrawler():
+    data = request.json
+    url: str = data.get('url_to_parse', 'https://www.google.com')
+    course_name: str = data.get('course_name', 'No course')
+    proffessor: str = data.get('proffessor', 'No professor')
+    collection_name: str = data.get('collection_name', f"{uuid.uuid4()}")
+
+    url_r = URLReaderCls(1, 200)
+    url_r.set_thread_count(25)
+    url_r.set_bfs_thread_count(25)
+    url_r.MAX_LEVEL_PARQ = 2
+    course_id = f'{uuid.uuid4()}'
+    print(f"crawling... {url_r.max_number_of_urls}")
+    
+    return Response(stream_with_context(
+        url_r.new_spider_function(urltoapp=url, save_to_database=db, collection_name=collection_name,
+                                  andu_db=messageDatabase, course_name=course_name, proffessor=proffessor,
+                                  course_id=course_id, current_user=flask_login.current_user)))
+
+@app.route("/generate_bfs_array", methods=["POST", "GET"])
+def genbfsarray():
     data = request.json
     url: str = data.get('url_to_parse', 'https://www.google.com')
     course_name: str = data.get('course_name', 'No course')
@@ -401,11 +363,8 @@ def urlcrawler():
     url_r.MAX_LEVEL_PARQ = 2
     course_id = f'{uuid.uuid4()}'
     print("crawling...")
-    return Response(stream_with_context(
-        url_r.new_spider_function(urltoapp=url, save_to_database=db, collection_name=collection_name,
-                                  andu_db=messageDatabase, course_name=course_name, proffessor=proffessor,
-                                  course_id=course_id)))
-
+    
+    return jsonify(url_r.get_bfs_array(url))
 
 @app.route("/getfromdbng", methods=["POST", "GET"])
 def getfromdbng():
@@ -509,6 +468,43 @@ def delete_uploaded_data():
     db.delete_datasource_chroma(collection_name)
     return jsonify({"deleted": collection_name})
 
+@app.route("/delete_doc", methods=["POST"])
+@flask_login.login_required
+def delete_doc():
+    data = request.json
+    collection_name = data["collection"]
+    doc_name = data["doc"]
+    
+    collection = db.client.get_collection(name=collection_name)
+    print(collection)
+    collection.delete(where={'from_doc': doc_name})
+    print("deleted")
+    return jsonify({"deleted": doc_name, "from_collection": collection_name})
+
+@app.route("/add_doc_tosection", methods=["POST"])
+@flask_login.login_required
+def add_fromdoc_tosection():
+    data = request.json
+    collection_name = data["collection"]
+    section_id = data["section_id"]
+    url_to_add = data["url_to_add"]
+
+    messageDatabase.update_section_add_fromdoc(section_id=section_id, from_doc=url_to_add)
+    return jsonify({"added": url_to_add, "to_collection": collection_name})
+
+@app.route("/get_section", methods=["POST"])
+def get_section():
+    data = request.json
+    collection_name = data["collection"]
+    section_id = data["section_id"]
+
+    sections = messageDatabase.execute_sql(
+        f"SELECT * FROM lsections WHERE section_id = '{section_id}'"
+    )
+    pfrom = [s["pulling_from"] for s in sections]
+    return jsonify({'sections': sections, 'pulling_from': pfrom})
+
+
 @app.route("/upload_site_url", methods=["POST"])
 def upload_site_url():
     try:
@@ -517,23 +513,167 @@ def upload_site_url():
         url_to_parse = ajson["url"]
         print('UTP: ', url_to_parse)
         collection_name = coll_name
-        resp = {"collection_name": coll_name, "urls": url_to_parse}
+        resp = {"collection_name": coll_name, "urls": url_to_parse, "docs": []}
         for surl in url_to_parse:
+            print(surl)
             ss = URLReaderCls.parse_url(surl)
             site_text = f"{ss.encode('utf-8', errors='replace')}"
-            navn = f"thingBoi{uuid.uuid4()}"
-            file = FileStorage(stream=io.BytesIO(bytes(site_text, 'utf-8')), name=navn)
+            # navn = f"thingBoi{uuid.uuid4()}"
+            navn = re.sub(r'[^A-Za-z0-9\-_]', '_', surl)
+            db.load_datasource(collection_name)
+            docs = db.get_chroma(from_doc=navn, n_results=1)
+            if docs == None:
+                continue
+            if len(docs) > 0:
+                resp["docs"] = resp["docs"] + [navn+"/_already_exists"]
+                continue
 
+            
+            file = FileStorage(stream=io.BytesIO(bytes(site_text, 'utf-8')), name=navn)
             f_f = (file, navn)
+        
+            
             doc = Doc(docname=f_f[1], citation="", dockey=f_f[1])
-            texts = parse_plaintext_file(f_f[0], doc=doc, chunk_chars=2000, overlap=100)
+            texts = parse_plaintext_file_read(f_f[0], doc=doc, chunk_chars=2000, overlap=100)
             db.load_datasource(collection_name)
             db.add_texts(texts)
+            resp["docs"] = resp["docs"] + [navn]
         return jsonify(resp)
     except Exception as e:
         return jsonify({'message': 'error'})
+    
+    
+# ------------ LOGIN ------------
+import flask_login
+import bcrypt
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
+
+class User(flask_login.UserMixin):
+    username = 'NO FACE'
+    email = 'NO NAME'
+    password_hash = 'NO NUMBER'
+    def get_id(self):
+           return self.username
+    @property
+    def password(self):
+        raise AttributeError('password not readable')
+    @password.setter
+    def password(self, password):
+        self.password_hash = bcrypt.hashpw(password.encode('utf-8', 'ignore'), bcrypt.gensalt())
+    
+    def verify_password(self, p):
+        print(self.password_hash, bcrypt.hashpw(p.encode('utf8', 'ignore'), bcrypt.gensalt()).decode('utf-8'))
+        print(self.password_hash, bcrypt.hashpw(p.encode('utf8', 'ignore'), bcrypt.gensalt()).decode('utf-8'))
+        print(self.password_hash.encode('utf-8'), p.encode('utf-8'))
+        return bcrypt.checkpw(p.encode('utf-8'), self.password_hash.encode('utf-8'))
 
 
+@login_manager.user_loader
+def user_loader(username):
+    users = messageDatabase.get_user(username=username)
+    
+    if len(users) == 0:
+        return
+    user = User()
+    user.username = users[0]["username"]
+    user.email = users[0]["email"]
+    print(users[0]["password"])
+    user.password_hash = users[0]["password"]
+
+    return user
+
+
+@login_manager.request_loader
+def request_loader(request):
+    username = request.form.get('username')
+    
+    users = messageDatabase.get_user(username=username)
+    
+    if len(users) == 0:
+        return
+
+    user = User()
+    user.username = users[0]["username"]
+    user.email = users[0]["email"]
+    user.password_hash = users[0]["password"]
+
+    return user
+
+
+@app.route('/register', methods=['POST', 'GET'])
+def register_user():
+    if flask.request.method == 'GET':
+        return '''
+               <form action='register' method='POST'>
+                <input type='text' name='username' id='username' placeholder='username'/>
+                <input type='text' name='email' id='email' placeholder='email'/>
+                <input type='password' name='password' id='password' placeholder='password'/>
+                <input type='submit' name='submit'/>
+               </form>
+               '''
+    username = flask.request.form['username']
+    email = flask.request.form['email']
+    password = flask.request.form['password']
+
+    email = flask.request.form['email']
+    users = messageDatabase.get_user(username=username)
+
+    if len(users) != 0:
+        return f'Username {username} already exists!'
+
+    print(password)
+    user = User()
+    user.email = email
+    user.password = password
+    user.username = username
+    print(user.password_hash)
+    messageDatabase.insert_user(user)
+    return f'User {user} inserted'
+    
+
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    if flask.request.method == 'GET':
+        return '''
+               <form action='login' method='POST'>
+                <input type='text' name='username' id='username' placeholder='username'/>
+                <input type='password' name='password' id='password' placeholder='password'/>
+                <input type='submit' name='submit'/>
+               </form>
+               '''
+
+    username = flask.request.form['username']
+    users = messageDatabase.get_user(username=username)
+    if len(users) == 0:
+        return 'Invalid username'
+    print(users[0]["password"])
+    user = User()
+    user.username = users[0]["username"]
+    user.email = users[0]["email"]
+    user.password_hash = users[0]["password"]
+    print(user.password_hash, " woooo ", flask.request.form['password'])
+
+    if user.verify_password(flask.request.form['password']):
+        flask_login.login_user(user)
+        return flask.redirect(flask.url_for('protected'))
+    return 'Bad login'
+
+@app.route('/protected')
+@flask_login.login_required
+def protected():
+    return 'Logged in as: ' + flask_login.current_user.username
+
+@app.route('/logout')
+def logout():
+    flask_login.logout_user()
+    return 'Logged out'
+
+@login_manager.unauthorized_handler
+def unauthorized_handler():
+    return 'Unauthorized', 401
+
+# ----------- ANGULAR -----------
 __angular_paths = []
 __angular_default_path = "index.html"
 __root = app.static_folder
@@ -553,13 +693,50 @@ for root, subdirs, files in os.walk(__root):
         __angular_paths.append(relativePath)
     print("Angular paths: [ ", __angular_paths, " ]")
 
+@app.route("/getuser", methods=['POST'])
+@flask_login.login_required
+def getuser():
+    print('Logged in as', flask_login.current_user.username)
+    return jsonify({
+        'username': flask_login.current_user.username
+    })
+
+@app.route("/users/<username>/mycourses", methods=['POST'])
+@flask_login.login_required
+def getusercourses(username):
+    if username != flask_login.current_user.username:
+        return 'Not allowed'
+    courses = messageDatabase.get_user_courses(username=username)
+    return jsonify({
+        'courses': courses
+    })
+
+@app.route("/users/<username>/courses/<course>", methods=['POST'])
+@flask_login.login_required
+def getusercoursessections(username, course):
+    if username != flask_login.current_user.username:
+        return 'Not allowed'
+    sections = messageDatabase.get_courses_sections(course_id=course)
+    return jsonify({
+        'sections': sections
+    })
+
+
+@app.route('/scrape/<path:path>')
+@app.route('/scrape', defaults={'path': ''})
+@flask_login.login_required
+def angular_lr(path):    
+    if path not in __angular_paths:
+        path = __angular_default_path
+    return send_from_directory(__root, path)
+
+
 # Special trick to capture all remaining routes
 @app.route('/<path:path>')
 @app.route('/', defaults={'path': ''})
 def angular(path):    
     if path not in __angular_paths:
         path = __angular_default_path
-    
     return send_from_directory(__root, path)
 
 if __name__ == "__main__":

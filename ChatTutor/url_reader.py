@@ -92,34 +92,57 @@ class URLReaderCls:
 
         print("dom: ", httpdom)
         print("MAX_PARURL: ", self.MAX_LEVEL_PARQ)
-
+        
+        forbidden_extensions = [
+            "exe", "py", "a", "b", "c",
+            "void", "pdf", "doc", "docx",
+            "txt", "java", "c", "zip",
+            "tar", "tar.gz", "bin"
+        ]
         for href in hrefs:
+            lock.acquire()
             shr = href['href']
+            print("\t\t -> " + shr)
 
+            g = "OK"
+          
             if ("http://" in shr or "https://" in shr) and httpdom not in shr:  # if url be havin' http://
                 g = "NO"
-            elif httpdom not in shr:
+            elif httpdom not in shr and g != 'NO':
                 if shr[0] == "/":
                     g = httpdom + shr
                 else:
                     g = httpdom + "/" + shr
-            else:
+            elif g != 'NO':
                 g = shr
+                
+            if ("void(0);" in g):
+                g = "NO"
+           
+            
+            
+            no_query = shr.split("?")[0]
+            
+            for forbidden in forbidden_extensions:
+                if no_query.endswith(f".{forbidden}"):
+                    g = "NO"
+                    
+
 
             if g != "NO" and '/#' not in g:
                 if 'license' not in g and "login" not in g:
-                    print("g: " + g)
-                    lock.acquire()
                     if not self.visited.get(g):
                         self.node_degree[g] = self.node_degree[urltoapp] + 1
-                        if self.node_degree[g] < 3:
+                        if self.node_degree[g] < self.MAX_LEVEL_PARQ and g not in self.spider_urls and g not in s_urls:
+                            print("g: " + g)
+                            print(s_urls)
                             s_urls.append(g)
-                    lock.release()
+            lock.release()
 
         lock.acquire()
-        for g in s_urls:
-            self.all_urls.append(g)
-            self.spider_urls.append(g)
+        for u in s_urls:
+            self.all_urls.append(u)
+            self.spider_urls.append(u)
         lock.release()
 
         print("done threading")
@@ -155,8 +178,24 @@ class URLReaderCls:
             print(len(self.spider_urls))
 
     global_results: {str: dict} = {}
+    
+    # {
+    # 'section_id': section_id,
+    # 'course_id': course_id,
+    # 'section_url': strv,
+    # 'course_chroma_collection': collection_name
+    # }
+    
+    def add_to_andudb(self, section_dict, from_doc_joined, andu_db: MessageDB):
+        andu_db.insert_section(section_id=section_dict['section_id'], pulling_from=from_doc_joined)
+        andu_db.establish_course_section_relationship(section_id=section_dict['section_id'], course_id=section_dict['course_id'])
+        return section_dict, from_doc_joined
+    
+    def add_from_doc_to_section(self, section_id, to_add, andu_db: MessageDB):
+        andu_db.update_section_add_fromdoc(section_id, from_doc=to_add)
+        return section_id, to_add
 
-    def parse_url_array(self, lock: Lock, andu_db: MessageDB, chroma_db, collection_name, course_id):
+    def parse_url_array(self, lock: Lock, andu_db: MessageDB, chroma_db, collection_name, course_id, addToMessageDB=True):
         print("...parsing url arr")
         lock.acquire()
         strv = self.all_urls.pop(0)
@@ -176,13 +215,7 @@ class URLReaderCls:
         texts = parse_plaintext_file_read(f_f[0], doc=doc, chunk_chars=2000, overlap=100)
 
         section_id = navn
-
-
-
-
         print("finish ..")
-
-
         print("adding texts... ", strv)
         try:
             chroma_db.add_texts_chroma_lock(texts, lock=lock)
@@ -191,19 +224,19 @@ class URLReaderCls:
         print("added texts...")
 
         # add to andu_db
-
-        andu_db.insert_section(section_id=section_id, pulling_from="")
+        print(f"adding to andudb {section_id}")
+        andu_db.insert_section(section_id=section_id, pulling_from=section_id)
         andu_db.establish_course_section_relationship(section_id=section_id, course_id=course_id)
-
+        print("added to andubd")
         lock.acquire()
         # print("yeyrye")
-        self.global_results[navn] = {'section_id': section_id,
+        self.global_results[navn] = {
+                                     'section_id': section_id,
                                      'course_id': course_id,
                                      'section_url': strv,
                                      'course_chroma_collection': collection_name
                                      }
         lock.release()
-
 
     def dfsjdlf(self):
         print("Yeyyy")
@@ -220,20 +253,28 @@ class URLReaderCls:
     def set_thread_count(self, tc):
         self.TH_COUNT = tc
 
+    def get_bfs_array(self, urltoapp):
+        lock = Lock()
+        self.lock = lock
+        self.dfsjdlf()
+        self.produce_bfs_array(urltoapp=urltoapp, lock=lock)
+        return self.all_urls
+    
     def new_spider_function(self, urltoapp, save_to_database, collection_name, andu_db: MessageDB, course_name,
-                            proffessor, course_id):
+                            proffessor, course_id, produce_bfs=True, current_user=None):
 
         print("New spider func")
         andu_db.insert_course(course_id=course_id, name=course_name, proffessor=proffessor, mainpage=urltoapp,
                               collectionname=collection_name)
+        andu_db.insert_user_to_course(current_user.username, course_id=course_id)
         save_to_database.load_datasource(collection_name)
         print("inserted date")
 
         lock = Lock()
-        self.dfsjdlf()
-        self.produce_bfs_array(urltoapp=urltoapp, lock=lock)
-
-        print("produced bfs array!!")
+        if produce_bfs:
+            self.dfsjdlf()
+            self.produce_bfs_array(urltoapp=urltoapp, lock=lock)
+            print("produced bfs array!!")
         # print(self.spider_urls)
         # print(self.all_urls)
 
@@ -263,4 +304,6 @@ class URLReaderCls:
             yield f"""data: {json.dumps(list(vals))}"""
 
         print("finished succesfully.")
+    
+    
 

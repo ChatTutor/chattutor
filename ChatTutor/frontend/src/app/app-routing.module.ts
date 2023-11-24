@@ -5,13 +5,18 @@ import {ChatTutorWrapperComponent} from "./chat-tutor-wrapper/chat-tutor-wrapper
 import { LandingPageComponent } from './landing-page/landing-page.component';
 import {ChattutorDatabaseComponent} from "./chattutor-database/chattutor-database.component";
 import {CourseInputComponent} from "./course-input/course-input.component";
+import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
+import { CourseDashboardComponent } from './course-dashboard/course-dashboard.component';
 
 const routes: Routes = [
   {path: '', component: LandingPageComponent},
   {path: 'cqnchattutor', component: CQNChatTutorWrapperComponent},
     {path: 'chattutordatabase', component: ChattutorDatabaseComponent},
     {path: 'chattutord', component: ChatTutorWrapperComponent},
-    {path: 'scrape', component: CourseInputComponent}
+    {path: 'scrape', component: CourseInputComponent},
+    {path: 'mycourses', component: UserDashboardComponent},
+    {path: 'courses/:id', component: CourseDashboardComponent },
+
 ];
 
 
