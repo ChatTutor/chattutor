@@ -104,7 +104,7 @@ Open a web browser and navigate to http://127.0.0.1:5000/ to interact with the a
 
 If you'd like to contribute to ChatTutor, please take a look at our
 [contribution guidelines](CONTRIBUTING.md). We use [GitHub issues](https://github.com/ChatTutor/chattutor/issues) for tracking requests and bugs. 
-
+ 
 ## Acknowledgements
 ![MIT](https://img.shields.io/badge/RLE-MIT-violet)
  
