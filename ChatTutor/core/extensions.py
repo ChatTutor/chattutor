@@ -4,8 +4,8 @@
 
 from core.vectordatabase import VectorDatabase
 
-db = VectorDatabase("34.123.154.72:8000", "chroma", hosted=True)
-user_db = VectorDatabase("34.123.154.72:8000", "chroma", hosted=True)
+db = VectorDatabase("34.133.39.77:8000", "chroma", hosted=True)
+user_db = VectorDatabase("34.133.39.77:8000", "chroma", hosted=True)
 
 import random
 import string
