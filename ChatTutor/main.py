@@ -2,7 +2,9 @@ import flask
 from flask import Flask, request, redirect, send_from_directory, url_for, render_template
 from flask import stream_with_context, Response, abort, jsonify
 from flask_cors import CORS
-from nice_functions import pprint, time_it 
+from itsdangerous import URLSafeTimedSerializer
+
+from nice_functions import pprint, time_it
 from core.extensions import (
     db,
     user_db,
@@ -26,7 +28,7 @@ import re
 import sqlite3
 import openai
 import core.loader
-from core.reader import read_filearray, extract_file,parse_plaintext_file_read
+from core.reader import read_filearray, extract_file, parse_plaintext_file_read
 from datetime import datetime
 from core.messagedb import MessageDB
 import interpreter
@@ -38,17 +40,18 @@ import uuid
 from werkzeug.datastructures import FileStorage
 # import markdown
 import flask_login
+
 # from vectordatabase import VectorDatabase
 
 interpreter.auto_run = True
 from core.openai_tools import load_api_keys
+
 load_api_keys()
-
-
 
 app = Flask(__name__, static_folder='frontend/dist/frontend/', static_url_path='')
 app.secret_key = "fhslcigiuchsvjksvjksgkgs"
-CORS(app, resources={r"/ask": {"origins": "https://barosandu.github.io"}})  # Enabling CORS for the Flask app to allow requests from different origins
+CORS(app, resources={r"/ask": {
+    "origins": "https://barosandu.github.io"}})  # Enabling CORS for the Flask app to allow requests from different origins
 db.init_db()
 user_db.init_db()
 
@@ -102,9 +105,6 @@ CREATE TABLE IF NOT EXISTS lmessages (
     )"""
 
 
-
-
-
 # @app.route('/')
 # @app.route('/cqnchattutor')
 # def serve():
@@ -125,7 +125,7 @@ def cqn():
     db.load_datasource("test_embedding_basic")
     print("getting number of documents...")
     docs = db.datasource.get(include=[])
-    total_papers = len(docs["ids"]) 
+    total_papers = len(docs["ids"])
     pprint("total_papers", total_papers)
     print("generating welcoming message...")
 
@@ -145,10 +145,10 @@ def cqn():
                 </ul>
                 <p>Feel free to explore the CQN research database and ask any questions you may have. I'm here to assist you on your research journey!</p>    
     """
-    
+
     # welcoming_message = "" # disable to generate a new one using simple_gpt
     if welcoming_message == "":
-        welcoming_message =  time_it(tutor.simple_gpt)(f"""
+        welcoming_message = time_it(tutor.simple_gpt)(f"""
         You are embedded into the Center for Quantum Networks (CQN) website as an Interactive Research Assistant. 
         Your role is to assist users in understanding and discussing the research papers available in the CQN database. 
         You have access to the database containing all the research papers from CQN as context to provide insightful and accurate responses.
@@ -160,13 +160,14 @@ def cqn():
         - search papers related to a topic or subject
         - find similar papers to others
         - summarize articles
-        """, "Make an introductory message of yourself mentioning who you are, how many papers do you know, and what you can do to help users. Also, give examples of questions to related to what you can do. Do it in 200 words and generate the response in HTML",
-        models_to_try = ["gpt-3.5-turbo"])
-
+        """,
+                                                      "Make an introductory message of yourself mentioning who you are, how many papers do you know, and what you can do to help users. Also, give examples of questions to related to what you can do. Do it in 200 words and generate the response in HTML",
+                                                      models_to_try=["gpt-3.5-turbo"])
 
     return flask.render_template(
         "cqn.html", welcoming_message=welcoming_message
     )
+
 
 @app.route("/chattutor")
 def chattutor():
@@ -286,7 +287,6 @@ def ask_interpreter():
     return stream_with_context(generate())
 
 
-
 @app.route("/addtodb", methods=["POST", "GET"])
 def addtodb():
     data = request.json
@@ -328,6 +328,7 @@ def getfromdb():
             'Error, please <a href="/static/display_db.html">Go back</a>'
         )
 
+
 @app.route("/urlcrawler", methods=["POST", "GET"])
 @flask_login.login_required
 def urlcrawler():
@@ -343,11 +344,12 @@ def urlcrawler():
     url_r.MAX_LEVEL_PARQ = 2
     course_id = f'{uuid.uuid4()}'
     print(f"crawling... {url_r.max_number_of_urls}")
-    
+
     return Response(stream_with_context(
         url_r.new_spider_function(urltoapp=url, save_to_database=db, collection_name=collection_name,
                                   andu_db=messageDatabase, course_name=course_name, proffessor=proffessor,
                                   course_id=course_id, current_user=flask_login.current_user)))
+
 
 @app.route("/generate_bfs_array", methods=["POST", "GET"])
 def genbfsarray():
@@ -363,8 +365,9 @@ def genbfsarray():
     url_r.MAX_LEVEL_PARQ = 2
     course_id = f'{uuid.uuid4()}'
     print("crawling...")
-    
+
     return jsonify(url_r.get_bfs_array(url))
+
 
 @app.route("/getfromdbng", methods=["POST", "GET"])
 def getfromdbng():
@@ -433,7 +436,6 @@ def upload_data_to_process():
     return jsonify(resp)
 
 
-
 @app.route("/upload_data_from_drop", methods=["POST"])
 def upload_data_from_drop():
     try:
@@ -461,6 +463,7 @@ def upload_data_from_drop():
     except Exception as e:
         return jsonify({'message': 'error'})
 
+
 @app.route("/delete_uploaded_data", methods=["POST"])
 def delete_uploaded_data():
     data = request.json
@@ -468,18 +471,20 @@ def delete_uploaded_data():
     db.delete_datasource_chroma(collection_name)
     return jsonify({"deleted": collection_name})
 
+
 @app.route("/delete_doc", methods=["POST"])
 @flask_login.login_required
 def delete_doc():
     data = request.json
     collection_name = data["collection"]
     doc_name = data["doc"]
-    
+
     collection = db.client.get_collection(name=collection_name)
     print(collection)
     collection.delete(where={'from_doc': doc_name})
     print("deleted")
     return jsonify({"deleted": doc_name, "from_collection": collection_name})
+
 
 @app.route("/add_doc_tosection", methods=["POST"])
 @flask_login.login_required
@@ -491,6 +496,7 @@ def add_fromdoc_tosection():
 
     messageDatabase.update_section_add_fromdoc(section_id=section_id, from_doc=url_to_add)
     return jsonify({"added": url_to_add, "to_collection": collection_name})
+
 
 @app.route("/get_section", methods=["POST"])
 def get_section():
@@ -525,14 +531,12 @@ def upload_site_url():
             if docs == None:
                 continue
             if len(docs) > 0:
-                resp["docs"] = resp["docs"] + [navn+"/_already_exists"]
+                resp["docs"] = resp["docs"] + [navn + "/_already_exists"]
                 continue
 
-            
             file = FileStorage(stream=io.BytesIO(bytes(site_text, 'utf-8')), name=navn)
             f_f = (file, navn)
-        
-            
+
             doc = Doc(docname=f_f[1], citation="", dockey=f_f[1])
             texts = parse_plaintext_file_read(f_f[0], doc=doc, chunk_chars=2000, overlap=100)
             db.load_datasource(collection_name)
@@ -541,27 +545,48 @@ def upload_site_url():
         return jsonify(resp)
     except Exception as e:
         return jsonify({'message': 'error'})
-    
-    
+
+
 # ------------ LOGIN ------------
 import flask_login
 import bcrypt
+
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
+
+
+# def generate_token(email):
+#     serializer = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+#     return serializer.dumps(email, salt=app.config["SECURITY_PASSWORD_SALT"])
+#
+#
+# def confirm_token(token, expiration=3600):
+#     serializer = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+#     try:
+#         email = serializer.loads(
+#             token, salt=app.config["SECURITY_PASSWORD_SALT"], max_age=expiration
+#         )
+#         return email
+#     except Exception:
+#         return False
+
 
 class User(flask_login.UserMixin):
     username = 'NO FACE'
     email = 'NO NAME'
     password_hash = 'NO NUMBER'
+
     def get_id(self):
-           return self.username
+        return self.username
+
     @property
     def password(self):
         raise AttributeError('password not readable')
+
     @password.setter
     def password(self, password):
         self.password_hash = bcrypt.hashpw(password.encode('utf-8', 'ignore'), bcrypt.gensalt())
-    
+
     def verify_password(self, p):
         print(self.password_hash, bcrypt.hashpw(p.encode('utf8', 'ignore'), bcrypt.gensalt()).decode('utf-8'))
         print(self.password_hash, bcrypt.hashpw(p.encode('utf8', 'ignore'), bcrypt.gensalt()).decode('utf-8'))
@@ -572,7 +597,7 @@ class User(flask_login.UserMixin):
 @login_manager.user_loader
 def user_loader(username):
     users = messageDatabase.get_user(username=username)
-    
+
     if len(users) == 0:
         return
     user = User()
@@ -587,9 +612,9 @@ def user_loader(username):
 @login_manager.request_loader
 def request_loader(request):
     username = request.form.get('username')
-    
+
     users = messageDatabase.get_user(username=username)
-    
+
     if len(users) == 0:
         return
 
@@ -605,12 +630,44 @@ def request_loader(request):
 def register_user():
     if flask.request.method == 'GET':
         return '''
-               <form action='register' method='POST'>
-                <input type='text' name='username' id='username' placeholder='username'/>
-                <input type='text' name='email' id='email' placeholder='email'/>
-                <input type='password' name='password' id='password' placeholder='password'/>
-                <input type='submit' name='submit'/>
+        
+        <style>
+                    
+                        .aot {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            height: 100vh;
+                        }
+                        .iaot {
+                            color: black;
+                            background-color: #f1f1f1;
+                            box-shadow: -8px -6px 15px 0 #fff, 6px 8px 15px 0 rgba(0, 0, 0, 0.15);
+                            margin: 10px;
+                            border-radius: 20px;
+                            padding: 20px 50px;
+                            border: 1px solid rgba(0,0,0,0.2);
+                        }
+                        
+                        .aot .iaot:hover {
+                            box-shadow: inset 8px 6px 15px rgba(0, 0, 0, 0.15),
+                                    inset -6px -8px 15px #fff;
+                        }
+                        
+                        
+                        body {
+                            background-color: #f1f1f1
+                        }
+                    </style>
+                    <body>
+               <form class="aot" action='register' method='POST'>
+                <input class="iaot" type='text' name='username' id='username' placeholder='username'/>
+                <input class="iaot" type='text' name='email' id='email' placeholder='email'/>
+                <input class="iaot"type='password' name='password' id='password' placeholder='password'/>
+                <input class="iaot" type='submit' name='submit'/>
                </form>
+               </body>
                '''
     username = flask.request.form['username']
     email = flask.request.form['email']
@@ -629,18 +686,51 @@ def register_user():
     user.username = username
     print(user.password_hash)
     messageDatabase.insert_user(user)
-    return f'User {user} inserted'
-    
+    return f'User {user} inserted, please <a href="/login">Login</a>'
+
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if flask.request.method == 'GET':
         return '''
-               <form action='login' method='POST'>
-                <input type='text' name='username' id='username' placeholder='username'/>
-                <input type='password' name='password' id='password' placeholder='password'/>
-                <input type='submit' name='submit'/>
+                <head>
+                    <style>
+                    
+                        .aot {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            height: 100vh;
+                        }
+                        .iaot {
+                            color: black;
+                            background-color: #f1f1f1;
+                            box-shadow: -8px -6px 15px 0 #fff, 6px 8px 15px 0 rgba(0, 0, 0, 0.15);
+                            margin: 10px;
+                            border-radius: 20px;
+                            padding: 20px 50px;
+                            border: 1px solid rgba(0,0,0,0.2);
+                        }
+                        
+                        .aot .iaot:hover {
+                            box-shadow: inset 8px 6px 15px rgba(0, 0, 0, 0.15),
+                                    inset -6px -8px 15px #fff;
+                        }
+                        
+                        
+                        body {
+                            background-color: #f1f1f1
+                        }
+                    </style>
+                </head>
+                <body>
+               <form class="aot" action='login' method='POST'>
+                <input class="iaot" type='text' name='username' id='username' placeholder='username'/>
+                <input class="iaot" type='password' name='password' id='password' placeholder='password'/>
+                <input class="iaot" type='submit' name='submit'/>
                </form>
+               </body>
                '''
 
     username = flask.request.form['username']
@@ -659,28 +749,34 @@ def login():
         return flask.redirect(flask.url_for('protected'))
     return 'Bad login'
 
+
 @app.route('/protected')
 @flask_login.login_required
 def protected():
-    return 'Logged in as: ' + flask_login.current_user.username
+    return f'Logged in as: {flask_login.current_user.username}, <a href="/">Return</a>'
+
 
 @app.route('/logout')
 def logout():
     flask_login.logout_user()
     return 'Logged out'
 
+
 @login_manager.unauthorized_handler
 def unauthorized_handler():
     return 'Unauthorized', 401
+
 
 # ----------- ANGULAR -----------
 __angular_paths = []
 __angular_default_path = "index.html"
 __root = app.static_folder
 
+
 @app.errorhandler(404)
 def not_found_error(error):
     return send_from_directory(__root, "index.html")
+
 
 print("Running @ ", __root)
 
@@ -693,6 +789,7 @@ for root, subdirs, files in os.walk(__root):
         __angular_paths.append(relativePath)
     print("Angular paths: [ ", __angular_paths, " ]")
 
+
 @app.route("/getuser", methods=['POST'])
 @flask_login.login_required
 def getuser():
@@ -700,6 +797,7 @@ def getuser():
     return jsonify({
         'username': flask_login.current_user.username
     })
+
 
 @app.route("/users/<username>/mycourses", methods=['POST'])
 @flask_login.login_required
@@ -710,6 +808,7 @@ def getusercourses(username):
     return jsonify({
         'courses': courses
     })
+
 
 @app.route("/users/<username>/courses/<course>", methods=['POST'])
 @flask_login.login_required
@@ -725,7 +824,7 @@ def getusercoursessections(username, course):
 @app.route('/scrape/<path:path>')
 @app.route('/scrape', defaults={'path': ''})
 @flask_login.login_required
-def angular_lr(path):    
+def angular_lr(path):
     if path not in __angular_paths:
         path = __angular_default_path
     return send_from_directory(__root, path)
@@ -734,10 +833,11 @@ def angular_lr(path):
 # Special trick to capture all remaining routes
 @app.route('/<path:path>')
 @app.route('/', defaults={'path': ''})
-def angular(path):    
+def angular(path):
     if path not in __angular_paths:
         path = __angular_default_path
     return send_from_directory(__root, path)
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)  # Running the app in debug mode

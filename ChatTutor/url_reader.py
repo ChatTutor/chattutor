@@ -225,7 +225,7 @@ class URLReaderCls:
 
         # add to andu_db
         print(f"adding to andudb {section_id}")
-        andu_db.insert_section(section_id=section_id, pulling_from=section_id)
+        andu_db.insert_section(section_id=section_id, pulling_from=section_id, sectionurl=strv)
         andu_db.establish_course_section_relationship(section_id=section_id, course_id=course_id)
         print("added to andubd")
         lock.acquire()

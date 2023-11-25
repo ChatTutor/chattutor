@@ -103,6 +103,12 @@ class MessageDB:
         )
     """
 
+
+    alter_section_Table = """
+        ALTER TABLE lsections
+        MODIFY sectionurl VARCHAR(256);
+    """
+
     def __init__(self, host, user, password, database, statistics_database):
         self.host = host
         self.user = user
@@ -127,7 +133,7 @@ class MessageDB:
     def insert_user_to_course(self, username, course_id):
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
-            cur.execute(f"INSERT IGNORE INTO ruserscourses (username, course_id) VALUES ('{username}', '{course_id}')")
+            cur.execute(f"INSERT INTO ruserscourses (username, course_id) VALUES ('{username}', '{course_id}') ON DUPLICATE KEY UPDATE username='{username}', course_id='{course_id}'")
             con.commit()
             
     def get_user_courses(self, username):
@@ -207,19 +213,20 @@ class MessageDB:
     def insert_course(self, course_id, name, proffessor, mainpage, collectionname):
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
-            cur.execute(f"INSERT IGNORE INTO lcourses (course_id, name, proffessor, mainpage, collectionname) VALUES ('{course_id}', '{name}', '{proffessor}', '{mainpage}', '{collectionname}')")
+            cur.execute(f"INSERT INTO lcourses (course_id, name, proffessor, mainpage, collectionname) VALUES ('{course_id}', '{name}', '{proffessor}', '{mainpage}', '{collectionname}') ON DUPLICATE KEY UPDATE course_id='{course_id}', name='{name}', proffessor='{proffessor}', mainpage='{mainpage}', collectionname='{collectionname}'")
             con.commit()
 
-    def insert_section(self, section_id, pulling_from):
+    def insert_section(self, section_id, pulling_from, sectionurl):
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
-            cur.execute(f"INSERT IGNORE INTO lsections (section_id, pulling_from) VALUES ('{section_id}', '{pulling_from}')")
+            cur.execute(f"INSERT INTO lsections (section_id, pulling_from, sectionurl) VALUES ('{section_id}', '{pulling_from}', '{sectionurl}') ON DUPLICATE KEY UPDATE section_id='{section_id}', pulling_from='{pulling_from}', sectionurl='{sectionurl}'")
+
             con.commit()
 
     def establish_course_section_relationship(self, section_id, course_id):
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
-            cur.execute(f"INSERT IGNORE INTO rsectionscourses (section_id, course_id) VALUES ('{section_id}', '{course_id}')")
+            cur.execute(f"INSERT INTO rsectionscourses (section_id, course_id) VALUES ('{section_id}', '{course_id}') ON DUPLICATE KEY UPDATE section_id='{section_id}', course_id='{course_id}'")
             con.commit()
 
     def update_section_add_fromdoc(self, section_id, from_doc):
