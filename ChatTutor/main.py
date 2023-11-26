@@ -544,6 +544,7 @@ def upload_site_url():
             resp["docs"] = resp["docs"] + [navn]
         return jsonify(resp)
     except Exception as e:
+        print(e)
         return jsonify({'message': 'error'})
 
 
@@ -632,41 +633,68 @@ def register_user():
         return '''
         
         <style>
-                    
+                        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=block');
+                        
+                        * {
+                            font-family: 'Montserrat', sans-serif;
+                        }
+                        
+                        
                         .aot {
                             display: flex;
                             flex-direction: column;
                             align-items: center;
                             justify-content: center;
-                            height: 100vh;
+                    
                         }
                         .iaot {
-                            color: black;
-                            background-color: #f1f1f1;
-                            box-shadow: -8px -6px 15px 0 #fff, 6px 8px 15px 0 rgba(0, 0, 0, 0.15);
+                            color: white;
+                            background-color: #232323;
                             margin: 10px;
                             border-radius: 20px;
                             padding: 20px 50px;
                             border: 1px solid rgba(0,0,0,0.2);
                         }
                         
+                        .iaot::placeholder {
+                            color: white !important;
+                        }
+                        
                         .aot .iaot:hover {
-                            box-shadow: inset 8px 6px 15px rgba(0, 0, 0, 0.15),
-                                    inset -6px -8px 15px #fff;
+                            box-shadow: 8px 6px 15px rgba(0, 0, 0, 0.15)
                         }
                         
                         
+                        .all-form {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            align-items: center;
+                            width: 100vw;
+                            height: 100vh;
+                        }
+                        
                         body {
-                            background-color: #f1f1f1
+                            background-image: linear-gradient(45deg, #2c7de7, #3cb2ff);
+                            width: 100%;
+                            height: calc(100vh - 0px);
+                        }
+                        
+                        h2 {
+                            color: white;
+                            font-weight: bold;
                         }
                     </style>
                     <body>
+                    <div class="all-form">
+                    <h2>Register:</h2>
                <form class="aot" action='register' method='POST'>
                 <input class="iaot" type='text' name='username' id='username' placeholder='username'/>
                 <input class="iaot" type='text' name='email' id='email' placeholder='email'/>
                 <input class="iaot"type='password' name='password' id='password' placeholder='password'/>
                 <input class="iaot" type='submit' name='submit'/>
                </form>
+               </div>
                </body>
                '''
     username = flask.request.form['username']
@@ -695,41 +723,68 @@ def login():
         return '''
                 <head>
                     <style>
-                    
+                        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=block');
+                        
+                        * {
+                            font-family: 'Montserrat', sans-serif;
+                        }
+                        
+                        
                         .aot {
                             display: flex;
                             flex-direction: column;
                             align-items: center;
                             justify-content: center;
-                            height: 100vh;
+                    
                         }
                         .iaot {
-                            color: black;
-                            background-color: #f1f1f1;
-                            box-shadow: -8px -6px 15px 0 #fff, 6px 8px 15px 0 rgba(0, 0, 0, 0.15);
+                            color: white;
+                            background-color: #232323;
                             margin: 10px;
                             border-radius: 20px;
                             padding: 20px 50px;
                             border: 1px solid rgba(0,0,0,0.2);
                         }
                         
+                        .iaot::placeholder {
+                            color: white !important;
+                        }
+                        
                         .aot .iaot:hover {
-                            box-shadow: inset 8px 6px 15px rgba(0, 0, 0, 0.15),
-                                    inset -6px -8px 15px #fff;
+                            box-shadow: 8px 6px 15px rgba(0, 0, 0, 0.15)
                         }
                         
                         
+                        .all-form {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            align-items: center;
+                            width: 100vw;
+                            height: 100vh;
+                        }
+                        
                         body {
-                            background-color: #f1f1f1
+                            background-image: linear-gradient(45deg, #2c7de7, #3cb2ff);
+                            width: 100%;
+                            height: calc(100vh - 0px);
+                        }
+                        
+                        h2 {
+                            color: white;
+                            font-weight: bold;
                         }
                     </style>
                 </head>
                 <body>
-               <form class="aot" action='login' method='POST'>
-                <input class="iaot" type='text' name='username' id='username' placeholder='username'/>
-                <input class="iaot" type='password' name='password' id='password' placeholder='password'/>
-                <input class="iaot" type='submit' name='submit'/>
-               </form>
+                <div class="all-form">
+                    <h2>Login:</h2>
+                   <form class="aot" action='login' method='POST'>
+                    <input class="iaot" type='text' name='username' id='username' placeholder='username'/>
+                    <input class="iaot" type='password' name='password' id='password' placeholder='password'/>
+                    <input class="iaot" type='submit' name='submit'/>
+                   </form>
+               <div>
                </body>
                '''
 
@@ -813,6 +868,17 @@ def getusercourses(username):
 @app.route("/users/<username>/courses/<course>", methods=['POST'])
 @flask_login.login_required
 def getusercoursessections(username, course):
+    if username != flask_login.current_user.username:
+        return 'Not allowed'
+    sections = messageDatabase.get_courses_sections_format(course_id=course)
+    return jsonify({
+        'sections': sections
+    })
+
+
+@app.route("/users/<username>/coursesv1/<course>", methods=['POST'])
+@flask_login.login_required
+def getusercoursessectionsv1(username, course):
     if username != flask_login.current_user.username:
         return 'Not allowed'
     sections = messageDatabase.get_courses_sections(course_id=course)

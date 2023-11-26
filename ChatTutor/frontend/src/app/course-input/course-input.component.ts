@@ -54,7 +54,7 @@ export class CourseInputComponent {
     }
 
     async submitUrlToParse() {
-        let data = JSON.stringify({url_to_parse: this.urltoparse, collection_name: this.collectionname, coursename: this.course_name, proffessor: this.proffessor})
+        let data = JSON.stringify({url_to_parse: this.urltoparse, collection_name: this.collectionname, course_name: this.course_name, coursename: this.course_name, proffessor: this.proffessor})
         let response = await fetch('/generate_bfs_array', {method: 'POST', headers:{'Content-Type':'application/json'}, body: data})
         const urls = await response.json()
         console.log("Generated urls: ", urls)
@@ -62,7 +62,7 @@ export class CourseInputComponent {
     }
 
     async submitUrlScrape() {
-        let data = JSON.stringify({url_to_parse: this.urltoparse, collection_name: this.collectionname, coursename: this.course_name, proffessor: this.proffessor})
+        let data = JSON.stringify({url_to_parse: this.urltoparse, collection_name: this.collectionname, course_name: this.course_name, coursename: this.course_name, proffessor: this.proffessor})
         let response = await fetch('/urlcrawler', {method: 'POST', headers:{'Content-Type':'application/json'}, body: data})
         const reader = response.body!.getReader()
         let fulldata = ''

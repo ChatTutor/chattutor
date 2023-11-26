@@ -146,9 +146,33 @@ class MessageDB:
     def get_courses_sections(self, course_id):
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
-            cur.execute(f"SELECT * FROM rsectionscourses WHERE course_id = '{course_id}'")
+            cur.execute(f"SELECT * FROM lsections WHERE section_id IN (SELECT section_id FROM rsectionscourses WHERE course_id = '{course_id}')")
             sections = cur.fetchall()
+            print(sections)
             return sections
+
+
+    def get_courses_sections_format(self, course_id):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"SELECT * FROM lsections WHERE section_id IN (SELECT section_id FROM rsectionscourses WHERE course_id = '{course_id}')")
+            sections = cur.fetchall()
+
+
+            cur.execute(f"SELECT name FROM lcourses WHERE course_id='{course_id}'")
+            names = cur.fetchall()
+
+            # print(names)
+            # print(sections)
+
+            dic = [{
+                'section_id': section['section_id'],
+                'course_id': course_id,
+                'section_url': section['sectionurl'],
+                'course_chroma_collection': names[0]['name']
+            } for section in sections]
+
+            return dic
     
     def connect_to_messages_database(self):
         """Function that connects to the database"""

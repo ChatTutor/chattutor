@@ -1,22 +1,77 @@
 /* Desktop Styles */
 
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=block');
 
+* {
+    font-family: 'Montserrat', sans-serif;
+}
 .section {
     width: calc(100% - 40px);
     font-weight: 700;
     font-size: 20px;
     text-align: center;
     padding: 20px;
-    background-color: rgb(241, 241, 241) !important;
+    display: flex;
+    flex-direction: row-reverse;
+
 
 }
 
-.menu {
-    background-color: white;
-    box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+.fl-right {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 
+}
+
+
+
+.fl-right a {
+    color: white;
+}
+
+.titl h1 {
+    font-size: 100px;
+    color: white !important;
+    line-height: 0px;
+}
+
+.links {
+    display: flex;
+    flex-direction: row;
+}
+
+.links div {
+    padding: 10px;
+}
+
+.links div a {
+    color: white;
+}
+
+.main-title {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: linear-gradient(45deg, #2c7de7, #3cb2ff);
+    width: 100%;
+    height: calc(100vh - 0px);
+
+    /* Set the background size and repeat properties. */
+
+}
+
+.fl-right a {
+    color: white;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.menu {
+    background-color: transparent;
     line-height: 80px;
-    position: sticky;
+    position: absolute;
     top: 0;
 }
 
@@ -56,12 +111,12 @@
     margin: 10px;
     border-radius: 20px;
     padding: 20px 50px;
-    border: 1px solid rgba(0,0,0,0.2);
+    border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .all-of-them div:hover {
     box-shadow: inset 8px 6px 15px rgba(0, 0, 0, 0.15),
-            inset -6px -8px 15px #fff;
+    inset -6px -8px 15px #fff;
 }
 
 .sign-up {

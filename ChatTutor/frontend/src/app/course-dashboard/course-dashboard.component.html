@@ -1,17 +1,12 @@
-<div>
-    <div *ngFor="let section of sections">
-        <div>
-            {{section["section_id"]}}
-            {{section["pulling_from"]}}
-        </div>
+<div class="acc-center">
+
+    <div class="accordeon">
+        <mat-accordion>
+            <div *ngFor="let section of sections">
+                <app-url-label [url_name]="section['section_url']" [section_info]="section"
+                               (onRemove)="removeFromCollection($event)"
+                               [isDeleting]="statusDel(section)"></app-url-label>
+            </div>
+        </mat-accordion>
     </div>
-    <!-- <mat-accordion>
-        <div *ngFor="let section of sections">
-            <app-url-label [url_name]="section['section_id']" [section_info]="url"
-                (onRemove)="removeFromCollection($event)" [isDeleting]="statusDel(url)"></app-url-label>
-        </div>
-        <div *ngIf="!is_ready">
-            <mat-spinner [diameter]="15"></mat-spinner>
-        </div>
-    </mat-accordion> -->
 </div>

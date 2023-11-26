@@ -1,7 +1,24 @@
 .table-container{
-    width: 99vw !important;
+    width: calc(100vw - 20px) !important;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.table-all {
+     width: calc(100vw - 0px) !important;
+    min-height: calc(100vh - 0px) !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: linear-gradient(45deg, #2c7de7, #3cb2ff);
+}
+
+.spinner {
+    margin: 10px;
+    padding: 5px;
+    background-color: white;
+    border-radius: 20px;
 }
