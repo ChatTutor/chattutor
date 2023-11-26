@@ -2,48 +2,14 @@
     /* position: fixed;
     top: 10px;
     right: 10px; */
-    /* max-width: 80%; */
-    margin: 5px;
-}
-
-.docheader, .docheader * {
-    word-break:break-all;
+    /* max-width: 18%; */
 }
 
 .docheader mat-card {
-    /* box-shadow: none !important; */
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px !important;
+    box-shadow: none !important;
     border-radius: 20px;
-}
-
-.docheader mat-card-header {
-    cursor: pointer;
-    user-select: none;
 }
 
 .docheader mat-card-option {
     margin: 10px;
-}
-
-.docheader *{
-    transition: all 0.2s ease;
-}
-
-.reduced mat-card-content{
-    max-height: 0px;
-    overflow: hidden;
-    transition: all 0.2s ease;
-
-}
-.reduced mat-card-actions{
-    min-height: 5px;
-    overflow: hidden;
-    transition: all 0.2s ease;
-
-}
-
-.reduced button {
-    display: none;
-    transition: all 0.2s ease;
-
 }
