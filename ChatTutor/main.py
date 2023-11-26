@@ -853,6 +853,16 @@ def getuser():
         'username': flask_login.current_user.username
     })
 
+@app.route("/isloggedin", methods=['POST'])
+def isloggedin():
+    print(flask_login.current_user)
+    if flask_login.current_user.is_authenticated:
+        return jsonify({
+            'loggedin': True
+        })
+    return jsonify({
+            'loggedin': False
+        })
 
 @app.route("/users/<username>/mycourses", methods=['POST'])
 @flask_login.login_required

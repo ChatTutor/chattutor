@@ -36,6 +36,7 @@ import {MatStepperModule} from '@angular/material/stepper';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 import { CourseDashboardComponent } from './course-dashboard/course-dashboard.component';
+import { NavbarComponent } from './navbar/navbar.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +55,8 @@ import { CourseDashboardComponent } from './course-dashboard/course-dashboard.co
     CourseInputComponent,
     UrlLabelComponent,
     UserDashboardComponent,
-    CourseDashboardComponent,],
+    CourseDashboardComponent,
+    NavbarComponent,],
     imports: [
         BrowserModule,
         AppRoutingModule,

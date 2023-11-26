@@ -41,19 +41,12 @@
     flex-direction: row;
 }
 
-
-
 .links div {
     padding: 10px;
 }
 
 .links div a {
     color: white;
-}
-
-.links div a:hover {
-    color: white;
-    opacity: 0.8;
 }
 
 .main-title {
@@ -186,8 +179,4 @@ a:visited {
     .feature-3 {
         order: 2;
     }
-}
-
-.titl{
-    color: white;
 }

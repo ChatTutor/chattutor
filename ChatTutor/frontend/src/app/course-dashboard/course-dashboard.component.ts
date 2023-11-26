@@ -12,12 +12,14 @@ export class CourseDashboardComponent implements OnInit {
     sections: any = []
     username: string
     process_of: any = {}
-
+    course_name: string = '[]'
+    loading: boolean = true
 
     constructor(private route: ActivatedRoute) {
     }
 
     ngOnInit(): void {
+        this.loading = true
         console.log(this.route.snapshot.paramMap)
         this.course_id = this.route.snapshot.paramMap.get('id')
         console.log(this.course_id)
@@ -31,7 +33,9 @@ export class CourseDashboardComponent implements OnInit {
                     resp => resp.json()
                 ).then(data => {
                     this.sections = data["sections"]
+                    this.course_name = this.sections[0]['course_chroma_collection']
                     console.log('sections:',this.sections)
+                    this.loading = false
                 })
             })
     }
