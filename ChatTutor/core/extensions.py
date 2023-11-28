@@ -1,5 +1,5 @@
 """
-    Defines which database is used. One can choose between chroma and deeplake
+    Defines which database is used. 
 """
 
 from core.vectordatabase import VectorDatabase

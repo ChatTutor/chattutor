@@ -72,7 +72,7 @@ Open a web browser and navigate to http://127.0.0.1:5000/ to interact with the a
 ### 3. **Database Interaction**
    - **File**: `database.py`
      - Defines the `VectorDatabase` class.
-     - Responsible for interacting with different database providers like Chroma and Deeplake.
+     - Responsible for interacting with different database providers like Chroma.
      - Handles loading of data sources, adding texts, and performing queries.
    -  **File**: `definitions.py`
      - Defines basic classes for parsing the dataset

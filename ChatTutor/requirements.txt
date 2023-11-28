@@ -1,5 +1,4 @@
 chromadb==0.4.14
-deeplake==3.6.15
 Flask==2.3.2
 Flask_Cors==4.0.0
 openai==0.28.1

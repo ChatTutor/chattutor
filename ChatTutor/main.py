@@ -37,15 +37,10 @@ from core.definitions import Doc
 import io
 import uuid
 from werkzeug.datastructures import FileStorage
-# import markdown
-
-# from vectordatabase import VectorDatabase
 
 interpreter.auto_run = True
 from core.openai_tools import load_api_keys
 load_api_keys()
-
-
 
 app = Flask(__name__, static_folder='frontend/dist/frontend/', static_url_path='')
 CORS(app, resources={r"/ask": {"origins": "https://barosandu.github.io"}})  # Enabling CORS for the Flask app to allow requests from different origins
@@ -98,7 +93,6 @@ CREATE TABLE IF NOT EXISTS lmessages (
     chat_key integer NOT NULL,
     FOREIGN KEY (chat_key) REFERENCES lchats (chat_id)
     )"""
-
 
 def initialize_ldatabase():
     """Creates the tables if they don't exist"""
@@ -373,11 +367,12 @@ def exesql():
 
 @app.route("/compile_chroma_db", methods=["POST"])
 def compile_chroma_db():
+    from core.loader import init_chroma_db
     token = request.headers.get("Authorization")
     if token != openai.api_key:
         abort(401)  # Unauthorized
 
-    loader.init_chroma_db()
+    init_chroma_db()
     return "Chroma db created successfully", 200
 
 
