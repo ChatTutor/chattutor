@@ -106,16 +106,6 @@ def initialize_ldatabase():
 
 initialize_ldatabase()
 
-
-# @app.route('/')
-# @app.route('/cqnchattutor')
-# def serve():
-#     print("Hey")
-#     return render_template(f"{app.static_folder}/index.html")
-
-
-
-
 @app.route("/cqn")
 def cqn():
     """
