@@ -351,20 +351,6 @@ def getfromdbng():
     else:
         return jsonify({'message': 'error'})
 
-
-@app.route("/exesql", methods=["POST", "GET"])
-def exesql():
-    data = request.json
-    username = data["lusername"]
-    passcode = data["lpassword"]
-    sqlexec = data["lexesql"]
-    if username == "root" and passcode == "admin":
-        messages_arr = messageDatabase.execute_sql(sqlexec)
-        return Response(f"{messages_arr}", 200)
-    else:
-        return Response("wrong password", 404)
-
-
 @app.route("/compile_chroma_db", methods=["POST"])
 def compile_chroma_db():
     from core.loader import init_chroma_db
