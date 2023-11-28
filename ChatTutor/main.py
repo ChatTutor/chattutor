@@ -376,37 +376,6 @@ def compile_chroma_db():
     return "Chroma db created successfully", 200
 
 
-@app.route("/upload_data_to_process", methods=["POST"])
-def upload_data_to_process():
-    file_store_list: List[FileStorage]
-    file_store_list = request.files.getlist("file")
-    print("number of files", len(file_store_list))
-    
-    desc = request.form.get("name", "").replace(" ", "-")
-    if len(desc) == 0:
-        desc = "untitled" + "-" + get_random_string(5)
-    resp = {"collection_name": False}
-    collection_name = request.form.get("collection_name", "")
-    
-    if file_store_list[0].filename != "":
-        array_of_content_filename_tuple = []
-        for f in file_store_list:
-            print(f"Extracted file", f.filename)
-            array_of_content_filename_tuple.extend( extract_file(f) )
-
-        texts = read_array_of_content_filename_tuple(array_of_content_filename_tuple)
-        # Generating the collection name based on the name provided by user, a random string and the current
-        # date formatted with punctuation replaced
-        collection_name = generate_unique_name(desc)
-
-        db.load_datasource(collection_name)
-        db.add_texts(texts)
-        resp["collection_name"] = collection_name
-
-    return jsonify(resp)
-
-
-
 @app.route("/upload_data_from_drop", methods=["POST"])
 def upload_data_from_drop():
     try:
