@@ -69,22 +69,6 @@ CREATE TABLE IF NOT EXISTS lchats (
     chat_id text PRIMARY KEY
     )"""
 
-
-def connect_to_database():
-    """Function that connects to the database"""
-    # for mysql server
-    # connection = pymysql.connect(
-    #     host='localhost',
-    #     user='root',
-    #     password='password',
-    #     db='mydatabase',
-    #     charset='utf8mb4',
-    #     cursorclass=pymysql.cursors.DictCursor
-    # )
-    # return connection
-    return sqlite3.connect("chat_store.sqlite3")
-
-
 messages_table_Sql = """
 CREATE TABLE IF NOT EXISTS lmessages (
     mes_id text PRIMARY KEY,
