@@ -72,7 +72,6 @@ export class ChatWindowComponent implements OnInit{
         this.setStatus(WStatus.LoadingMessage)
         let args: ChatTutor = {
             conversation: this.messages,
-            selectedModel: "gpt-3.5-turbo-16k",
             multiple: true,
         }
 

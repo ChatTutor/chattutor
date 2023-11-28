@@ -1,4 +1,3 @@
-from typing import List
 import flask
 from flask import Flask, request, redirect, send_from_directory, url_for, render_template
 from flask import stream_with_context, Response, abort, jsonify
@@ -39,7 +38,7 @@ import uuid
 from werkzeug.datastructures import FileStorage
 
 interpreter.auto_run = True
-from core.openai_tools import load_api_keys
+from core.openai_tools import get_default_model, load_api_keys
 load_api_keys()
 
 app = Flask(__name__, static_folder='frontend/dist/frontend/', static_url_path='')
@@ -54,6 +53,7 @@ messageDatabase = MessageDB(
     database="chatmsg",
     statistics_database="sessiondat",
 )
+
 
 # Only for deleting the db when you first access the site. Can be used for debugging
 presetTables1 = """
@@ -107,11 +107,11 @@ def ask():
     collection_desc = data.get("description")
     multiple = data.get("multiple")
     from_doc = data.get("from_doc")
-    selected_model = data.get("selectedModel")
-    if selected_model == None:
-        selected_model = 'gpt-3.5-turbo-16k'
-    print('SELECTED MODEL:', selected_model)
-    print(collection_name)
+    selected_model = data.get("selected_model", get_default_model())
+    print("-"*100)
+    print("beginning of ask")
+    pprint("selected_model", selected_model)
+    pprint("collection_name", collection_name)
     # Logging whether the request is specific to a document or can be from any document
     chattutor = Tutor(db)
     if collection_name and collection_name != []:
@@ -154,12 +154,11 @@ def ask_interpreter():
     collection_desc = data.get("description")
     multiple = data.get("multiple")
     from_doc = data.get("from_doc")
-    selected_model = data.get("selectedModel")
-    if selected_model == None:
-        # selected_model = 'gpt-3.5-turbo-16k'
-        selected_model = "gpt-4"
-    print("SELECTED MODEL:", selected_model)
-    print(collection_name)
+    selected_model = data.get("selected_model", get_default_model())
+    print("-"*100)
+    print("beginning of ask_interpreter")
+    pprint("selected_model", selected_model)
+    pprint("collection_name", collection_name)
     # Logging whether the request is specific to a document or can be from any document
     chattutor = Tutor(db)
     if collection_name:
@@ -249,7 +248,6 @@ def compile_chroma_db():
 
     init_chroma_db()
     return "Chroma db created successfully", 200
-
 
 @app.route("/upload_data_from_drop", methods=["POST"])
 def upload_data_from_drop():

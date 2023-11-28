@@ -13,7 +13,7 @@ import tiktoken
 import utils.config as config
 
 from core.extensions import db
-from core.openai_tools import load_api_keys
+from core.openai_tools import load_api_keys, simple_gpt
 import openai
 
 def print_summary_medium():
@@ -30,34 +30,11 @@ def print_summary_basic():
     docs = db.datasource.get(limit=10)
     pprint(docs)
 
-
-def simple_gpt(system_message, user_message):
-    models_to_try = ["gpt-3.5-turbo-16k", "gpt-3.5-turbo"]
-    for model_to_try in models_to_try:
-        try:
-            response = openai.ChatCompletion.create(
-                model=model_to_try,
-                messages=[
-                    {"role": "system", "content": system_message},
-                    {"role": "user", "content": user_message},
-                ],
-                temperature=1,
-                frequency_penalty=0.0,
-                presence_penalty=0.0,
-                # stream=True,
-            )
-            return response.choices[0].message.content
-        except Exception as e:
-            print(red(model_to_try), "FAILED!")
-            if model_to_try == models_to_try[-1]: raise(e)
-
-
 def reduce_synopsis(synopsis, to_number_of_tokens):
     answer = simple_gpt(
         "You are a bot capable of summarize scientific articles", 
         rf"Please, can you summarize the following text returning no more than {to_number_of_tokens} tokens? The text to summarize is: {synopsis}")
     return answer
-
 
 def get_db_summary():
     db_summary_path = join(pathlib.Path(__file__).parent.parent.resolve(), "db_summary", "test_embedding.txt")

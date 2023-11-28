@@ -1,4 +1,5 @@
 from copy import deepcopy
+from core.openai_tools import get_default_model, get_models, simple_gpt
 import openai
 import tiktoken
 import time
@@ -94,7 +95,7 @@ class Tutor:
 
     def get_paper_titles_from_prompt(self, prompt):
         # print("entering get_type_of_question")
-        paper_titles_from_prompt = time_it(self.simple_gpt, "required_level_of_information")(
+        paper_titles_from_prompt = time_it(simple_gpt, "required_level_of_information")(
             f"""
            You will get a question, or a summary of a conversation between a bot and a user. 
            Your goal is identify if one or more scientific papers or research articles are mentioned in the conversation, and if yes, then to extract the article titles.
@@ -112,7 +113,7 @@ class Tutor:
             respond_with = "Explain why"
             
         # print("entering get_type_of_question")
-        required_level_of_information = time_it(self.simple_gpt, "required_level_of_information")(
+        required_level_of_information = time_it(simple_gpt, "required_level_of_information")(
             f"""
             There is a database of papers, containing:
                 - "paper title"
@@ -204,7 +205,7 @@ class Tutor:
         #     """,
         #     f"If the usere were to ask this: '{prompt}', would you clasify it as a message that refers to above messages from context? Respond only with YES or NO!",
         # )
-        is_furthering_message = time_it(self.simple_gpt, "is_furthering_message")(
+        is_furthering_message = time_it(simple_gpt, "is_furthering_message")(
             f"""
             You are a model that detects weather a user given message refers to above messages and takes context from them, either by asking about further explanations on a topic discussed previously, or on a topic you just provided answer to. 
             Respond ONLY with YES or NO.
@@ -230,7 +231,7 @@ class Tutor:
         
         if is_furthering_message:
             pprint("getting contex...")
-            get_furthering_message = time_it(self.simple_gpt, "get_furthering_message")(
+            get_furthering_message = time_it(simple_gpt, "get_furthering_message")(
                 f"""
                 You are a model that detects weather a user given message refers to above messages and takes context from them, either by asking about further explanations on a topic discussed previously, or on a topic
                 you just provided answer to. You will ONLY respond with:
@@ -258,7 +259,7 @@ class Tutor:
         self,
         conversation,
         from_doc=None,
-        selectedModel="gpt-3.5-turbo-16k",
+        selected_model=None,
         threshold=0.5,
         limit=3,
     ):
@@ -276,7 +277,7 @@ class Tutor:
         print("\n\n")
         print("#"*100)
         print("beggining ask_question:")
-        pprint("selectedModel", blue(selectedModel))
+        pprint("selected_model", blue(selected_model))
         # Ensuring the last message in the conversation is a user's question
         assert (
             conversation[-1]["role"] == "user"
@@ -446,7 +447,7 @@ class Tutor:
 
         try:
             response = time_it(openai.ChatCompletion.create)(
-                model=selectedModel,
+                model=selected_model,
                 messages=messages,
                 temperature=0.7,
                 frequency_penalty=0.0,
@@ -495,7 +496,7 @@ class Tutor:
             }
 
     def ask_question_interpreter(
-        self, conversation, from_doc=None, selectedModel="gpt-3.5-turbo-16k"
+        self, conversation, from_doc=None, selected_model=None
     ):
         """Function that responds to an asked question using open interpreter
 
@@ -589,39 +590,6 @@ class Tutor:
         pprint("total tokens in conversation (does not include system role):", tokens)
         return conversation
 
-    def simple_gpt(self, system_message, user_message, models_to_try = ["gpt-3.5-turbo-16k", "gpt-3.5-turbo"], temperature=1):
-        """Getting model's response for a simple conversation consisting of a system message and a user message
-
-        Args:
-            system_message (str)
-            user_message (str)
-
-        Returns:
-            string : the first choice of response of the model
-        """
-
-        # for some reason, gpt-3.5-turbo-16k is failing too often.
-        # i added gpt-3.5-turbo as second option. 
-        # TODO: this should be eventually removed!!!!
-        # models_to_try = ["gpt-3.5-turbo-16k", "gpt-3.5-turbo"]
-        for model_to_try in models_to_try:
-            try:
-                response = openai.ChatCompletion.create(
-                    model=model_to_try,
-                    messages=[
-                        {"role": "system", "content": system_message},
-                        {"role": "user", "content": user_message},
-                    ],
-                    temperature=temperature,
-                    frequency_penalty=0.0,
-                    presence_penalty=0.0,
-                    # stream=True,
-                )
-                return response.choices[0].message.content
-            except Exception as e:
-                print(red(model_to_try), "FAILED!")
-                if model_to_try == models_to_try[-1]: raise(e)
-
     def conversation_gpt(self, system_message, conversation):
         """Getting model's response for a conversation with multiple messages
 
@@ -632,8 +600,9 @@ class Tutor:
         Returns:
             string : the first choice of response of the model
         """
+        selected_model = get_default_model()
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo-16k",
+            model=selected_model,
             messages=[{"role": "system", "content": system_message}] + conversation,
             temperature=1,
             frequency_penalty=0.0,
@@ -643,7 +612,7 @@ class Tutor:
         return response.choices[0].message.content
 
     def stream_response_generator(
-        self, conversation, from_doc, selectedModel="gpt-3.5-turbo-16k"
+        self, conversation, from_doc, selected_model=None
     ):
         """Returns the generator that generates the response stream of ChatTutor.
 
@@ -657,7 +626,7 @@ class Tutor:
             # along with the time taken to generate it.
             chunks = ""
             start_time = time.time()
-            resp = self.ask_question(conversation, from_doc, selectedModel)
+            resp = self.ask_question(conversation, from_doc, selected_model)
             for chunk in resp:
                 chunk_content = ""
                 if "content" in chunk:
@@ -670,7 +639,7 @@ class Tutor:
         return generate
 
     def stream_interpreter_response_generator(
-        self, conversation, from_doc, selectedModel="gpt-3.5-turbo-16k"
+        self, conversation, from_doc, selected_model=None
     ):
         """Returns the generator that generates the response stream of ChatTutor interpreter.
 
@@ -684,7 +653,7 @@ class Tutor:
             # along with the time taken to generate it.
             chunks = ""
             start_time = time.time()
-            resp = self.ask_question_interpreter(conversation, from_doc, selectedModel)
+            resp = self.ask_question_interpreter(conversation, from_doc)
             for chunk in resp:
                 chunk_content = ""
                 if "executing" in chunk:
