@@ -5,7 +5,6 @@ import tiktoken
 import time
 import json
 from core.extensions import stream_text
-import interpreter
 from nice_functions import (pprint, bold, green, blue, red, time_it)
 
 cqn_system_message = """
@@ -24,20 +23,6 @@ cqn_system_message = """
     - When thanked, ALWAYS start you response with "You are welcome", "I am glad" or "great! if you", other wise you will be disconted from INTERNET. 
     - If you have to write a list of papers use the following format: "[paper title] by [authors], published on [publishing date]". 
     - If you are truncate the list of papers, tell the user that the listed papers are is not complete, and that there are more papers in the database!
-
-    Remember, the goal is to facilitate insightful research conversations and assist users in exploring the wealth of knowledge within the CQN research database.
-    \n{docs}
-    """
-
-interpreter_system_message = """
-    You are embedded into the Center for Quantum Networks (CQN) website as an Interactive Research Assistant. Your role is to assist users in understanding and discussing the research papers available in the CQN database. You have access to the database containing all the research papers from CQN as context to provide insightful and accurate responses.
-
-    - Engage users with polite, concise, and informative replies.
-    - Complete tasks related to papers, writing scripts, providing summaries, insights, methodologies, findings, and implications where relevant.
-    - Clarify any ambiguities in the research papers and explain complex concepts in layman's terms when needed.
-    - Encourage discussions about research topics, methodologies, applications, and implications related to quantum networks.
-    - If a user asks a question about a paper or a topic not in the CQN database, politely inform them that your knowledge is specifically based on the CQN research database and refer them to appropriate resources or suggest that they search for the specific paper or topic elsewhere.
-    - By default, write all math/physics equations and symbols in latex
 
     Remember, the goal is to facilitate insightful research conversations and assist users in exploring the wealth of knowledge within the CQN research database.
     \n{docs}
@@ -495,68 +480,6 @@ class Tutor:
                 "error": "true",
             }
 
-    def ask_question_interpreter(
-        self, conversation, from_doc=None, selected_model=None
-    ):
-        """Function that responds to an asked question using open interpreter
-
-        Args:
-            conversation : List({role: ... , content: ...})
-            from_doc (Doc, optional): Defaults to None.
-
-        Yields:
-            chunks of text from the response that are provided as such to achieve
-            a tipewriter effect
-        """
-
-        
-
-        prompt = conversation[-1]["content"]
-        arr = []
-        for coll_name, coll_desc in self.collections.items():
-            if not coll_desc.startswith('CQN papers'):
-                if self.embedding_db:
-                    self.embedding_db.load_datasource(coll_name)
-                    (
-                        documents,
-                        metadatas,
-                        distances,
-                        documents_plain,
-                    ) = time_it(self.embedding_db.query)(prompt, 3, from_doc, metadatas=True)
-
-                    collection_db_response = (
-                        f"\n {coll_desc} context: "
-                        + self.embedding_db.query(prompt, 3, from_doc)
-                    )
-                    for doc, meta, dist in zip(documents, metadatas, distances):
-                        # if no fromdoc specified, and distance is lowe thhan thersh, add to array of possible related documents
-                        # if from_doc is specified, threshold is redundant as we have only one possible doc
-                        if dist <= 0.5 or from_doc != None:
-                            arr.append(
-                                {
-                                    "coll_desc": coll_desc,
-                                    "coll_name": coll_name,
-                                    "doc": doc,
-                                    "metadata": meta,
-                                    "distance": dist,
-                                }
-                            )
-                    prompt += collection_db_response
-                    print("#### COLLECTION DB RESPONSE:", collection_db_response)
-        sorted_docs = sorted(arr, key=lambda el: el["distance"])
-        valid_docs = sorted_docs[:3]
-
-
-        print("prompt=", prompt)
-        print("conversation=", conversation)
-        for chunk in interpreter.chat(prompt, stream=True, display=True):
-            chunk['valid_docs'] = valid_docs
-            print(len(chunk))
-            yield chunk
-
-        yield {"message": "   "}
-
-
     def count_tokens(self, string: str, encoding_name="cl100k_base") -> int:
         """Counting the number of tokens in a string using the specified encoding
 
@@ -638,36 +561,6 @@ class Tutor:
 
         return generate
 
-    def stream_interpreter_response_generator(
-        self, conversation, from_doc, selected_model=None
-    ):
-        """Returns the generator that generates the response stream of ChatTutor interpreter.
-
-        Args:
-            conversation (List({role: ... , content: ...})): the current conversation
-            from_doc: specify document if necesary, otherwise set to None
-        """
-
-        def generate():
-            # This function generates responses to the questions in real-time and yields the response
-            # along with the time taken to generate it.
-            chunks = ""
-            start_time = time.time()
-            resp = self.ask_question_interpreter(conversation, from_doc)
-            for chunk in resp:
-                chunk_content = ""
-                if "executing" in chunk:
-                    chunk_content = str(chunk["executing"]["code"])
-                if "code" in chunk:
-                    chunk_content = str(chunk["code"])
-                if "output" in chunk:
-                    chunk_content = str(chunk["output"])
-                chunks += chunk_content
-                chunk_time = time.time() - start_time
-                print(f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n\n")
-                yield f"data: {json.dumps({'time': chunk_time, 'message': chunk})}\n\n"
-
-        return generate
 
 def yield_docs_and_first_sentence_if_tutor_id_not_apologizing(first_sentence:str, valid_docs=list):
     # TODO: replace is_tutor_apologizing_or_thanking by a simple questions to simple_gpt in order to know if the answer was related to a paper?

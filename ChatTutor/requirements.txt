@@ -9,6 +9,5 @@ gunicorn==20.1.0
 google-cloud-storage==2.11.0
 PyPDF2==3.0.1
 pymysql==1.1.0
-open-interpreter==0.1.9
 beautifulsoup4==4.12.2
 Werkzeug==3.0.0

@@ -11,7 +11,7 @@ from core.extensions import (
     stream_text,
 )  # Importing the database object from extensions module
 from core.tutor import Tutor
-from core.tutor import cqn_system_message, default_system_message, interpreter_system_message
+from core.tutor import cqn_system_message, default_system_message
 import json
 import time
 import os
@@ -29,7 +29,6 @@ import core.loader
 from core.reader import URLReader, read_array_of_content_filename_tuple, extract_file,parse_plaintext_file
 from datetime import datetime
 from core.messagedb import MessageDB
-import interpreter
 from url_reader import URLReader
 from core.definitions import Text
 from core.definitions import Doc
@@ -37,7 +36,6 @@ import io
 import uuid
 from werkzeug.datastructures import FileStorage
 
-interpreter.auto_run = True
 from core.openai_tools import get_default_model, load_api_keys
 load_api_keys()
 
@@ -137,48 +135,8 @@ def ask():
     return Response(stream_with_context(generate()), content_type="text/event-stream")
 
 
-@app.route("/ask_interpreter", methods=["POST", "GET"])
-def ask_interpreter():
-    """Route that facilitates the asking of questions. The response is generated
-    based on an embedding.
 
-    URLParams:
-        conversation (List({role: ... , content: ...})):  snapshot of the current conversation
-        collection: embedding used for vectorization
-    Yields:
-        response: {data: {time: ..., message: ...}}
-    """
-    data = request.json
-    conversation = data["conversation"]
-    collection_name = data.get("collection")
-    collection_desc = data.get("description")
-    multiple = data.get("multiple")
-    from_doc = data.get("from_doc")
-    selected_model = data.get("selected_model", get_default_model())
-    print("-"*100)
-    print("beginning of ask_interpreter")
-    pprint("selected_model", selected_model)
-    pprint("collection_name", collection_name)
-    # Logging whether the request is specific to a document or can be from any document
-    chattutor = Tutor(db)
-    if collection_name:
-        if multiple == None:
-            name = collection_desc if collection_desc else ""
-            chattutor.add_collection(collection_name, name)
-        else:
-            chattutor = Tutor(db, system_message=interpreter_system_message)
-            for cname in collection_name:
-                message = (
-                    f"CQN papers "
-                    if cname == "test_embedding"
-                    else """Use the following user uploaded files to provide information if asked about content from them. 
-                User uploaded files """
-                )
-                chattutor.add_collection(cname, message)
-    generate = chattutor.stream_interpreter_response_generator(
-        conversation, from_doc, selected_model
-    )
-    return stream_with_context(generate())
+
 
 
 @app.route("/addtodb", methods=["POST", "GET"])
