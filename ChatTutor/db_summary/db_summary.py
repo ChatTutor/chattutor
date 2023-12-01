@@ -1,6 +1,8 @@
 from copy import deepcopy
 from pprint import pp
-import sys 
+import sys
+
+from core.openai_tools import OPENAI_DEFAULT_MODEL 
 sys.path.insert(0, ".")
 
 import pathlib
@@ -32,7 +34,7 @@ def print_summary_basic():
 
 
 def simple_gpt(system_message, user_message):
-    models_to_try = ["gpt-3.5-turbo-16k", "gpt-3.5-turbo"]
+    models_to_try = [OPENAI_DEFAULT_MODEL]
     for model_to_try in models_to_try:
         try:
             response = openai.ChatCompletion.create(

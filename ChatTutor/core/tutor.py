@@ -1,4 +1,5 @@
 from copy import deepcopy
+from core.openai_tools import OPENAI_DEFAULT_MODEL
 import openai
 import tiktoken
 import time
@@ -258,7 +259,7 @@ class Tutor:
         self,
         conversation,
         from_doc=None,
-        selectedModel="gpt-3.5-turbo-16k",
+        selectedModel=OPENAI_DEFAULT_MODEL,
         threshold=0.5,
         limit=3,
     ):
@@ -589,7 +590,7 @@ class Tutor:
         pprint("total tokens in conversation (does not include system role):", tokens)
         return conversation
 
-    def simple_gpt(self, system_message, user_message, models_to_try = ["gpt-3.5-turbo-16k", "gpt-3.5-turbo"], temperature=1):
+    def simple_gpt(self, system_message, user_message, models_to_try = [OPENAI_DEFAULT_MODEL], temperature=1):
         """Getting model's response for a simple conversation consisting of a system message and a user message
 
         Args:
@@ -600,10 +601,6 @@ class Tutor:
             string : the first choice of response of the model
         """
 
-        # for some reason, gpt-3.5-turbo-16k is failing too often.
-        # i added gpt-3.5-turbo as second option. 
-        # TODO: this should be eventually removed!!!!
-        # models_to_try = ["gpt-3.5-turbo-16k", "gpt-3.5-turbo"]
         for model_to_try in models_to_try:
             try:
                 response = openai.ChatCompletion.create(
