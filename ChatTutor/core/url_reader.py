@@ -5,10 +5,7 @@ import requests
 
 class URLReader:
     def parse_url(url: str):
-        try:
-            page = requests.get(url)
-        except:
-            return ""
+        page = requests.get(url)
         soup = BeautifulSoup(page.content, 'html.parser')
         for tag in soup(['style', 'script']):
             tag.decompose()

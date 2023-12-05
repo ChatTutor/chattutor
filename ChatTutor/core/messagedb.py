@@ -61,13 +61,119 @@ class MessageDB:
         FOREIGN KEY (chat_key) REFERENCES lchats (chat_id)
         )"""
 
+    create_course_name = """
+    CREATE TABLE IF NOT EXISTS lcourses (
+        course_id varchar(250) PRIMARY KEY,
+        name text NOT NULL,
+        proffessor text not null,
+        mainpage text not null,
+        collectionname text not null
+        )"""
+
+    create_section_name = """
+        CREATE TABLE IF NOT EXISTS lsections (
+            section_id varchar(250) PRIMARY KEY,
+            pulling_from text not null
+            )"""
+
+    create_relationship_between_sections_and_courses = """
+        CREATE TABLE IF NOT EXISTS rsectionscourses (
+            section_id varchar(250) not null ,
+            course_id varchar(250) not null,
+            FOREIGN KEY (section_id) REFERENCES lsections(section_id),
+            FOREIGN KEY (course_id) REFERENCES lcourses(course_id),
+            UNIQUE (section_id, course_id)
+            )"""
+            
+    user_table_Sql = """
+        CREATE TABLE IF NOT EXISTS lusers (
+            username varchar(100) PRIMARY KEY,
+            email varchar(100),
+            password varchar(100),
+        )
+        """
+
+    relationship_users_courses = """
+        CREATE TABLE IF NOT EXISTS ruserscourses (
+            username varchar(250) not null ,
+            course_id varchar(250) not null,
+            FOREIGN KEY (username) REFERENCES lusers(username),
+            FOREIGN KEY (course_id) REFERENCES lcourses(course_id),
+            UNIQUE (username, course_id)
+        )
+    """
+
+
+    alter_section_Table = """
+        ALTER TABLE lsections
+        MODIFY sectionurl VARCHAR(256);
+    """
+
     def __init__(self, host, user, password, database, statistics_database):
         self.host = host
         self.user = user
         self.password = password
         self.db = database
         self.statisticsdb = statistics_database
+        
+    def insert_user(self, user):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            print(f"INSERT IGNORE INTO lusers (username, email, password) VALUES ('{user.username}', '{user.email}', '{user.password_hash.decode('utf-8') }')")
+            cur.execute(f"INSERT IGNORE INTO lusers (username, email, password) VALUES ('{user.username}', '{user.email}', '{user.password_hash.decode('utf-8') }')")
+            con.commit()
+            
+    def get_user(self, username):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"SELECT * FROM lusers WHERE username = '{username}'")
+            users = cur.fetchall()
+            return users
+        
+    def insert_user_to_course(self, username, course_id):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"INSERT INTO ruserscourses (username, course_id) VALUES ('{username}', '{course_id}') ON DUPLICATE KEY UPDATE username='{username}', course_id='{course_id}'")
+            con.commit()
+            
+    def get_user_courses(self, username):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"SELECT * FROM lcourses WHERE course_id IN (SELECT course_id FROM ruserscourses WHERE username = '{username}')")
+            courses = cur.fetchall()
+            return courses
+    
+    def get_courses_sections(self, course_id):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"SELECT * FROM lsections WHERE section_id IN (SELECT section_id FROM rsectionscourses WHERE course_id = '{course_id}')")
+            sections = cur.fetchall()
+            print(sections)
+            return sections
 
+
+    def get_courses_sections_format(self, course_id):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"SELECT * FROM lsections WHERE section_id IN (SELECT section_id FROM rsectionscourses WHERE course_id = '{course_id}')")
+            sections = cur.fetchall()
+
+
+            cur.execute(f"SELECT name FROM lcourses WHERE course_id='{course_id}'")
+            names = cur.fetchall()
+
+            # print(names)
+            # print(sections)
+
+            dic = [{
+                'section_id': section['section_id'],
+                'course_id': course_id,
+                'section_url': section['sectionurl'],
+                'course_chroma_collection': names[0]['name']
+            } for section in sections]
+
+            return dic
+    
     def connect_to_messages_database(self):
         """Function that connects to the database"""
         connection = pymysql.connect(
@@ -102,6 +208,10 @@ class MessageDB:
         # cur.execute(presetTables2)
         cur.execute(self.chats_table_Sql)
         cur.execute(self.messages_table_Sql)
+        cur.execute(self.create_course_name)
+        cur.execute(self.create_section_name)
+        cur.execute(self.create_relationship_between_sections_and_courses)
+        con.commit()
 
     def insert_message(self, a_message):
         """This inserts a message into the sqlite3 database. the message must be sent as a dictionary"""
@@ -121,6 +231,32 @@ class MessageDB:
             cur = con.cursor()
             insert_format_lchats = ""
             cur.execute(f"INSERT IGNORE INTO lchats (chat_id) VALUES ('{chat_key}')")
+            con.commit()
+
+
+    def insert_course(self, course_id, name, proffessor, mainpage, collectionname):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"INSERT INTO lcourses (course_id, name, proffessor, mainpage, collectionname) VALUES ('{course_id}', '{name}', '{proffessor}', '{mainpage}', '{collectionname}') ON DUPLICATE KEY UPDATE course_id='{course_id}', name='{name}', proffessor='{proffessor}', mainpage='{mainpage}', collectionname='{collectionname}'")
+            con.commit()
+
+    def insert_section(self, section_id, pulling_from, sectionurl):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"INSERT INTO lsections (section_id, pulling_from, sectionurl) VALUES ('{section_id}', '{pulling_from}', '{sectionurl}') ON DUPLICATE KEY UPDATE section_id='{section_id}', pulling_from='{pulling_from}', sectionurl='{sectionurl}'")
+
+            con.commit()
+
+    def establish_course_section_relationship(self, section_id, course_id):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"INSERT INTO rsectionscourses (section_id, course_id) VALUES ('{section_id}', '{course_id}') ON DUPLICATE KEY UPDATE section_id='{section_id}', course_id='{course_id}'")
+            con.commit()
+
+    def update_section_add_fromdoc(self, section_id, from_doc):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"UPDATE lsections SET pulling_from = concat(pulling_from, '{'$'+from_doc}') WHERE section_id = '{section_id}'")
             con.commit()
 
     def execute_sql(self, sqlexec, commit=True):

@@ -1,0 +1,182 @@
+/* Desktop Styles */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=block');
+
+* {
+    font-family: 'Montserrat', sans-serif;
+}
+.section {
+    width: calc(100% - 40px);
+    font-weight: 700;
+    font-size: 20px;
+    text-align: center;
+    padding: 20px;
+    display: flex;
+    flex-direction: row-reverse;
+
+
+}
+
+.fl-right {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+}
+
+
+
+.fl-right a {
+    color: white;
+}
+
+.titl h1 {
+    font-size: 100px;
+    color: white !important;
+    line-height: 0px;
+}
+
+.links {
+    display: flex;
+    flex-direction: row;
+}
+
+.links div {
+    padding: 10px;
+}
+
+.links div a {
+    color: white;
+}
+
+.main-title {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: linear-gradient(45deg, #2c7de7, #3cb2ff);
+    width: 100%;
+    height: calc(100vh - 0px);
+
+    /* Set the background size and repeat properties. */
+
+}
+
+.fl-right a {
+    color: white;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.menu {
+    background-color: transparent;
+    line-height: 80px;
+    position: absolute;
+    top: 0;
+}
+
+.body {
+    background-color: rgb(241, 241, 241);
+    min-width: 100vw;
+    min-height: 100vh;
+}
+
+.hero {
+    line-height: 400px;
+    background-color: #ffffff;
+}
+
+.feature-1,
+.feature-2,
+.feature-3 {
+    width: 33.3%;
+    display: inline-block;
+}
+
+.all-of-them {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: black !important;
+    width: 100vw;
+    padding-top: 100px;
+    min-height: calc(100vh - 220px);
+}
+
+.all-of-them div {
+    color: black;
+    background-color: #f1f1f1;
+    box-shadow: -8px -6px 15px 0 #fff, 6px 8px 15px 0 rgba(0, 0, 0, 0.15);
+    margin: 10px;
+    border-radius: 20px;
+    padding: 20px 50px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.all-of-them div:hover {
+    box-shadow: inset 8px 6px 15px rgba(0, 0, 0, 0.15),
+    inset -6px -8px 15px #fff;
+}
+
+.sign-up {
+    background-color: #D6E9FE;
+    line-height: 100px;
+}
+
+.content {
+    background-color: #EAEDF0;
+    line-height: 600px;
+}
+
+.feature-1 {
+    background-color: #00d6ff;
+}
+
+.feature-2 {
+    background-color: #0090de;
+}
+
+.feature-3 {
+    /*background-color: #005dbe;*/
+    background-color: #0069f3;
+}
+
+.footer {
+    color: #f4f4f4;
+    background-color: #333333;
+}
+
+a {
+    font-weight: bold;
+    color: gray;
+    text-decoration: none;
+}
+
+a:visited {
+    color: gray;
+    text-decoration: none;
+}
+
+/* Tablet Styles */
+@media only screen and (max-width: 960px) {
+    .sign-up,
+    .feature-1,
+    .feature-2,
+    .feature-3 {
+        width: 50%;
+    }
+
+    .sign-up {
+        display: inline-block;
+        line-height: 300px;
+        order: 1;
+    }
+
+    .footer,
+    .feature-1,
+    .feature-2,
+    .feature-3 {
+        order: 2;
+    }
+}

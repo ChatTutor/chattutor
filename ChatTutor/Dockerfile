@@ -1,6 +1,9 @@
+
+
 # ---- Build Angular App ----
 FROM node:18.10 AS build-angular
 WORKDIR /app/frontend
+RUN echo "current directory $(pwd)"
 
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm install
@@ -25,13 +28,15 @@ COPY --from=build-angular /app/frontend/dist /app/frontend/dist
 COPY . ./
 
 # Install Python dependencies -- TODO: remove --no-cache-dir
-RUN pip install --no-cache-dir -r requirements.txt
+#RUN #pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 # RUN pip install -r requirements.txt
 
 # Clean up
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* && rm -rf sqlite-autoconf-3430200.tar.gz && rm -rf sqlite-autoconf-3430200
 RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/sqlite3.conf && ldconfig
 
+#CMD exec ls -a
 EXPOSE 5000
 CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
 

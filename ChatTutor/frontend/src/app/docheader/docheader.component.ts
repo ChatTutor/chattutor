@@ -12,17 +12,10 @@ export class DocheaderComponent {
   @Input() showHeader: boolean = true;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onFocus: EventEmitter<any> = new EventEmitter();
-  @Output() onClick: EventEmitter<any> = new EventEmitter();
-
-  @Input() full: any = true;
   closeInfoBox() {
     this.onClose.emit()
   }
   focusOnDocument() {
     this.onFocus.emit(this.document)
-  }
-
-  toggleDocument() {
-    this.onClick.emit()
   }
 }
