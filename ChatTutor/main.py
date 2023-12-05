@@ -802,7 +802,7 @@ def login():
     if user.verify_password(flask.request.form['password']):
         flask_login.login_user(user)
         return flask.redirect(flask.url_for('protected'))
-    return 'Bad login'
+    return 'Bad login, <a href="/">Return</a>'
 
 
 @app.route('/protected')
@@ -814,12 +814,12 @@ def protected():
 @app.route('/logout')
 def logout():
     flask_login.logout_user()
-    return 'Logged out'
+    return 'Logged out, <a href="/">Return</a>'
 
 
 @login_manager.unauthorized_handler
 def unauthorized_handler():
-    return 'Unauthorized', 401
+    return 'Unauthorized, <a href="/">Return</a>', 401
 
 
 # ----------- ANGULAR -----------
@@ -868,7 +868,7 @@ def isloggedin():
 @flask_login.login_required
 def getusercourses(username):
     if username != flask_login.current_user.username:
-        return 'Not allowed'
+        return 'Not allowed, <a href="/">Return</a>'
     courses = messageDatabase.get_user_courses(username=username)
     return jsonify({
         'courses': courses
@@ -879,7 +879,7 @@ def getusercourses(username):
 @flask_login.login_required
 def getusercoursessections(username, course):
     if username != flask_login.current_user.username:
-        return 'Not allowed'
+        return 'Not allowed, <a href="/">Return</a>'
     sections = messageDatabase.get_courses_sections_format(course_id=course)
     return jsonify({
         'sections': sections
@@ -890,12 +890,19 @@ def getusercoursessections(username, course):
 @flask_login.login_required
 def getusercoursessectionsv1(username, course):
     if username != flask_login.current_user.username:
-        return 'Not allowed'
+        return 'Not allowed, <a href="/">Return</a>'
     sections = messageDatabase.get_courses_sections(course_id=course)
     return jsonify({
         'sections': sections
     })
 
+@app.route("/api/v1/<path:path>")
+def apiv1(path):
+    return send_from_directory("static/api/v1", path)
+
+@app.route("/api/v2/<path:path>")
+def apiv2(path):
+    return send_from_directory("static/api/v1", path)
 
 @app.route('/scrape/<path:path>')
 @app.route('/scrape', defaults={'path': ''})

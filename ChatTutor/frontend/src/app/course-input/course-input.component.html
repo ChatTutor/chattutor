@@ -4,8 +4,8 @@ class="example-stepper">
 <mat-step label="Fill out you course info">
 <div class="urldiv">
     <mat-form-field>
-        <mat-label>Proffessor</mat-label>
-        <input matInput [(ngModel)]="proffessor" placeholder="proffessor name">
+        <mat-label>Professor</mat-label>
+        <input matInput [(ngModel)]="proffessor" placeholder="professor name">
     </mat-form-field>
     <mat-form-field>
         <mat-label>Course Name/ID</mat-label>
@@ -20,14 +20,14 @@ class="example-stepper">
         <input matInput [(ngModel)]="collectionname" placeholder="collection name">
     </mat-form-field>
     <button mat-button color="primary" matStepperNext type="submit" name="submit" (click)="submitUrlScrape()">
-        Submit url
+        Next
     </button>
 
 </div>
 </mat-step>
-<mat-step label="Let's read through your course">
+<mat-step label="Wait for us to compile your course">
 <div *ngIf="!is_ready">
-    <p>ChatTutor will look through  your course's website to understand it, and each page will represent a section, weather being a reading or a lab!</p>
+    <p>ChatTutor will look through your course's website to understand it, and each page will represent a section, whether being a reading or a lab!</p>
     <p>This will take up to 5 minutes, so please do not refresh the page!</p>
 </div>
 <div *ngIf="is_ready">
@@ -47,16 +47,17 @@ class="example-stepper">
 </div>
 
 </mat-step>
-<mat-step label="Your urls are now ready!">
+<mat-step label="ChatTutor has been added to your course!">
 <div style="display: flex; margin-top: 30px; flex-direction: column; align-items: center; justify-content: center; font-size: large">
-    <h3>Congratulations!</h3>
-    <div>Your course id ready to embed ChatTutor!</div>
-    <div>Your course collection is: <span style="font-family: monospace">{{ url_collection_name }}</span></div>
+    <h1>Congratulations!</h1>
+    <h3>ChatTutor has been added to your course!</h3>
+    <!-- <div>Your course id ready to embed ChatTutor!</div> -->
+    <!-- <div>Your course collection is: <span style="font-family: monospace">{{ url_collection_name }}</span></div> -->
     <!-- <div>Te equivalent for a given url from the course site can be found with (from_doc): <span style="font-family: monospace">re.sub(r'[^A-Za-z0-9\-_]', '_',
         (your-url))</span>
     </div> -->
 
-    <button mat-button><a href="/">Take me back!</a></button>
+    <button mat-button><a href="/">View my new AI-augmented course website!</a></button>
 </div>
 </mat-step>
 
