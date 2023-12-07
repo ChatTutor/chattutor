@@ -3,9 +3,19 @@
 """
 
 from core.vectordatabase import VectorDatabase
+from core.messagedb import MessageDB
 
 db = VectorDatabase("34.133.39.77:8000", "chroma", hosted=True)
 user_db = VectorDatabase("34.133.39.77:8000", "chroma", hosted=True)
+
+
+messageDatabase = MessageDB(
+    host="34.41.31.71",
+    user="admin",
+    password="AltaParolaPuternica1245",
+    database="chatmsg",
+    statistics_database="sessiondat",
+)
 
 import random
 import string

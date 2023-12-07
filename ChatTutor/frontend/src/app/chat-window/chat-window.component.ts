@@ -10,17 +10,17 @@ import { WStatus } from 'app/models/windowstatus.enum';
     styleUrls: ['./chat-window.component.css']
 })
 export class ChatWindowComponent implements OnInit{
-    messages: Message[] = []
+    messages: Message[] = [];
     @Input() collections: string[] | undefined = ['test_embedding']
     @Input() restrictToDocument: any = undefined
     @Input() type: any
-    @Input() openingMessage: string = `Hello, I am here to respond to any questions you might have about this chapter or course.\nFeel free to ask me anything!`
     documentInfo: any = undefined
     loadingFiles: boolean = false
     status: WStatus = WStatus.Idle
     endpoint: string = "/ask"
 
     pleaseStopGeneratingConvo: boolean = false
+    @Input() openingMessage: string = `Hello, I am here to respond to any questions you might have about this chapter or course.\nFeel free to ask me anything!`
 
     ngOnInit(): void {
         this.messages.push({
@@ -114,7 +114,6 @@ export class ChatWindowComponent implements OnInit{
         await this.addMessageToDB(ms)
         console.log(this.messages);
         console.log(JSON.stringify(this.messages))
-
         this.askForMessage().then(() => {
             console.log('Asked!')
         })

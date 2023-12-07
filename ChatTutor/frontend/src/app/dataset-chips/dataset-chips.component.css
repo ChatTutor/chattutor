@@ -15,7 +15,7 @@
     padding-left: calc(15% + 15px);
     padding-right: calc(15% + 15px);
     pointer-events: none;
-    
+
 }
 
 .urls-and-files {
@@ -29,6 +29,7 @@
 .urls-and-files.large *{
     pointer-events: none;
 }
+
 
 .hide{
     width: 52px;

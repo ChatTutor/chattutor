@@ -18,6 +18,7 @@ export class DocheaderComponent {
   closeInfoBox() {
     this.onClose.emit()
   }
+  
   focusOnDocument() {
     this.onFocus.emit(this.document)
   }

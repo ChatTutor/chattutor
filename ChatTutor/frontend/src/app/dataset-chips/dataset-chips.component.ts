@@ -1,5 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {MatChipInputEvent} from "@angular/material/chips";
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';import {MatChipInputEvent} from "@angular/material/chips";
 import {COMMA, ENTER, SPACE} from "@angular/cdk/keycodes";
 import { WStatus } from 'app/models/windowstatus.enum';
 

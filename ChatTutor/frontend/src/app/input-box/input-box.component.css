@@ -18,7 +18,7 @@ button:disabled{
 button.b1:not(:disabled) {
     background-color: #3f51b5;
     color: white;
-    
+
 }
 
 button.b2:disabled {
@@ -32,7 +32,7 @@ button.b2:disabled {
 button.b1:not(:disabled):hover {
     background-color: #364499;
     color: white;
-    
+
 }
 
 .icon-display {
@@ -43,4 +43,3 @@ button {
     border-radius: 10px !important;
     transition: all 0.2s ease-in-out;
 }
-

@@ -1,5 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=block');
 
+* {
+    font-family: 'Montserrat', sans-serif;
+}
 html, body {
     height: 100%;
     --color-primary-mid: #223c5f;
@@ -13,11 +17,10 @@ html, body {
     --color-warning-dark: #980000;
 
 }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: 'Montserrat', sans-serif; }
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
+body { margin: 0; font-family: 'Montserrat', sans-serif; }
 
 .mat-mdc-text-field-wrapper, .mdc-text-field{
     border-radius: 10px !important;

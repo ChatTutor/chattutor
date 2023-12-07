@@ -11,7 +11,6 @@
 }
 
 .docheader mat-card {
-    /* box-shadow: none !important; */
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px !important;
     border-radius: 20px;
 }
@@ -24,6 +23,7 @@
 .docheader mat-card-option {
     margin: 10px;
 }
+
 
 .docheader *{
     transition: all 0.2s ease;
@@ -45,5 +45,4 @@
 .reduced button {
     display: none;
     transition: all 0.2s ease;
-
 }

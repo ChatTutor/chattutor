@@ -1,5 +1,3 @@
-from nice_functions import pprint
-from werkzeug.datastructures import FileStorage
 from core.definitions import Doc, Text
 from typing import List
 import os
@@ -91,26 +89,25 @@ def read_folder(path):
     return texts
 
 
-def read_array_of_content_filename_tuple(array_of_content_filename_tuple):
-    """
-    Args:
-        array_of_content_filename_tuple: 
-            Array of tuples [(content, filename)]
-
-    """
+def read_filearray(files):
     texts = []
 
-    for content, filename in array_of_content_filename_tuple:
-        doc = Doc(docname=filename, citation="", dockey=filename)
-        if filename.endswith(".pdf"):
-            new_texts = parse_pdf(content, doc, 2000, 100)
-        elif filename.endswith(".ipynb"):
-            new_texts = parse_notebook_file(content, doc, 2000, 100)
-        else:
-            # convert bytes to string
-            if isinstance(content, bytes): content = decode(content)
-            new_texts = parse_plaintext_file(content, doc, 2000, 100)
-        texts.extend(new_texts)
+    for file in files:
+        print("AAAAAAA")
+        doc = Doc(docname=file[1], citation="", dockey=file[1])
+        print(file[1])
+        try:
+            if file[1].endswith(".pdf"):
+                new_texts = parse_pdf(file[0], doc, 2000, 100)
+            elif file[1].endswith(".ipynb"):
+                new_texts = parse_notebook_file(file[0], doc, 2000, 100)
+            else:
+                new_texts = parse_plaintext_file(file[0], doc, 2000, 100)
+
+            texts.extend(new_texts)
+        except Exception as e:
+            print(e.__str__())
+            pass
     return texts
 
 
@@ -203,7 +200,7 @@ def parse_pdf(
     return texts
 
 
-def parse_plaintext_file(file: str, doc: Doc, chunk_chars: int, overlap: int):
+def parse_plaintext_file(file, doc: Doc, chunk_chars: int, overlap: int):
     """Parses a plain text file and generates texts from its content.
 
     Args:
@@ -216,6 +213,23 @@ def parse_plaintext_file(file: str, doc: Doc, chunk_chars: int, overlap: int):
         [Text]: The resulting Texts as an array
     """
     texts = texts_from_str(file, doc, chunk_chars, overlap)
+    print(texts)
+    return texts
+
+
+def parse_plaintext_file_read(file, doc: Doc, chunk_chars: int, overlap: int):
+    """Parses a plain text file and generates texts from its content.
+
+    Args:
+        file: File
+        doc (Doc): Doc object that the Text objects will comply to
+        chunk_chars (int): size of chunks
+        overlap (int): overlap of chunks
+
+    Returns:
+        [Text]: The resulting Texts as an array
+    """
+    texts = texts_from_str(file.read(), doc, chunk_chars, overlap)
     return texts
 
 
@@ -279,46 +293,28 @@ def texts_from_str(text_str: str, doc: Doc, chunk_chars: int, overlap: int):
 
 import zipfile
 
-def decode(s, encodings=('ascii', 'utf8', 'latin1')):
-    for encoding in encodings:
-        try:
-            return s.decode(encoding)
-        except UnicodeDecodeError:
-            pass
-    return s.decode('ascii', 'ignore')
 
-def extract_zip(file: BytesIO):
+def extract_zip(file):
     """Extracts the content of a zip file and returns file-like objects
 
     Args:
         file : Zip-file
     Returns: Array of tuples [(file, filename)]
     """
-    zipfile_ob = zipfile.ZipFile(file)
+    file_like_object = file.stream._file
+    zipfile_ob = zipfile.ZipFile(file_like_object)
     file_names = zipfile_ob.namelist()
     files = [(zipfile_ob.open(name).read(), name) for name in file_names]
-    pprint("extract_zip", file_names)
     return files
 
 
-def extract_file(file: FileStorage):
+def extract_file(file):
     """Extracts the content of a file and returns file-like objects
 
     Args:
         file : Zip-file/single-file (pdf, txt of ipynb)
-    Returns: Array of tuples [(content, filename)]
+    Returns: Array of tuples [(file, filename)]
     """
-
-    import os
-    _, file_extension = os.path.splitext(file.filename)
-
-    file_extension = file_extension.lower()
-
-    file_Bytes: BytesIO
-    file_Bytes = file.stream._file
-
-    if file_extension in {".pdf", ".ipynb", ".txt", ".html", ".htm"}:
-        return [(file_Bytes.read(), file.filename)]
-    elif zipfile.is_zipfile( file_Bytes ):
-        return extract_zip(file_Bytes)
-    raise(TypeError(f"{file_extension} is not a valid type"))
+    if file.filename.endswith((".pdf", ".txt", ".ipynb")):
+        return [(file.read(), file.filename)]
+    return extract_zip(file)

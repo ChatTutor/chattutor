@@ -1,17 +1,17 @@
 <mat-form-field class="input-container">
-    <textarea matInput [(ngModel)]="messageText" (keydown)="keyPressed($event)" placeholder="Enter your message..."
-    cdkTextareaAutosize
-    #autosize="cdkTextareaAutosize"
-    cdkAutosizeMinRows="1"
-    cdkAutosizeMaxRows="5"></textarea>
-    <button mat-icon-button color="primary" matSuffix (click)="send()" [disabled]="!canSend" class="b1">
-      <mat-icon class="icon-display">send</mat-icon>
-    </button>
-    <button mat-icon-button color="primary" matSuffix (click)="clearChat()" [disabled]="!canClear" class="b2">
-      <mat-icon class="icon-display">clear</mat-icon>
-    </button>
+  <textarea matInput [(ngModel)]="messageText" (keydown)="keyPressed($event)" placeholder="Enter your message..."
+  cdkTextareaAutosize
+  #autosize="cdkTextareaAutosize"
+  cdkAutosizeMinRows="1"
+  cdkAutosizeMaxRows="5"></textarea>
+  <button mat-icon-button color="primary" matSuffix (click)="send()" [disabled]="!canSend" class="b1">
+    <mat-icon class="icon-display">send</mat-icon>
+  </button>
+  <button mat-icon-button color="primary" matSuffix (click)="clearChat()" [disabled]="!canClear" class="b2">
+    <mat-icon class="icon-display">clear</mat-icon>
+  </button>
 
-    <button mat-icon-button color="primary" matSuffix (click)="stopChat()" [disabled]="!canStop" class="b2">
-      <mat-icon class="icon-display">stops</mat-icon>
-    </button>
+  <button mat-icon-button color="primary" matSuffix (click)="stopChat()" [disabled]="!canStop" class="b2">
+    <mat-icon class="icon-display">stops</mat-icon>
+  </button>
 </mat-form-field>

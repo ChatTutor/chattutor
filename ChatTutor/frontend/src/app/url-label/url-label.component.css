@@ -1,0 +1,32 @@
+.urlname {
+    display: block;
+}
+
+.urllabel {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.opacity {
+    opacity: 0.5 !important;
+}
+
+.hidden {
+    width: 0px !important;
+    opacity: 0 !important;
+}
+
+.add-input {
+
+    margin-left: 10px;
+    width: 200px;
+    opacity: 1;
+    transition: all 0.3s ease;
+}
+
+.please-horizontal {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}

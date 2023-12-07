@@ -82,6 +82,12 @@
     /* backdrop-filter: blur(4px); */
 }
 
+mat-form-field{
+    width: 60%;
+    align-self: center;
+    justify-self: center;
+}
+
 .chat-header-title * {
     margin-right: 10px;
 }
@@ -121,11 +127,5 @@
     position: fixed;
     width: 100%;
     bottom: 0;
-    /* backdrop-filter: blur(4px); */
-}
-
-mat-form-field{
-    width: 60%;
-    align-self: center;
-    justify-self: center;
+    backdrop-filter: blur(4px);
 }
