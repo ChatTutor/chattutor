@@ -157,14 +157,8 @@ class MessageDB:
             cur = con.cursor()
             cur.execute(f"SELECT * FROM lsections WHERE section_id IN (SELECT section_id FROM rsectionscourses WHERE course_id = '{course_id}')")
             sections = cur.fetchall()
-
-
             cur.execute(f"SELECT name FROM lcourses WHERE course_id='{course_id}'")
             names = cur.fetchall()
-
-            # print(names)
-            # print(sections)
-
             dic = [{
                 'section_id': section['section_id'],
                 'course_id': course_id,
@@ -203,9 +197,6 @@ class MessageDB:
         """Creates the tables if they don't exist"""
         con = self.connect_to_messages_database()
         cur = con.cursor()
-        # if you want to delete the database when a user acceses the site. (For DEBUGGING purposes only
-        # cur.execute(presetTables1)
-        # cur.execute(presetTables2)
         cur.execute(self.chats_table_Sql)
         cur.execute(self.messages_table_Sql)
         cur.execute(self.create_course_name)
@@ -319,7 +310,6 @@ class MessageDB:
                 tr_header = f'<tr style="color: var(--left-msg-txt); background-color: rgba(140, 0, 255, 0.5)"><td colspan="5">{chat_header}</td></tr>'
 
             msg_html = f"""
-                            
                             {tr_header}
                            <tr style="color: var(--left-msg-txt); {styl_td}">
                                 <td style={styl_td}>{role}</td>

@@ -37,7 +37,7 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 import { CourseDashboardComponent } from './course-dashboard/course-dashboard.component';
 import { NavbarComponent } from './navbar/navbar.component';
-
+import { MathjaxComponent } from './mathjax/mathjax.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -52,11 +52,13 @@ import { NavbarComponent } from './navbar/navbar.component';
     LandingPageComponent,
     ChattutorDatabaseComponent,
     MessageInsideDatabaseComponent,
+    MathjaxComponent,
     CourseInputComponent,
     UrlLabelComponent,
     UserDashboardComponent,
     CourseDashboardComponent,
-    NavbarComponent,],
+    NavbarComponent,
+    MathjaxComponent,],
     imports: [
         BrowserModule,
         AppRoutingModule,

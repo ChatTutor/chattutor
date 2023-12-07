@@ -67,7 +67,7 @@ class Tutor:
     ):
         """
         Args:
-            - `embedding_db (VectorDatabase)`: the db with any or no source loaded
+            - `embedding_db (VectorDatabase)`: the db with any or no source loaded / can be found in extensions.py (db)
             - `embedding_db_name (str)`: Description of embedding_db.
             - `system_message (str)`
             - `engineer_prompts (bool)`: weather the chattutor bot should pull the full context from the last user message before querying.
@@ -85,7 +85,8 @@ class Tutor:
         self.engineer_prompts = engineer_prompts
 
     def add_collection(self, name, desc):
-        """Adds a collection to self.collections
+        """
+        Adds a collection to ChatTutor's collections that are used for quierying and resopnse generation
         Args:
             name (str): name of the collection to load form the chromadb (embedding_db)
             desc (str): description prompted to the model
@@ -184,11 +185,8 @@ class Tutor:
             f"\n\n{c['role']}: {c['content']}"
             for c in conversation[-truncating_at:][:-1]
         ]
-        # todo: fix prompt to take context from all messages
         prompt = conversation[-1]["content"]
-        print("entering engineer_prompt")
-        # pprint("truncated_convo", truncated_convo)
-        
+        print("entering engineer_prompt")        
          
         is_generic_message = "NO" # currenlty not used
         # is_generic_message = time_it(self.simple_gpt, "is_generic_message")(
@@ -368,9 +366,7 @@ class Tutor:
                                     "distance": dist,
                                 }
                             )
-            # removing duplicates
-            # arr = list(set(arr))
-            # sort by distance, increasing
+
             sorted_docs = sorted(arr, key=lambda el: el["distance"])
             valid_docs = sorted_docs[:process_limit]
 
@@ -382,9 +378,6 @@ class Tutor:
                 pprint(" ", doc["metadata"].get("pdf_url", "(not defined)"))
                 pprint(" ", doc["distance"])
 
-
-            # pprint("system_message", self.system_message)
-            # stringify the docs and add to context message
             docs = ""
             if required_level_of_information in {"basic", "medium"}:
                 docs = "\n\n"
@@ -410,18 +403,9 @@ class Tutor:
                     
                     doc_reference = "-"*100 + f"\n{doc_content}\n\n"
                     docs += doc_reference
-                # print('#### COLLECTION DB RESPONSE:', collection_db_response)
-            # debug log
+
         pprint("collections", self.collections)
         pprint("len collections", len(self.collections))
-        # print(
-        #     "\n\n\nSYSTEM MESSAGE",
-        #     self.system_message,
-        #     len(self.collections),
-        #     self.collections,
-        #     self.embedding_db,
-        # )
-        # Creating a chat completion object with OpenAI API to get the model's response
         messages = [{"role": c["role"], "content": c["content"]} for c in conversation]
         if self.embedding_db and len(self.collections) > 0:
             messages = [
@@ -433,16 +417,6 @@ class Tutor:
         docs_tokens =   get_number_of_tokens(docs)
         pprint("total_tokens", total_tokens)
         pprint("docs_tokens", docs_tokens)
-        # pprint("docs", docs)
-        # print(
-        #     "NUMBER OF INPUT TOKENS:",
-        #     len(tiktoken.get_encoding("cl100k_base").encode(docs)),
-        # )
-        # print("\t | GENERIC \t | FURTHERING \t | ")
-        # print(
-        #     is_generic_message, is_furthering_message, "|", get_furthering_message, "|"
-        # )
-        # print("\n\t=>\t", prompt)
 
         try:
             response = time_it(openai.ChatCompletion.create)(

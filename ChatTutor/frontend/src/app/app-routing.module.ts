@@ -12,7 +12,7 @@ const routes: Routes = [
   {path: '', component: LandingPageComponent},
   {path: 'cqnchattutor', component: CQNChatTutorWrapperComponent},
     {path: 'chattutordatabase', component: ChattutorDatabaseComponent},
-    {path: 'chattutord', component: ChatTutorWrapperComponent},
+    {path: 'chattutor', component: ChatTutorWrapperComponent},
     {path: 'scrape', component: CourseInputComponent},
     {path: 'mycourses', component: UserDashboardComponent},
     {path: 'courses/:id', component: CourseDashboardComponent },
