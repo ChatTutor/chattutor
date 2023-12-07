@@ -1,57 +1,37 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=block');
-
-/*<style>*/
-
-
-* {
-    font-family: 'Montserrat', sans-serif;
-}
-
-
-.aot {
+.my-form-center {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-}
-
-.iaot {
-    color: white;
-    background-color: #232323;
-    margin: 10px;
-    border-radius: 20px;
-    padding: 20px 50px;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-}
-
-.iaot::placeholder {
-    color: white !important;
-}
-
-.aot .iaot:hover {
-    box-shadow: 8px 6px 15px rgba(0, 0, 0, 0.15)
-}
-
-
-.all-form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     width: 100vw;
     height: 100vh;
-}
+    flex-direction: row;
 
-.boody {
-    background-image: linear-gradient(45deg, #2c7de7, #3cb2ff);
+    justify-content: center;
+    align-items: center;
+}
+/* please change the colors - i didnt know the right ones*/
+.my-form {
+    background-color: #d7d7d7;
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
     width: 100%;
-    height: calc(100vh - 0px);
 }
 
-h2 {
+.my-form input {
+    border: none;
+    background-color: white;
+    border-radius: 5px;
+    color: var(--color-primary-dark);
+    padding: 10px;
+    margin: 5px;
+    width: calc( 100% - 30px ) !important;
+}
+
+.my-form button {
+    border: none;
+    background-color: #0d8998;
     color: white;
-    font-weight: bold;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 5px;
+    width: calc( 100% - 10px );
 }
-
-/*</style>*/

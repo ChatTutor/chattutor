@@ -30,13 +30,7 @@ import { ChattutorDatabaseComponent } from './chattutor-database/chattutor-datab
 import { MessageInsideDatabaseComponent } from './message-inside-database/message-inside-database.component';
 import {MatTableModule} from "@angular/material/table";
 import {MatPaginatorModule} from "@angular/material/paginator";
-import { CourseInputComponent } from './course-input/course-input.component';
-import { UrlLabelComponent } from './url-label/url-label.component';
-import {MatStepperModule} from '@angular/material/stepper';
-import {MatExpansionModule} from '@angular/material/expansion';
-import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
-import { CourseDashboardComponent } from './course-dashboard/course-dashboard.component';
-import { NavbarComponent } from './navbar/navbar.component';
+import { MathjaxComponent } from './mathjax/mathjax.component';
 
 @NgModule({
   declarations: [
@@ -52,11 +46,7 @@ import { NavbarComponent } from './navbar/navbar.component';
     LandingPageComponent,
     ChattutorDatabaseComponent,
     MessageInsideDatabaseComponent,
-    CourseInputComponent,
-    UrlLabelComponent,
-    UserDashboardComponent,
-    CourseDashboardComponent,
-    NavbarComponent,],
+    MathjaxComponent,],
     imports: [
         BrowserModule,
         AppRoutingModule,
@@ -72,10 +62,7 @@ import { NavbarComponent } from './navbar/navbar.component';
         MatTooltipModule,
         MatProgressSpinnerModule,
         MatTableModule,
-        MatPaginatorModule,
-        MatStepperModule,
-        MatExpansionModule
-    ],
+        MatPaginatorModule    ],
   providers: [
     { provide: ENDPOINT_TOKEN, useValue: 'your_endpoint_url_here' },
   ],

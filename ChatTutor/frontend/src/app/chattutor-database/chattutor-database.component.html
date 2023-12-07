@@ -1,23 +1,21 @@
 <div *ngIf="success_message === '' || success_message === 'error'">
-    <div class="boody">
-        <div class="all-form">
-            <div class="aot">
-                <input class="iaot" [(ngModel)]="username" placeholder="username">
-                <input class="iaot" [(ngModel)]="password" placeholder="password">
-                <button class="iaot" (click)="submitForm()">Submit</button>
-            </div>
-        </div>
+    <div class="my-form-center">
+    <div class="my-form">
+        <input [(ngModel)]="username">
+        <input [(ngModel)]="password">
+        <button (click)="submitForm()">Submit</button>
+    </div>
     </div>
 </div>
 <div *ngIf="success_message === 'success'">
     <p>success</p>
     <table mat-table [dataSource]="table_data">
         <ng-container matColumnDef="content">
-            <th mat-header-cell *matHeaderCellDef> Content</th>
+            <th mat-header-cell *matHeaderCellDef> Content </th>
             <td mat-cell *matCellDef="let msg"> {{msg.content}} </td>
         </ng-container>
         <ng-container matColumnDef="role">
-            <th mat-header-cell *matHeaderCellDef> Role</th>
+            <th mat-header-cell *matHeaderCellDef> Role </th>
             <td mat-cell *matCellDef="let msg"> {{msg.role}} </td>
         </ng-container>
 
@@ -28,7 +26,7 @@
 
 </div>
 <mat-paginator #paginator [pageSizeOptions]="[2, 4, 6]"
-               showFirstLastButtons></mat-paginator>
+        showFirstLastButtons></mat-paginator>
 
 <div *ngIf="success_message === 'error'">
     <p>Error!</p>
