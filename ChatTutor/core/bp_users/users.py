@@ -63,6 +63,7 @@ class User(flask_login.UserMixin):
     username = 'NO FACE'
     email = 'NO NAME'
     password_hash = 'NO NUMBER'
+    user_type = ''
 
     def get_id(self):
         return self.username
@@ -81,76 +82,8 @@ class User(flask_login.UserMixin):
         print(self.password_hash.encode('utf-8'), p.encode('utf-8'))
         return bcrypt.checkpw(p.encode('utf-8'), self.password_hash.encode('utf-8'))
 
-@users_bp.route('/register', methods=['POST', 'GET'])
+@users_bp.route('/register', methods=['POST'])
 def register_user():
-    if flask.request.method == 'GET':
-        return '''
-        
-        <style>
-                        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=block');
-                        
-                        * {
-                            font-family: 'Montserrat', sans-serif;
-                        }
-                        
-                        
-                        .aot {
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                            justify-content: center;
-                    
-                        }
-                        .iaot {
-                            color: white;
-                            background-color: #232323;
-                            margin: 10px;
-                            border-radius: 20px;
-                            padding: 20px 50px;
-                            border: 1px solid rgba(0,0,0,0.2);
-                        }
-                        
-                        .iaot::placeholder {
-                            color: white !important;
-                        }
-                        
-                        .aot .iaot:hover {
-                            box-shadow: 8px 6px 15px rgba(0, 0, 0, 0.15)
-                        }
-                        
-                        
-                        .all-form {
-                            display: flex;
-                            flex-direction: column;
-                            justify-content: center;
-                            align-items: center;
-                            width: 100vw;
-                            height: 100vh;
-                        }
-                        
-                        body {
-                            background-image: linear-gradient(45deg, #2c7de7, #3cb2ff);
-                            width: 100%;
-                            height: calc(100vh - 0px);
-                        }
-                        
-                        h2 {
-                            color: white;
-                            font-weight: bold;
-                        }
-                    </style>
-                    <body>
-                    <div class="all-form">
-                    <h2>Register:</h2>
-               <form class="aot" action='register' method='POST'>
-                <input class="iaot" type='text' name='username' id='username' placeholder='username'/>
-                <input class="iaot" type='text' name='email' id='email' placeholder='email'/>
-                <input class="iaot"type='password' name='password' id='password' placeholder='password'/>
-                <input class="iaot" type='submit' name='submit'/>
-               </form>
-               </div>
-               </body>
-               '''
     username = flask.request.form['username']
     email = flask.request.form['email']
     password = flask.request.form['password']
@@ -166,82 +99,14 @@ def register_user():
     user.email = email
     user.password = password
     user.username = username
+    user.user_type = 'PROFESSOR'
     print(user.password_hash)
     messageDatabase.insert_user(user)
     return f'User {user} inserted, please <a href="/login">Login</a>'
 
 
-@users_bp.route('/login', methods=['POST', 'GET'])
+@users_bp.route('/login', methods=['POST'])
 def login():
-    if flask.request.method == 'GET':
-        return '''
-                <head>
-                    <style>
-                        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=block');
-                        
-                        * {
-                            font-family: 'Montserrat', sans-serif;
-                        }
-                        
-                        
-                        .aot {
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                            justify-content: center;
-                    
-                        }
-                        .iaot {
-                            color: white;
-                            background-color: #232323;
-                            margin: 10px;
-                            border-radius: 20px;
-                            padding: 20px 50px;
-                            border: 1px solid rgba(0,0,0,0.2);
-                        }
-                        
-                        .iaot::placeholder {
-                            color: white !important;
-                        }
-                        
-                        .aot .iaot:hover {
-                            box-shadow: 8px 6px 15px rgba(0, 0, 0, 0.15)
-                        }
-                        
-                        
-                        .all-form {
-                            display: flex;
-                            flex-direction: column;
-                            justify-content: center;
-                            align-items: center;
-                            width: 100vw;
-                            height: 100vh;
-                        }
-                        
-                        body {
-                            background-image: linear-gradient(45deg, #2c7de7, #3cb2ff);
-                            width: 100%;
-                            height: calc(100vh - 0px);
-                        }
-                        
-                        h2 {
-                            color: white;
-                            font-weight: bold;
-                        }
-                    </style>
-                </head>
-                <body>
-                <div class="all-form">
-                    <h2>Login:</h2>
-                   <form class="aot" action='login' method='POST'>
-                    <input class="iaot" type='text' name='username' id='username' placeholder='username'/>
-                    <input class="iaot" type='password' name='password' id='password' placeholder='password'/>
-                    <input class="iaot" type='submit' name='submit'/>
-                   </form>
-               <div>
-               </body>
-               '''
-
     username = flask.request.form['username']
     users = messageDatabase.get_user(username=username)
     if len(users) == 0:
@@ -318,3 +183,25 @@ def getusercoursessectionsv1(username, course):
     return jsonify({
         'sections': sections
     })
+
+@users_bp.route("/student/register", methods=['POST'])
+def student_register():
+    username = flask.request.form['username']
+    email = flask.request.form['email']
+    password = flask.request.form['password']
+
+    email = flask.request.form['email']
+    users = messageDatabase.get_user(username=username)
+
+    if len(users) != 0:
+        return f'Username {username} already exists!'
+
+    print(password)
+    user = User()
+    user.email = email
+    user.password = password
+    user.username = username
+    user.user_type = 'STUDENT'
+    print(user.password_hash)
+    messageDatabase.insert_user(user)
+    return f'User {user} inserted, please <a href="/login">Login</a>'

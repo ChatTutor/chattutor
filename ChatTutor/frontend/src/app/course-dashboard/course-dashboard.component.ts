@@ -14,8 +14,15 @@ export class CourseDashboardComponent implements OnInit {
     process_of: any = {}
     course_name: string = '[]'
     loading: boolean = true
+    status: String = 'content'
+    testmode: boolean = false
+    runlocally: boolean = false
 
     constructor(private route: ActivatedRoute) {
+    }
+
+    switchStatus(newstatus : String) : void {
+        this.status = newstatus
     }
 
     ngOnInit(): void {

@@ -160,3 +160,4 @@ def get_section():
     )
     pfrom = [s["pulling_from"] for s in sections]
     return jsonify({'sections': sections, 'pulling_from': pfrom})
+

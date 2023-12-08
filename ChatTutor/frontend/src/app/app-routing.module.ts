@@ -7,15 +7,21 @@ import {ChattutorDatabaseComponent} from "./chattutor-database/chattutor-databas
 import {CourseInputComponent} from "./course-input/course-input.component";
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 import { CourseDashboardComponent } from './course-dashboard/course-dashboard.component';
+import { LoginPageComponent } from './login-page/login-page.component';
+import { RegisterPageComponent } from './register-page/register-page.component';
+import { RegisterStudentPageComponent } from './register-student-page/register-student-page.component';
 
 const routes: Routes = [
   {path: '', component: LandingPageComponent},
   {path: 'cqnchattutor', component: CQNChatTutorWrapperComponent},
-    {path: 'chattutordatabase', component: ChattutorDatabaseComponent},
-    {path: 'chattutor', component: ChatTutorWrapperComponent},
-    {path: 'scrape', component: CourseInputComponent},
-    {path: 'mycourses', component: UserDashboardComponent},
-    {path: 'courses/:id', component: CourseDashboardComponent },
+  {path: 'chattutordatabase', component: ChattutorDatabaseComponent},
+  {path: 'chattutor', component: ChatTutorWrapperComponent},
+  {path: 'scrape', component: CourseInputComponent},
+  {path: 'mycourses', component: UserDashboardComponent},
+  {path: 'courses/:id', component: CourseDashboardComponent },
+  {path: 'login', component: LoginPageComponent},
+  {path: 'register', component: RegisterPageComponent},
+  {path: 'student/register', component: RegisterStudentPageComponent}
 
 ];
 

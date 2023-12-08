@@ -13,7 +13,7 @@
     padding: 20px;
     display: flex;
     flex-direction: row-reverse;
-
+    
 
 }
 
@@ -180,3 +180,35 @@ a:visited {
         order: 2;
     }
 }
+
+.section {
+    background-color: #0090de;
+}
+
+.menu {
+    background-color: #0090de;
+}
+
+.fl-right {
+    background-color: transparent;
+}
+
+
+.ondashboard * {
+    color: black !important;
+}
+.ondashboard h1 {
+    color: black !important;
+}
+.menu {
+    position: sticky;
+    z-index: 1000;
+}
+
+
+.ondashboardmenu {
+    line-height: unset;
+    background-color: whitesmoke;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px !important;
+}
+

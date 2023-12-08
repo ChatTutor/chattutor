@@ -109,6 +109,7 @@ class MessageDB:
         MODIFY sectionurl VARCHAR(256);
     """
 
+
     def __init__(self, host, user, password, database, statistics_database):
         self.host = host
         self.user = user
@@ -119,8 +120,9 @@ class MessageDB:
     def insert_user(self, user):
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
-            print(f"INSERT IGNORE INTO lusers (username, email, password) VALUES ('{user.username}', '{user.email}', '{user.password_hash.decode('utf-8') }')")
-            cur.execute(f"INSERT IGNORE INTO lusers (username, email, password) VALUES ('{user.username}', '{user.email}', '{user.password_hash.decode('utf-8') }')")
+            # add type too.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args..*args.*args.
+            print(f"INSERT IGNORE INTO lusers (username, email, password, user_type) VALUES ('{user.username}', '{user.email}', '{user.password_hash.decode('utf-8') }', '{user.user_type}')")
+            cur.execute(f"INSERT IGNORE INTO lusers (username, email, password, user_type) VALUES ('{user.username}', '{user.email}', '{user.password_hash.decode('utf-8') }', '{user.user_type}')")
             con.commit()
             
     def get_user(self, username):
@@ -204,6 +206,7 @@ class MessageDB:
         cur.execute(self.create_relationship_between_sections_and_courses)
         con.commit()
 
+
     def insert_message(self, a_message):
         """This inserts a message into the sqlite3 database. the message must be sent as a dictionary"""
         with self.connect_to_messages_database() as con:
@@ -258,6 +261,31 @@ class MessageDB:
             if commit:
                 con.commit()
             return messages_arr
+        
+
+    def insert_config(self, user: str, course_id: str, course_url: str, run_locally: int, test_mode: int, is_static: int, build_with: str, server_port: int, chattutor_server: str, token_id: str, use_as_default: int):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+
+            """
+            user varchar(250) not null ,
+            course_id varchar(250) not null,
+            course_url varchar(250) not null,
+            run_locally integer,
+            test_mode integer,
+            is_static integer,
+            built_with varchar(250),
+            server_port integer,
+            chattutor_server varchar(250),
+            token_id varchar(230) PRIMARY KEY,
+            use_as_default integer
+            """
+            cur.execute(f"""INSERT INTO lconfigstokens (user, course_id, course_url, run_locally, test_mode, is_static, build_with, server_port, chattutor_server, token_id, use_as_default)
+                            VALUES ('{user}', '{course_id}', '{course_url}', {run_locally}, {test_mode}, {is_static}, '{build_with}', {server_port}, '{chattutor_server}', '{token_id}', {use_as_default}) 
+                            ON DUPLICATE KEY UPDATE user='{user}', course_id='{course_id}', course_url='{course_url}',
+                                                    run_locally={run_locally}, test_mode={test_mode}, is_static={is_static}, built_with='{build_with}', server_port={server_port},
+                                                    chattutor_server='{chattutor_server}', token_id='{token_id}', use_as_default={use_as_default}""")
+            con.commit()
 
     def parse_messages(self, messages_arr):
         renderedString = (
