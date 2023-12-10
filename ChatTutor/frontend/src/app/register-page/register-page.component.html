@@ -3,10 +3,26 @@
 <div class="all-form">
 <h2>CHATTUTOR Register:</h2>
 <form ngNoForm class="aot" [action]='endpoint' method='POST'>
-    <input class="iaot" type='text' name='username' id='username' placeholder='username'/>
-    <input class="iaot" type='text' name='email' id='email' placeholder='email'/>
-    <input class="iaot"type='password' name='password' id='password' placeholder='password'/>
-    <input class="iaot" type='submit' name='submit'/>
+    <mat-form-field>
+        <mat-label>Username</mat-label>
+
+    <input matInput type='text' name='username' id='username' placeholder='username'/>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>E-Mail</mat-label>
+
+    <input matInput type='text' name='email' id='email' placeholder='email'/>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Password</mat-label>
+
+    <input matInput type='password' name='password' id='password' placeholder='password'/>
+    </mat-form-field>
+    <mat-form-field>
+
+    <input matInput type='submit' name='submit'/>
+    </mat-form-field>
+
 </form>
 </div>
 </div>
