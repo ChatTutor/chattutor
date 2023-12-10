@@ -17,7 +17,7 @@ export class CourseDashboardComponent implements OnInit {
     status: String = 'content'
     testmode: boolean = false
     runlocally: boolean = false
-
+    tokens: any[] = []
     constructor(private route: ActivatedRoute) {
     }
 
@@ -44,7 +44,14 @@ export class CourseDashboardComponent implements OnInit {
                     console.log('sections:',this.sections)
                     this.loading = false
                 })
+
+                fetch(`/course/${this.course_id}/gettokens`, {method: 'POST', headers: {'Content-Type': 'application/json'}}).then(res => res.json())
+                .then(toks => {
+                    this.tokens = toks
+                })
             })
+
+
     }
 
 

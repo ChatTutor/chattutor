@@ -205,3 +205,51 @@ def student_register():
     print(user.password_hash)
     messageDatabase.insert_user(user)
     return f'User {user} inserted, please <a href="/login">Login</a>'
+
+
+@users_bp.route("/course/addtoken", methods=['POST'])
+@flask_login.login_required
+def addtoken():
+    args = flask.request.form
+    print(args)
+    cid = args.get('course_id')
+    curl = args.get('course_url')
+    rulocally = 1 if (args.get('run_locally', 'off') == 'on') else 0
+    testmode = 1 if (args.get('test_mode', 'off') == 'on') else 0
+    isstatic = 1 if (args.get('is_static', 'off') == 'on') else 0
+    buildwith = args.get('built_with', 'Other')
+    server_port =  args.get('server_port', 0)
+    chattutor_server =  args.get('chattutor_server', 'http://127.0.0.1')
+    token_id = f'{uuid.uuid4()}'
+    isdef = 1 if (args.get('is_default', 'off') == 'on') else 0
+
+
+    print(flask_login.current_user.username,cid,
+                                  curl,
+                                  rulocally,
+                                  testmode,
+                                  isstatic,
+                                  buildwith,
+                                  server_port,
+                                  chattutor_server,
+                                  token_id,
+                                  isdef)
+    messageDatabase.insert_config(flask_login.current_user.username,cid,
+                                  curl,
+                                  rulocally,
+                                  testmode,
+                                  isstatic,
+                                  buildwith,
+                                  server_port,
+                                  chattutor_server,
+                                  token_id,
+                                  isdef)
+    return flask.redirect(f"/courses/{cid}")
+
+
+
+@users_bp.route("/course/<cid>/gettokens", methods=['POST'])
+@flask_login.login_required
+def gettokens(cid):
+    tokens = messageDatabase.get_config_by_course_id(cid)
+    return jsonify(tokens)

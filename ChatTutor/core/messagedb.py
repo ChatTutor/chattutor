@@ -280,12 +280,24 @@ class MessageDB:
             token_id varchar(230) PRIMARY KEY,
             use_as_default integer
             """
-            cur.execute(f"""INSERT INTO lconfigstokens (user, course_id, course_url, run_locally, test_mode, is_static, build_with, server_port, chattutor_server, token_id, use_as_default)
+            print(f"""INSERT INTO lconfigstokens (user, course_id, course_url, run_locally, test_mode, is_static, built_with, server_port, chattutor_server, token_id, use_as_default)
+                            VALUES ('{user}', '{course_id}', '{course_url}', {run_locally}, {test_mode}, {is_static}, '{build_with}', {server_port}, '{chattutor_server}', '{token_id}', {use_as_default}) 
+                            ON DUPLICATE KEY UPDATE user='{user}', course_id='{course_id}', course_url='{course_url}',
+                                                    run_locally={run_locally}, test_mode={test_mode}, is_static={is_static}, built_with='{build_with}', server_port={server_port},
+                                                    chattutor_server='{chattutor_server}', token_id='{token_id}', use_as_default={use_as_default}""")
+            cur.execute(f"""INSERT INTO lconfigstokens (user, course_id, course_url, run_locally, test_mode, is_static, built_with, server_port, chattutor_server, token_id, use_as_default)
                             VALUES ('{user}', '{course_id}', '{course_url}', {run_locally}, {test_mode}, {is_static}, '{build_with}', {server_port}, '{chattutor_server}', '{token_id}', {use_as_default}) 
                             ON DUPLICATE KEY UPDATE user='{user}', course_id='{course_id}', course_url='{course_url}',
                                                     run_locally={run_locally}, test_mode={test_mode}, is_static={is_static}, built_with='{build_with}', server_port={server_port},
                                                     chattutor_server='{chattutor_server}', token_id='{token_id}', use_as_default={use_as_default}""")
             con.commit()
+            
+    def get_config_by_course_id(self, course_id: str):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            response = cur.execute(f"SELECT * FROM lconfigstokens WHERE course_id='{course_id}'")
+            messages_arr = cur.fetchall()
+            return messages_arr
 
     def parse_messages(self, messages_arr):
         renderedString = (

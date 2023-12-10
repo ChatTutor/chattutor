@@ -52,52 +52,100 @@
                     <div *ngIf="status=='tokens'">
                         
                         <div class="acc-center">
+                            <h3>Add a token!</h3>
+
                             <div class="text">
                             <span>Below are all your course's tokens. Tokens help you embed ChatTutor on your course!</span>
                             </div>
-                            <mat-divider></mat-divider>
-                            <form ngNoForm action="course/addtoken" class="col start theform">
-                                <mat-form-field>
-                                    <mat-label>Domain of Course</mat-label>
-                                    <input matInput type='text' name='course_url' id='course_url' placeholder="E.g.: https://my.course.com or https://127.0.0.1"/>
-                                </mat-form-field>
-                                <div class="horiz">
-                                    <input type='checkbox' name='run_locally' id='run_locally'
-                                    [checked]="runlocally"
-                                    (change)="runlocally = !runlocally"/>
-                                    <mat-label>Runs on a localhost server</mat-label>
-                                    
-                                </div>
+                            <div class="border fl">
+                                <form ngNoForm action="/course/addtoken" method='POST' class="col start theform">
+
+                                    <mat-form-field>
+                                        <mat-label>Course ID (leave unchaged)</mat-label>
+                                        <input matInput type='text' name='course_id' id='course_id' placeholder="ID" [value]="course_id"/>
+                                    </mat-form-field>
+                                    <mat-form-field>
+                                        <mat-label>Domain of Course</mat-label>
+                                        <input matInput type='text' name='course_url' id='course_url' placeholder="E.g.: https://my.course.com or https://127.0.0.1"/>
+                                    </mat-form-field>
+                                    <div class="horiz">
+                                        <input type='checkbox' name='run_locally' id='run_locally'
+                                        [checked]="runlocally"
+                                        (change)="runlocally = !runlocally"/>
+                                        <mat-label>Runs on a localhost server</mat-label> 
+                                    </div>
+    
+                                    <div *ngIf="runlocally">
+                                        <mat-form-field>
+                                            <mat-label>What do you use to build your site?</mat-label>
+                                            <select matNativeControl name="built_with" id="built_with">
+                                                <option value="JUPYTER-NOTEBOOK">Jupyter Notebook</option>
+                                                <option value="SERVER">Other</option>
+                                            </select>
+                                        </mat-form-field>
+    
+                                        <div class="horiz">
+                                            <input type='checkbox' name='is_static' id='is_static'/>
+                                        <mat-label>If Jupyter Notebook is selected above, will you use the token to run the build statically on your local machine?</mat-label>
+                                        
+                                    </div>
+    
                                     <div class="horiz">
                                         <input type='checkbox' name='test_mode' id='test_mode'
-                                    [checked]="testmode"
-                                    (change)="testmode = !testmode"/>
-                                    <mat-label>Requests answers from a localhost ChatTutor server</mat-label>
+                                        [checked]="testmode"
+                                        (change)="testmode = !testmode"/>
+                                        <mat-label>Requests answers from a localhost ChatTutor server</mat-label>
+                                        
+                                    </div>
+    
+                                    <div *ngIf="testmode">
+                                        <mat-form-field class="full-width">
+                                            <mat-label>ChatTutor Server / PORT</mat-label>
+                                            <input matInput type='text' name='chattutor_server' id='chattutor_server'/>
+                                        </mat-form-field>
+                                    </div>
                                     
-                                </div>
-
-                                <div *ngIf="testmode">
-                                    <mat-form-field class="full-width">
-                                        <mat-label>ChatTutor Server / PORT</mat-label>
-                                        <input matInput type='text' name='chattutor_server' id='chattutor_server'/>
-                                    </mat-form-field>
-                                </div>
-                                <div *ngIf="runlocally">
-                                    <mat-form-field>
-                                        <mat-label>What do you use to build your site?</mat-label>
-                                        <select matNativeControl name="built_with" id="built_with">
-                                            <option value="JUPYTER-NOTEBOOK">Jupyter Notebook</option>
-                                            <option value="SERVER">Other</option>
-                                        </select>
-                                    </mat-form-field>
+                                    </div>
 
                                     <div class="horiz">
-                                        <input type='checkbox' name='is_static' id='is_static'/>
-                                    <mat-label>If Jupyter Notebook is selected above, will you use the token to run the build statically on your local machine?</mat-label>
-                                    
-                                </div>
-                                </div>
-                            </form>
+                                        <input type='checkbox' name='is_default' id='is_default' checked/>
+                                        <mat-label>Save as default token for this course</mat-label>
+                                        
+                                    </div>
+
+
+                                    <mat-form-field class="full-width">
+
+                                        <input matInput type='submit'/>
+                                    </mat-form-field>
+                                </form>
+                            </div>
+                            <br/>
+                            <br/>
+                            <div>
+                                <h3>Your tokens</h3>
+
+                                <mat-list>
+
+                                    <div *ngFor="let tok of tokens">
+                                        <mat-divider></mat-divider>
+
+                                        <mat-list-item>
+                                        <div class="col start" style="margin: 20px;">
+                                            
+                                                <div class="col start">
+                                                    <span>Token: {{tok['token_id']}}</span>
+                        
+                                                    <span>Active on: {{tok['course_url']}}</span>
+                                                </div>
+                                        </div>
+                                        </mat-list-item>
+
+                                    </div>
+                                </mat-list>
+
+                            </div>
+                            
                         </div>
                     </div>
                     <div *ngIf="status=='students'">

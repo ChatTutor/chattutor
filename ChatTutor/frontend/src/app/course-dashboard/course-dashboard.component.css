@@ -84,3 +84,18 @@ mat-form-field {
     flex-direction: row;
     padding: 5px;
 }
+
+.border {
+    border: 5px solid whitesmoke;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.fl {
+    width: 100%;
+}
+
+.col.start {
+    justify-content: flex-start;
+    align-items: flex-start;
+}
