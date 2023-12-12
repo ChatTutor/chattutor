@@ -41,8 +41,9 @@ from werkzeug.datastructures import FileStorage
 # from vectordatabase import VectorDatabase
 
 interpreter.auto_run = True
-from core.openai_tools import load_api_keys
+from core.openai_tools import OPENAI_DEFAULT_MODEL, load_api_keys
 load_api_keys()
+
 
 
 app = Flask(__name__)
@@ -174,7 +175,7 @@ def cqn():
         - find similar papers to others
         - summarize articles
         """, "Make an introductory message of yourself mentioning who you are, how many papers do you know, and what you can do to help users. Also, give examples of questions to related to what you can do. Do it in 200 words and generate the response in HTML",
-        models_to_try = ["gpt-3.5-turbo"])
+        models_to_try = [OPENAI_DEFAULT_MODEL])
 
 
     return flask.render_template(
@@ -229,9 +230,9 @@ def ask():
     from_doc = data.get("from_doc")
     selected_model = data.get("selectedModel")
     if selected_model == None:
-        selected_model = 'gpt-3.5-turbo-16k'
+        selected_model = OPENAI_DEFAULT_MODEL
     # TEMP CHANGE
-    selected_model = 'gpt-4'
+    selected_model = OPENAI_DEFAULT_MODEL
     print('SELECTED MODEL:', selected_model)
     print(collection_name)
     # Logging whether the request is specific to a document or can be from any document
@@ -276,7 +277,7 @@ def ask_interpreter():
     selected_model = data.get("selectedModel")
     if selected_model == None:
         # selected_model = 'gpt-3.5-turbo-16k'
-        selected_model = "gpt-4"
+        selected_model = OPENAI_DEFAULT_MODEL
     print("SELECTED MODEL:", selected_model)
     print(collection_name)
     # Logging whether the request is specific to a document or can be from any document
