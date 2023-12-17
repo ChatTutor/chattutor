@@ -253,6 +253,32 @@ class MessageDB:
             cur.execute(f"UPDATE lsections SET pulling_from = concat(pulling_from, '{'$'+from_doc}') WHERE section_id = '{section_id}'")
             con.commit()
 
+
+    def insert_course(self, course_id, name, proffessor, mainpage, collectionname):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"INSERT INTO lcourses (course_id, name, proffessor, mainpage, collectionname) VALUES ('{course_id}', '{name}', '{proffessor}', '{mainpage}', '{collectionname}') ON DUPLICATE KEY UPDATE course_id='{course_id}', name='{name}', proffessor='{proffessor}', mainpage='{mainpage}', collectionname='{collectionname}'")
+            con.commit()
+
+    def insert_section(self, section_id, pulling_from, sectionurl):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"INSERT INTO lsections (section_id, pulling_from, sectionurl) VALUES ('{section_id}', '{pulling_from}', '{sectionurl}') ON DUPLICATE KEY UPDATE section_id='{section_id}', pulling_from='{pulling_from}', sectionurl='{sectionurl}'")
+
+            con.commit()
+
+    def establish_course_section_relationship(self, section_id, course_id):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"INSERT INTO rsectionscourses (section_id, course_id) VALUES ('{section_id}', '{course_id}') ON DUPLICATE KEY UPDATE section_id='{section_id}', course_id='{course_id}'")
+            con.commit()
+
+    def update_section_add_fromdoc(self, section_id, from_doc):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(f"UPDATE lsections SET pulling_from = concat(pulling_from, '{'$'+from_doc}') WHERE section_id = '{section_id}'")
+            con.commit()
+
     def execute_sql(self, sqlexec, commit=True):
         with self.connect_to_messages_database() as con:
             cur = con.cursor()

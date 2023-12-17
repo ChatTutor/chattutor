@@ -5,7 +5,13 @@
 * {
     font-family: 'Montserrat', sans-serif;
 }
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=block');
+
+* {
+    font-family: 'Montserrat', sans-serif;
+}
 .section {
+    width: calc(100% - 40px);
     width: calc(100% - 40px);
     font-weight: 700;
     font-size: 20px;

@@ -1,5 +1,7 @@
 from threading import Lock
 
+from threading import Lock
+
 import chromadb
 from chromadb.utils import embedding_functions
 from typing import List
@@ -163,6 +165,30 @@ class VectorDatabase:
             documents=[text.text for text in texts],
         )
 
+    def add_texts_chroma_lock(self, texts: List[Text], lock: Lock):
+        """Adding texts to Chroma data source with specified ids, metadatas, and documents,
+            for parallel url spidering
+
+        Args:
+            texts (List[Text]): Texts to add to database
+            lock (Lock): the threading lock
+        """
+        lock.acquire()
+        count = self.datasource.count()
+        ids = [str(i) for i in range(count, count + len(texts))]
+        # print(ids, count)
+        lock.release()
+        self.datasource.add(
+            ids=ids,
+            metadatas=[{"doc": text.doc.docname} for text in texts],
+            documents=[text.text for text in texts],
+        )
+        # print(texts)
+        # print("texts", texts)
+        # print(texts[0].doc.docname
+
+
+
     def query(self, prompt, n_results, from_doc, metadatas=False, distances=False):
         """Equivalent of query_chroma
         Args:
@@ -217,22 +243,15 @@ class VectorDatabase:
                 query_texts=prompt, n_results=n_results, include=include
             )
 
-    def get_chroma(self, n_results, from_doc, include=["documents"]):
-        """
-        Get document from ChromaDB that matches from_doc exactly.
-        Args:
-            from_doc (string | list[string]) -  should be either a string  a list of strings
-            include (list[string]) - any cmbination of embeddings, documents, metadatas. Defaults to ["documents"]
-        """
-        if from_doc and (type(from_doc) in (list, )):
-            return self.datasource.get(
-                where={"doc": {"$in" : from_doc}},
-                include=include,
-            )
-        elif from_doc:
-            return self.datasource.get(
-                where={"doc": from_doc},
-                include=include,
+    def query_deeplake(self, prompt, n_results, from_doc):
+        """Querying Deeplake data source with specified embedding_data, embedding_function, k, optional filter, and exec_option"""
+        if from_doc:
+            return self.datasource.search(
+                embedding_data=prompt,
+                embedding_function=embedding_function,
+                k=n_results,
+                filter={"metadata": {"doc": from_doc}},
+                exec_option="compute_engine",
             )
         else:
             return self.datasource.get(
