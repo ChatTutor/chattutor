@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <header class="section menu" [class.ondashboardmenu]="ondashboard">
     <!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT09TQMs5SsRhsLscHDKkO-uP-QTJRmz-JM2lDrXbhYvgAUi7uXJWtbMYgBGjg&s"/> -->
     <div class="fl-right" [class.ondashboard]="ondashboard">
@@ -17,6 +18,28 @@
             <a href="/register">Register</a>
         </div>
         <div *ngIf="loggedin && !hidden">
+=======
+<header class="section menu">
+    <!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT09TQMs5SsRhsLscHDKkO-uP-QTJRmz-JM2lDrXbhYvgAUi7uXJWtbMYgBGjg&s"/> -->
+    <div class="fl-right">
+
+        <div>
+            <a href="/">Home</a>
+        </div>
+        <div>
+            <a href="/chattutordatabase">Database</a>
+        </div>
+        <div *ngIf="loggedin">
+            <a href="/mycourses">My courses</a>
+        </div>
+        <div *ngIf="!loggedin">
+            <a href="/login">Login</a>
+        </div>
+        <div *ngIf="!loggedin">
+            <a href="/register">Register</a>
+        </div>
+        <div *ngIf="loggedin">
+>>>>>>> origin/beta-main
             <a href="/logout">Logout</a>
         </div>
     </div>

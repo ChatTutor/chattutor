@@ -1,6 +1,10 @@
 .accordeon {
     width: calc(50vw - 40px);
+<<<<<<< HEAD
     /* max-height: 500px; */
+=======
+    max-height: 500px;
+>>>>>>> origin/beta-main
     overflow: scroll;
     border: 2px solid white;
     background: white;
@@ -8,6 +12,7 @@
     padding: 10px;
 }
 .body {
+<<<<<<< HEAD
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -19,6 +24,18 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
+=======
+    padding-top: 120px;
+    background-image: linear-gradient(45deg, #2c7de7, #3cb2ff);
+}
+.acc-center {
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: white;
+>>>>>>> origin/beta-main
     padding: 20px;
 }
 
@@ -32,6 +49,7 @@
 .text{
     width: 100%;
     margin-bottom: 20px;
+<<<<<<< HEAD
 }
 
 .row {
@@ -98,4 +116,6 @@ mat-form-field {
 .col.start {
     justify-content: flex-start;
     align-items: flex-start;
+=======
+>>>>>>> origin/beta-main
 }

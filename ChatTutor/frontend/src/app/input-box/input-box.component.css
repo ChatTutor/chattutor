@@ -1,7 +1,8 @@
 .input-container {
-    width: calc(60% - 30px);
+    width: calc(100% - 60px);
     padding-left: 30px;
     padding-right: 30px;
+<<<<<<< HEAD
     width: calc( 60% - 30px );
     padding-left: calc(20% + 15px);
     padding-right: calc(20% + 15px);
@@ -20,13 +21,11 @@ button.b1:not(:disabled) {
     color: white;
 
 }
+=======
+>>>>>>> origin/beta-main
 
-button.b2:disabled {
-    width: 0px !important;
-    height: 0px !important;
-    padding: 0;
-    overflow: hidden;
 }
+<<<<<<< HEAD
 
 
 button.b1:not(:disabled):hover {
@@ -43,3 +42,5 @@ button {
     border-radius: 10px !important;
     transition: all 0.2s ease-in-out;
 }
+=======
+>>>>>>> origin/beta-main

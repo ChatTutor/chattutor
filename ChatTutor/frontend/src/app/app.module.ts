@@ -38,10 +38,14 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 import { CourseDashboardComponent } from './course-dashboard/course-dashboard.component';
 import { NavbarComponent } from './navbar/navbar.component';
+<<<<<<< HEAD
 import { MathjaxComponent } from './mathjax/mathjax.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { RegisterPageComponent } from './register-page/register-page.component';
 import { RegisterStudentPageComponent } from './register-student-page/register-student-page.component';
+=======
+
+>>>>>>> origin/beta-main
 @NgModule({
   declarations: [
     AppComponent,
@@ -56,17 +60,24 @@ import { RegisterStudentPageComponent } from './register-student-page/register-s
     LandingPageComponent,
     ChattutorDatabaseComponent,
     MessageInsideDatabaseComponent,
+<<<<<<< HEAD
     MathjaxComponent,
+=======
+>>>>>>> origin/beta-main
     CourseInputComponent,
     UrlLabelComponent,
     UserDashboardComponent,
     CourseDashboardComponent,
+<<<<<<< HEAD
     NavbarComponent,
     MathjaxComponent,
     LoginPageComponent,
     RegisterPageComponent,
     RegisterStudentPageComponent
   ],
+=======
+    NavbarComponent,],
+>>>>>>> origin/beta-main
     imports: [
         BrowserModule,
         AppRoutingModule,

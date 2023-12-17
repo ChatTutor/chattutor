@@ -1,28 +1,32 @@
 <div class="message-container" [class]="message.sender">
     <div class="message">
+<<<<<<< HEAD
         <!-- <div class="timestamp">{{ message.timestamp }}</div> -->
 
 
         <!-- <div [innerHTML]="message.content"></div> -->
         <app-mathjax [content]='message.content' class="box"></app-mathjax>
         <!-- <ng-katex-html [html]="message.conten"></ng-katex-html> -->
+=======
+        <div class="timestamp">{{ message.timestamp }}</div>
+    
+        <div *ngIf="message.valid_docs != undefined" class="message-docs">
+            <mat-chip-listbox *ngFor="let doc of message.valid_docs; let docindex = index" class="message-doc">
+                <app-paper-chip [document]="doc"
+                (onRestrict)="doc_restrictContext($event)"
+                (click)="activatePaper(docindex)"
+                [active]="docindex == activePaperIndex"></app-paper-chip>
+            </mat-chip-listbox>
+        </div>
+        <div [innerHTML]="message.content"></div>
+
+>>>>>>> origin/beta-main
     </div>
     <div class="paper-info">
-        <div  *ngIf="message.valid_docs != undefined" class="message-docs">
-            <div *ngFor="let doc of message.valid_docs; let docindex = index">
-                <!-- <mat-chip-listbox class="message-doc">
-                    <app-paper-chip [document]="doc"
-                    (onRestrict)="doc_restrictContext($event)"
-                    (click)="activatePaper(docindex)"
-                    [active]="docindex == activePaperIndex"></app-paper-chip>
-                </mat-chip-listbox> -->
-
-
-                <app-docheader [document]="doc" [showHeader]="false"
-                (onFocus)="doc_restrictContext($event)" [full]="(activePaperIndex >= 0) && (activePaperIndex == docindex) && message.valid_docs"
-                (onClick)="activatePaper(docindex)"
-                ></app-docheader>
-            </div>
+        <div *ngIf="(activePaperIndex >= 0) && message.valid_docs">
+            <app-docheader [document]="message.valid_docs[activePaperIndex]" [showHeader]="false"
+            (onFocus)="doc_restrictContext($event)"
+            ></app-docheader>
         </div>
     </div>
 </div>
