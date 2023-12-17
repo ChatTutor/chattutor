@@ -253,3 +253,11 @@ def addtoken():
 def gettokens(cid):
     tokens = messageDatabase.get_config_by_course_id(cid)
     return jsonify(tokens)
+
+
+@users_bp.route("/gendefaulttoken", methods=['POST'])
+@flask_login.login_required
+def gendefaulttoken():
+    request_url = request.url
+    tokens = messageDatabase.get_default_config_for_url(request_url)
+    return jsonify(tokens)

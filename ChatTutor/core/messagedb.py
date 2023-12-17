@@ -299,6 +299,14 @@ class MessageDB:
             messages_arr = cur.fetchall()
             return messages_arr
 
+
+    def get_default_config_for_url(self, url: str):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            response = cur.execute(f"SELECT * FROM lconfigstokens WHERE course_url='{url}' AND use_as_default=1")
+            messages_arr = cur.fetchall()
+            return messages_arr
+
     def parse_messages(self, messages_arr):
         renderedString = (
             '<table class="messages-table"> <tr style="background-color: rgb(140, 0, 255); color: white"> '
