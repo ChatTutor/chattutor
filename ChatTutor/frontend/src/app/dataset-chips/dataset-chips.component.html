@@ -1,4 +1,4 @@
-<mat-form-field class="urls-and-files" [class]="status == WStatus.DragOver ? 'urls-and-files large' : 'urls-and-files normal'" [class.hide]="!isactive">
+<mat-form-field class="urls-and-files" [class]="status == WStatus.DragOver ? 'urls-and-files large' : 'urls-and-files normal'">
     <mat-label>Write url or drag files</mat-label>
     <mat-chip-grid #chipGrid aria-label="Write url">
         <mat-chip-row *ngFor="let file of files_data">

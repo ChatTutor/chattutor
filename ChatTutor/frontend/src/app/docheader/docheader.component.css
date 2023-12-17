@@ -2,22 +2,12 @@
     /* position: fixed;
     top: 10px;
     right: 10px; */
-    /* max-width: 80%; */
-    margin: 5px;
-}
-
-.docheader, .docheader * {
-    word-break:break-all;
+    /* max-width: 18%; */
 }
 
 .docheader mat-card {
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px !important;
     border-radius: 20px;
-}
-
-.docheader mat-card-header {
-    cursor: pointer;
-    user-select: none;
 }
 
 .docheader mat-card-option {

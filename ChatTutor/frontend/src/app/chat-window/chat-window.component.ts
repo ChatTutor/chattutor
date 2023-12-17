@@ -1,4 +1,4 @@
-import {Component, EventEmitter, HostBinding, HostListener, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostBinding, HostListener, Input, Output} from '@angular/core';
 import {Paper} from 'app/models/paper.model';
 import {DataMessage, Message} from "../models/message.model";
 import {ChatTutor} from "../models/chattutor.model";
@@ -22,14 +22,6 @@ export class ChatWindowComponent implements OnInit{
     pleaseStopGeneratingConvo: boolean = false
     @Input() openingMessage: string = `Hello, I am here to respond to any questions you might have about this chapter or course.\nFeel free to ask me anything!`
 
-    ngOnInit(): void {
-        this.messages.push({
-            sender: "Assistant",
-            content: formatMessage(this.openingMessage),
-            role: 'assistant',
-            timestamp: "0"
-        } as Message);
-    }
 
     setStatus(status: WStatus) {
         this.status = status

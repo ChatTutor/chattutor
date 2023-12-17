@@ -162,6 +162,11 @@ class VectorDatabase:
             metadatas=[{"doc": text.doc.docname} for text in texts],
             documents=[text.text for text in texts],
         )
+        # print(texts)
+        # print("texts", texts)
+        # print(texts[0].doc.docname
+
+
 
     def query(self, prompt, n_results, from_doc, metadatas=False, distances=False):
         """Equivalent of query_chroma
@@ -213,8 +218,8 @@ class VectorDatabase:
                     include=include,
                 )
         else:
-            return self.datasource.query(
-                query_texts=prompt, n_results=n_results, include=include
+            return self.datasource.get(
+                include=include
             )
 
     def get_chroma(self, n_results, from_doc, include=["documents"]):

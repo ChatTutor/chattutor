@@ -109,7 +109,6 @@ class MessageDB:
         MODIFY sectionurl VARCHAR(256);
     """
 
-
     def __init__(self, host, user, password, database, statistics_database):
         self.host = host
         self.user = user
@@ -205,7 +204,6 @@ class MessageDB:
         cur.execute(self.create_section_name)
         cur.execute(self.create_relationship_between_sections_and_courses)
         con.commit()
-
 
     def insert_message(self, a_message):
         """This inserts a message into the sqlite3 database. the message must be sent as a dictionary"""

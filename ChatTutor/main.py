@@ -56,7 +56,6 @@ load_api_keys()
 
 app = Flask(__name__, static_folder='frontend/dist/frontend/', static_url_path='')
 app.secret_key = "fhslcigiuchsvjksvjksgkgs"
-
 db.init_db()
 user_db.init_db()
 messageDatabase.initialize_ldatabase()
@@ -120,6 +119,7 @@ __root = app.static_folder
 def not_found_error(error):
     return send_from_directory(__root, "index.html")
 
+
 print("Running @ ", __root)
 
 for root, subdirs, files in os.walk(__root):
@@ -154,6 +154,7 @@ def angular(path):
     if path not in __angular_paths:
         path = __angular_default_path
     return send_from_directory(__root, path)
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)  # Running the app in debug mode
