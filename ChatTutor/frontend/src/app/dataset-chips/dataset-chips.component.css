@@ -1,12 +1,19 @@
-.urls-and-files {
+.urls-and-files, .file-place-holder {
     padding-left: 30px;
     padding-right: 30px;
-    width: calc( 100% - 60px );
+    width: calc( 60% - 30px );
     font-size: small;
+    padding-left: calc(20% + 15px);
+    padding-right: calc(20% + 15px);
+    right: 0;
+    float: right;
 }
 
 .urls-and-files.large {
-    min-height: 200px;
+    width: calc( 70% - 30px );
+
+    padding-left: calc(15% + 15px);
+    padding-right: calc(15% + 15px);
     pointer-events: none;
 
 }

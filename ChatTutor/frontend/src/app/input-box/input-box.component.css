@@ -1,5 +1,5 @@
 .input-container {
-    width: calc(100% - 60px);
+    width: calc(60% - 30px);
     padding-left: 30px;
     padding-right: 30px;
     width: calc( 60% - 30px );
@@ -21,6 +21,11 @@ button.b1:not(:disabled) {
 
 }
 
+button.b2:disabled {
+    width: 0px !important;
+    height: 0px !important;
+    padding: 0;
+    overflow: hidden;
 }
 
 
