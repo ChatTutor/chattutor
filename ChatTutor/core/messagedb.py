@@ -109,7 +109,10 @@ class MessageDB:
         MODIFY sectionurl VARCHAR(256);
     """
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/beta-main
     def __init__(self, host, user, password, database, statistics_database):
         self.host = host
         self.user = user
@@ -120,9 +123,14 @@ class MessageDB:
     def insert_user(self, user):
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
+<<<<<<< HEAD
             # add type too.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args..*args.*args.
             print(f"INSERT IGNORE INTO lusers (username, email, password, user_type) VALUES ('{user.username}', '{user.email}', '{user.password_hash.decode('utf-8') }', '{user.user_type}')")
             cur.execute(f"INSERT IGNORE INTO lusers (username, email, password, user_type) VALUES ('{user.username}', '{user.email}', '{user.password_hash.decode('utf-8') }', '{user.user_type}')")
+=======
+            print(f"INSERT IGNORE INTO lusers (username, email, password) VALUES ('{user.username}', '{user.email}', '{user.password_hash.decode('utf-8') }')")
+            cur.execute(f"INSERT IGNORE INTO lusers (username, email, password) VALUES ('{user.username}', '{user.email}', '{user.password_hash.decode('utf-8') }')")
+>>>>>>> origin/beta-main
             con.commit()
             
     def get_user(self, username):
@@ -152,15 +160,31 @@ class MessageDB:
             sections = cur.fetchall()
             print(sections)
             return sections
+<<<<<<< HEAD
 
 
+=======
+
+
+>>>>>>> origin/beta-main
     def get_courses_sections_format(self, course_id):
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             cur.execute(f"SELECT * FROM lsections WHERE section_id IN (SELECT section_id FROM rsectionscourses WHERE course_id = '{course_id}')")
             sections = cur.fetchall()
+<<<<<<< HEAD
             cur.execute(f"SELECT name FROM lcourses WHERE course_id='{course_id}'")
             names = cur.fetchall()
+=======
+
+
+            cur.execute(f"SELECT name FROM lcourses WHERE course_id='{course_id}'")
+            names = cur.fetchall()
+
+            # print(names)
+            # print(sections)
+
+>>>>>>> origin/beta-main
             dic = [{
                 'section_id': section['section_id'],
                 'course_id': course_id,
@@ -205,7 +229,10 @@ class MessageDB:
         cur.execute(self.create_section_name)
         cur.execute(self.create_relationship_between_sections_and_courses)
         con.commit()
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/beta-main
 
     def insert_message(self, a_message):
         """This inserts a message into the sqlite3 database. the message must be sent as a dictionary"""

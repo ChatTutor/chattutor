@@ -1,4 +1,4 @@
-import {Component, EventEmitter, HostBinding, HostListener, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostBinding, HostListener, Input, Output} from '@angular/core';
 import {Paper} from 'app/models/paper.model';
 import {DataMessage, Message} from "../models/message.model";
 import {ChatTutor} from "../models/chattutor.model";
@@ -9,7 +9,11 @@ import { WStatus } from 'app/models/windowstatus.enum';
     templateUrl: './chat-window.component.html',
     styleUrls: ['./chat-window.component.css']
 })
+<<<<<<< HEAD
 export class ChatWindowComponent implements OnInit{
+=======
+export class ChatWindowComponent {
+>>>>>>> origin/beta-main
     messages: Message[] = [];
     @Input() collections: string[] | undefined = ['test_embedding']
     @Input() restrictToDocument: any = undefined
@@ -22,14 +26,6 @@ export class ChatWindowComponent implements OnInit{
     pleaseStopGeneratingConvo: boolean = false
     @Input() openingMessage: string = `Hello, I am here to respond to any questions you might have about this chapter or course.\nFeel free to ask me anything!`
 
-    ngOnInit(): void {
-        this.messages.push({
-            sender: "Assistant",
-            content: formatMessage(this.openingMessage),
-            role: 'assistant',
-            timestamp: "0"
-        } as Message);
-    }
 
     setStatus(status: WStatus) {
         this.status = status
@@ -113,7 +109,11 @@ export class ChatWindowComponent implements OnInit{
         this.messages.push(ms);
         await this.addMessageToDB(ms)
         console.log(this.messages);
+<<<<<<< HEAD
         console.log(JSON.stringify(this.messages))
+=======
+
+>>>>>>> origin/beta-main
         this.askForMessage().then(() => {
             console.log('Asked!')
         })

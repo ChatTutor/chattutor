@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <app-navbar [ondashboard]="true"></app-navbar>
 <div class="body col">
     <div class="container">
@@ -154,5 +155,33 @@
                 </div>
             </div>
         </div>
+=======
+<app-navbar></app-navbar>
+<div class="body">
+    <div *ngIf="loading">
+
+        <div class="spinner">
+            <mat-spinner diameter="30"></mat-spinner>
+        </div>
+    </div>
+    <div *ngIf="!loading">
+        <div class="acc-center">
+            <div class="text">
+                <h1>Welcome to {{course_name}}!</h1>
+            <h3>Below are all your course's sections, either labs of readings.</h3>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="accordeon">
+                <mat-accordion>
+                    <div *ngFor="let section of sections">
+                        <app-url-label [url_name]="section['section_url']" [section_info]="section"
+                                       (onRemove)="removeFromCollection($event)"
+                                       [isDeleting]="statusDel(section)"></app-url-label>
+                    </div>
+                </mat-accordion>
+            </div>
+        </div>
+
+>>>>>>> origin/beta-main
     </div>
 </div>

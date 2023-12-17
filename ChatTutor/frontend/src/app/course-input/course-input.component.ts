@@ -55,7 +55,11 @@ export class CourseInputComponent {
 
     async submitUrlToParse() {
         let data = JSON.stringify({url_to_parse: this.urltoparse, collection_name: this.collectionname, course_name: this.course_name, coursename: this.course_name, proffessor: this.proffessor})
+<<<<<<< HEAD
         let response = await fetch('/prep/course/parse', {method: 'POST', headers:{'Content-Type':'application/json'}, body: data})
+=======
+        let response = await fetch('/generate_bfs_array', {method: 'POST', headers:{'Content-Type':'application/json'}, body: data})
+>>>>>>> origin/beta-main
         const urls = await response.json()
         console.log("Generated urls: ", urls)
         this.urls_to_parse = urls
@@ -63,7 +67,11 @@ export class CourseInputComponent {
 
     async submitUrlScrape() {
         let data = JSON.stringify({url_to_parse: this.urltoparse, collection_name: this.collectionname, course_name: this.course_name, coursename: this.course_name, proffessor: this.proffessor})
+<<<<<<< HEAD
         let response = await fetch('/prep/course/register', {method: 'POST', headers:{'Content-Type':'application/json'}, body: data})
+=======
+        let response = await fetch('/urlcrawler', {method: 'POST', headers:{'Content-Type':'application/json'}, body: data})
+>>>>>>> origin/beta-main
         const reader = response.body!.getReader()
         let fulldata = ''
         let added_sections : any = {}

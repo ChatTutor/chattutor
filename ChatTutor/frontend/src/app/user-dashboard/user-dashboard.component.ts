@@ -9,6 +9,7 @@ export class UserDashboardComponent implements OnInit {
     username: string
     displayedColumns: string[] = ['mainpage', 'name', 'collectionname', 'professor', 'accesslink'];
     loading: boolean = true
+<<<<<<< HEAD
     status: String = 'courses'
 
     courses: any[] = []
@@ -19,6 +20,11 @@ export class UserDashboardComponent implements OnInit {
     }
 
 
+=======
+
+    courses: any[] = []
+
+>>>>>>> origin/beta-main
     async ngOnInit(): Promise<void> {
         this.loading = true
         const respuser = await fetch('/getuser', {method: 'POST', headers: {'Content-Type': 'application/json'}})

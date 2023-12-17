@@ -14,6 +14,7 @@ export class CourseDashboardComponent implements OnInit {
     process_of: any = {}
     course_name: string = '[]'
     loading: boolean = true
+<<<<<<< HEAD
     status: String = 'content'
     testmode: boolean = false
     runlocally: boolean = false
@@ -23,6 +24,10 @@ export class CourseDashboardComponent implements OnInit {
 
     switchStatus(newstatus : String) : void {
         this.status = newstatus
+=======
+
+    constructor(private route: ActivatedRoute) {
+>>>>>>> origin/beta-main
     }
 
     ngOnInit(): void {
@@ -44,6 +49,7 @@ export class CourseDashboardComponent implements OnInit {
                     console.log('sections:',this.sections)
                     this.loading = false
                 })
+<<<<<<< HEAD
 
                 fetch(`/course/${this.course_id}/gettokens`, {method: 'POST', headers: {'Content-Type': 'application/json'}}).then(res => res.json())
                 .then(toks => {
@@ -52,6 +58,9 @@ export class CourseDashboardComponent implements OnInit {
             })
 
 
+=======
+            })
+>>>>>>> origin/beta-main
     }
 
 

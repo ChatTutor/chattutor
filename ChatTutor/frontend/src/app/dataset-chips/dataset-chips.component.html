@@ -1,4 +1,4 @@
-<mat-form-field class="urls-and-files" [class]="status == WStatus.DragOver ? 'urls-and-files large' : 'urls-and-files normal'" [class.hide]="!isactive">
+<mat-form-field class="urls-and-files" [class]="status == WStatus.DragOver ? 'urls-and-files large' : 'urls-and-files normal'">
     <mat-label>Write url or drag files</mat-label>
     <mat-chip-grid #chipGrid aria-label="Write url">
         <mat-chip-row *ngFor="let file of files_data">
@@ -16,14 +16,21 @@
             </mat-chip-row>
         </div>
 
+<<<<<<< HEAD
         <input placeholder="Add url or drag file"  [disabled]="!isactive"
+=======
+        <input placeholder="Add url or drag file"
+>>>>>>> origin/beta-main
            [matChipInputFor]="chipGrid"
            [matChipInputSeparatorKeyCodes]="[COMMA, SPACE, ENTER]"
            [matChipInputAddOnBlur]="true"
            (matChipInputTokenEnd)="add($event)"/>
     </mat-chip-grid>
+<<<<<<< HEAD
 
     <button mat-icon-button color="primary" matSuffix (click)="toggle()">
         <mat-icon class="icon-display">folder</mat-icon>
     </button>
+=======
+>>>>>>> origin/beta-main
 </mat-form-field>
