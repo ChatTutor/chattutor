@@ -46,6 +46,11 @@ prep_bp = Blueprint('bp_prep', __name__)
 @prep_bp.route("/course/register", methods=["POST", "GET"])
 @flask_login.login_required
 def urlcrawler():
+    """
+    The function `urlcrawler` crawls a given URL and saves the parsed data to a database, along with
+    additional information such as course name and professor.
+    :return: a Response object.
+    """
     data = request.json
     url: str = data.get('url_to_parse', 'https://www.google.com')
     course_name: str = data.get('course_name', 'No course')
@@ -66,6 +71,12 @@ def urlcrawler():
 
 @prep_bp.route("/course/parse", methods=["POST", "GET"])
 def genbfsarray():
+    """
+    The function `genbfsarray` takes a JSON request, extracts a URL from it (defaulting to
+    "https://www.google.com" if no URL is provided), and uses a URLSpider object to crawl the website
+    and generate a breadth-first search array.
+    :return: the result of `url_r.get_bfs_array(url)` as a JSON response.
+    """
     data = request.json
     url: str = data.get('url_to_parse', 'https://www.google.com')
 

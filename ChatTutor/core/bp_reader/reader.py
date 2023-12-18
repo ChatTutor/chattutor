@@ -45,6 +45,13 @@ reader_bp = Blueprint('bp_reader', __name__)
 
 @reader_bp.route("/upload_data_to_process", methods=["POST"])
 def upload_data_to_process():
+    """
+    The function `upload_data_to_process` uploads data from a file, extracts the contents, and adds them
+    to a database collection with a generated name.
+    :return: a JSON response containing the "collection_name" key. The value of "collection_name" is
+    either False if no file was uploaded, or a generated unique name for the collection if a file was
+    uploaded.
+    """
     file = request.files.getlist("file")
     print(file)
     data = request.form
@@ -72,6 +79,13 @@ def upload_data_to_process():
 
 @reader_bp.route("/upload_data_from_drop", methods=["POST"])
 def upload_data_from_drop():
+    """
+    The function `upload_data_from_drop` uploads data from a file to a database collection, extracts the
+    file contents, and adds the extracted texts to the collection.
+    :return: a JSON response. If the try block is executed successfully, it will return a JSON object
+    containing the collection name and the names of the uploaded files. If there is an exception, it
+    will return a JSON object with a message indicating an error.
+    """
     try:
         cname = request.form.get('collection_name')
         file = request.files.getlist('file')
@@ -100,6 +114,15 @@ def upload_data_from_drop():
 
 @reader_bp.route("/upload_site_url", methods=["POST"])
 def upload_site_url():
+    """
+    The `upload_site_url` function takes a JSON object containing a collection name and a list of URLs,
+    parses the content of each URL, and adds the parsed text to a database. It returns a JSON response
+    containing the collection name, URLs, and a list of document names that were successfully added to
+    the database.
+    :return: a JSON response. If the code executes without any exceptions, it will return a JSON object
+    containing the collection name, URLs, and a list of document names that were successfully uploaded.
+    If an exception occurs, it will return a JSON object with a message indicating an error.
+    """
     try:
         ajson = request.json
         coll_name = ajson['name']

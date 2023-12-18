@@ -84,6 +84,15 @@ class User(flask_login.UserMixin):
 
 @users_bp.route('/register', methods=['POST'])
 def register_user():
+    """
+    The function `register_user()` registers a new user by retrieving their username, email, and
+    password from a form, checking if the username already exists in the database, creating a new User
+    object with the provided information, and inserting the user into the database.
+    :return: a string message indicating the result of the user registration process. If the username
+    already exists in the database, it returns a message stating that the username already exists. If
+    the registration is successful, it returns a message indicating that the user has been inserted and
+    provides a link to the login page.
+    """
     username = flask.request.form['username']
     email = flask.request.form['email']
     password = flask.request.form['password']
@@ -107,6 +116,12 @@ def register_user():
 
 @users_bp.route('/login', methods=['POST'])
 def login():
+    """
+    The login function checks if the username and password provided by the user match the stored
+    username and password in the database, and logs the user in if they match.
+    :return: The function `login()` returns either 'Invalid username', 'Bad login, <a
+    href="/">Return</a>', or a redirect to "/protected" depending on the conditions met in the code.
+    """
     username = flask.request.form['username']
     users = messageDatabase.get_user(username=username)
     if len(users) == 0:
@@ -130,12 +145,21 @@ def protected():
 
 @users_bp.route('/logout')
 def logout():
+    """
+    The function `logout` logs out the user and returns a message with a link to return to the homepage.
+    :return: The string 'Logged out, <a href="/">Return</a>' is being returned.
+    """
     flask_login.logout_user()
     return 'Logged out, <a href="/">Return</a>'
 
 @users_bp.route("/getuser", methods=['POST'])
 @flask_login.login_required
 def getuser():
+    """
+    The function `getuser` prints the username of the currently logged in user and returns it as a JSON
+    object.
+    :return: a JSON object containing the username of the currently logged in user.
+    """
     print('Logged in as', flask_login.current_user.username)
     return jsonify({
         'username': flask_login.current_user.username
@@ -143,6 +167,13 @@ def getuser():
 
 @users_bp.route("/isloggedin", methods=['POST'])
 def isloggedin():
+    """
+    The function checks if the current user is logged in and returns a JSON response indicating whether
+    they are logged in or not.
+    :return: The function isloggedin() returns a JSON object with a key-value pair indicating whether
+    the user is logged in or not. If the current user is authenticated, it returns {'loggedin': True},
+    otherwise it returns {'loggedin': False}.
+    """
     print(flask_login.current_user)
     if flask_login.current_user.is_authenticated:
         return jsonify({
@@ -155,6 +186,14 @@ def isloggedin():
 @users_bp.route("/users/<username>/mycourses", methods=['POST'])
 @flask_login.login_required
 def getusercourses(username):
+    """
+    The function `getusercourses` retrieves the courses associated with a given username and returns
+    them in JSON format.
+    
+    :param username: The `username` parameter is the username of the user for whom you want to retrieve
+    the courses
+    :return: a JSON response containing the courses associated with the given username.
+    """
     if username != flask_login.current_user.username:
         return 'Not allowed, <a href="/">Return</a>'
     courses = messageDatabase.get_user_courses(username=username)
@@ -166,6 +205,16 @@ def getusercourses(username):
 @users_bp.route("/users/<username>/courses/<course>", methods=['POST'])
 @flask_login.login_required
 def getusercoursessections(username, course):
+    """
+    The function `getusercoursessections` returns the sections of a given course for a specific user,
+    but only if the username matches the currently logged in user.
+    
+    :param username: The `username` parameter is the username of the user for whom we want to retrieve
+    the courses and sections. It is used to check if the user is authorized to access the information
+    :param course: The "course" parameter is the ID or name of the course for which you want to retrieve
+    the sections
+    :return: a JSON object containing the sections of a specific course.
+    """
     if username != flask_login.current_user.username:
         return 'Not allowed, <a href="/">Return</a>'
     sections = messageDatabase.get_courses_sections_format(course_id=course)
@@ -177,6 +226,16 @@ def getusercoursessections(username, course):
 @users_bp.route("/users/<username>/coursesv1/<course>", methods=['POST'])
 @flask_login.login_required
 def getusercoursessectionsv1(username, course):
+    """
+    The function `getusercoursessectionsv1` returns the sections of a given course for a specific user,
+    but only if the user is currently logged in.
+    
+    :param username: The username parameter is the username of the user for whom we want to retrieve the
+    course sections
+    :param course: The "course" parameter is the ID or name of the course for which you want to retrieve
+    the sections
+    :return: a JSON object containing the sections of a given course.
+    """
     if username != flask_login.current_user.username:
         return 'Not allowed, <a href="/">Return</a>'
     sections = messageDatabase.get_courses_sections(course_id=course)
@@ -186,6 +245,15 @@ def getusercoursessectionsv1(username, course):
 
 @users_bp.route("/student/register", methods=['POST'])
 def student_register():
+    """
+    The function `student_register` registers a new student user by retrieving the username, email, and
+    password from a form, checking if the username already exists, creating a new User object with the
+    provided information, and inserting the user into the message database.
+    :return: a string message indicating the result of the user registration process. If the username
+    already exists in the database, it returns a message stating that the username already exists. If
+    the registration is successful, it returns a message indicating that the user has been inserted and
+    provides a link to the login page.
+    """
     username = flask.request.form['username']
     email = flask.request.form['email']
     password = flask.request.form['password']
@@ -210,6 +278,11 @@ def student_register():
 @users_bp.route("/course/addtoken", methods=['POST'])
 @flask_login.login_required
 def addtoken():
+    """
+    The function `addtoken()` takes in form data, extracts the necessary values, inserts them into a
+    database, and redirects the user to a specific course page.
+    :return: a Flask redirect to the "/courses/{cid}" route.
+    """
     args = flask.request.form
     print(args)
     cid = args.get('course_id')
@@ -251,6 +324,15 @@ def addtoken():
 @users_bp.route("/course/<cid>/gettokens", methods=['POST'])
 @flask_login.login_required
 def gettokens(cid):
+    """
+    The function `gettokens` retrieves tokens from the message database based on a given course ID and
+    returns them as a JSON response.
+    
+    :param cid: The parameter "cid" stands for "course id". It is used to identify a specific course in
+    the message database
+    :return: a JSON response containing the tokens retrieved from the message database for the given
+    course ID.
+    """
     tokens = messageDatabase.get_config_by_course_id(cid)
     return jsonify(tokens)
 
@@ -258,6 +340,12 @@ def gettokens(cid):
 @users_bp.route("/gendefaulttoken", methods=['POST'])
 @flask_login.login_required
 def gendefaulttoken():
+    """
+    The function `gendefaulttoken()` retrieves default configuration tokens for a given URL and returns
+    them as a JSON response.
+    :return: a JSON response containing the tokens retrieved from the message database for the given
+    request URL.
+    """
     request_url = request.url
     tokens = messageDatabase.get_default_config_for_url(request_url)
     return jsonify(tokens)
