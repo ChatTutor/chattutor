@@ -270,7 +270,10 @@ class URLSpider:
         lock = Lock()
         if produce_bfs:
             self.dfsjdlf()
+            self.all_urls = []
+            print("All urls:", self.all_urls)
             self.produce_bfs_array(urltoapp=urltoapp, lock=lock)
+            print("All urls", self.all_urls)
             print("produced bfs array!!")
         # print(self.spider_urls)
         # print(self.all_urls)
@@ -301,5 +304,8 @@ class URLSpider:
             yield f"""data: {json.dumps(list(vals))}"""
 
         print("finished succesfully.")
-    
+        self.global_results = []
+        self.all_urls = []
+        self.spider_urls = []
+        self.node_degree = []
     
