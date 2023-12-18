@@ -312,11 +312,13 @@ class Tutor:
         if "test_embedding" in str(self.collections.items()) and required_level_of_information == "db_summary":
             import db_summary
             docs = db_summary.get_db_summary()
-
+            pprint(red("TESTEMBEDDING"))
         else:
+            pprint(red("NOT TESTEMBEDDING"))
             for coll_name, coll_desc in self.collections.items():
                 # if is_generic_message:
                 #    continue
+                print(self.embedding_db)
                 if self.embedding_db:
 
                     keep_only_first_x_tokens_for_processing = None # none means all
@@ -351,7 +353,7 @@ class Tutor:
                         metadatas,
                         distances,
                         documents_plain,
-                    ) = time_it(self.embedding_db.query)(prompt, query_limit, from_doc, metadatas=True)
+                    ) = time_it(self.embedding_db.query)(prompt, query_limit, from_doc, metadatas=True) 
                     pprint(rf"got {len(documents)} documents")
                     for doc, meta, dist in zip(documents, metadatas, distances):
                         # if no fromdoc specified, and distance is lowe thhan thersh, add to array of possible related documents
@@ -366,12 +368,12 @@ class Tutor:
                                     "distance": dist,
                                 }
                             )
-
+            print(arr, from_doc, "ARR - FROMDOC")
             sorted_docs = sorted(arr, key=lambda el: el["distance"])
             valid_docs = sorted_docs[:process_limit]
 
             # print in the console basic info of valid docs
-            pprint("valid_docs")
+            pprint("valid_docs", valid_docs)
             for idoc, doc in  enumerate(  valid_docs):
                 pprint(f"- {idoc}", doc["metadata"].get("docname", "(not defined)"))
                 pprint(" ", doc["metadata"].get("authors", "(not defined)"))

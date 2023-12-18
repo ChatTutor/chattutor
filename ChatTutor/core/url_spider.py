@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 import bs4
 import requests
 import io
-from urllib.parse import urlparse, ParseResult
+from urllib.parse import urlparse, ParseResult, urljoin
 import uuid
 
 from flask import jsonify
@@ -20,7 +20,7 @@ from core.messagedb import MessageDB
 from core.reader import parse_plaintext_file, parse_plaintext_file_read
 from core.extensions import get_random_string
 from core.url_reader import URLReader
-from nice_functions import pprint, green, red, blue
+
 
 class URLSpider:
     depth = 1
@@ -29,14 +29,6 @@ class URLSpider:
     TH_COUNT: int
     BFS_TH_COUNT: int
     MAX_LEVEL_PARQ: int
-
-    spider_urls: [str] = []
-    degree: int = 0
-    visited: {str: bool} = {}
-
-    global_url_reading_queue: [str]
-
-    all_urls: [str] = []
 
     def __init__(self, depth, max_number_of_urls):
         self.depth = depth
@@ -66,9 +58,17 @@ class URLSpider:
             x = URLSpider.parse_url(url)
             x += "\n\n"
 
+    spider_urls: [str] = []
+    degree: int = 0
+    visited: {str: bool} = {}
+
+    global_url_reading_queue: [str]
+
+    all_urls: [str] = []
+
     def neighbouring_urls(self, lock: Lock, url2app):
         lock.acquire()
-        pprint(green("Starting thread!"))
+        print("starting thread!")
         if len(self.spider_urls) == 0 or len(self.spider_urls) > self.max_number_of_urls:
             return
 
@@ -90,7 +90,8 @@ class URLSpider:
         dom = adom.netloc
         httpdom = adom.scheme + "://" + adom.netloc
 
-        pprint("Domain: ", blue(httpdom), "MAX_PARURL: ", self.MAX_LEVEL_PARQ)
+        print("dom: ", httpdom)
+        print("MAX_PARURL: ", self.MAX_LEVEL_PARQ)
         
         forbidden_extensions = [
             "exe", "py", "a", "b", "c",
@@ -101,19 +102,16 @@ class URLSpider:
         for href in hrefs:
             lock.acquire()
             shr = href['href']
-            pprint("\t\t -> " + shr)
+            print("\t\t -> " + shr)
 
             g = "OK"
           
-            if ("http://" in shr or "https://" in shr) and httpdom not in shr:  # if url be havin' http://
+            if ("http://" in shr or "https://" in shr) and dom not in shr:  # if url be havin' http://
                 g = "NO"
-            elif httpdom not in shr and g != 'NO':
-                if shr[0] == "/":
-                    g = httpdom + shr
-                else:
-                    g = httpdom + "/" + shr
-            elif g != 'NO':
-                g = shr
+            else:
+                print(adom)
+                g = urljoin(adom.geturl(), shr)
+                print(g)
                 
             if ("void(0);" in g):
                 g = "NO"
@@ -144,22 +142,23 @@ class URLSpider:
             self.spider_urls.append(u)
         lock.release()
 
-        pprint(green("Done threading."))
+        print("done threading")
 
     def set_bfs_thread_count(self, tc):
         self.BFS_TH_COUNT = tc
 
     def produce_bfs_array(self, urltoapp, lock):
-        pprint("PRODUCING BFS ARRAY, limit", green(self.max_number_of_urls))
+        print("PRODUCING BFS ARRAY", self.max_number_of_urls)
         self.spider_urls = []
         self.visited = {}
         self.spider_urls.append(urltoapp)
         self.node_degree[urltoapp] = 0
         THREAD_COUNT = self.BFS_TH_COUNT
 
+        print("PRODUCING BFS ARRAY")
         while 0 < len(self.spider_urls) < self.max_number_of_urls:
             threads = []
-            pprint("len: ", min(len(self.spider_urls), THREAD_COUNT))
+            print("len: ", min(len(self.spider_urls), THREAD_COUNT))
 
             for i in range(0, min(len(self.spider_urls), THREAD_COUNT)):
                 thread = Thread(target=self.neighbouring_urls,
@@ -167,12 +166,13 @@ class URLSpider:
                 thread.start()
                 threads.append(thread)
 
-            print(green("Started threads"))
+            print("started threads")
 
             for thread in threads:
                 thread.join()
 
-            pprint(green("Ended threads"), len(self.spider_urls))
+            print("ended threads")
+            print(len(self.spider_urls))
 
     global_results: {str: dict} = {}
     
@@ -193,13 +193,13 @@ class URLSpider:
         return section_id, to_add
 
     def parse_url_array(self, lock: Lock, message_db: MessageDB, chroma_db, collection_name, course_id, addToMessageDB=True):
-        pprint("...parsing url arr")
+        print("...parsing url arr")
         lock.acquire()
         strv = self.all_urls.pop(0)
 
         lock.release()
 
-        pprint("Parsing ", blue(strv))
+        print("parse " + strv)
         ss = URLSpider.parse_url(strv)
         if ss == "":
             return
@@ -212,20 +212,21 @@ class URLSpider:
         texts = parse_plaintext_file_read(f_f[0], doc=doc, chunk_chars=2000, overlap=100)
 
         section_id = navn
-        pprint("Finished!")
-        pprint(green("Adding texts... "), blue(strv))
+        print("finish ..")
+        print("adding texts... ", strv)
         try:
             chroma_db.add_texts_chroma_lock(texts, lock=lock)
         except:
-            print(red("error"))
-        pprint(green("Added texts!\n\n"))
+            print("\t\t\t\terror")
+        print("added texts...", strv)
 
         # add to message_db
-        pprint(f"Adding to message_db {section_id}")
+        # print(f"adding to andudb {section_id}")
         message_db.insert_section(section_id=section_id, pulling_from=section_id, sectionurl=strv)
         message_db.establish_course_section_relationship(section_id=section_id, course_id=course_id)
-        pprint(green("Added to message_db!"))
+        # print("added to andubd")
         lock.acquire()
+        # print("yeyrye")
         self.global_results[navn] = {
                                      'section_id': section_id,
                                      'course_id': course_id,
@@ -234,8 +235,8 @@ class URLSpider:
                                      }
         lock.release()
 
-    def debug_log(self):
-        print("DEBUG")
+    def dfsjdlf(self):
+        print("Yeyyy")
 
     def unique(self, list1):
         unique_list = []
@@ -252,30 +253,32 @@ class URLSpider:
     def get_bfs_array(self, urltoapp):
         lock = Lock()
         self.lock = lock
-        self.debug_log()
+        self.dfsjdlf()
         self.produce_bfs_array(urltoapp=urltoapp, lock=lock)
         return self.all_urls
     
     def new_spider_function(self, urltoapp, save_to_database, collection_name, message_db: MessageDB, course_name,
                             proffessor, course_id, produce_bfs=True, current_user=None):
 
-        pprint("Spidering...")
+        print("New spider func")
         message_db.insert_course(course_id=course_id, name=course_name, proffessor=proffessor, mainpage=urltoapp,
                               collectionname=collection_name)
         message_db.insert_user_to_course(current_user.username, course_id=course_id)
         save_to_database.load_datasource(collection_name)
-        pprint("Inserted to message_db!")
+        print("inserted date")
 
         lock = Lock()
         if produce_bfs:
-            self.debug_log()
+            self.dfsjdlf()
             self.produce_bfs_array(urltoapp=urltoapp, lock=lock)
-            pprint(green("Produced bfs array!!"))
+            print("produced bfs array!!")
+        # print(self.spider_urls)
+        # print(self.all_urls)
 
         THREAD_COUNT = self.TH_COUNT
-        pprint("Produced array successfully!")
+        print("produced array successfully!")
         self.all_urls = self.unique(self.all_urls)
-        pprint("Size: ", green(len(self.all_urls)))
+        print(len(self.all_urls))
         while len(self.all_urls) > 1:
             print("len::", len(self.all_urls))
             threads = []
@@ -291,13 +294,12 @@ class URLSpider:
             for thread in threads:
                 thread.join()
 
-            print("Finished in while.")
+            print("finish in while.")
 
             # for value in self.global_results.values():
             vals = self.global_results.values()
             yield f"""data: {json.dumps(list(vals))}"""
 
-        print(blue("\n\n\tFinished succesfully."))
+        print("finished succesfully.")
     
     
-

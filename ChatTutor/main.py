@@ -33,7 +33,6 @@ from core.reader import read_filearray, extract_file, parse_plaintext_file_read
 from datetime import datetime
 from core.messagedb import MessageDB
 import interpreter
-from core.url_spider import URLSpider
 from core.definitions import Text
 from core.definitions import Doc
 import io

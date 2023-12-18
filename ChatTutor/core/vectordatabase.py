@@ -156,12 +156,12 @@ class VectorDatabase:
         count = self.datasource.count()
         ids = [str(i) for i in range(count, count + len(texts))]
         # print(ids, count)
-        lock.release()
         self.datasource.add(
             ids=ids,
             metadatas=[{"doc": text.doc.docname} for text in texts],
             documents=[text.text for text in texts],
         )
+        lock.release()
 
     def query(self, prompt, n_results, from_doc, metadatas=False, distances=False):
         """Equivalent of query_chroma
