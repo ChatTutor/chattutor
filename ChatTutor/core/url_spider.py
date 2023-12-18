@@ -21,12 +21,13 @@ from core.reader import parse_plaintext_file, parse_plaintext_file_read
 from core.extensions import get_random_string
 from core.url_reader import URLReader
 
- 
+
 class URLSpider:
     """
-        The `URLSpider` class is a web scraping tool that parses URLs, extracts text content from web pages,
-        and stores the parsed information in a database.
+    The `URLSpider` class is a web scraping tool that parses URLs, extracts text content from web pages,
+    and stores the parsed information in a database.
     """
+
     depth = 1
     node_degree = {}
     max_number_of_urls: int
@@ -44,7 +45,7 @@ class URLSpider:
         The function `parse_url` takes a URL as input, retrieves the content of the web page at that
         URL, removes any style and script tags from the HTML, and returns the stripped text content of
         the page.
-        
+
         :param url: The `url` parameter is a string that represents the URL of a webpage that you want
         to parse
         :type url: str
@@ -59,11 +60,11 @@ class URLSpider:
         if page.status_code != 200:
             return ""
 
-        content_page_no = page.content.decode('utf-8', 'ignore')
-        content_page = ''.join(i for i in content_page_no if i in string.printable)
+        content_page_no = page.content.decode("utf-8", "ignore")
+        content_page = "".join(i for i in content_page_no if i in string.printable)
 
-        soup = BeautifulSoup(content_page, 'html.parser')
-        for tag in soup(['style', 'script']):
+        soup = BeautifulSoup(content_page, "html.parser")
+        for tag in soup(["style", "script"]):
             tag.decompose()
         x = " ".join(soup.stripped_strings)
         return x
@@ -72,7 +73,7 @@ class URLSpider:
         """
         The function `parse_urls` takes a list of URLs, calls the `parse_url` function on each URL using
         the `URLSpider` class, and appends the result to a string with two newlines.
-        
+
         :param urls: A list of strings representing URLs
         :type urls: List[str]
         """
@@ -92,7 +93,7 @@ class URLSpider:
         """
         The `neighbouring_urls` function is responsible for extracting and processing the URLs found on
         a given webpage, while respecting certain conditions and restrictions.
-        
+
         :param lock: The `lock` parameter is an instance of the `Lock` class from the `threading`
         module. It is used to synchronize access to shared resources between multiple threads. In this
         code, the lock is acquired before accessing and modifying the `self.spider_urls`,
@@ -103,7 +104,10 @@ class URLSpider:
         """
         lock.acquire()
         print("starting thread!")
-        if len(self.spider_urls) == 0 or len(self.spider_urls) > self.max_number_of_urls:
+        if (
+            len(self.spider_urls) == 0
+            or len(self.spider_urls) > self.max_number_of_urls
+        ):
             return
 
         urltoapp = self.spider_urls.pop(0)
@@ -117,8 +121,8 @@ class URLSpider:
         if page.status_code != 200:
             return
 
-        soup = BeautifulSoup(page.content, 'html.parser')
-        hrefs = soup.find_all('a', href=True)
+        soup = BeautifulSoup(page.content, "html.parser")
+        hrefs = soup.find_all("a", href=True)
 
         adom: ParseResult = urlparse(url2app)
         dom = adom.netloc
@@ -126,43 +130,59 @@ class URLSpider:
 
         print("dom: ", httpdom)
         print("MAX_PARURL: ", self.MAX_LEVEL_PARQ)
-        
+
         forbidden_extensions = [
-            "exe", "py", "a", "b", "c",
-            "void", "pdf", "doc", "docx",
-            "txt", "java", "c", "zip",
-            "tar", "tar.gz", "bin"
+            "exe",
+            "py",
+            "a",
+            "b",
+            "c",
+            "void",
+            "pdf",
+            "doc",
+            "docx",
+            "txt",
+            "java",
+            "c",
+            "zip",
+            "tar",
+            "tar.gz",
+            "bin",
         ]
         for href in hrefs:
             lock.acquire()
-            shr = href['href']
+            shr = href["href"]
             print("\t\t -> " + shr)
 
             g = "OK"
-          
-            if ("http://" in shr or "https://" in shr) and dom not in shr:  # if url be havin' http://
+
+            if (
+                "http://" in shr or "https://" in shr
+            ) and dom not in shr:  # if url be havin' http://
                 g = "NO"
             else:
                 print(adom)
                 g = urljoin(adom.geturl(), shr)
                 print(g)
-                
-            if ("void(0);" in g):
+
+            if "void(0);" in g:
                 g = "NO"
-           
-            
-            
+
             no_query = shr.split("?")[0]
-            
+
             for forbidden in forbidden_extensions:
                 if no_query.endswith(f".{forbidden}"):
                     g = "NO"
 
-            if g != "NO" and '/#' not in g:
-                if 'license' not in g and "login" not in g:
+            if g != "NO" and "/#" not in g:
+                if "license" not in g and "login" not in g:
                     if not self.visited.get(g):
                         self.node_degree[g] = self.node_degree[urltoapp] + 1
-                        if self.node_degree[g] < self.MAX_LEVEL_PARQ and g not in self.spider_urls and g not in s_urls:
+                        if (
+                            self.node_degree[g] < self.MAX_LEVEL_PARQ
+                            and g not in self.spider_urls
+                            and g not in s_urls
+                        ):
                             print("g: " + g)
                             print(s_urls)
                             s_urls.append(g)
@@ -182,7 +202,7 @@ class URLSpider:
         """
         The function produces a breadth-first search array of URLs by iterating through a list of spider
         URLs and creating threads to find neighboring URLs.
-        
+
         :param urltoapp: The `urltoapp` parameter is the starting URL for the BFS (Breadth-First Search)
         algorithm. It is the URL from which the spider will begin crawling and exploring its neighboring
         URLs
@@ -203,8 +223,7 @@ class URLSpider:
             print("len: ", min(len(self.spider_urls), THREAD_COUNT))
 
             for i in range(0, min(len(self.spider_urls), THREAD_COUNT)):
-                thread = Thread(target=self.neighbouring_urls,
-                                args=(lock, urltoapp))
+                thread = Thread(target=self.neighbouring_urls, args=(lock, urltoapp))
                 thread.start()
                 threads.append(thread)
 
@@ -217,13 +236,12 @@ class URLSpider:
             print(len(self.spider_urls))
 
     global_results: {str: dict} = {}
-    
-    
+
     def add_to_andudb(self, section_dict, from_doc_joined, message_db: MessageDB):
         """
         The function adds a section to a message database and establishes a relationship between the
         section and a course.
-        
+
         :param section_dict: A dictionary containing information about a section, including the section
         ID and course ID
         :param from_doc_joined: The parameter "from_doc_joined" is a string that represents the document
@@ -232,15 +250,19 @@ class URLSpider:
         :type message_db: MessageDB
         :return: a tuple containing the section_dict and from_doc_joined.
         """
-        message_db.insert_section(section_id=section_dict['section_id'], pulling_from=from_doc_joined)
-        message_db.establish_course_section_relationship(section_id=section_dict['section_id'], course_id=section_dict['course_id'])
+        message_db.insert_section(
+            section_id=section_dict["section_id"], pulling_from=from_doc_joined
+        )
+        message_db.establish_course_section_relationship(
+            section_id=section_dict["section_id"], course_id=section_dict["course_id"]
+        )
         return section_dict, from_doc_joined
-    
+
     def add_from_doc_to_section(self, section_id, to_add, message_db: MessageDB):
         """
         The function `add_from_doc_to_section` updates a section in a message database by adding a value
         from a document, and returns the section ID and the value added.
-        
+
         :param section_id: The section_id parameter is the identifier of the section where the content
         will be added from the document
         :param to_add: The `to_add` parameter is the content that you want to add to a specific section
@@ -253,11 +275,19 @@ class URLSpider:
         message_db.update_section_add_fromdoc(section_id, from_doc=to_add)
         return section_id, to_add
 
-    def parse_url_array(self, lock: Lock, message_db: MessageDB, chroma_db, collection_name, course_id, addToMessageDB=True):
+    def parse_url_array(
+        self,
+        lock: Lock,
+        message_db: MessageDB,
+        chroma_db,
+        collection_name,
+        course_id,
+        addToMessageDB=True,
+    ):
         """
         The function `parse_url_array` parses a URL array, extracts text from the URLs, adds the text to
         a database, and updates various data structures and databases with the parsed information.
-        
+
         :param lock: The `lock` parameter is an instance of the `Lock` class from the `threading`
         module. It is used to synchronize access to shared resources in a multi-threaded environment. By
         acquiring and releasing the lock, the code ensures that only one thread can execute the critical
@@ -293,11 +323,13 @@ class URLSpider:
             return
 
         site_text = f"{ss.encode('utf-8', errors='ignore')}"
-        navn = re.sub(r'[^A-Za-z0-9\-_]', '_', strv)
-        file = FileStorage(stream=io.BytesIO(bytes(site_text, 'utf-8')), name=navn)
+        navn = re.sub(r"[^A-Za-z0-9\-_]", "_", strv)
+        file = FileStorage(stream=io.BytesIO(bytes(site_text, "utf-8")), name=navn)
         f_f = (file, navn)
         doc = Doc(docname=f_f[1], citation="", dockey=f_f[1])
-        texts = parse_plaintext_file_read(f_f[0], doc=doc, chunk_chars=2000, overlap=100)
+        texts = parse_plaintext_file_read(
+            f_f[0], doc=doc, chunk_chars=2000, overlap=100
+        )
 
         section_id = navn
         print("finish ..")
@@ -308,15 +340,19 @@ class URLSpider:
             print("\t\t\t\terror")
         print("added texts...", strv)
 
-        message_db.insert_section(section_id=section_id, pulling_from=section_id, sectionurl=strv)
-        message_db.establish_course_section_relationship(section_id=section_id, course_id=course_id)
+        message_db.insert_section(
+            section_id=section_id, pulling_from=section_id, sectionurl=strv
+        )
+        message_db.establish_course_section_relationship(
+            section_id=section_id, course_id=course_id
+        )
         lock.acquire()
         self.global_results[navn] = {
-                                     'section_id': section_id,
-                                     'course_id': course_id,
-                                     'section_url': strv,
-                                     'course_chroma_collection': collection_name
-                                     }
+            "section_id": section_id,
+            "course_id": course_id,
+            "section_url": strv,
+            "course_chroma_collection": collection_name,
+        }
         lock.release()
 
     def dfsjdlf(self):
@@ -326,7 +362,7 @@ class URLSpider:
         """
         The function takes a list as input and returns a new list with only the unique elements from the
         input list.
-        
+
         :param list1: The parameter `list1` is a list of elements
         :return: a list of unique elements from the input list.
         """
@@ -344,7 +380,7 @@ class URLSpider:
     def get_bfs_array(self, urltoapp):
         """
         The function `get_bfs_array` returns the `all_urls` list after performing some operations.
-        
+
         :param urltoapp: The `urltoapp` parameter is a string that represents the URL to the application
         :return: the value of the variable "self.all_urls".
         """
@@ -353,13 +389,23 @@ class URLSpider:
         self.dfsjdlf()
         self.produce_bfs_array(urltoapp=urltoapp, lock=lock)
         return self.all_urls
-    
-    def new_spider_function(self, urltoapp, save_to_database, collection_name, message_db: MessageDB, course_name,
-                                    proffessor, course_id, produce_bfs=True, current_user=None):
+
+    def new_spider_function(
+        self,
+        urltoapp,
+        save_to_database,
+        collection_name,
+        message_db: MessageDB,
+        course_name,
+        proffessor,
+        course_id,
+        produce_bfs=True,
+        current_user=None,
+    ):
         """
         The function `new_spider_function` is used to crawl and scrape data from a website, save it to a
         database, and return the results.
-        
+
         :param urltoapp: The `urltoapp` parameter is the URL of the application or website that you want
         to crawl with the spider
         :param save_to_database: The `save_to_database` parameter is an object that is responsible for
@@ -387,8 +433,13 @@ class URLSpider:
         """
 
         print("New spider func")
-        message_db.insert_course(course_id=course_id, name=course_name, proffessor=proffessor, mainpage=urltoapp,
-                              collectionname=collection_name)
+        message_db.insert_course(
+            course_id=course_id,
+            name=course_name,
+            proffessor=proffessor,
+            mainpage=urltoapp,
+            collectionname=collection_name,
+        )
         message_db.insert_user_to_course(current_user.username, course_id=course_id)
         save_to_database.load_datasource(collection_name)
         print("inserted date")
@@ -415,8 +466,16 @@ class URLSpider:
             print("ao::", min(THREAD_COUNT, len(self.all_urls)))
 
             for i in range(0, min(THREAD_COUNT, len(self.all_urls))):
-                thread = Thread(target=self.parse_url_array,
-                                args=(lock, message_db, save_to_database, collection_name, course_id))
+                thread = Thread(
+                    target=self.parse_url_array,
+                    args=(
+                        lock,
+                        message_db,
+                        save_to_database,
+                        collection_name,
+                        course_id,
+                    ),
+                )
                 thread.start()
                 threads.append(thread)
 
@@ -434,4 +493,3 @@ class URLSpider:
         self.all_urls = []
         self.spider_urls = []
         self.node_degree = []
-    

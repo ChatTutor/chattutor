@@ -1,11 +1,22 @@
 import flask
-from flask import Flask, request, redirect, send_from_directory, url_for, render_template
+from flask import (
+    Flask,
+    request,
+    redirect,
+    send_from_directory,
+    url_for,
+    render_template,
+)
 from flask import stream_with_context, Response, abort, jsonify
 from flask_cors import CORS
 from itsdangerous import URLSafeTimedSerializer
 from flask import Blueprint, render_template
 from core.tutor import Tutor
-from core.tutor import cqn_system_message, default_system_message, interpreter_system_message
+from core.tutor import (
+    cqn_system_message,
+    default_system_message,
+    interpreter_system_message,
+)
 import json
 from nice_functions import pprint, time_it
 from core.extensions import (
@@ -15,8 +26,10 @@ from core.extensions import (
     get_random_string,
     generate_unique_name,
     stream_text,
-) 
-ask_bp = Blueprint('bp_ask', __name__)
+)
+
+ask_bp = Blueprint("bp_ask", __name__)
+
 
 @ask_bp.route("/", methods=["POST", "GET"])
 def ask():
@@ -37,8 +50,8 @@ def ask():
     from_doc = data.get("from_doc")
     selected_model = data.get("selectedModel")
     if selected_model == None:
-        selected_model = 'gpt-3.5-turbo-16k'
-    print('SELECTED MODEL:', selected_model)
+        selected_model = "gpt-3.5-turbo-16k"
+    print("SELECTED MODEL:", selected_model)
     print(collection_name)
     # Logging whether the request is specific to a document or can be from any document
     chattutor = Tutor(db)
@@ -63,7 +76,6 @@ def ask():
         conversation, from_doc, selected_model
     )
     return Response(stream_with_context(generate()), content_type="text/event-stream")
-
 
 
 @ask_bp.route("/interpreter", methods=["POST", "GET"])

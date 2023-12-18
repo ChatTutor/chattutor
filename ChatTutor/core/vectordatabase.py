@@ -84,7 +84,7 @@ class VectorDatabase:
     def load_datasource(self, name):
         """
         Loading a collection by it's name:
-        
+
         Args:
             name (String) - name of the collection. If collection exists
                             it will be loaded, if not, it will be created
@@ -198,13 +198,13 @@ class VectorDatabase:
             prompt - the query text
         """
         if from_doc:
-            if hasattr(from_doc, '__len__') and (not isinstance(from_doc, str)):
-               return self.datasource.query(
+            if hasattr(from_doc, "__len__") and (not isinstance(from_doc, str)):
+                return self.datasource.query(
                     query_texts=prompt,
                     n_results=n_results,
                     where={"doc": {"$in": from_doc}},
                     include=include,
-                ) 
+                )
             else:
                 return self.datasource.query(
                     query_texts=prompt,
@@ -224,9 +224,9 @@ class VectorDatabase:
             from_doc (string | list[string]) -  should be either a string  a list of strings
             include (list[string]) - any cmbination of embeddings, documents, metadatas. Defaults to ["documents"]
         """
-        if from_doc and (type(from_doc) in (list, )):
+        if from_doc and (type(from_doc) in (list,)):
             return self.datasource.get(
-                where={"doc": {"$in" : from_doc}},
+                where={"doc": {"$in": from_doc}},
                 include=include,
             )
         elif from_doc:
@@ -235,6 +235,4 @@ class VectorDatabase:
                 include=include,
             )
         else:
-            return self.datasource.get(
-                include=include
-            )
+            return self.datasource.get(include=include)

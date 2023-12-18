@@ -1,11 +1,22 @@
 import flask
-from flask import Flask, request, redirect, send_from_directory, url_for, render_template
+from flask import (
+    Flask,
+    request,
+    redirect,
+    send_from_directory,
+    url_for,
+    render_template,
+)
 from flask import stream_with_context, Response, abort, jsonify
 from flask_cors import CORS
 from itsdangerous import URLSafeTimedSerializer
 from flask import Blueprint, render_template
 from core.tutor import Tutor
-from core.tutor import cqn_system_message, default_system_message, interpreter_system_message
+from core.tutor import (
+    cqn_system_message,
+    default_system_message,
+    interpreter_system_message,
+)
 import json
 from nice_functions import pprint, time_it
 from core.extensions import (
@@ -15,7 +26,7 @@ from core.extensions import (
     get_random_string,
     generate_unique_name,
     stream_text,
-) 
+)
 from core.definitions import Text
 from core.definitions import Doc
 from core.reader import parse_plaintext_file
@@ -23,6 +34,7 @@ import io
 import uuid
 from werkzeug.datastructures import FileStorage
 import re
+
 # import pymysql
 import sqlite3
 import openai
@@ -37,10 +49,11 @@ from core.definitions import Doc
 import io
 import uuid
 from werkzeug.datastructures import FileStorage
+
 # import markdown
 import flask_login
 
-reader_bp = Blueprint('bp_reader', __name__)
+reader_bp = Blueprint("bp_reader", __name__)
 
 
 @reader_bp.route("/upload_data_to_process", methods=["POST"])
@@ -87,8 +100,8 @@ def upload_data_from_drop():
     will return a JSON object with a message indicating an error.
     """
     try:
-        cname = request.form.get('collection_name')
-        file = request.files.getlist('file')
+        cname = request.form.get("collection_name")
+        file = request.files.getlist("file")
         f_arr = []
         for fil in file:
             f_arr.append(fil.filename)
@@ -109,8 +122,8 @@ def upload_data_from_drop():
 
         return jsonify(resp)
     except Exception as e:
-        return jsonify({'message': 'error'})
-    
+        return jsonify({"message": "error"})
+
 
 @reader_bp.route("/upload_site_url", methods=["POST"])
 def upload_site_url():
@@ -125,16 +138,16 @@ def upload_site_url():
     """
     try:
         ajson = request.json
-        coll_name = ajson['name']
+        coll_name = ajson["name"]
         url_to_parse = ajson["url"]
-        print('UTP: ', url_to_parse)
+        print("UTP: ", url_to_parse)
         collection_name = coll_name
         resp = {"collection_name": coll_name, "urls": url_to_parse, "docs": []}
         for surl in url_to_parse:
             print(surl)
             ss = URLSpider.parse_url(surl)
             site_text = f"{ss.encode('utf-8', errors='replace')}"
-            navn = re.sub(r'[^A-Za-z0-9\-_]', '_', surl)
+            navn = re.sub(r"[^A-Za-z0-9\-_]", "_", surl)
             db.load_datasource(collection_name)
             docs = db.get_chroma(from_doc=navn, n_results=1)
             if docs == None:
@@ -143,15 +156,17 @@ def upload_site_url():
                 resp["docs"] = resp["docs"] + [navn + "/_already_exists"]
                 continue
 
-            file = FileStorage(stream=io.BytesIO(bytes(site_text, 'utf-8')), name=navn)
+            file = FileStorage(stream=io.BytesIO(bytes(site_text, "utf-8")), name=navn)
             f_f = (file, navn)
 
             doc = Doc(docname=f_f[1], citation="", dockey=f_f[1])
-            texts = parse_plaintext_file_read(f_f[0], doc=doc, chunk_chars=2000, overlap=100)
+            texts = parse_plaintext_file_read(
+                f_f[0], doc=doc, chunk_chars=2000, overlap=100
+            )
             db.load_datasource(collection_name)
             db.add_texts(texts)
             resp["docs"] = resp["docs"] + [navn]
         return jsonify(resp)
     except Exception as e:
         print(e)
-        return jsonify({'message': 'error'})
+        return jsonify({"message": "error"})

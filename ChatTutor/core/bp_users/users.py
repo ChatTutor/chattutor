@@ -1,11 +1,22 @@
 import flask
-from flask import Flask, request, redirect, send_from_directory, url_for, render_template
+from flask import (
+    Flask,
+    request,
+    redirect,
+    send_from_directory,
+    url_for,
+    render_template,
+)
 from flask import stream_with_context, Response, abort, jsonify
 from flask_cors import CORS
 from itsdangerous import URLSafeTimedSerializer
 from flask import Blueprint, render_template
 from core.tutor import Tutor
-from core.tutor import cqn_system_message, default_system_message, interpreter_system_message
+from core.tutor import (
+    cqn_system_message,
+    default_system_message,
+    interpreter_system_message,
+)
 import json
 from nice_functions import pprint, time_it
 from core.extensions import (
@@ -15,7 +26,7 @@ from core.extensions import (
     get_random_string,
     generate_unique_name,
     stream_text,
-) 
+)
 from core.definitions import Text
 from core.definitions import Doc
 from core.reader import parse_plaintext_file
@@ -23,6 +34,7 @@ import io
 import uuid
 from werkzeug.datastructures import FileStorage
 import re
+
 # import pymysql
 import sqlite3
 import openai
@@ -37,11 +49,13 @@ from core.definitions import Doc
 import io
 import uuid
 from werkzeug.datastructures import FileStorage
+
 # import markdown
 
 import flask_login
 import bcrypt
-users_bp = Blueprint('bp_users', __name__)
+
+users_bp = Blueprint("bp_users", __name__)
 
 # def generate_token(email):
 #     serializer = URLSafeTimedSerializer(app.config["SECRET_KEY"])
@@ -60,29 +74,38 @@ users_bp = Blueprint('bp_users', __name__)
 
 
 class User(flask_login.UserMixin):
-    username = 'NO FACE'
-    email = 'NO NAME'
-    password_hash = 'NO NUMBER'
-    user_type = ''
+    username = "NO FACE"
+    email = "NO NAME"
+    password_hash = "NO NUMBER"
+    user_type = ""
 
     def get_id(self):
         return self.username
 
     @property
     def password(self):
-        raise AttributeError('password not readable')
+        raise AttributeError("password not readable")
 
     @password.setter
     def password(self, password):
-        self.password_hash = bcrypt.hashpw(password.encode('utf-8', 'ignore'), bcrypt.gensalt())
+        self.password_hash = bcrypt.hashpw(
+            password.encode("utf-8", "ignore"), bcrypt.gensalt()
+        )
 
     def verify_password(self, p):
-        print(self.password_hash, bcrypt.hashpw(p.encode('utf8', 'ignore'), bcrypt.gensalt()).decode('utf-8'))
-        print(self.password_hash, bcrypt.hashpw(p.encode('utf8', 'ignore'), bcrypt.gensalt()).decode('utf-8'))
-        print(self.password_hash.encode('utf-8'), p.encode('utf-8'))
-        return bcrypt.checkpw(p.encode('utf-8'), self.password_hash.encode('utf-8'))
+        print(
+            self.password_hash,
+            bcrypt.hashpw(p.encode("utf8", "ignore"), bcrypt.gensalt()).decode("utf-8"),
+        )
+        print(
+            self.password_hash,
+            bcrypt.hashpw(p.encode("utf8", "ignore"), bcrypt.gensalt()).decode("utf-8"),
+        )
+        print(self.password_hash.encode("utf-8"), p.encode("utf-8"))
+        return bcrypt.checkpw(p.encode("utf-8"), self.password_hash.encode("utf-8"))
 
-@users_bp.route('/register', methods=['POST'])
+
+@users_bp.route("/register", methods=["POST"])
 def register_user():
     """
     The function `register_user()` registers a new user by retrieving their username, email, and
@@ -93,28 +116,28 @@ def register_user():
     the registration is successful, it returns a message indicating that the user has been inserted and
     provides a link to the login page.
     """
-    username = flask.request.form['username']
-    email = flask.request.form['email']
-    password = flask.request.form['password']
+    username = flask.request.form["username"]
+    email = flask.request.form["email"]
+    password = flask.request.form["password"]
 
-    email = flask.request.form['email']
+    email = flask.request.form["email"]
     users = messageDatabase.get_user(username=username)
 
     if len(users) != 0:
-        return f'Username {username} already exists!'
+        return f"Username {username} already exists!"
 
     print(password)
     user = User()
     user.email = email
     user.password = password
     user.username = username
-    user.user_type = 'PROFESSOR'
+    user.user_type = "PROFESSOR"
     print(user.password_hash)
     messageDatabase.insert_user(user)
     return f'User {user} inserted, please <a href="/login">Login</a>'
 
 
-@users_bp.route('/login', methods=['POST'])
+@users_bp.route("/login", methods=["POST"])
 def login():
     """
     The login function checks if the username and password provided by the user match the stored
@@ -122,28 +145,28 @@ def login():
     :return: The function `login()` returns either 'Invalid username', 'Bad login, <a
     href="/">Return</a>', or a redirect to "/protected" depending on the conditions met in the code.
     """
-    username = flask.request.form['username']
+    username = flask.request.form["username"]
     users = messageDatabase.get_user(username=username)
     if len(users) == 0:
-        return 'Invalid username'
+        return "Invalid username"
     print(users[0]["password"])
     user = User()
     user.username = users[0]["username"]
     user.email = users[0]["email"]
     user.password_hash = users[0]["password"]
-    if user.verify_password(flask.request.form['password']):
+    if user.verify_password(flask.request.form["password"]):
         flask_login.login_user(user)
         return flask.redirect("/protected")
     return 'Bad login, <a href="/">Return</a>'
 
 
-@users_bp.route('/protected')
+@users_bp.route("/protected")
 @flask_login.login_required
 def protected():
     return f'Logged in as: {flask_login.current_user.username}, <a href="/">Return</a>'
 
 
-@users_bp.route('/logout')
+@users_bp.route("/logout")
 def logout():
     """
     The function `logout` logs out the user and returns a message with a link to return to the homepage.
@@ -152,7 +175,8 @@ def logout():
     flask_login.logout_user()
     return 'Logged out, <a href="/">Return</a>'
 
-@users_bp.route("/getuser", methods=['POST'])
+
+@users_bp.route("/getuser", methods=["POST"])
 @flask_login.login_required
 def getuser():
     """
@@ -160,12 +184,11 @@ def getuser():
     object.
     :return: a JSON object containing the username of the currently logged in user.
     """
-    print('Logged in as', flask_login.current_user.username)
-    return jsonify({
-        'username': flask_login.current_user.username
-    })
+    print("Logged in as", flask_login.current_user.username)
+    return jsonify({"username": flask_login.current_user.username})
 
-@users_bp.route("/isloggedin", methods=['POST'])
+
+@users_bp.route("/isloggedin", methods=["POST"])
 def isloggedin():
     """
     The function checks if the current user is logged in and returns a JSON response indicating whether
@@ -176,20 +199,17 @@ def isloggedin():
     """
     print(flask_login.current_user)
     if flask_login.current_user.is_authenticated:
-        return jsonify({
-            'loggedin': True
-        })
-    return jsonify({
-            'loggedin': False
-        })
+        return jsonify({"loggedin": True})
+    return jsonify({"loggedin": False})
 
-@users_bp.route("/users/<username>/mycourses", methods=['POST'])
+
+@users_bp.route("/users/<username>/mycourses", methods=["POST"])
 @flask_login.login_required
 def getusercourses(username):
     """
     The function `getusercourses` retrieves the courses associated with a given username and returns
     them in JSON format.
-    
+
     :param username: The `username` parameter is the username of the user for whom you want to retrieve
     the courses
     :return: a JSON response containing the courses associated with the given username.
@@ -197,18 +217,16 @@ def getusercourses(username):
     if username != flask_login.current_user.username:
         return 'Not allowed, <a href="/">Return</a>'
     courses = messageDatabase.get_user_courses(username=username)
-    return jsonify({
-        'courses': courses
-    })
+    return jsonify({"courses": courses})
 
 
-@users_bp.route("/users/<username>/courses/<course>", methods=['POST'])
+@users_bp.route("/users/<username>/courses/<course>", methods=["POST"])
 @flask_login.login_required
 def getusercoursessections(username, course):
     """
     The function `getusercoursessections` returns the sections of a given course for a specific user,
     but only if the username matches the currently logged in user.
-    
+
     :param username: The `username` parameter is the username of the user for whom we want to retrieve
     the courses and sections. It is used to check if the user is authorized to access the information
     :param course: The "course" parameter is the ID or name of the course for which you want to retrieve
@@ -218,18 +236,16 @@ def getusercoursessections(username, course):
     if username != flask_login.current_user.username:
         return 'Not allowed, <a href="/">Return</a>'
     sections = messageDatabase.get_courses_sections_format(course_id=course)
-    return jsonify({
-        'sections': sections
-    })
+    return jsonify({"sections": sections})
 
 
-@users_bp.route("/users/<username>/coursesv1/<course>", methods=['POST'])
+@users_bp.route("/users/<username>/coursesv1/<course>", methods=["POST"])
 @flask_login.login_required
 def getusercoursessectionsv1(username, course):
     """
     The function `getusercoursessectionsv1` returns the sections of a given course for a specific user,
     but only if the user is currently logged in.
-    
+
     :param username: The username parameter is the username of the user for whom we want to retrieve the
     course sections
     :param course: The "course" parameter is the ID or name of the course for which you want to retrieve
@@ -239,11 +255,10 @@ def getusercoursessectionsv1(username, course):
     if username != flask_login.current_user.username:
         return 'Not allowed, <a href="/">Return</a>'
     sections = messageDatabase.get_courses_sections(course_id=course)
-    return jsonify({
-        'sections': sections
-    })
+    return jsonify({"sections": sections})
 
-@users_bp.route("/student/register", methods=['POST'])
+
+@users_bp.route("/student/register", methods=["POST"])
 def student_register():
     """
     The function `student_register` registers a new student user by retrieving the username, email, and
@@ -254,28 +269,28 @@ def student_register():
     the registration is successful, it returns a message indicating that the user has been inserted and
     provides a link to the login page.
     """
-    username = flask.request.form['username']
-    email = flask.request.form['email']
-    password = flask.request.form['password']
+    username = flask.request.form["username"]
+    email = flask.request.form["email"]
+    password = flask.request.form["password"]
 
-    email = flask.request.form['email']
+    email = flask.request.form["email"]
     users = messageDatabase.get_user(username=username)
 
     if len(users) != 0:
-        return f'Username {username} already exists!'
+        return f"Username {username} already exists!"
 
     print(password)
     user = User()
     user.email = email
     user.password = password
     user.username = username
-    user.user_type = 'STUDENT'
+    user.user_type = "STUDENT"
     print(user.password_hash)
     messageDatabase.insert_user(user)
     return f'User {user} inserted, please <a href="/login">Login</a>'
 
 
-@users_bp.route("/course/addtoken", methods=['POST'])
+@users_bp.route("/course/addtoken", methods=["POST"])
 @flask_login.login_required
 def addtoken():
     """
@@ -285,49 +300,53 @@ def addtoken():
     """
     args = flask.request.form
     print(args)
-    cid = args.get('course_id')
-    curl = args.get('course_url')
-    rulocally = 1 if (args.get('run_locally', 'off') == 'on') else 0
-    testmode = 1 if (args.get('test_mode', 'off') == 'on') else 0
-    isstatic = 1 if (args.get('is_static', 'off') == 'on') else 0
-    buildwith = args.get('built_with', 'Other')
-    server_port =  args.get('server_port', 0)
-    chattutor_server =  args.get('chattutor_server', 'http://127.0.0.1')
-    token_id = f'{uuid.uuid4()}'
-    isdef = 1 if (args.get('is_default', 'off') == 'on') else 0
+    cid = args.get("course_id")
+    curl = args.get("course_url")
+    rulocally = 1 if (args.get("run_locally", "off") == "on") else 0
+    testmode = 1 if (args.get("test_mode", "off") == "on") else 0
+    isstatic = 1 if (args.get("is_static", "off") == "on") else 0
+    buildwith = args.get("built_with", "Other")
+    server_port = args.get("server_port", 0)
+    chattutor_server = args.get("chattutor_server", "http://127.0.0.1")
+    token_id = f"{uuid.uuid4()}"
+    isdef = 1 if (args.get("is_default", "off") == "on") else 0
 
-
-    print(flask_login.current_user.username,cid,
-                                  curl,
-                                  rulocally,
-                                  testmode,
-                                  isstatic,
-                                  buildwith,
-                                  server_port,
-                                  chattutor_server,
-                                  token_id,
-                                  isdef)
-    messageDatabase.insert_config(flask_login.current_user.username,cid,
-                                  curl,
-                                  rulocally,
-                                  testmode,
-                                  isstatic,
-                                  buildwith,
-                                  server_port,
-                                  chattutor_server,
-                                  token_id,
-                                  isdef)
+    print(
+        flask_login.current_user.username,
+        cid,
+        curl,
+        rulocally,
+        testmode,
+        isstatic,
+        buildwith,
+        server_port,
+        chattutor_server,
+        token_id,
+        isdef,
+    )
+    messageDatabase.insert_config(
+        flask_login.current_user.username,
+        cid,
+        curl,
+        rulocally,
+        testmode,
+        isstatic,
+        buildwith,
+        server_port,
+        chattutor_server,
+        token_id,
+        isdef,
+    )
     return flask.redirect(f"/courses/{cid}")
 
 
-
-@users_bp.route("/course/<cid>/gettokens", methods=['POST'])
+@users_bp.route("/course/<cid>/gettokens", methods=["POST"])
 @flask_login.login_required
 def gettokens(cid):
     """
     The function `gettokens` retrieves tokens from the message database based on a given course ID and
     returns them as a JSON response.
-    
+
     :param cid: The parameter "cid" stands for "course id". It is used to identify a specific course in
     the message database
     :return: a JSON response containing the tokens retrieved from the message database for the given
@@ -337,7 +356,7 @@ def gettokens(cid):
     return jsonify(tokens)
 
 
-@users_bp.route("/gendefaulttoken", methods=['POST'])
+@users_bp.route("/gendefaulttoken", methods=["POST"])
 @flask_login.login_required
 def gendefaulttoken():
     """

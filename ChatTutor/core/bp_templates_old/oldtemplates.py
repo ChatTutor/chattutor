@@ -1,11 +1,22 @@
 import flask
-from flask import Flask, request, redirect, send_from_directory, url_for, render_template
+from flask import (
+    Flask,
+    request,
+    redirect,
+    send_from_directory,
+    url_for,
+    render_template,
+)
 from flask import stream_with_context, Response, abort, jsonify
 from flask_cors import CORS
 from itsdangerous import URLSafeTimedSerializer
 from flask import Blueprint, render_template
 from core.tutor import Tutor
-from core.tutor import cqn_system_message, default_system_message, interpreter_system_message
+from core.tutor import (
+    cqn_system_message,
+    default_system_message,
+    interpreter_system_message,
+)
 import json
 from nice_functions import pprint, time_it
 from core.extensions import (
@@ -15,7 +26,7 @@ from core.extensions import (
     get_random_string,
     generate_unique_name,
     stream_text,
-) 
+)
 from core.definitions import Text
 from core.definitions import Doc
 from core.reader import parse_plaintext_file
@@ -23,6 +34,7 @@ import io
 import uuid
 from werkzeug.datastructures import FileStorage
 import re
+
 # import pymysql
 import sqlite3
 import openai
@@ -37,12 +49,13 @@ from core.definitions import Doc
 import io
 import uuid
 from werkzeug.datastructures import FileStorage
+
 # import markdown
 
 import flask_login
 import bcrypt
 
-temp_bp = Blueprint('bp_templates_old', __name__)
+temp_bp = Blueprint("bp_templates_old", __name__)
 
 
 @temp_bp.route("/cqn")
@@ -82,7 +95,8 @@ def cqn():
 
     # welcoming_message = "" # disable to generate a new one using simple_gpt
     if welcoming_message == "":
-        welcoming_message = time_it(tutor.simple_gpt)(f"""
+        welcoming_message = time_it(tutor.simple_gpt)(
+            f"""
         You are embedded into the Center for Quantum Networks (CQN) website as an Interactive Research Assistant. 
         Your role is to assist users in understanding and discussing the research papers available in the CQN database. 
         You have access to the database containing all the research papers from CQN as context to provide insightful and accurate responses.
@@ -95,12 +109,11 @@ def cqn():
         - find similar papers to others
         - summarize articles
         """,
-                                                      "Make an introductory message of yourself mentioning who you are, how many papers do you know, and what you can do to help users. Also, give examples of questions to related to what you can do. Do it in 200 words and generate the response in HTML",
-                                                      models_to_try=["gpt-3.5-turbo"])
+            "Make an introductory message of yourself mentioning who you are, how many papers do you know, and what you can do to help users. Also, give examples of questions to related to what you can do. Do it in 200 words and generate the response in HTML",
+            models_to_try=["gpt-3.5-turbo"],
+        )
 
-    return flask.render_template(
-        "cqn.html", welcoming_message=welcoming_message
-    )
+    return flask.render_template("cqn.html", welcoming_message=welcoming_message)
 
 
 @temp_bp.route("/chattutor")

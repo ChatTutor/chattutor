@@ -1,6 +1,7 @@
 import os
 import openai
 
+
 def load_api_keys():
     if "CHATTUTOR_GCP" in os.environ or "_CHATUTOR_GCP" in os.environ:
         openai.api_key = os.environ["OPENAI_API_KEY"]
