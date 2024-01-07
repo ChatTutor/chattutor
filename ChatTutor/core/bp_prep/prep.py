@@ -1,57 +1,12 @@
-import flask
-from flask import (
-    Flask,
-    request,
-    redirect,
-    send_from_directory,
-    url_for,
-    render_template,
-)
-from flask import stream_with_context, Response, abort, jsonify
-from flask_cors import CORS
-from itsdangerous import URLSafeTimedSerializer
-from flask import Blueprint, render_template
-from core.tutor import Tutor
-from core.tutor import (
-    cqn_system_message,
-    default_system_message,
-    interpreter_system_message,
-)
-import json
-from nice_functions import pprint, time_it
-from core.extensions import (
-    db,
-    user_db,
-    messageDatabase,
-    get_random_string,
-    generate_unique_name,
-    stream_text,
-)
-from core.definitions import Text
-from core.definitions import Doc
-from core.reader import parse_plaintext_file
-import io
-import uuid
-from werkzeug.datastructures import FileStorage
-import re
-
 # import pymysql
-import sqlite3
-import openai
-import core.loader
-from core.reader import read_filearray, extract_file, parse_plaintext_file_read
-from datetime import datetime
-from core.messagedb import MessageDB
-import interpreter
-from core.url_spider import URLSpider
-from core.definitions import Text
-from core.definitions import Doc
-import io
 import uuid
-from werkzeug.datastructures import FileStorage
 
 # import markdown
 import flask_login
+from core.extensions import (db, messageDatabase)
+from core.url_spider import URLSpider
+from flask import (Blueprint, Response, jsonify, request, stream_with_context)
+from nice_functions import pprint
 
 prep_bp = Blueprint("bp_prep", __name__)
 

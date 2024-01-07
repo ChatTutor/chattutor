@@ -3,14 +3,9 @@
     `read_folder` function to the `./db` chroma VectorDatabase (see `database.py`)
 """
 
-import json
-import os
-from google.cloud import storage
-import yaml
-from time import sleep
 
-from core.reader import read_folder, read_folder_gcp
-from core.vectordatabase import VectorDatabase
+from core.reader import read_folder_gcp
+from google.cloud import storage
 
 
 # Splits a list into n (roughly) equal parts

@@ -71,8 +71,9 @@
 .menu {
     background-color: transparent;
     line-height: 80px;
-    position: absolute;
+    /* position: fixed; */
     top: 0;
+
 }
 
 .body {

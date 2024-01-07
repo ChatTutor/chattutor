@@ -1,14 +1,11 @@
+import os
 from threading import Lock
+from typing import List
 
 import chromadb
-from chromadb.utils import embedding_functions
-from typing import List
-from core.definitions import Text
-from deeplake.core.vectorstore import VectorStore
 import openai
-import requests
-import json
-import os
+from chromadb.utils import embedding_functions
+from core.definitions import Text
 
 # Setting up user and URL for activeloop
 username = "mit.quantum.ai"

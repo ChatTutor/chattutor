@@ -1,32 +1,8 @@
-import flask
-from flask import (
-    Flask,
-    request,
-    redirect,
-    send_from_directory,
-    url_for,
-    render_template,
-)
-from flask import stream_with_context, Response, abort, jsonify
-from flask_cors import CORS
-from itsdangerous import URLSafeTimedSerializer
-from flask import Blueprint, render_template
-from core.tutor import Tutor
-from core.tutor import (
-    cqn_system_message,
-    default_system_message,
-    interpreter_system_message,
-)
-import json
-from nice_functions import pprint, time_it
-from core.extensions import (
-    db,
-    user_db,
-    messageDatabase,
-    get_random_string,
-    generate_unique_name,
-    stream_text,
-)
+
+from core.extensions import (db)
+from core.tutor import (Tutor, cqn_system_message, default_system_message,
+                        interpreter_system_message)
+from flask import (Blueprint, Response, request, stream_with_context)
 
 ask_bp = Blueprint("bp_ask", __name__)
 
