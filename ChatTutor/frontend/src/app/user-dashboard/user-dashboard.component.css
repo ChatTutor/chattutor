@@ -16,9 +16,61 @@
     background-image: linear-gradient(45deg, #2c7de7, #3cb2ff);
 }
 
+
+.body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+    /* background-image: linear-gradient(45deg, #2c7de7, #3cb2ff); */
+}
+
 .spinner {
     margin: 10px;
     padding: 5px;
     background-color: white;
     border-radius: 20px;
+}
+
+
+.menu-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.menu-btn:hover {
+    background: transparent;
+    border: none;
+    text-decoration: underline !important;
+    cursor: pointer;
+}
+
+.right > div {
+    width: calc(70vw + 5px);;
+}
+
+.mat-column-mainpage {
+    flex: 0 0 10%;
+}
+.mat-column-name {
+    flex: 0 0 50%;
+}
+
+.mat-column-collectionname {
+    flex: 0 0 10%;
+}
+.mat-column-professor {
+    flex: 0 0 50%;
+}
+.mat-column-accesslink {
+    flex: 0 0 50%;
+}
+
+table {
+    box-shadow: none !important;
+}
+
+.right {
+    padding-left: 20px;
 }

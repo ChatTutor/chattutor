@@ -15,13 +15,13 @@
             </mat-panel-description>
         </mat-expansion-panel-header>
         <p>Page(Section) Info:</p>
-        <ul>
+        <ul class="cool-shadow">
             <li>Section ID: {{section_info['section_id']}}</li>
             <li>Course Embedding Collection Name: {{section_info['course_chroma_collection']}}</li>
             <li>Section URL: {{section_info['section_url']}}</li>
         </ul>
         <p>Information available to ChatTutor:</p>
-        <ul *ngFor="let fd of from_doc_joined.split('$')">
+        <ul *ngFor="let fd of from_doc_joined.split('$')" class="cool-shadow">
             <li>{{fd}}</li>
         </ul>
 
@@ -39,4 +39,6 @@
         </mat-form-field>
 
     </mat-expansion-panel>
+    <mat-divider></mat-divider>
+
 </div>

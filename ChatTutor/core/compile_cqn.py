@@ -1,24 +1,22 @@
-import time
 import os
+import time
+from urllib.error import URLError
+from urllib.parse import urljoin
+
+import arxiv
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
-import arxiv
-from urllib.error import URLError
 from google.cloud import storage
-
 from selenium import webdriver
-from selenium.common.exceptions import (
-    TimeoutException,
-    NoSuchElementException,
-    ElementClickInterceptedException,
-    StaleElementReferenceException,
-)
+from selenium.common.exceptions import (ElementClickInterceptedException,
+                                        NoSuchElementException,
+                                        StaleElementReferenceException,
+                                        TimeoutException)
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
 
 # Set up Options for Chrome
 # chrome_options = Options()

@@ -1,6 +1,6 @@
 .accordeon {
     width: calc(50vw - 40px);
-    max-height: 500px;
+    /* max-height: 500px; */
     overflow: scroll;
     border: 2px solid white;
     background: white;
@@ -8,16 +8,17 @@
     padding: 10px;
 }
 .body {
-    padding-top: 120px;
-    background-image: linear-gradient(45deg, #2c7de7, #3cb2ff);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+    /* background-image: linear-gradient(45deg, #2c7de7, #3cb2ff); */
 }
 .acc-center {
-    width: 100vw;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    align-items: center;
-    background-color: white;
+    align-items: flex-start;
     padding: 20px;
 }
 
@@ -31,4 +32,70 @@
 .text{
     width: 100%;
     margin-bottom: 20px;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: start;
+}
+
+.col {
+    align-items: center;
+}
+
+.col.start {
+    align-items: start;
+
+}
+
+.menu-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.menu-btn:hover {
+    background: transparent;
+    border: none;
+    text-decoration: underline !important;
+    cursor: pointer;
+}
+
+.right > div {
+    width: calc(50vw + 5px);;
+}
+
+mat-form-field {
+    width: 100% !important;
+}
+
+.theform {
+    width: 100% !important;
+}
+
+.full-width {
+    width: 100% !important;
+}
+
+.horiz {
+    display: flex;
+    flex-direction: row;
+    padding: 5px;
+}
+
+.border {
+    border: 5px solid whitesmoke;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.fl {
+    width: 100%;
+}
+
+.col.start {
+    justify-content: flex-start;
+    align-items: flex-start;
 }

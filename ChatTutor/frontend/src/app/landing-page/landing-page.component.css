@@ -63,7 +63,7 @@
     align-items: center;
     background-image: linear-gradient(45deg, #2c7de7, #3cb2ff);
     width: 100%;
-    height: calc(100vh - 0px);
+    height: calc(100vh - 120px);
 
     /* Set the background size and repeat properties. */
 
@@ -190,4 +190,12 @@ a:visited {
 
 .titl{
     color: white;
+}
+
+.innerlink {
+    background-color: #2c7de7;
+    border-radius: 35px;
+    margin-left: 5px;
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;    margin-right: 5px;
+    transform: translateY(0px);
 }

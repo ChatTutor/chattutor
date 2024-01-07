@@ -9,8 +9,15 @@ export class UserDashboardComponent implements OnInit {
     username: string
     displayedColumns: string[] = ['mainpage', 'name', 'collectionname', 'professor', 'accesslink'];
     loading: boolean = true
+    status: String = 'courses'
 
     courses: any[] = []
+
+
+    switchStatus(newstatus : String) : void {
+        this.status = newstatus
+    }
+
 
     async ngOnInit(): Promise<void> {
         this.loading = true

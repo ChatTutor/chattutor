@@ -30,3 +30,17 @@
     align-items: center;
     justify-content: center;
 }
+
+.mat-expansion-panel:not([class*=mat-elevation-z])  {
+    box-shadow: none !important;
+    /* border-top: 1px solid rgb(137, 137, 137) !important; */
+    border-radius: 0px !important;
+}
+
+ul {
+    background: whitesmoke;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 10px;
+    /* border: 1px solid rgb(135, 133, 133); */
+}
