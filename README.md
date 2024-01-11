@@ -1,3 +1,6 @@
+<img width="329" alt="image" src="https://github.com/ChatTutor/chattutor/assets/46609341/fe9dec71-8ac1-4c01-8657-07d0ffa584ff">
+
+
 # ChatTutor
 ![Code Size](https://img.shields.io/github/languages/code-size/ChatTutor/chattutor)
 ![Repo Size](https://img.shields.io/github/repo-size/ChatTutor/chattutor)
