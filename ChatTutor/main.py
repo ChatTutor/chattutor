@@ -57,13 +57,15 @@ import flask_login
 # ------------ INIT APP ------------
 
 interpreter.auto_run = True
-from core.openai_tools import load_api_keys
+from core.openai_tools import load_api_keys, load_env
 from core.bp_ask.ask import ask_bp
 from core.bp_data.data import data_bp
 from core.bp_users.users import users_bp, User
 from core.bp_prep.prep import prep_bp
 from core.bp_reader.reader import reader_bp
 
+
+load_env()
 load_api_keys()
 
 app = Flask(__name__, static_folder="frontend/dist/frontend/", static_url_path="")

@@ -4,17 +4,21 @@
 
 from core.vectordatabase import VectorDatabase
 from core.messagedb import MessageDB
+import os
+from core.openai_tools import load_env
 
-db = VectorDatabase("34.133.39.77:8000", "chroma", hosted=True)
-user_db = VectorDatabase("34.133.39.77:8000", "chroma", hosted=True)
+load_env()
+
+db = VectorDatabase(os.getenv('VECTOR_DB_HOST'), "chroma", hosted=True)
+user_db = VectorDatabase(os.getenv('VECTOR_DB_HOST'), "chroma", hosted=True)
 
 
 messageDatabase = MessageDB(
-    host="34.41.31.71",
-    user="admin",
-    password="AltaParolaPuternica1245",
-    database="chatmsg",
-    statistics_database="sessiondat",
+    host=os.getenv('SQL_DB_HOST'),
+    user=os.getenv('SQL_DB_USER'),
+    password=os.getenv('SQL_DB_PASSWORD'),
+    database=os.getenv('SQL_DB'),
+    statistics_database=os.getenv('STAT_SQL_DB'),
 )
 
 import random

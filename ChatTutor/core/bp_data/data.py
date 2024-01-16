@@ -1,6 +1,7 @@
 # import pymysql
 
 import flask
+import os
 # import markdown
 import flask_login
 from core.extensions import (db, messageDatabase)
@@ -47,7 +48,7 @@ def getfromdb():
     passcode = data.get("lpassword", "nan")
     print(data)
     print(username, passcode)
-    if username == "root" and passcode == "admin":
+    if username == os.getenv('ROOT_USER') and passcode == os.getenv('ROOT_PW'):
         messages_arr = messageDatabase.execute_sql(
             "SELECT * FROM lmessages ORDER BY chat_key, clear_number, time_created",
             True,
@@ -67,7 +68,7 @@ def getfromdbng():
     """
     The function `getfromdbng` retrieves messages from a database if the provided username and password
     match the credentials for the root user.
-    :return: a JSON response. If the username and passcode are "root" and "admin" respectively, it will
+    :return: a JSON response. If the username and passcode are os.getenv('ROOT_USER') and os.getenv('ROOT_PW') respectively, it will
     return a JSON object with a "message" key set to "success" and a "messages" key containing an array
     of messages. If the username and passcode do not match, it will return a JSON object with a
     "message" key set to "error".
@@ -77,7 +78,7 @@ def getfromdbng():
     passcode = data.get("lpassword", "nan")
     print(data)
     print(username, passcode)
-    if username == "root" and passcode == "admin":
+    if username == os.getenv('ROOT_USER') and passcode == os.getenv('ROOT_PW'):
         messages_arr = messageDatabase.execute_sql(
             "SELECT * FROM lmessages ORDER BY chat_key, clear_number, time_created",
             True,
@@ -93,7 +94,7 @@ def exesql():
     username = data["lusername"]
     passcode = data["lpassword"]
     sqlexec = data["lexesql"]
-    if username == "root" and passcode == "admin":
+    if username == os.getenv('ROOT_USER') and passcode == os.getenv('ROOT_PW'):
         messages_arr = messageDatabase.execute_sql(sqlexec)
         return Response(f"{messages_arr}", 200)
     else:
