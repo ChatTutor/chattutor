@@ -69,11 +69,14 @@ export class ChatWindowComponent implements OnInit{
     }
 
     async askChatTutor() {
+        console.log("Asking chattutor")
+
         this.setStatus(WStatus.LoadingMessage)
         let args: ChatTutor = {
             conversation: this.messages,
             selectedModel: "gpt-3.5-turbo-16k",
             multiple: true,
+            credential_token: "none"
         }
 
         if (this.collections) {
