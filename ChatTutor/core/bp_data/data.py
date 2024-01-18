@@ -20,9 +20,16 @@ def addtodb():
     data = request.json
     content = data["content"]
     role = data["role"]
-    chat_k_id = data["chat_k"]
-    clear_number = data["clear_number"]
+    chat_k_id = data.get("chat_k")
+    if chat_k_id is None:
+        chat_k_id = "none"
+    clear_number = data.get("clear_number")
+    if clear_number is None:
+        clear_number = 0
     time_created = data["time_created"]
+    credential_token = data.get("credential_token")
+    if credential_token is None:
+        credential_token = "Not a valid token"
     messageDatabase.insert_chat(chat_k_id)
     message_to_upload = {
         "content": content,
@@ -30,7 +37,11 @@ def addtodb():
         "chat": chat_k_id,
         "clear_number": clear_number,
         "time_created": time_created,
+        "credential_token": credential_token
     }
+
+
+    print("adding ", message_to_upload, " to db")
     messageDatabase.insert_message(message_to_upload)
     return Response("inserted!", content_type="text")
 

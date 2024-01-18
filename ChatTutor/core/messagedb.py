@@ -227,7 +227,8 @@ class MessageDB:
             chat_key = a_message["chat"]
             clear_number = a_message["clear_number"]
             time_created = a_message["time_created"]
-            insert_format_lmessages = f"INSERT INTO lmessages (mes_id ,role, content, chat_key, clear_number, time_created) VALUES ('{uuid.uuid4()}','{role}', %s, '{chat_key}', {clear_number}, '{time_created}')"
+            credential_token = a_message["credential_token"]
+            insert_format_lmessages = f"INSERT INTO lmessages (mes_id ,role, content, chat_key, clear_number, time_created, credential_token) VALUES ('{uuid.uuid4()}','{role}', %s, '{chat_key}', {clear_number}, '{time_created}', '{credential_token}')"
             cur.execute(insert_format_lmessages, (content,))
             con.commit()
 
