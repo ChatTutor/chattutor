@@ -8,6 +8,7 @@ import { ENDPOINT_TOKEN } from './chat.service';
 import { ChatWindowComponent } from './chat-window/chat-window.component';
 import { InputBoxComponent } from './input-box/input-box.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatListModule } from '@angular/material/list';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -37,7 +38,10 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 import { CourseDashboardComponent } from './course-dashboard/course-dashboard.component';
 import { NavbarComponent } from './navbar/navbar.component';
-
+import { MathjaxComponent } from './mathjax/mathjax.component';
+import { LoginPageComponent } from './login-page/login-page.component';
+import { RegisterPageComponent } from './register-page/register-page.component';
+import { RegisterStudentPageComponent } from './register-student-page/register-student-page.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -52,11 +56,17 @@ import { NavbarComponent } from './navbar/navbar.component';
     LandingPageComponent,
     ChattutorDatabaseComponent,
     MessageInsideDatabaseComponent,
+    MathjaxComponent,
     CourseInputComponent,
     UrlLabelComponent,
     UserDashboardComponent,
     CourseDashboardComponent,
-    NavbarComponent,],
+    NavbarComponent,
+    MathjaxComponent,
+    LoginPageComponent,
+    RegisterPageComponent,
+    RegisterStudentPageComponent
+  ],
     imports: [
         BrowserModule,
         AppRoutingModule,
@@ -64,6 +74,7 @@ import { NavbarComponent } from './navbar/navbar.component';
         MatFormFieldModule,
         MatInputModule,
         MatIconModule,
+        MatListModule,
         FormsModule,
         MatDividerModule,
         MatButtonModule,

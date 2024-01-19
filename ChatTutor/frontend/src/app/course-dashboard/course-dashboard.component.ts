@@ -14,8 +14,15 @@ export class CourseDashboardComponent implements OnInit {
     process_of: any = {}
     course_name: string = '[]'
     loading: boolean = true
-
+    status: String = 'content'
+    testmode: boolean = false
+    runlocally: boolean = false
+    tokens: any[] = []
     constructor(private route: ActivatedRoute) {
+    }
+
+    switchStatus(newstatus : String) : void {
+        this.status = newstatus
     }
 
     ngOnInit(): void {
@@ -37,7 +44,14 @@ export class CourseDashboardComponent implements OnInit {
                     console.log('sections:',this.sections)
                     this.loading = false
                 })
+
+                fetch(`/course/${this.course_id}/gettokens`, {method: 'POST', headers: {'Content-Type': 'application/json'}}).then(res => res.json())
+                .then(toks => {
+                    this.tokens = toks
+                })
             })
+
+
     }
 
 

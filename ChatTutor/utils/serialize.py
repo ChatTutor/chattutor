@@ -4,13 +4,16 @@ from copy import deepcopy
 
 def serialize(func):
     import inspect
-    lines = inspect.getsource(func)    
+
+    lines = inspect.getsource(func)
     return lines
 
-def serialize_iteratively (object):
+
+def serialize_iteratively(object):
     """transforms all callables to string"""
+
     def iteration(object):
-        if object.__class__ ==re.Pattern:
+        if object.__class__ == re.Pattern:
             return object.pattern
         if callable(object):
             return serialize(object)

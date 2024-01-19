@@ -13,7 +13,7 @@
     padding: 20px;
     display: flex;
     flex-direction: row-reverse;
-
+    
 
 }
 
@@ -71,8 +71,9 @@
 .menu {
     background-color: transparent;
     line-height: 80px;
-    position: absolute;
+    /* position: fixed; */
     top: 0;
+
 }
 
 .body {
@@ -180,3 +181,36 @@ a:visited {
         order: 2;
     }
 }
+
+.section {
+    background:  linear-gradient(45deg, #2c7de7, #3cb2ff);;
+}
+
+.menu {
+    background:  linear-gradient(45deg, #2c7de7, #3cb2ff);;
+}
+
+.fl-right {
+    background-color: transparent;
+}
+
+
+.ondashboard * {
+    color: black !important;
+}
+.ondashboard h1 {
+    color: black !important;
+}
+.menu {
+    position: sticky;
+    z-index: 1000;
+}
+
+
+.ondashboardmenu {
+    line-height: unset;
+    background-color: whitesmoke;
+    background: whitesmoke !important;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px !important;
+}
+

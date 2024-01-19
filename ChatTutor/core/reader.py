@@ -8,6 +8,7 @@ import PyPDF2
 from core.vectordatabase import VectorDatabase
 from core.url_reader import URLReader
 
+
 def read_folder_gcp(bucket_name, folder_name):
     """
     Reads the contents of a folder in a GCS bucket and parses each file according to its type,

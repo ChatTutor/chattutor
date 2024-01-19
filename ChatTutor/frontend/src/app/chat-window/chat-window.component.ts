@@ -1,4 +1,4 @@
-import {Component, EventEmitter, HostBinding, HostListener, Input, Output} from '@angular/core';
+import {Component, EventEmitter, HostBinding, HostListener, Input, OnInit, Output} from '@angular/core';
 import {Paper} from 'app/models/paper.model';
 import {DataMessage, Message} from "../models/message.model";
 import {ChatTutor} from "../models/chattutor.model";
@@ -9,7 +9,7 @@ import { WStatus } from 'app/models/windowstatus.enum';
     templateUrl: './chat-window.component.html',
     styleUrls: ['./chat-window.component.css']
 })
-export class ChatWindowComponent {
+export class ChatWindowComponent implements OnInit{
     messages: Message[] = [];
     @Input() collections: string[] | undefined = ['test_embedding']
     @Input() restrictToDocument: any = undefined
@@ -20,7 +20,16 @@ export class ChatWindowComponent {
     endpoint: string = "/ask"
 
     pleaseStopGeneratingConvo: boolean = false
+    @Input() openingMessage: string = `Hello, I am here to respond to any questions you might have about this chapter or course.\nFeel free to ask me anything!`
 
+    ngOnInit(): void {
+        this.messages.push({
+            sender: "Assistant",
+            content: formatMessage(this.openingMessage),
+            role: 'assistant',
+            timestamp: "0"
+        } as Message);
+    }
 
     setStatus(status: WStatus) {
         this.status = status
@@ -60,11 +69,14 @@ export class ChatWindowComponent {
     }
 
     async askChatTutor() {
+        console.log("Asking chattutor")
+
         this.setStatus(WStatus.LoadingMessage)
         let args: ChatTutor = {
             conversation: this.messages,
             selectedModel: "gpt-3.5-turbo-16k",
             multiple: true,
+            credential_token: "none"
         }
 
         if (this.collections) {
@@ -104,7 +116,7 @@ export class ChatWindowComponent {
         this.messages.push(ms);
         await this.addMessageToDB(ms)
         console.log(this.messages);
-
+        console.log(JSON.stringify(this.messages))
         this.askForMessage().then(() => {
             console.log('Asked!')
         })
