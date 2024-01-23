@@ -175,6 +175,6 @@ def angular(path):
         path = __angular_default_path
     return send_from_directory(__root, path)
 
-
+# testing
 if __name__ == "__main__":
     app.run(debug=True, port=5000)  # Running the app in debug mode
