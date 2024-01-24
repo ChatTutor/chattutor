@@ -4,7 +4,7 @@ import tiktoken
 import time
 import json
 from core.extensions import stream_text
-import interpreter
+# import interpreter
 from nice_functions import pprint, bold, green, blue, red, time_it
 
 cqn_system_message = """
@@ -509,65 +509,65 @@ class Tutor:
                 "error": "true",
             }
 
-    def ask_question_interpreter(
-        self, conversation, from_doc=None, selectedModel="gpt-3.5-turbo-16k"
-    ):
-        """Function that responds to an asked question using open interpreter
+    # def ask_question_interpreter(
+    #     self, conversation, from_doc=None, selectedModel="gpt-3.5-turbo-16k"
+    # ):
+    #     """Function that responds to an asked question using open interpreter
 
-        Args:
-            conversation : List({role: ... , content: ...})
-            from_doc (Doc, optional): Defaults to None.
+    #     Args:
+    #         conversation : List({role: ... , content: ...})
+    #         from_doc (Doc, optional): Defaults to None.
 
-        Yields:
-            chunks of text from the response that are provided as such to achieve
-            a tipewriter effect
-        """
+    #     Yields:
+    #         chunks of text from the response that are provided as such to achieve
+    #         a tipewriter effect
+    #     """
 
-        prompt = conversation[-1]["content"]
-        arr = []
-        for coll_name, coll_desc in self.collections.items():
-            if not coll_desc.startswith("CQN papers"):
-                if self.embedding_db:
-                    self.embedding_db.load_datasource(coll_name)
-                    (
-                        documents,
-                        metadatas,
-                        distances,
-                        documents_plain,
-                    ) = time_it(
-                        self.embedding_db.query
-                    )(prompt, 3, from_doc, metadatas=True)
+    #     prompt = conversation[-1]["content"]
+    #     arr = []
+    #     for coll_name, coll_desc in self.collections.items():
+    #         if not coll_desc.startswith("CQN papers"):
+    #             if self.embedding_db:
+    #                 self.embedding_db.load_datasource(coll_name)
+    #                 (
+    #                     documents,
+    #                     metadatas,
+    #                     distances,
+    #                     documents_plain,
+    #                 ) = time_it(
+    #                     self.embedding_db.query
+    #                 )(prompt, 3, from_doc, metadatas=True)
 
-                    collection_db_response = (
-                        f"\n {coll_desc} context: "
-                        + self.embedding_db.query(prompt, 3, from_doc)
-                    )
-                    for doc, meta, dist in zip(documents, metadatas, distances):
-                        # if no fromdoc specified, and distance is lowe thhan thersh, add to array of possible related documents
-                        # if from_doc is specified, threshold is redundant as we have only one possible doc
-                        if dist <= 0.5 or from_doc != None:
-                            arr.append(
-                                {
-                                    "coll_desc": coll_desc,
-                                    "coll_name": coll_name,
-                                    "doc": doc,
-                                    "metadata": meta,
-                                    "distance": dist,
-                                }
-                            )
-                    prompt += collection_db_response
-                    print("#### COLLECTION DB RESPONSE:", collection_db_response)
-        sorted_docs = sorted(arr, key=lambda el: el["distance"])
-        valid_docs = sorted_docs[:3]
+    #                 collection_db_response = (
+    #                     f"\n {coll_desc} context: "
+    #                     + self.embedding_db.query(prompt, 3, from_doc)
+    #                 )
+    #                 for doc, meta, dist in zip(documents, metadatas, distances):
+    #                     # if no fromdoc specified, and distance is lowe thhan thersh, add to array of possible related documents
+    #                     # if from_doc is specified, threshold is redundant as we have only one possible doc
+    #                     if dist <= 0.5 or from_doc != None:
+    #                         arr.append(
+    #                             {
+    #                                 "coll_desc": coll_desc,
+    #                                 "coll_name": coll_name,
+    #                                 "doc": doc,
+    #                                 "metadata": meta,
+    #                                 "distance": dist,
+    #                             }
+    #                         )
+    #                 prompt += collection_db_response
+    #                 print("#### COLLECTION DB RESPONSE:", collection_db_response)
+    #     sorted_docs = sorted(arr, key=lambda el: el["distance"])
+    #     valid_docs = sorted_docs[:3]
 
-        print("prompt=", prompt)
-        print("conversation=", conversation)
-        for chunk in interpreter.chat(prompt, stream=True, display=True):
-            chunk["valid_docs"] = valid_docs
-            print(len(chunk))
-            yield chunk
+    #     print("prompt=", prompt)
+    #     print("conversation=", conversation)
+    #     for chunk in interpreter.chat(prompt, stream=True, display=True):
+    #         chunk["valid_docs"] = valid_docs
+    #         print(len(chunk))
+    #         yield chunk
 
-        yield {"message": "   "}
+    #     yield {"message": "   "}
 
     def count_tokens(self, string: str, encoding_name="cl100k_base") -> int:
         """Counting the number of tokens in a string using the specified encoding
