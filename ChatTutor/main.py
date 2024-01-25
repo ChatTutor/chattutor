@@ -1,3 +1,4 @@
+import bcrypt
 import flask
 from flask import (
     Flask,
@@ -64,11 +65,13 @@ from core.bp_users.users import users_bp, User
 from core.bp_prep.prep import prep_bp
 from core.bp_reader.reader import reader_bp
 
-
 load_env()
 load_api_keys()
 
-app = Flask(__name__, static_folder="frontend/dist/frontend/", static_url_path="")
+app = Flask(__name__, static_folder="frontend/dist/frontend/",
+            static_url_path="")
+CORS(app, origins=["https://barosandu.github.io", "https://pymit6101-nbqjgewnea-uc.a.run.app",
+     "https://byucamacholab.github.io", "https://pr4jitd.github.io", "https://introcomp.mit.edu"])
 app.secret_key = "fhslcigiuchsvjksvjksgkgs"
 db.init_db()
 user_db.init_db()
@@ -81,8 +84,6 @@ app.register_blueprint(prep_bp, url_prefix="/prep")
 app.register_blueprint(reader_bp)
 
 # ------------ LOGIN ------------
-import flask_login
-import bcrypt
 
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)

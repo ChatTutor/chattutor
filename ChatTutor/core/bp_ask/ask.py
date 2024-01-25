@@ -7,7 +7,7 @@ from flask import (Blueprint, Response, request, stream_with_context)
 ask_bp = Blueprint("bp_ask", __name__)
 
 
-@ask_bp.route("/", methods=["POST", "GET"])
+@ask_bp.route("", methods=["POST", "GET"])
 def ask():
     """Route that facilitates the asking of questions. The response is generated
     based on an embedding.
