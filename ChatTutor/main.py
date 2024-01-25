@@ -51,7 +51,7 @@ import core.loader
 from core.reader import read_filearray, extract_file, parse_plaintext_file_read
 from datetime import datetime
 from core.messagedb import MessageDB
-import interpreter
+# import interpreter
 from core.definitions import Text
 from core.definitions import Doc
 import io
@@ -63,8 +63,13 @@ import flask_login
 
 # ------------ INIT APP ------------
 
-interpreter.auto_run = True
-
+# interpreter.auto_run = True
+from core.openai_tools import load_api_keys, load_env
+from core.bp_ask.ask import ask_bp
+from core.bp_data.data import data_bp
+from core.bp_users.users import users_bp, User
+from core.bp_prep.prep import prep_bp
+from core.bp_reader.reader import reader_bp
 
 load_env()
 load_api_keys()
@@ -177,6 +182,6 @@ def angular(path):
         path = __angular_default_path
     return send_from_directory(__root, path)
 
-
+# testing
 if __name__ == "__main__":
     app.run(debug=True, port=5000)  # Running the app in debug mode
