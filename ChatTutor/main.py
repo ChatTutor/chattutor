@@ -1,10 +1,4 @@
 import bcrypt
-from core.bp_reader.reader import reader_bp
-from core.bp_prep.prep import prep_bp
-from core.bp_users.users import users_bp, User
-from core.bp_data.data import data_bp
-from core.bp_ask.ask import ask_bp
-from core.openai_tools import load_api_keys, load_env
 import flask
 from flask import (
     Flask,
