@@ -11,3 +11,4 @@ arxiv_ids.txt
 chat_store.sqlite3
 debug.ipynb
 .ipynb_checkpoints/
+run_application.sh
