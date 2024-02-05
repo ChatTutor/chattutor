@@ -2,13 +2,15 @@
 
 # ---- Build Angular App ----
 FROM node:18.10 AS build-angular
+ARG ANGULAR_ENV=production
 WORKDIR /app/frontend
 RUN echo "current directory $(pwd)"
 
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm install
 COPY frontend ./
-RUN npm run build
+# RUN npm run build
+RUN npm run build -- --configuration=${ANGULAR_ENV}
 
 # ---- Python Setup ----
 FROM python:3.11-bookworm

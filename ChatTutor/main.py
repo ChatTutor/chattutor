@@ -68,9 +68,8 @@ from core.bp_reader.reader import reader_bp
 load_env()
 load_api_keys()
 
-app = Flask(__name__, static_folder="frontend/dist/frontend/",
-            static_url_path="")
-CORS(app, origins=["https://barosandu.github.io", "https://pymit6101-nbqjgewnea-uc.a.run.app",
+app = Flask(__name__, static_folder="frontend/dist/frontend/", static_url_path="")
+CORS(app, origins=["http://127.0.0.1:5000", "https://barosandu.github.io", "https://pymit6101-nbqjgewnea-uc.a.run.app",
      "https://byucamacholab.github.io", "https://pr4jitd.github.io", "https://introcomp.mit.edu"])
 app.secret_key = "fhslcigiuchsvjksvjksgkgs"
 db.init_db()
