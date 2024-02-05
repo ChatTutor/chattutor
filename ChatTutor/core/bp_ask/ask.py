@@ -21,7 +21,6 @@ def ask():
     data = request.json
 
     # get credentials
-
     credential_user = data.get("credential_token")
     conversation = data["conversation"]
     collection_name = data.get("collection")
