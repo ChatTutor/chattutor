@@ -3,6 +3,7 @@ import {Paper} from 'app/models/paper.model';
 import {DataMessage, Message} from "../models/message.model";
 import {ChatTutor} from "../models/chattutor.model";
 import { WStatus } from 'app/models/windowstatus.enum';
+import { environment } from '../../environments/environment';
 
 @Component({
     selector: 'app-chat-window',
@@ -17,7 +18,7 @@ export class ChatWindowComponent implements OnInit{
     documentInfo: any = undefined
     loadingFiles: boolean = false
     status: WStatus = WStatus.Idle
-    endpoint: string = "https://beta-chattutor-nbqjgewnea-uc.a.run.app/ask/"
+    endpoint: string = `${environment.apiUrl}/ask`
 
     pleaseStopGeneratingConvo: boolean = false
     @Input() openingMessage: string = `Hello, I am here to respond to any questions you might have about this chapter or course.\nFeel free to ask me anything!`
@@ -70,6 +71,7 @@ export class ChatWindowComponent implements OnInit{
 
     async askChatTutor() {
         console.log("Asking chattutor")
+        console.log('URL = ', environment)
 
         this.setStatus(WStatus.LoadingMessage)
         let args: ChatTutor = {
@@ -92,7 +94,6 @@ export class ChatWindowComponent implements OnInit{
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(args)
         }
-
         let response = await fetch(this.endpoint, req_init)
         return response
     }
@@ -153,7 +154,6 @@ export class ChatWindowComponent implements OnInit{
                     return spl
                 })
             for (let message_index in the_messages) {
-
                 const message = the_messages[message_index]
                 if (message == null)
                     continue
