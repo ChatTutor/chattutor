@@ -125,6 +125,8 @@ export class ChatWindowComponent implements OnInit{
 
     async askForMessage() {
         let response = await this.askChatTutor()
+        console.log(response,'qqqq');
+        
 
         let stop_gen = false
         let is_first = true
@@ -140,7 +142,6 @@ export class ChatWindowComponent implements OnInit{
                 return
             }
             const string_value = new TextDecoder().decode(par.value)
-            //console.log(string_value)
 
             const the_messages: DataMessage[] =
                 string_value.split('\n\n')
