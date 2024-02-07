@@ -57,7 +57,7 @@ class MessageDB:
         content text NOT NULL,
         chat_key varchar(100) NOT NULL,
         clear_number integer NOT NULL,
-        time_created text NOT NULL,
+        time_created datetime NOT NULL,
         FOREIGN KEY (chat_key) REFERENCES lchats (chat_id)
         )"""
 
