@@ -1,15 +1,16 @@
+import { Time } from "@angular/common";
 import { Paper } from "./paper.model";
 
 export interface Message {
     sender: 'Student' | 'Assistant',
-    timestamp: string,
+    timestamp: number,
     role: 'user' | 'assistant',
     content: string,
     delay?: Number,
     valid_docs?: any[],
     chat_k?: string,
     clear_number?: string,
-    time_created?: string,
+    time_created?: number,
 }
 
 export interface DataMessage {

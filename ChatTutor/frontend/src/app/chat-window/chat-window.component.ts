@@ -28,7 +28,7 @@ export class ChatWindowComponent implements OnInit{
             sender: "Assistant",
             content: formatMessage(this.openingMessage),
             role: 'assistant',
-            timestamp: "0"
+            timestamp: 0
         } as Message);
     }
 
@@ -110,7 +110,7 @@ export class ChatWindowComponent implements OnInit{
         console.log("Updated message");
         const ms: Message = {
             sender: 'Student',
-            timestamp: new Date().toLocaleTimeString(),
+            timestamp: new Date().getTime(),
             role: 'user',
             content: messageText,
         }
@@ -175,7 +175,7 @@ export class ChatWindowComponent implements OnInit{
 
                     msg_in_progress = {
                         sender: 'Assistant',
-                        timestamp: new Date().toLocaleTimeString(),
+                        timestamp: new Date().getTime(),
                         role: 'assistant',
                         content: formatMessage(accumulated_content),
                         valid_docs: context_documents,

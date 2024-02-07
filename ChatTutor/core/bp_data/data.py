@@ -6,6 +6,7 @@ import os
 import flask_login
 from core.extensions import (db, messageDatabase)
 from flask import (Blueprint, Response, jsonify, request)
+from datetime import datetime
 
 data_bp = Blueprint("bp_data", __name__)
 
@@ -27,6 +28,7 @@ def addtodb():
     if clear_number is None:
         clear_number = 0
     time_created = data["time_created"]
+    time_created = datetime.utcfromtimestamp(int(time_created) / 1000)
     credential_token = data.get("credential_token")
     if credential_token is None:
         credential_token = "Not a valid token"
