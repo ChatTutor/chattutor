@@ -7,9 +7,8 @@ import openai
 from chromadb.utils import embedding_functions
 from core.definitions import Text
 
-# Setting up user and URL for activeloop
+# Setting up user 
 username = "mit.quantum.ai"
-activeloop_url = "https://app.activeloop.ai/api/query/v1"
 
 
 def embedding_function(texts, model="text-embedding-ada-002"):
@@ -44,7 +43,6 @@ else:
     keys = yamlenv["env_variables"]
     print(keys)
     os.environ["OPENAI_API_KEY"] = keys["OPENAI_API_KEY"]
-    os.environ["ACTIVELOOP_TOKEN"] = keys["ACTIVELOOP_TOKEN"]
 
 
 class VectorDatabase:
