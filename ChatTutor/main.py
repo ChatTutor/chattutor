@@ -51,6 +51,7 @@ from core.definitions import Doc
 import io
 import uuid
 from werkzeug.datastructures import FileStorage
+from authlib.integrations.flask_client import OAuth
 
 # import markdown
 import flask_login
@@ -81,6 +82,40 @@ app.register_blueprint(data_bp)
 app.register_blueprint(users_bp)
 app.register_blueprint(prep_bp, url_prefix="/prep")
 app.register_blueprint(reader_bp)
+
+
+# ------------ OAuth ------------
+oauth = OAuth(app)
+google = oauth.register(
+    name='google',
+    client_id='731947664853-26viimvavb8qc3hmfcuah4t7f8sll2he.apps.googleusercontent.com',  # Replace with your Google client ID
+    client_secret='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',  # Replace with your Google client secret
+    access_token_url='https://accounts.google.com/o/oauth2/token',
+    access_token_params=None,
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    authorize_params=None,
+    api_base_url='https://www.googleapis.com/oauth2/v1/',
+    userinfo_endpoint='https://openidconnect.googleapis.com/v1/userinfo',  # This is to get the user's info which includes their email
+    client_kwargs={'scope': 'openid email profile'},
+)
+
+@app.route('/oauth')
+def login():
+    print('aaaaaaa')
+    redirect_uri = url_for('authorize', _external=True)
+    return google.authorize_redirect(redirect_uri)
+
+@app.route('/oauth/callback')
+def authorize():
+    print('bbbbbb')
+    token = google.authorize_access_token()
+    print(token)
+    resp = google.get('userinfo').json()
+    print(resp)
+    # Do something with the user's info, e.g., log them in
+    # You might want to save the user's data in a database
+    return f"User info: {resp}"
+
 
 # ------------ LOGIN ------------
 

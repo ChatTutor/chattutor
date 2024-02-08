@@ -42,6 +42,12 @@ import { MathjaxComponent } from './mathjax/mathjax.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { RegisterPageComponent } from './register-page/register-page.component';
 import { RegisterStudentPageComponent } from './register-student-page/register-student-page.component';
+
+import { OAuthModule } from 'angular-oauth2-oidc';
+import { AuthService } from './auth.service';
+import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -85,9 +91,16 @@ import { RegisterStudentPageComponent } from './register-student-page/register-s
         MatTableModule,
         MatPaginatorModule,
         MatStepperModule,
-        MatExpansionModule
+        MatExpansionModule,
+        HttpClientModule,
+        OAuthModule.forRoot({
+          resourceServer: {
+            sendAccessToken: false,
+          }
+        }),
     ],
   providers: [
+    AuthService,
     { provide: ENDPOINT_TOKEN, useValue: 'your_endpoint_url_here' },
   ],
   bootstrap: [AppComponent]
