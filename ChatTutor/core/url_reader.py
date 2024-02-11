@@ -7,7 +7,7 @@ import requests
 # The URLReader class provides methods to parse the content of a webpage given a URL or a list of
 # URLs.
 class URLReader:
-    def parse_url(url: str):
+    def parse_url(url: str) -> str:
         """
         The function `parse_url` takes a URL as input, retrieves the content of the webpage, removes the
         style and script tags from the HTML, and returns the stripped text content of the webpage.
@@ -24,7 +24,7 @@ class URLReader:
         x = " ".join(soup.stripped_strings)
         return x
 
-    def parse_urls(urls: List[str]):
+    def parse_urls(urls: List[str]) -> None:
         """
         The function `parse_urls` takes a list of URLs, parses each URL using the `URLReader.parse_url`
         method, and appends the result to a string with two newlines.

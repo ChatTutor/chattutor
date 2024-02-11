@@ -3,6 +3,11 @@ from threading import Lock
 from typing import List
 
 import chromadb
+from chromadb.utils import embedding_functions
+from chromadb import QueryResult, GetResult
+from typing import List, Union
+from core.definitions import Text, Doc
+from deeplake.core.vectorstore import VectorStore
 import openai
 from chromadb.utils import embedding_functions
 from core.definitions import Text
@@ -11,7 +16,7 @@ from core.definitions import Text
 username = "mit.quantum.ai"
 
 
-def embedding_function(texts, model="text-embedding-ada-002"):
+def embedding_function(texts: List[Text], model: str="text-embedding-ada-002") -> List[List[float]]:
     """
     Function to generate embeddings for given texts using OpenAI API
 
@@ -58,12 +63,12 @@ class VectorDatabase:
         provider of the database: either \'chroma\' or ~~\'deeplake\'~~
     """
 
-    def __init__(self, path, db_provider, hosted=True):
+    def __init__(self, path: str, db_provider: str, hosted: bool=True) -> None:
         self.path = path
         self.hosted = hosted
         self.db_provider = db_provider
 
-    def init_db(self):
+    def init_db(self) -> None:
         """
         Initializing the database client if the provider is 'chroma'
         """
@@ -76,7 +81,7 @@ class VectorDatabase:
         else:
             self.client = chromadb.PersistentClient(path=self.path)
 
-    def load_datasource(self, name):
+    def load_datasource(self, name: str) -> None:
         """
         Loading a collection by it's name:
 
@@ -89,7 +94,7 @@ class VectorDatabase:
         else:
             raise Exception("db_provider must be one of 'chroma' or 'deeplake'")
 
-    def load_datasource_chroma(self, collection_name):
+    def load_datasource_chroma(self, collection_name: str) -> None:
         """Load Chroma collection"""
         openai_ef = embedding_functions.OpenAIEmbeddingFunction(
             model_name="text-embedding-ada-002"
@@ -98,7 +103,7 @@ class VectorDatabase:
             name=collection_name, embedding_function=openai_ef
         )
 
-    def delete_datasource_chroma(self, collection_name):
+    def delete_datasource_chroma(self, collection_name: str) -> None:
         """
         Unload and delete Chroma collection
         Please make sure you know what you're doing when using this,
@@ -112,7 +117,7 @@ class VectorDatabase:
             coll_names = [coll.name for coll in collections]
             print(coll_names, collection_name)
 
-    def add_texts(self, texts: List[Text]):
+    def add_texts(self, texts: List[Text]) -> None:
         """Equivalent to add_texts_chroma
 
         Args:
@@ -123,7 +128,7 @@ class VectorDatabase:
         else:
             raise Exception("db_provider must be one of 'chroma' or 'deeplake'")
 
-    def add_texts_chroma(self, texts: List[Text]):
+    def add_texts_chroma(self, texts: List[Text]) -> None:
         """
         Adding texts to Chroma data source with specified ids, metadatas, and documents
 
@@ -138,7 +143,7 @@ class VectorDatabase:
             documents=[text.text for text in texts],
         )
 
-    def add_texts_chroma_lock(self, texts: List[Text], lock: Lock):
+    def add_texts_chroma_lock(self, texts: List[Text], lock: Lock) -> None:
         """
         Adding texts to Chroma data source with specified ids, metadatas, and documents,
         for parallel url spidering. This would lock the mutex lock first and then work like
@@ -158,7 +163,8 @@ class VectorDatabase:
         )
         lock.release()
 
-    def query(self, prompt, n_results, from_doc, metadatas=False, distances=False):
+    def query(self, prompt: str, n_results: int, from_doc: Union[str, List[str]], 
+              metadatas: bool=False, distances: bool=False) -> str:
         """Equivalent of query_chroma
         Args:
             from_doc (string | list[string]) -  should be either a string  a list of strings
@@ -184,7 +190,13 @@ class VectorDatabase:
         else:
             raise Exception("db_provider must be one of 'chroma' or 'deeplake'")
 
-    def query_chroma(self, prompt, n_results, from_doc, include=["documents"]):
+    def query_chroma(
+            self, 
+            prompt: str, 
+            n_results: int, 
+            from_doc: Doc, 
+            include: List[str]=["documents"]
+    ) -> QueryResult:
         """Querying Chroma data source with specified query text,
         getting best match from the chroma embeddings
         Args:
@@ -212,7 +224,7 @@ class VectorDatabase:
                 query_texts=prompt, n_results=n_results, include=include
             )
 
-    def get_chroma(self, n_results, from_doc, include=["documents"]):
+    def get_chroma(self, n_results: int, from_doc: Doc, include: List[str]=["documents"]) -> GetResult:
         """
         Get document from ChromaDB that matches from_doc exactly.
         Args:

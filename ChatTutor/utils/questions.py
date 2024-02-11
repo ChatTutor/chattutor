@@ -1,8 +1,9 @@
 import nice_functions as nf
 from utils.get_char import get_char
+from typing import List
 
 
-def multiple_options_only_text(options_list):
+def multiple_options_only_text(options_list: List[str]) -> str: 
     text_list = []
     for option in options_list:
         _tmp = option.split(",")
@@ -21,12 +22,12 @@ def multiple_options_only_text(options_list):
 
 
 def multiple_options(
-    question,
-    options_list=[],
-    input_text="Type your answer and press enter: ",
-    multiple_letters=False,
-    answer=None,
-):
+    question: str,
+    options_list: List[str]=[],
+    input_text: str="Type your answer and press enter: ",
+    multiple_letters: bool=False,
+    answer: str=None,
+) -> str:
     if question:
         print(question)
     if options_list:
@@ -41,7 +42,7 @@ def multiple_options(
         return input(input_text)
 
 
-def yes_no_question(question, enter="yes"):
+def yes_no_question(question: str, enter: str="yes") -> bool:
     print(question, end="")
     if enter == "yes":
         print(
@@ -65,36 +66,36 @@ def yes_no_question(question, enter="yes"):
             return False
 
 
-def no_changes():
+def no_changes() -> None:
     print(f"No changes {nf.ok_symbol}")
 
 
-def no_changes_press_enter():
+def no_changes_press_enter() -> None:
     print(f"No changes {nf.ok_symbol}")
     input("Press enter to continue")
 
 
-def press_enter(message=""):
+def press_enter(message: str="") -> None:
     if message:
         message = f"{message}. "
     input(f"{message}Press enter to continue")
 
 
-def done_press_enter(message="Done"):
+def done_press_enter(message: str="Done") -> None:
     input(f"{message} {nf.ok_symbol}\nPress enter to continue")
 
 
-def done(message="Done"):
+def done(message: str="Done") -> None:
     print(f"{message} {nf.ok_symbol}")
 
 
-def failed(message="Failed"):
+def failed(message: str="Failed") -> None:
     print(f"{message} {nf.fail_symbol}")
 
 
-def failed_press_enter(message="Failed"):
+def failed_press_enter(message: str="Failed") -> None:
     input(f"{message} {nf.fail_symbol}\nPress enter to continue")
 
 
-def processing_answer():
+def processing_answer() -> None:
     print("Processing answer...")

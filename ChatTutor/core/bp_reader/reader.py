@@ -5,14 +5,14 @@ from core.definitions import Doc
 from core.extensions import (db, generate_unique_name, get_random_string)
 from core.reader import (extract_file, parse_plaintext_file_read, read_filearray)
 from core.url_spider import URLSpider
-from flask import (Blueprint, jsonify, request)
+from flask import (Blueprint, jsonify, request, Response)
 from werkzeug.datastructures import FileStorage
 
 reader_bp = Blueprint("bp_reader", __name__)
 
 
 @reader_bp.route("/upload_data_to_process", methods=["POST"])
-def upload_data_to_process():
+def upload_data_to_process() -> Response:
     """
     The function `upload_data_to_process` uploads data from a file, extracts the contents, and adds them
     to a database collection with a generated name.
@@ -46,7 +46,7 @@ def upload_data_to_process():
 
 
 @reader_bp.route("/upload_data_from_drop", methods=["POST"])
-def upload_data_from_drop():
+def upload_data_from_drop() -> Response:
     """
     The function `upload_data_from_drop` uploads data from a file to a database collection, extracts the
     file contents, and adds the extracted texts to the collection.
@@ -81,7 +81,7 @@ def upload_data_from_drop():
 
 
 @reader_bp.route("/upload_site_url", methods=["POST"])
-def upload_site_url():
+def upload_site_url() -> Response:
     """
     The `upload_site_url` function takes a JSON object containing a collection name and a list of URLs,
     parses the content of each URL, and adds the parsed text to a database. It returns a JSON response

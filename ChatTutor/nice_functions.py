@@ -1,8 +1,8 @@
 import json
+from typing import Callable
 
-
-def pprint(*args):
-    def wrapper(ob):
+def pprint(*args) -> None:
+    def wrapper(ob) -> None:
         if isinstance(ob, (str, int, float)):
             print(ob)
 
@@ -37,58 +37,58 @@ def pprint(*args):
         wrapper(el)
 
 
-def bold(some_string):
+def bold(some_string: str) -> str:
     """Convert to blue text"""
     return CBOLD + str(some_string) + CEND
 
 
-def bold(some_string):
+def bold(some_string: str) -> str:
     """Convert to blue text"""
     return CBOLD + str(some_string) + CEND
 
 
-def blue(some_string):
+def blue(some_string: str) -> str:
     """Convert to blue text"""
     return CBLUE + str(some_string) + CEND
 
 
-def green(some_string):
+def green(some_string: str) -> str:
     """Convert to green text"""
     return CGREEN + str(some_string) + CEND
 
 
-def gray(some_string):
+def gray(some_string: str) -> str:
     """gray text"""
     return CGRAY + str(some_string) + CEND
 
 
-def under(some_string):
+def under(some_string: str) -> str:
     """under text"""
     return CUNDER + str(some_string) + CEND
 
 
-def lgray(some_string):
+def lgray(some_string: str) -> str:
     """light gray text"""
     return CLGRAY + str(some_string) + CEND
 
 
-def red(some_string):
+def red(some_string: str) -> str:
     """Convert to red text"""
     return CRED + str(some_string) + CEND
 
 
-def white(some_string):
+def white(some_string: str) -> str:
     """Convert to white text"""
     return CWHITE + str(some_string) + CEND
 
 
-def yellow(some_string):
+def yellow(some_string: str) -> str:
     """Convert to yellow text"""
     return CYELLOW + str(some_string) + CEND
 
 
 # set print stdout to a given color
-def set_to_color(color):
+def set_to_color(color: str) -> None:
     if color == "blue":
         print(CBLUE, end="")
     if color == "green":
@@ -124,7 +124,7 @@ CUNDER = "\033[4m"
 import functools, time
 
 
-def time_it(func, message=""):
+def time_it(func: Callable, message: str="") -> Callable:
     if message != "":
         message = f" ({blue(message)})"
 

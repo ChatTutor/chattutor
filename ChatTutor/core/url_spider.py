@@ -18,9 +18,9 @@ from core.definitions import Text
 from core.definitions import Doc
 from core.messagedb import MessageDB
 from core.reader import parse_plaintext_file, parse_plaintext_file_read
-from core.extensions import get_random_string
+from core.extensions import get_random_string, VectorDatabase
 from core.url_reader import URLReader
-
+from typing import Dict, Tuple, Generator
 
 class URLSpider:
     """
@@ -35,12 +35,12 @@ class URLSpider:
     BFS_TH_COUNT: int
     MAX_LEVEL_PARQ: int
 
-    def __init__(self, depth, max_number_of_urls):
+    def __init__(self, depth: int, max_number_of_urls: int) -> None:
         self.depth = depth
         self.node_degree = {}
         self.max_number_of_urls = max_number_of_urls
 
-    def parse_url(url: str):
+    def parse_url(url: str) -> str:
         """
         The function `parse_url` takes a URL as input, retrieves the content of the web page at that
         URL, removes any style and script tags from the HTML, and returns the stripped text content of
@@ -69,7 +69,7 @@ class URLSpider:
         x = " ".join(soup.stripped_strings)
         return x
 
-    def parse_urls(urls: List[str]):
+    def parse_urls(urls: List[str]) -> None:
         """
         The function `parse_urls` takes a list of URLs, calls the `parse_url` function on each URL using
         the `URLSpider` class, and appends the result to a string with two newlines.
@@ -89,7 +89,7 @@ class URLSpider:
 
     all_urls: [str] = []
 
-    def neighbouring_urls(self, lock: Lock, url2app):
+    def neighbouring_urls(self, lock: Lock, url2app: str) -> None:
         """
         The `neighbouring_urls` function is responsible for extracting and processing the URLs found on
         a given webpage, while respecting certain conditions and restrictions.
@@ -198,10 +198,10 @@ class URLSpider:
         lock.release()
         print("done threading")
 
-    def set_bfs_thread_count(self, tc):
+    def set_bfs_thread_count(self, tc: int) -> None:
         self.BFS_TH_COUNT = tc
 
-    def produce_bfs_array(self, urltoapp, lock):
+    def produce_bfs_array(self, urltoapp: str, lock: Lock) -> None:
         """
         The function produces a breadth-first search array of URLs by iterating through a list of spider
         URLs and creating threads to find neighboring URLs.
@@ -240,7 +240,12 @@ class URLSpider:
 
     global_results: {str: dict} = {}
 
-    def add_to_andudb(self, section_dict, from_doc_joined, message_db: MessageDB):
+    def add_to_andudb(
+            self, 
+            section_dict: Dict, 
+            from_doc_joined: str, 
+            message_db: MessageDB
+    ) -> Tuple[Dict, str]:
         """
         The function adds a section to a message database and establishes a relationship between the
         section and a course.
@@ -261,7 +266,12 @@ class URLSpider:
         )
         return section_dict, from_doc_joined
 
-    def add_from_doc_to_section(self, section_id, to_add, message_db: MessageDB):
+    def add_from_doc_to_section(
+            self, 
+            section_id: str, 
+            to_add: str, 
+            message_db: MessageDB
+    ) -> Tuple:
         """
         The function `add_from_doc_to_section` updates a section in a message database by adding a value
         from a document, and returns the section ID and the value added.
@@ -282,11 +292,11 @@ class URLSpider:
             self,
             lock: Lock,
             message_db: MessageDB,
-            chroma_db,
-            collection_name,
-            course_id,
-            addToMessageDB=True,
-    ):
+            chroma_db: VectorDatabase,
+            collection_name: str,
+            course_id: str,
+            addToMessageDB: bool=True,
+    ) -> None:
         """
         The function `parse_url_array` parses a URL array, extracts text from the URLs, adds the text to
         a database, and updates various data structures and databases with the parsed information.
@@ -354,10 +364,10 @@ class URLSpider:
         }
         lock.release()
 
-    def dfsjdlf(self):
+    def dfsjdlf(self) -> None:
         print("Yeyyy")
 
-    def unique(self, list1):
+    def unique(self, list1: list) -> list:
         """
         The function takes a list as input and returns a new list with only the unique elements from the
         input list.
@@ -373,10 +383,10 @@ class URLSpider:
 
         return unique_list
 
-    def set_thread_count(self, tc):
+    def set_thread_count(self, tc: int) -> None:
         self.TH_COUNT = tc
 
-    def get_bfs_array(self, urltoapp):
+    def get_bfs_array(self, urltoapp: str) -> List[str]:
         """
         The function `get_bfs_array` returns the `all_urls` list after performing some operations.
 
@@ -391,16 +401,16 @@ class URLSpider:
 
     def new_spider_function(
             self,
-            urltoapp,
-            save_to_database,
-            collection_name,
+            urltoapp: str,
+            save_to_database: VectorDatabase,
+            collection_name: str,
             message_db: MessageDB,
-            course_name,
-            proffessor,
-            course_id,
-            produce_bfs=True,
+            course_name: str,
+            proffessor: str,
+            course_id: str,
+            produce_bfs: bool=True,
             current_user=None,
-    ):
+    ) -> Generator[str]:
         """
         The function `new_spider_function` is used to crawl and scrape data from a website, save it to a
         database, and return the results.

@@ -5,7 +5,7 @@ class _GetChar:
     From: https://code.activestate.com/recipes/134892/
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.impl = _GetchWindows()
         except ImportError:
@@ -16,10 +16,10 @@ class _GetChar:
 
 
 class _GetchUnix:
-    def __init__(self):
+    def __init__(self) -> None:
         import tty, sys
 
-    def __call__(self):
+    def __call__(self) -> str:
         import sys, tty, termios
 
         fd = sys.stdin.fileno()
@@ -33,10 +33,10 @@ class _GetchUnix:
 
 
 class _GetchWindows:
-    def __init__(self):
+    def __init__(self) -> None:
         import msvcrt
 
-    def __call__(self):
+    def __call__(self) -> bytes:
         import msvcrt
 
         return msvcrt.getch()

@@ -1,13 +1,11 @@
 import re
 from copy import deepcopy
 
-
-def serialize(func):
+def serialize(func) -> str:
     import inspect
 
     lines = inspect.getsource(func)
     return lines
-
 
 def serialize_iteratively(object):
     """transforms all callables to string"""

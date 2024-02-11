@@ -5,7 +5,7 @@ import bcrypt
 import flask
 import flask_login
 from core.extensions import (messageDatabase)
-from flask import (Blueprint, jsonify, request)
+from flask import (Blueprint, Response, jsonify, request)
 
 users_bp = Blueprint("bp_users", __name__)
 
@@ -31,20 +31,20 @@ class User(flask_login.UserMixin):
     password_hash = "NO NUMBER"
     user_type = ""
 
-    def get_id(self):
+    def get_id(self) -> str:
         return self.username
 
     @property
-    def password(self):
+    def password(self) -> None:
         raise AttributeError("password not readable")
 
     @password.setter
-    def password(self, password):
+    def password(self, password: str) -> None:
         self.password_hash = bcrypt.hashpw(
             password.encode("utf-8", "ignore"), bcrypt.gensalt()
         )
 
-    def verify_password(self, p):
+    def verify_password(self, p: str) -> bool:
         print(
             self.password_hash,
             bcrypt.hashpw(p.encode("utf8", "ignore"), bcrypt.gensalt()).decode("utf-8"),
@@ -58,7 +58,7 @@ class User(flask_login.UserMixin):
 
 
 @users_bp.route("/register", methods=["POST"])
-def register_user():
+def register_user() -> str:
     """
     The function `register_user()` registers a new user by retrieving their username, email, and
     password from a form, checking if the username already exists in the database, creating a new User
@@ -90,7 +90,7 @@ def register_user():
 
 
 @users_bp.route("/login", methods=["POST"])
-def login():
+def login() -> str:
     """
     The login function checks if the username and password provided by the user match the stored
     username and password in the database, and logs the user in if they match.
@@ -114,12 +114,12 @@ def login():
 
 @users_bp.route("/protected")
 @flask_login.login_required
-def protected():
+def protected() -> str:
     return f'Logged in as: {flask_login.current_user.username}, <a href="/">Return</a>'
 
 
 @users_bp.route("/logout")
-def logout():
+def logout() -> str:
     """
     The function `logout` logs out the user and returns a message with a link to return to the homepage.
     :return: The string 'Logged out, <a href="/">Return</a>' is being returned.
@@ -130,7 +130,7 @@ def logout():
 
 @users_bp.route("/getuser", methods=["POST"])
 @flask_login.login_required
-def getuser():
+def getuser() -> Response:
     """
     The function `getuser` prints the username of the currently logged in user and returns it as a JSON
     object.
@@ -141,7 +141,7 @@ def getuser():
 
 
 @users_bp.route("/isloggedin", methods=["POST"])
-def isloggedin():
+def isloggedin() -> Response:
     """
     The function checks if the current user is logged in and returns a JSON response indicating whether
     they are logged in or not.
@@ -157,7 +157,7 @@ def isloggedin():
 
 @users_bp.route("/users/<username>/mycourses", methods=["POST"])
 @flask_login.login_required
-def getusercourses(username):
+def getusercourses(username: str) -> Response:
     """
     The function `getusercourses` retrieves the courses associated with a given username and returns
     them in JSON format.
@@ -174,7 +174,7 @@ def getusercourses(username):
 
 @users_bp.route("/users/<username>/courses/<course>", methods=["POST"])
 @flask_login.login_required
-def getusercoursessections(username, course):
+def getusercoursessections(username: str, course: str) -> Response:
     """
     The function `getusercoursessections` returns the sections of a given course for a specific user,
     but only if the username matches the currently logged in user.
@@ -193,7 +193,7 @@ def getusercoursessections(username, course):
 
 @users_bp.route("/users/<username>/coursesv1/<course>", methods=["POST"])
 @flask_login.login_required
-def getusercoursessectionsv1(username, course):
+def getusercoursessectionsv1(username: str, course: str) -> Response:
     """
     The function `getusercoursessectionsv1` returns the sections of a given course for a specific user,
     but only if the user is currently logged in.
@@ -211,7 +211,7 @@ def getusercoursessectionsv1(username, course):
 
 
 @users_bp.route("/student/register", methods=["POST"])
-def student_register():
+def student_register() -> str:
     """
     The function `student_register` registers a new student user by retrieving the username, email, and
     password from a form, checking if the username already exists, creating a new User object with the
@@ -244,7 +244,7 @@ def student_register():
 
 @users_bp.route("/course/addtoken", methods=["POST"])
 @flask_login.login_required
-def addtoken():
+def addtoken() -> Response:
     """
     The function `addtoken()` takes in form data, extracts the necessary values, inserts them into a
     database, and redirects the user to a specific course page.
@@ -294,7 +294,7 @@ def addtoken():
 
 @users_bp.route("/course/<cid>/gettokens", methods=["POST"])
 @flask_login.login_required
-def gettokens(cid):
+def gettokens(cid: str) -> Response:
     """
     The function `gettokens` retrieves tokens from the message database based on a given course ID and
     returns them as a JSON response.
@@ -310,7 +310,7 @@ def gettokens(cid):
 
 @users_bp.route("/gendefaulttoken", methods=["POST"])
 @flask_login.login_required
-def gendefaulttoken():
+def gendefaulttoken() -> Response:
     """
     The function `gendefaulttoken()` retrieves default configuration tokens for a given URL and returns
     them as a JSON response.

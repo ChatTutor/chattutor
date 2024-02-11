@@ -16,9 +16,9 @@ import utils.config as config
 from core.extensions import db
 from core.openai_tools import load_api_keys
 import openai
+from typing import List, Dict
 
-
-def print_summary_medium():
+def print_summary_medium() -> None:
     load_api_keys()
     db.init_db()
     db.load_datasource("test_embedding_medium")
@@ -26,7 +26,7 @@ def print_summary_medium():
     pprint(docs)
 
 
-def print_summary_basic():
+def print_summary_basic() -> None:
     load_api_keys()
     db.init_db()
     db.load_datasource("test_embedding_basic")
@@ -34,7 +34,7 @@ def print_summary_basic():
     pprint(docs)
 
 
-def simple_gpt(system_message, user_message):
+def simple_gpt(system_message: str, user_message: str) -> str:
     models_to_try = ["gpt-3.5-turbo-16k", "gpt-3.5-turbo"]
     for model_to_try in models_to_try:
         try:
@@ -56,7 +56,7 @@ def simple_gpt(system_message, user_message):
                 raise (e)
 
 
-def reduce_synopsis(synopsis, to_number_of_tokens):
+def reduce_synopsis(synopsis: str, to_number_of_tokens: int) -> str:
     answer = simple_gpt(
         "You are a bot capable of summarize scientific articles",
         rf"Please, can you summarize the following text returning no more than {to_number_of_tokens} tokens? The text to summarize is: {synopsis}",
@@ -64,7 +64,7 @@ def reduce_synopsis(synopsis, to_number_of_tokens):
     return answer
 
 
-def get_db_summary():
+def get_db_summary() -> str:
     db_summary_path = join(
         pathlib.Path(__file__).parent.parent.resolve(),
         "db_summary",
@@ -74,8 +74,8 @@ def get_db_summary():
     return f.read()
 
 
-def create_db_summary():
-    def summarize_block(docs):
+def create_db_summary() -> None:
+    def summarize_block(docs: List) -> str:
         import re
 
         all_docs = "\n\n".join(docs)
@@ -96,7 +96,7 @@ def create_db_summary():
         )
         return summary
 
-    def summarize_all_blocks(blocks):
+    def summarize_all_blocks(blocks: List) -> str:
         all_blocks = [
             f"This is the beggining of a block:\n{el}\nThis is the end of a block\n\n"
             for el in blocks
@@ -156,7 +156,7 @@ def create_db_summary():
     f.write(db_summary)
 
 
-def create_embeddings_with_levels_of_information():
+def create_embeddings_with_levels_of_information() -> None:
     load_api_keys()
     db.init_db()
 
@@ -235,8 +235,7 @@ def create_embeddings_with_levels_of_information():
                     f"{green(uid)}: {doc_summarized['Paper Title'][0:50]}\n -> {green('added')}"
                 )
 
-
-def get_keys_by_regex(regex, dict):
+def get_keys_by_regex(regex: str, dict: Dict) -> List[str]:
     keys = []
     import re
 
@@ -246,7 +245,7 @@ def get_keys_by_regex(regex, dict):
     return keys
 
 
-def get_doc_summary(doc_metadata, summary_keys):
+def get_doc_summary(doc_metadata: Dict, summary_keys: Dict[str, str]) -> Dict:
     doc_summary = {}
     for summary_key in summary_keys:
         summary_key_name = summary_key["name"]
@@ -264,7 +263,7 @@ def get_doc_summary(doc_metadata, summary_keys):
     return doc_summary
 
 
-def stringify_doc_summary(doc_summary):
+def stringify_doc_summary(doc_summary: Dict) -> str:
     doc_summary_str = ""
     for k, v in doc_summary.items():
         if v:
@@ -272,5 +271,5 @@ def stringify_doc_summary(doc_summary):
     return doc_summary_str
 
 
-def get_values_from_keys(keys, dict, joiner=", "):
+def get_values_from_keys(keys: str, dict: Dict, joiner: str=", ") -> str:
     return joiner.join([v for k, v in dict.items() if k in keys])

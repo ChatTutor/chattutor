@@ -2,6 +2,7 @@ import pickle
 import utils.questions as questions
 import re
 from utils.serialize import serialize_iteratively
+from typing import Dict
 
 import pathlib
 from os.path import join
@@ -9,7 +10,7 @@ from os.path import join
 config_data_folder = join(pathlib.Path(__file__).parent.resolve(), "config_data")
 
 
-def load(file_name, ask=True, default=None, format="pickle"):
+def load(file_name: str, ask: bool=True, default=None, format: str = "pickle") -> Dict:
     import os
     import json
 
@@ -51,7 +52,7 @@ def load(file_name, ask=True, default=None, format="pickle"):
             return default
 
 
-def save(file_name, dict_to_save, format="pickle"):
+def save(file_name: str, dict_to_save: Dict, format: str="pickle") -> None:
     import os
 
     if file_name == "":

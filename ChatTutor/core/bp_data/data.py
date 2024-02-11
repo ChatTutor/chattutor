@@ -12,7 +12,7 @@ data_bp = Blueprint("bp_data", __name__)
 
 
 @data_bp.route("/addtodb", methods=["POST", "GET"])
-def addtodb():
+def addtodb() -> Response:
     """
     The `addtodb` function inserts a message into a database with the provided content, role, chat ID,
     clear number, and time created.
@@ -49,7 +49,7 @@ def addtodb():
 
 
 @data_bp.route("/getfromdb", methods=["POST", "GET"])
-def getfromdb():
+def getfromdb() -> str:
     """
     The function `getfromdb()` retrieves data from a form, checks if the username and password match a
     specific value, and returns a rendered template based on the result.
@@ -77,7 +77,7 @@ def getfromdb():
 
 
 @data_bp.route("/getfromdbng", methods=["POST", "GET"])
-def getfromdbng():
+def getfromdbng() -> Response:
     """
     The function `getfromdbng` retrieves messages from a database if the provided username and password
     match the credentials for the root user.
@@ -102,7 +102,7 @@ def getfromdbng():
 
 
 @data_bp.route("/exesql", methods=["POST", "GET"])
-def exesql():
+def exesql() -> Response:
     data = request.json
     username = data["lusername"]
     passcode = data["lpassword"]
@@ -115,7 +115,7 @@ def exesql():
 
 
 @data_bp.route("/delete_uploaded_data", methods=["POST"])
-def delete_uploaded_data():
+def delete_uploaded_data() -> Response:
     """
     The function `delete_uploaded_data` deletes a data source with a given collection name from a
     database.
@@ -130,7 +130,7 @@ def delete_uploaded_data():
 
 @data_bp.route("/delete_doc", methods=["POST"])
 @flask_login.login_required
-def delete_doc():
+def delete_doc() -> Response:
     """
     The `delete_doc` function deletes a document from a specified collection in a database.
     :return: a JSON response containing the name of the deleted document and the name of the collection
@@ -149,7 +149,7 @@ def delete_doc():
 
 @data_bp.route("/add_doc_tosection", methods=["POST"])
 @flask_login.login_required
-def add_fromdoc_tosection():
+def add_fromdoc_tosection() -> Response:
     """
     The function `add_fromdoc_tosection` adds a URL to a specific section in a collection and returns a
     JSON response indicating the URL that was added and the collection it was added to.
@@ -168,7 +168,7 @@ def add_fromdoc_tosection():
 
 
 @data_bp.route("/get_section", methods=["POST"])
-def get_section():
+def get_section() -> Response:
     """
     The function `get_section` retrieves a specific section from a collection and returns the section
     details along with the pulling_from information.

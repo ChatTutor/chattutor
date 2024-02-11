@@ -96,7 +96,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 # print("ArXiv links are saved in arxiv_ids.txt.")
 
 
-def upload_blob(bucket_name, file_content, destination_blob_name):
+def upload_blob(bucket_name: str, file_content: str, destination_blob_name: str) -> None:
     """
     Uploads a file to the bucket.
     bucket_name = "your-bucket-name"
@@ -115,7 +115,7 @@ def upload_blob(bucket_name, file_content, destination_blob_name):
     print(f"File uploaded as {destination_blob_name}.")
 
 
-def file_exists_in_bucket(bucket_name, blob_name):
+def file_exists_in_bucket(bucket_name: str, blob_name: str) -> bool:
     """
     Checks if a file exists in the specified bucket.
     """

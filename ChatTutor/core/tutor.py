@@ -6,6 +6,11 @@ import json
 from core.extensions import stream_text
 # import interpreter
 from nice_functions import pprint, bold, green, blue, red, time_it
+import interpreter
+from nice_functions import (pprint, bold, green, blue, red, time_it)
+from typing import List, Dict, Tuple, Generator, Union, Callable
+from vectordatabase import VectorDatabase
+from definitions import Doc
 
 cqn_system_message = """
     You are embedded into the Center for Quantum Networks (CQN) website as an Interactive Research Assistant. 
@@ -61,11 +66,11 @@ class Tutor:
 
     def __init__(
         self,
-        embedding_db,
-        embedding_db_name="CQN database",
-        system_message=default_system_message,
-        engineer_prompts=True,
-    ):
+        embedding_db: VectorDatabase,
+        embedding_db_name: str="CQN database",
+        system_message: str=default_system_message,
+        engineer_prompts: bool=True,
+    ) -> None:
         """
         Args:
             - `embedding_db (VectorDatabase)`: the db with any or no source loaded / can be found in extensions.py (db)
@@ -85,7 +90,7 @@ class Tutor:
         self.system_message = system_message
         self.engineer_prompts = engineer_prompts
 
-    def add_collection(self, name, desc):
+    def add_collection(self, name: str, desc: str) -> None:
         """
         Adds a collection to ChatTutor's collections that are used for quierying and resopnse generation
         Args:
@@ -94,7 +99,7 @@ class Tutor:
         """
         self.collections[name] = desc
 
-    def get_paper_titles_from_prompt(self, prompt):
+    def get_paper_titles_from_prompt(self, prompt: str) -> str:
         # print("entering get_type_of_question")
         paper_titles_from_prompt = time_it(
             self.simple_gpt, "required_level_of_information"
@@ -111,7 +116,7 @@ class Tutor:
         )
         return paper_titles_from_prompt
 
-    def get_required_level_of_information(self, prompt, explain=False):
+    def get_required_level_of_information(self, prompt: str, explain: bool=False) -> str:
         respond_with = ""
         if explain:
             respond_with = "Explain why"
@@ -159,7 +164,7 @@ class Tutor:
         else:
             return "basic"
 
-    def get_metadata_from_paper_titles_from_prompt(self, paper_titles_from_prompt):
+    def get_metadata_from_paper_titles_from_prompt(self, paper_titles_from_prompt: str) -> List[Dict]:
         paper_titles_from_prompt = paper_titles_from_prompt.replace('"', "")
         paper_titles_from_prompt = paper_titles_from_prompt.replace("[", "")
         paper_titles_from_prompt = paper_titles_from_prompt.replace("]", "")
@@ -178,7 +183,8 @@ class Tutor:
                 metadata_from_paper_titles_from_prompt.append(meta)
         return metadata_from_paper_titles_from_prompt
 
-    def engineer_prompt(self, conversation, truncating_at=10, context=True):
+    def engineer_prompt(self, conversation: List[Dict[str, str]], truncating_at: int=10, 
+                        context: bool=True) -> Tuple[str, bool, bool, str]:
         """
         Args:
             conversation: current conversation
@@ -260,12 +266,12 @@ class Tutor:
 
     def ask_question(
         self,
-        conversation,
-        from_doc=None,
-        selectedModel="gpt-3.5-turbo-16k",
-        threshold=0.5,
-        limit=3,
-    ):
+        conversation: List[Dict[str, str]],
+        from_doc: Doc=None,
+        selectedModel: str="gpt-3.5-turbo-16k",
+        threshold: float=0.5,
+        limit: int=3,
+    ) -> Generator[Union[Dict[str, str], Dict[str, List]]]:
         """Function that responds to an asked question based
         on the current database and the loaded collections from the database
 
@@ -510,8 +516,9 @@ class Tutor:
             }
 
     # def ask_question_interpreter(
-    #     self, conversation, from_doc=None, selectedModel="gpt-3.5-turbo-16k"
-    # ):
+    #     self, conversation: List[Dict[str, str]], from_doc: Doc=None, 
+    #     selectedModel: str="gpt-3.5-turbo-16k"
+    # ) -> Generator[Dict[str, str]]:
     #     """Function that responds to an asked question using open interpreter
 
     #     Args:
@@ -569,7 +576,7 @@ class Tutor:
 
     #     yield {"message": "   "}
 
-    def count_tokens(self, string: str, encoding_name="cl100k_base") -> int:
+    def count_tokens(self, string: str, encoding_name: str="cl100k_base") -> int:
         """Counting the number of tokens in a string using the specified encoding
 
         Args:
@@ -583,7 +590,8 @@ class Tutor:
         num_tokens = len(encoding.encode(string))
         return num_tokens
 
-    def truncate_conversation(self, conversation, token_limit=10000):
+    def truncate_conversation(self, conversation: List[Dict[str, str]], 
+                              token_limit: int=10000) -> List[Dict[str, str]]:
         """Truncates the conversation to fit within the token limit
 
         Args:
@@ -604,11 +612,11 @@ class Tutor:
 
     def simple_gpt(
         self,
-        system_message,
-        user_message,
-        models_to_try=["gpt-3.5-turbo-16k", "gpt-3.5-turbo"],
-        temperature=1,
-    ):
+        system_message: str,
+        user_message: str,
+        models_to_try: List[str]=["gpt-3.5-turbo-16k", "gpt-3.5-turbo"],
+        temperature: int=1,
+    ) -> str:
         """Getting model's response for a simple conversation consisting of a system message and a user message
 
         Args:
@@ -642,7 +650,7 @@ class Tutor:
                 if model_to_try == models_to_try[-1]:
                     raise (e)
 
-    def conversation_gpt(self, system_message, conversation):
+    def conversation_gpt(self, system_message: str, conversation: List[Dict[str, str]]) -> str:
         """Getting model's response for a conversation with multiple messages
 
         Args:
@@ -663,8 +671,11 @@ class Tutor:
         return response.choices[0].message.content
 
     def stream_response_generator(
-        self, conversation, from_doc, selectedModel="gpt-3.5-turbo-16k"
-    ):
+        self, 
+        conversation: List[Dict[str, str]], 
+        from_doc: Doc, 
+        selectedModel="gpt-3.5-turbo-16k"
+    ) -> Callable:
         """Returns the generator that generates the response stream of ChatTutor.
 
         Args:
@@ -672,7 +683,7 @@ class Tutor:
             from_doc: specify document if necesary, otherwise set to None
         """
 
-        def generate():
+        def generate() -> Generator[str]:
             # This function generates responses to the questions in real-time and yields the response
             # along with the time taken to generate it.
             chunks = ""
@@ -690,8 +701,11 @@ class Tutor:
         return generate
 
     def stream_interpreter_response_generator(
-        self, conversation, from_doc, selectedModel="gpt-3.5-turbo-16k"
-    ):
+        self, 
+        conversation: List[Dict[str, str]], 
+        from_doc: Doc, 
+        selectedModel: str="gpt-3.5-turbo-16k"
+    ) -> Callable:
         """Returns the generator that generates the response stream of ChatTutor interpreter.
 
         Args:
@@ -699,7 +713,7 @@ class Tutor:
             from_doc: specify document if necesary, otherwise set to None
         """
 
-        def generate():
+        def generate() -> Generator[str]:
             # This function generates responses to the questions in real-time and yields the response
             # along with the time taken to generate it.
             chunks = ""
@@ -723,7 +737,7 @@ class Tutor:
 
 def yield_docs_and_first_sentence_if_tutor_id_not_apologizing(
     first_sentence: str, valid_docs=list
-):
+) -> Generator[Dict[str, str]]:
     # TODO: replace is_tutor_apologizing_or_thanking by a simple questions to simple_gpt in order to know if the answer was related to a paper?
     # we would need more than the first sentence, and also it might take additional precious time.
     if not is_tutor_apologizing_or_thanking(first_sentence):
@@ -736,7 +750,7 @@ def yield_docs_and_first_sentence_if_tutor_id_not_apologizing(
         yield {"content": rf" {word}"}
 
 
-def truncate_to_x_number_of_tokens(string, num_of_tokens=None):
+def truncate_to_x_number_of_tokens(string: str, num_of_tokens: int=None) -> None:
     if num_of_tokens == None or num_of_tokens == 0:
         return string
     cut_string = ""
@@ -750,7 +764,7 @@ def truncate_to_x_number_of_tokens(string, num_of_tokens=None):
     return cut_string
 
 
-def remove_score_and_doc_from_valid_docs(valid_docs):
+def remove_score_and_doc_from_valid_docs(valid_docs: List[Dict[str, str]]) -> List[Dict[str, str]]:
     # keep only relevant information
     new_valid_docs = []
     for valid_doc in valid_docs:
@@ -763,11 +777,11 @@ def remove_score_and_doc_from_valid_docs(valid_docs):
     return new_valid_docs
 
 
-def get_number_of_tokens(string):
+def get_number_of_tokens(string: str) -> int:
     return len(tiktoken.get_encoding("cl100k_base").encode(str(string)))
 
 
-def is_tutor_apologizing_or_thanking(sentence: str):
+def is_tutor_apologizing_or_thanking(sentence: str) -> bool:
     import re
 
     sentence = re.sub("\(.+\)", "", sentence)

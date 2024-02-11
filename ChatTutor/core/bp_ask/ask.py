@@ -3,12 +3,13 @@ from core.extensions import (db)
 from core.tutor import (Tutor, cqn_system_message, default_system_message,
                         interpreter_system_message)
 from flask import (Blueprint, Response, request, stream_with_context)
+from typing import Iterator
 
 ask_bp = Blueprint("bp_ask", __name__)
 
 
 @ask_bp.route("", methods=["POST", "GET"])
-def ask():
+def ask() -> Response:
     """Route that facilitates the asking of questions. The response is generated
     based on an embedding.
 
@@ -58,7 +59,7 @@ def ask():
 
 
 @ask_bp.route("/interpreter", methods=["POST", "GET"])
-def ask_interpreter():
+def ask_interpreter() -> Iterator:
     """Route that facilitates the asking of questions. The response is generated
     based on an embedding.
 

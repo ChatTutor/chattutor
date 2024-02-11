@@ -6,6 +6,7 @@ from core.vectordatabase import VectorDatabase
 from core.messagedb import MessageDB
 import os
 from core.openai_tools import load_env
+from typing import Generator, Union, Dict, Callable
 
 load_env()
 
@@ -26,7 +27,7 @@ import string
 from datetime import datetime
 
 
-def get_random_string(length):
+def get_random_string(length: int) -> str:
     # choose from all lowercase letter
     letters = string.ascii_lowercase
     result_str = "".join(random.choice(letters) for i in range(length))
@@ -34,7 +35,7 @@ def get_random_string(length):
     return result_str
 
 
-def generate_unique_name(desc):
+def generate_unique_name(desc: str) -> str:
     return (
         desc
         + "_"
@@ -47,8 +48,8 @@ def generate_unique_name(desc):
     )
 
 
-def stream_text(text, chunk_size=4, asdict=True):
-    def generate():
+def stream_text(text: str, chunk_size: int=4, asdict: bool=True) -> Callable:
+    def generate() -> Generator[Union[str, Dict[str, str]]]:
         i = 0
         d = ""
         for c in text:

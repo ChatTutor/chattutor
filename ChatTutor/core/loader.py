@@ -6,16 +6,16 @@
 
 from core.reader import read_folder_gcp
 from google.cloud import storage
-
+from typing import List
 
 # Splits a list into n (roughly) equal parts
-def split(a, n):
+def split(a: list, n: int) -> List[list]:
     k, m = divmod(len(a), n)
     return list(a[i * k + min(i, m) : (i + 1) * k + min(i + 1, m)] for i in range(n))
 
 
 # Initializing a storage client
-def init_chroma_db():
+def init_chroma_db() -> None:
     storage_client = storage.Client()
     source_bucket_name = "downloaded_content"
     source_folder_name = "./"

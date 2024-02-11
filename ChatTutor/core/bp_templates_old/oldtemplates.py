@@ -3,8 +3,7 @@
 import flask
 from core.extensions import (db)
 from core.tutor import (Tutor)
-from flask import (Blueprint, redirect,
-                   url_for)
+from flask import (Blueprint, Response, redirect, url_for)
 from nice_functions import pprint, time_it
 
 # import markdown
@@ -14,7 +13,7 @@ temp_bp = Blueprint("bp_templates_old", __name__)
 
 
 @temp_bp.route("/cqn")
-def cqn():
+def cqn() -> str:
     """
     Serves the landing page of the web application which provides
     the ChatTutor interface. Users can ask the Tutor questions and it will
@@ -72,7 +71,7 @@ def cqn():
 
 
 @temp_bp.route("/chattutor")
-def chattutor():
+def chattutor() -> Response:
     """
     Serves the landing page of the web application which provides
     the ChatTutor interface. Users can ask the Tutor questions and it will
@@ -83,7 +82,7 @@ def chattutor():
 
 
 @temp_bp.route("/interpreter")
-def interpreter():
+def interpreter() -> Response:
     """
     Serves the landing page of the web application which provides
     the ChatTutor interface. Users can ask the Tutor questions and it will

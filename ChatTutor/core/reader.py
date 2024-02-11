@@ -1,5 +1,5 @@
 from core.definitions import Doc, Text
-from typing import List
+from typing import List, IO
 import os
 import json
 from google.cloud import storage
@@ -7,9 +7,10 @@ from io import BytesIO
 import PyPDF2
 from core.vectordatabase import VectorDatabase
 from core.url_reader import URLReader
+import zipfile
 
 
-def read_folder_gcp(bucket_name, folder_name):
+def read_folder_gcp(bucket_name: str, folder_name: str) -> List[Text]:
     """
     Reads the contents of a folder in a GCS bucket and parses each file according to its type,
     whether pdf, notebook, or plain text.
@@ -60,7 +61,7 @@ def read_folder_gcp(bucket_name, folder_name):
     return texts
 
 
-def read_folder(path):
+def read_folder(path: str) -> List[Text]:
     """
     Reads the contents of a folder and parses each file according to it's type,
     weather pdf, notebook or plain text.
@@ -90,7 +91,7 @@ def read_folder(path):
     return texts
 
 
-def read_filearray(files):
+def read_filearray(files: List[tuple[IO, str]]) -> List[Text]:
     texts = []
 
     for file in files:
@@ -112,7 +113,7 @@ def read_filearray(files):
     return texts
 
 
-def parse_plaintext(path: str, doc: Doc, chunk_chars: int, overlap: int):
+def parse_plaintext(path: str, doc: Doc, chunk_chars: int, overlap: int) -> List[Text]:
     """Parses a plain text file and generates texts from its content.
 
     Args:
@@ -128,7 +129,7 @@ def parse_plaintext(path: str, doc: Doc, chunk_chars: int, overlap: int):
         return texts_from_str(f.read(), doc, chunk_chars, overlap)
 
 
-def parse_notebook(path: str, doc: Doc, chunk_chars: int, overlap: int):
+def parse_notebook(path: str, doc: Doc, chunk_chars: int, overlap: int) -> List[Text]:
     """Parses a jupyter notebook file and generates texts from its content.
 
     Args:
@@ -154,7 +155,10 @@ def parse_notebook(path: str, doc: Doc, chunk_chars: int, overlap: int):
 
 
 def parse_pdf(
-    file_contents: str, doc: Doc, chunk_chars: int, overlap: int
+    file_contents: str, 
+    doc: Doc, 
+    chunk_chars: int, 
+    overlap: int
 ) -> List[Text]:
     """Parses a pdf file and generates texts from its content.
 
@@ -201,7 +205,7 @@ def parse_pdf(
     return texts
 
 
-def parse_plaintext_file(file, doc: Doc, chunk_chars: int, overlap: int):
+def parse_plaintext_file(file: IO, doc: Doc, chunk_chars: int, overlap: int) -> List[Text]:
     """Parses a plain text file and generates texts from its content.
 
     Args:
@@ -218,7 +222,7 @@ def parse_plaintext_file(file, doc: Doc, chunk_chars: int, overlap: int):
     return texts
 
 
-def parse_plaintext_file_read(file, doc: Doc, chunk_chars: int, overlap: int):
+def parse_plaintext_file_read(file: IO, doc: Doc, chunk_chars: int, overlap: int) -> List[Text]:
     """Parses a plain text file and generates texts from its content.
 
     Args:
@@ -234,7 +238,7 @@ def parse_plaintext_file_read(file, doc: Doc, chunk_chars: int, overlap: int):
     return texts
 
 
-def parse_notebook_file(file, doc: Doc, chunk_chars: int, overlap: int):
+def parse_notebook_file(file: IO, doc: Doc, chunk_chars: int, overlap: int) -> List[Text]:
     """Parses a jupyter notebook file and generates texts from its content.
 
     Args:
@@ -256,7 +260,7 @@ def parse_notebook_file(file, doc: Doc, chunk_chars: int, overlap: int):
     return texts_from_str(text_str, doc, chunk_chars, overlap)
 
 
-def texts_from_str(text_str: str, doc: Doc, chunk_chars: int, overlap: int):
+def texts_from_str(text_str: str, doc: Doc, chunk_chars: int, overlap: int) -> List[Text]:
     texts = []
     index = 0
 
@@ -292,10 +296,7 @@ def texts_from_str(text_str: str, doc: Doc, chunk_chars: int, overlap: int):
     return texts
 
 
-import zipfile
-
-
-def extract_zip(file):
+def extract_zip(file: zipfile) -> List[tuple[IO, str]]:
     """Extracts the content of a zip file and returns file-like objects
 
     Args:
@@ -309,7 +310,7 @@ def extract_zip(file):
     return files
 
 
-def extract_file(file):
+def extract_file(file: IO) -> List[tuple[IO, str]]:
     """Extracts the content of a file and returns file-like objects
 
     Args:

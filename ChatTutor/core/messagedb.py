@@ -1,8 +1,7 @@
 import pymysql
 import uuid
 import datetime
-
-
+from typing import Dict, List, Union
 class MessageSchema:
     mes_id = ""
     role = ""
@@ -11,7 +10,7 @@ class MessageSchema:
     clear_number = 0
     time_created = ""
 
-    def convert_to_dictionary(self):
+    def convert_to_dictionary(self) -> Dict[str, Union[str, int]]:
         return {
             "mes_id": self.mes_id,
             "role": self.role,
@@ -25,7 +24,7 @@ class MessageSchema:
 class ChatSchema:
     chat_id = ""
 
-    def convert_to_dictionary(self):
+    def convert_to_dictionary(self) -> Dict[str, str]:
         return {"chat_id": self.chat_id}
 
 
@@ -110,14 +109,21 @@ class MessageDB:
         MODIFY sectionurl VARCHAR(256);
     """
 
-    def __init__(self, host, user, password, database, statistics_database):
+    def __init__(
+            self, 
+            host: str, 
+            user: str, 
+            password: str, 
+            database: str, 
+            statistics_database: str
+    ) -> None:
         self.host = host
         self.user = user
         self.password = password
         self.db = database
         self.statisticsdb = statistics_database
 
-    def insert_user(self, user):
+    def insert_user(self, user: str) -> None:
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             # add type too.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args..*args.*args.
@@ -129,14 +135,14 @@ class MessageDB:
             )
             con.commit()
 
-    def get_user(self, username):
+    def get_user(self, username: str) -> List[Dict[str, str]]:
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             cur.execute(f"SELECT * FROM lusers WHERE username = '{username}'")
             users = cur.fetchall()
             return users
 
-    def insert_user_to_course(self, username, course_id):
+    def insert_user_to_course(self, username: str, course_id: str) -> None:
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             cur.execute(
@@ -144,7 +150,7 @@ class MessageDB:
             )
             con.commit()
 
-    def get_user_courses(self, username):
+    def get_user_courses(self, username: str) -> list:
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             cur.execute(
@@ -153,7 +159,7 @@ class MessageDB:
             courses = cur.fetchall()
             return courses
 
-    def get_courses_sections(self, course_id):
+    def get_courses_sections(self, course_id: str) -> list:
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             cur.execute(
@@ -163,7 +169,7 @@ class MessageDB:
             print(sections)
             return sections
 
-    def get_courses_sections_format(self, course_id):
+    def get_courses_sections_format(self, course_id: str) -> Dict[str, str]:
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             cur.execute(
@@ -184,7 +190,7 @@ class MessageDB:
 
             return dic
 
-    def connect_to_messages_database(self):
+    def connect_to_messages_database(self) -> pymysql.Connection:
         """Function that connects to the database"""
         connection = pymysql.connect(
             host=self.host,
@@ -197,7 +203,7 @@ class MessageDB:
 
         return connection
 
-    def connect_to_statistics_database(self):
+    def connect_to_statistics_database(self) -> pymysql.Connection:
         connection = pymysql.connect(
             host=self.host,
             user=self.user,
@@ -209,7 +215,7 @@ class MessageDB:
 
         return connection
 
-    def initialize_ldatabase(self):
+    def initialize_ldatabase(self) -> None:
         """Creates the tables if they don't exist"""
         con = self.connect_to_messages_database()
         cur = con.cursor()
@@ -220,7 +226,7 @@ class MessageDB:
         cur.execute(self.create_relationship_between_sections_and_courses)
         con.commit()
 
-    def insert_message(self, a_message):
+    def insert_message(self, a_message: Dict[str, str]) -> None:
         """This inserts a message into the sqlite3 database. the message must be sent as a dictionary"""
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
@@ -234,14 +240,15 @@ class MessageDB:
             cur.execute(insert_format_lmessages, (content,))
             con.commit()
 
-    def insert_chat(self, chat_key):
+    def insert_chat(self, chat_key: str) -> None:
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             insert_format_lchats = ""
             cur.execute(f"INSERT IGNORE INTO lchats (chat_id) VALUES ('{chat_key}')")
             con.commit()
 
-    def insert_course(self, course_id, name, proffessor, mainpage, collectionname):
+    def insert_course(self, course_id: str, name: str, proffessor: str, 
+                      mainpage: str, collectionname: str) -> None:
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             cur.execute(
@@ -249,16 +256,15 @@ class MessageDB:
             )
             con.commit()
 
-    def insert_section(self, section_id, pulling_from, sectionurl):
+    def insert_section(self, section_id: str, pulling_from: str, sectionurl: str) -> None:
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             cur.execute(
                 f"INSERT INTO lsections (section_id, pulling_from, sectionurl) VALUES ('{section_id}', '{pulling_from}', '{sectionurl}') ON DUPLICATE KEY UPDATE section_id='{section_id}', pulling_from='{pulling_from}', sectionurl='{sectionurl}'"
             )
-
             con.commit()
 
-    def establish_course_section_relationship(self, section_id, course_id):
+    def establish_course_section_relationship(self, section_id: str, course_id: str) -> None:
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             cur.execute(
@@ -266,7 +272,7 @@ class MessageDB:
             )
             con.commit()
 
-    def update_section_add_fromdoc(self, section_id, from_doc):
+    def update_section_add_fromdoc(self, section_id: str, from_doc: str) -> None:
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             cur.execute(
@@ -274,7 +280,7 @@ class MessageDB:
             )
             con.commit()
 
-    def execute_sql(self, sqlexec, commit=True):
+    def execute_sql(self, sqlexec: str, commit: bool=True) -> List[Dict]:
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             response = cur.execute(sqlexec)
@@ -296,7 +302,7 @@ class MessageDB:
         chattutor_server: str,
         token_id: str,
         use_as_default: int,
-    ):
+    ) -> None:
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
 
@@ -329,7 +335,7 @@ class MessageDB:
             )
             con.commit()
 
-    def get_config_by_course_id(self, course_id: str):
+    def get_config_by_course_id(self, course_id: str) -> list:
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             response = cur.execute(
@@ -338,7 +344,7 @@ class MessageDB:
             messages_arr = cur.fetchall()
             return messages_arr
 
-    def get_default_config_for_url(self, url: str):
+    def get_default_config_for_url(self, url: str) -> list:
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             response = cur.execute(
@@ -347,7 +353,7 @@ class MessageDB:
             messages_arr = cur.fetchall()
             return messages_arr
 
-    def parse_messages(self, messages_arr):
+    def parse_messages(self, messages_arr: List[Dict[str, str]]) -> str:
         renderedString = (
             '<table class="messages-table"> <tr style="background-color: rgb(140, 0, 255); color: white"> '
             "<th> Role </th>"
