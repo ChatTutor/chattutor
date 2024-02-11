@@ -1,25 +1,27 @@
 <app-navbar></app-navbar>
+
 <div class="body">
-<div class="all-form">
-    <h2>CHATTUTOR Login:</h2>
-    <form ngNoForm class="aot" [action]='endpoint' method='POST'>
-        <mat-form-field>
-            <mat-label>Username</mat-label>
-            <input matInput type='text' name='username' id='username'/>
-        </mat-form-field>
-        <mat-form-field>
-            <mat-label>Password</mat-label>
-            <input matInput type='password' name='password' id='password'/>
-        </mat-form-field>
+    <div class="all-form">
+        <h2>Welcome</h2>
+        <form ngNoForm class="aot" [action]='endpoint' method='POST'>
+            <mat-form-field>
+                <mat-label>Email</mat-label>
+                <input matInput type='text' name='email' id='email'/>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Password</mat-label>
+                <input matInput type='password' name='password' id='password'/>
+            </mat-form-field>
 
-        <mat-form-field>
-            <input matInput type='submit' name='submit'/>
+            <mat-form-field>
+                <input matInput type='submit' name='submit'/>
+            </mat-form-field>
+        </form>
 
-        </mat-form-field>
-    </form>
 
-    <div class="login-container">
-        <button (click)="oauth()">Login with Google</button>
-    </div>
-<div>
+        <div class="login-container aot">
+            <button mat-stroked-button (click)="continueOAuth()">Continue with Google</button>
+        </div>
+    <div>
 </div>
+

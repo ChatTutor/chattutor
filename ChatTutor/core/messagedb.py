@@ -1,4 +1,6 @@
 import pymysql
+from pymysql import OperationalError
+from pymysql.constants import ER
 import uuid
 import datetime
 
@@ -87,19 +89,22 @@ class MessageDB:
 
     user_table_Sql = """
         CREATE TABLE IF NOT EXISTS lusers (
-            username varchar(100) PRIMARY KEY,
-            email varchar(100),
-            password varchar(100),
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            google_id VARCHAR(255) UNIQUE,
+            email VARCHAR(255) UNIQUE NOT NULL,
+            name VARCHAR(255),
+            password VARCHAR(255),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
-        """
+    """
 
     relationship_users_courses = """
         CREATE TABLE IF NOT EXISTS ruserscourses (
-            username varchar(250) not null ,
+            email varchar(250) not null ,
             course_id varchar(250) not null,
-            FOREIGN KEY (username) REFERENCES lusers(username),
+            FOREIGN KEY (email) REFERENCES lusers(email),
             FOREIGN KEY (course_id) REFERENCES lcourses(course_id),
-            UNIQUE (username, course_id)
+            UNIQUE (email, course_id)
         )
     """
 
@@ -118,35 +123,39 @@ class MessageDB:
     def insert_user(self, user):
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
-            # add type too.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args.*args..*args.*args.
-            print(
-                f"INSERT IGNORE INTO lusers (username, email, password, user_type) VALUES ('{user.username}', '{user.email}', '{user.password_hash.decode('utf-8') }', '{user.user_type}')"
-            )
             cur.execute(
-                f"INSERT IGNORE INTO lusers (username, email, password, user_type) VALUES ('{user.username}', '{user.email}', '{user.password_hash.decode('utf-8') }', '{user.user_type}')"
+                f"INSERT IGNORE INTO lusers (email, password) VALUES ('{user.email}', '{user.password_hash.decode('utf-8') }')"
+            )
+            con.commit()
+    
+    def insert_oauth_user(self, user):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            cur.execute(
+                f"INSERT IGNORE INTO lusers (google_id, email, name) VALUES ('{user.google_id}', '{user.email}', '{user.name}')"
             )
             con.commit()
 
-    def get_user(self, username):
+    def get_user(self, email):
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
-            cur.execute(f"SELECT * FROM lusers WHERE username = '{username}'")
+            cur.execute("SELECT * FROM lusers WHERE email = %s", (email,))
             users = cur.fetchall()
             return users
 
-    def insert_user_to_course(self, username, course_id):
+    def insert_user_to_course(self, email, course_id):
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             cur.execute(
-                f"INSERT INTO ruserscourses (username, course_id) VALUES ('{username}', '{course_id}') ON DUPLICATE KEY UPDATE username='{username}', course_id='{course_id}'"
+                f"INSERT INTO ruserscourses (email, course_id) VALUES ('{email}', '{course_id}') ON DUPLICATE KEY UPDATE email='{email}', course_id='{course_id}'"
             )
             con.commit()
 
-    def get_user_courses(self, username):
+    def get_user_courses(self, email):
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             cur.execute(
-                f"SELECT * FROM lcourses WHERE course_id IN (SELECT course_id FROM ruserscourses WHERE username = '{username}')"
+                f"SELECT * FROM lcourses WHERE course_id IN (SELECT course_id FROM ruserscourses WHERE email = '{email}')"
             )
             courses = cur.fetchall()
             return courses
@@ -184,16 +193,36 @@ class MessageDB:
 
     def connect_to_messages_database(self):
         """Function that connects to the database"""
-        connection = pymysql.connect(
-            host=self.host,
-            user=self.user,
-            password=self.password,
-            db=self.db,
-            charset="utf8mb4",
-            cursorclass=pymysql.cursors.DictCursor,
-        )
-
-        return connection
+        try:
+            connection = pymysql.connect(
+                host=self.host,
+                user=self.user,
+                password=self.password,
+                db=self.db,
+                charset="utf8mb4",
+                cursorclass=pymysql.cursors.DictCursor,
+            )
+            print(f"Connected to database {self.db}")
+            return connection
+        except OperationalError as e:
+            if e.args[0] == ER.BAD_DB_ERROR:
+                connection = pymysql.connect(host=self.host, user=self.user, password=self.password)
+                with connection.cursor() as cursor:
+                    # Create the database
+                    cursor.execute(f"CREATE DATABASE IF NOT EXISTS {self.db}")
+                    print(f"Database '{self.db}' created.")
+                connection.close()
+                connection = pymysql.connect(
+                    host=self.host,
+                    user=self.user,
+                    password=self.password,
+                    db=self.db,
+                    charset="utf8mb4",
+                    cursorclass=pymysql.cursors.DictCursor,
+                )
+                return connection
+            else:
+                raise
 
     def connect_to_statistics_database(self):
         connection = pymysql.connect(
@@ -216,6 +245,8 @@ class MessageDB:
         cur.execute(self.create_course_name)
         cur.execute(self.create_section_name)
         cur.execute(self.create_relationship_between_sections_and_courses)
+        cur.execute(self.user_table_Sql)
+        cur.execute(self.relationship_users_courses)
         con.commit()
 
     def insert_message(self, a_message):

@@ -10,6 +10,7 @@ import { CourseDashboardComponent } from './course-dashboard/course-dashboard.co
 import { LoginPageComponent } from './login-page/login-page.component';
 import { RegisterPageComponent } from './register-page/register-page.component';
 import { RegisterStudentPageComponent } from './register-student-page/register-student-page.component';
+import { OAuthCallbackComponent } from './oauth-callback/oauth-callback.component';
 
 const routes: Routes = [
   {path: '', component: LandingPageComponent},
@@ -21,8 +22,8 @@ const routes: Routes = [
   {path: 'courses/:id', component: CourseDashboardComponent },
   {path: 'login', component: LoginPageComponent},
   {path: 'register', component: RegisterPageComponent},
-  {path: 'student/register', component: RegisterStudentPageComponent}
-
+  {path: 'student/register', component: RegisterStudentPageComponent},
+  {path: 'oauth-callback', component: OAuthCallbackComponent },
 ];
 
 

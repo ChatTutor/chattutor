@@ -18,3 +18,4 @@ export class NavbarComponent implements OnInit{
     this.hidden = false
   }
 }
+

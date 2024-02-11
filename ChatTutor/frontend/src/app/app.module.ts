@@ -43,9 +43,17 @@ import { LoginPageComponent } from './login-page/login-page.component';
 import { RegisterPageComponent } from './register-page/register-page.component';
 import { RegisterStudentPageComponent } from './register-student-page/register-student-page.component';
 
-import { OAuthModule } from 'angular-oauth2-oidc';
+import { OAuthModule, AuthConfig, JwksValidationHandler, ValidationHandler, OAuthStorage, OAuthModuleConfig } from 'angular-oauth2-oidc'; // Added
 import { AuthService } from './auth.service';
-import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
+import { HttpClientModule } from '@angular/common/http';
+import { OAuthCallbackComponent } from './oauth-callback/oauth-callback.component'; // Import HttpClientModule
+
+const authModuleConfig: OAuthModuleConfig = {
+  resourceServer: {
+    allowedUrls: ['http://localhost:5000', 'https://beta-chattutor-nbqjgewnea-uc.a.run.app', 'https://chattutor.org/'],
+    sendAccessToken: true,
+  },
+};
 
 
 @NgModule({
@@ -71,7 +79,8 @@ import { HttpClientModule } from '@angular/common/http'; // Import HttpClientMod
     MathjaxComponent,
     LoginPageComponent,
     RegisterPageComponent,
-    RegisterStudentPageComponent
+    RegisterStudentPageComponent,
+    OAuthCallbackComponent
   ],
     imports: [
         BrowserModule,
@@ -93,15 +102,13 @@ import { HttpClientModule } from '@angular/common/http'; // Import HttpClientMod
         MatStepperModule,
         MatExpansionModule,
         HttpClientModule,
-        OAuthModule.forRoot({
-          resourceServer: {
-            sendAccessToken: false,
-          }
-        }),
+        OAuthModule.forRoot(authModuleConfig),
     ],
   providers: [
     AuthService,
     { provide: ENDPOINT_TOKEN, useValue: 'your_endpoint_url_here' },
+    { provide: OAuthModuleConfig, useValue: authModuleConfig },
+    { provide: OAuthStorage, useValue: localStorage },
   ],
   bootstrap: [AppComponent]
 })

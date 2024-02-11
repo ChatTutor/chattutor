@@ -88,34 +88,16 @@ app.register_blueprint(reader_bp)
 oauth = OAuth(app)
 google = oauth.register(
     name='google',
-    client_id='731947664853-26viimvavb8qc3hmfcuah4t7f8sll2he.apps.googleusercontent.com',  # Replace with your Google client ID
-    client_secret='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',  # Replace with your Google client secret
+    client_id=os.environ['OAUTH_CLIENT_ID'],
+    client_secret=os.environ['OAUTH_CLIENT_SECRET'],
     access_token_url='https://accounts.google.com/o/oauth2/token',
     access_token_params=None,
     authorize_url='https://accounts.google.com/o/oauth2/auth',
     authorize_params=None,
     api_base_url='https://www.googleapis.com/oauth2/v1/',
-    userinfo_endpoint='https://openidconnect.googleapis.com/v1/userinfo',  # This is to get the user's info which includes their email
+    userinfo_endpoint='https://openidconnect.googleapis.com/v1/userinfo',
     client_kwargs={'scope': 'openid email profile'},
 )
-
-@app.route('/oauth')
-def login():
-    print('aaaaaaa')
-    redirect_uri = url_for('authorize', _external=True)
-    return google.authorize_redirect(redirect_uri)
-
-@app.route('/oauth/callback')
-def authorize():
-    print('bbbbbb')
-    token = google.authorize_access_token()
-    print(token)
-    resp = google.get('userinfo').json()
-    print(resp)
-    # Do something with the user's info, e.g., log them in
-    # You might want to save the user's data in a database
-    return f"User info: {resp}"
-
 
 # ------------ LOGIN ------------
 
@@ -129,13 +111,12 @@ def unauthorized_handler():
 
 
 @login_manager.user_loader
-def user_loader(username):
-    users = messageDatabase.get_user(username=username)
+def user_loader(email):
+    users = messageDatabase.get_user(email=email)
 
     if len(users) == 0:
         return
     user = User()
-    user.username = users[0]["username"]
     user.email = users[0]["email"]
     print(users[0]["password"])
     user.password_hash = users[0]["password"]
@@ -145,15 +126,14 @@ def user_loader(username):
 
 @login_manager.request_loader
 def request_loader(request):
-    username = request.form.get("username")
+    email = request.form.get("email")
 
-    users = messageDatabase.get_user(username=username)
+    users = messageDatabase.get_user(email=email)
 
     if len(users) == 0:
         return
 
     user = User()
-    user.username = users[0]["username"]
     user.email = users[0]["email"]
     user.password_hash = users[0]["password"]
 

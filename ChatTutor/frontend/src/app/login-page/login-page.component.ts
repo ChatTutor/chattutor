@@ -1,5 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { AuthService } from '../auth.service'; // Adjust the path as necessary
+import { AuthService } from '../auth.service';
+import { OAuthService, AuthConfig, OAuthErrorEvent } from 'angular-oauth2-oidc';
+
+
 
 @Component({
   selector: 'app-login-page',
@@ -8,9 +11,10 @@ import { AuthService } from '../auth.service'; // Adjust the path as necessary
 })
 export class LoginPageComponent {
   @Input() endpoint: String = "/login"
-  constructor(private authService: AuthService) { }
-
-  oauth() {
-    this.authService.oauth();
+  constructor(private authService: AuthService, private oauthService: OAuthService) {
+  }
+  
+  continueOAuth() {
+    this.authService.oauthLogin();
   }
 }
