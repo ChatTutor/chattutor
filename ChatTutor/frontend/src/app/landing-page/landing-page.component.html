@@ -1,49 +1,65 @@
 <div class="body">
     <main class="main">
-        <app-navbar></app-navbar>
+        <app-navbar [onhomepage]="true"></app-navbar>
 
+        <app-gradient-background></app-gradient-background>
 
         <div class="main-title">
+
+            <svg width="0" height="0">
+                <filter id="f">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.5"/>
+                </filter>
+            </svg>
             <div class="titl">
                 <h1>ChatTutor</h1>
             </div>
+
             <div class="links">
-                <div class="innerlink">
-                    <a href="/chattutor" style="height: 30px; justify-content: center; align-items: center;" class="row">Talk to ChatTutor</a>
+                <div class="innerlink talk_to_chattutor">
+                    <a href="/chattutor" style="height: 30px; justify-content: center; align-items: center;"
+                       class="row">Talk to ChatTutor</a>
                 </div>
-                <div class="innerlink">
-                    <a href="/cqnchattutor" class="row" style="justify-content: center; align-items: center;">
-                        <img src="https://scontent.fcnd1-1.fna.fbcdn.net/v/t39.30808-1/305492136_418749353695856_2795955134570730799_n.png?stp=dst-png_p120x120&_nc_cat=106&ccb=1-7&_nc_sid=4da83f&_nc_ohc=60dPd6N1_3IAX9RxpjJ&_nc_ht=scontent.fcnd1-1.fna&oh=00_AfBw-Nq5titbYQXC3D7zpb4EtWZdu2wNPgGtbZCdwu-u2Q&oe=659F92B7"
-                            style="width: 30px; height: 30px; border-radius: 15px; margin-right: 10px;"/>
+
+                <div class="innerlink talk_to_chattutor">
+                    <a href="/scrape" style="height: 30px; justify-content: center; align-items: center;" class="row">Get
+                        ChatTutor on your course</a>
+                </div>
+
+            </div>
+            <div class="links">
+
+                <div class="innerlink talk_to_chattutor">
+                    <a href="/cqnchattutor" class="row"
+                       style="height: 30px; justify-content: center; align-items: center;">
                         CQN-based bot</a>
                 </div>
-                <div class="innerlink">
-                    <a href="/scrape" style="height: 30px; justify-content: center; align-items: center;" class="row">Get ChatTutor on your course</a>
-                </div>
-                
 
             </div>
-            <div class="titl">
-                <h2>Check out ChatTutor on courses!</h2>
-            </div>
-            <div class="checkout links">
 
-                <div>
-                    <a href="https://byucamacholab.github.io/Photonics-Bootcamp/">
-                        CamachoLab's Photonics-Bootcamp
-                    </a>
+            <div class="chattutor_course_container">
+                <div class="titl">
+                    <h2>Check out ChatTutor on courses!</h2>
                 </div>
+                <div class="checkout links">
 
-                <div>
-                    <a href="https://pymit6101-nbqjgewnea-uc.a.run.app/fall23/calendar">
-                        MIT 6.101
-                    </a>
-                </div>
+                    <div class="chattutor_course">
+                        <a href="https://byucamacholab.github.io/Photonics-Bootcamp/">
+                            CamachoLab's Photonics-Bootcamp
+                        </a>
+                    </div>
 
-                <div>
-                    <a href="https://barosandu.github.io/intro.html">
-                        MIT 6.2410
-                    </a>
+                    <div class="chattutor_course">
+                        <a href="https://pymit6101-nbqjgewnea-uc.a.run.app/fall23/calendar">
+                            MIT 6.101
+                        </a>
+                    </div>
+
+                    <div class="chattutor_course">
+                        <a href="https://barosandu.github.io/intro.html">
+                            MIT 6.2410
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

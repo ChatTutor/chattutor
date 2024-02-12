@@ -4,7 +4,6 @@
     font-family: 'Montserrat', sans-serif;
 }
 
-
 .aot {
     display: flex;
     flex-direction: column;
@@ -31,18 +30,18 @@
 
 
 .all-form {
+
+}
+
+.body {
+    /*background-image: linear-gradient(45deg, #2c7de7, #3cb2ff);*/
+    background: black;
+    width: 100vw;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 100vw;
-    height: 100%;
-}
-
-.body {
-    background-image: linear-gradient(45deg, #2c7de7, #3cb2ff);
-    width: 100%;
-    height: calc(100vh - 120px);
 }
 
 h2 {

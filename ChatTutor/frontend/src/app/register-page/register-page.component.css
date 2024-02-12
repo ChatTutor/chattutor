@@ -4,7 +4,6 @@
     font-family: 'Montserrat', sans-serif;
 }
 
-
 .aot {
     display: flex;
     flex-direction: column;
@@ -16,9 +15,9 @@
     color: white;
     background-color: #232323;
     margin: 10px;
-    border-radius: 20px;
+    /* border-radius: 20px; */
     padding: 20px 50px;
-    border: 1px solid rgba(0,0,0,0.2);
+    /* border: 1px solid rgba(0,0,0,0.2); */
 }
 
 .iaot::placeholder {
@@ -26,23 +25,25 @@
 }
 
 .aot .iaot:hover {
-    box-shadow: 8px 6px 15px rgba(0, 0, 0, 0.15)
+    /* box-shadow: 8px 6px 15px rgba(0, 0, 0, 0.15) */
 }
 
 
 .all-form {
+
+}
+
+
+
+.body {
+    /*background-image: linear-gradient(45deg, #2c7de7, #3cb2ff);*/
+    background: black;
+    width: 100vw;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 100vw;
-    height: 100%;
-}
-
-.body {
-    background-image: linear-gradient(45deg, #2c7de7, #3cb2ff);
-    width: 100%;
-    height: calc(100vh - 120px);
 }
 
 h2 {

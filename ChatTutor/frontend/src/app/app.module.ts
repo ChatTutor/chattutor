@@ -42,6 +42,7 @@ import { MathjaxComponent } from './mathjax/mathjax.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { RegisterPageComponent } from './register-page/register-page.component';
 import { RegisterStudentPageComponent } from './register-student-page/register-student-page.component';
+import { GradientBackgroundComponent } from './gradient-background/gradient-background.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -65,7 +66,8 @@ import { RegisterStudentPageComponent } from './register-student-page/register-s
     MathjaxComponent,
     LoginPageComponent,
     RegisterPageComponent,
-    RegisterStudentPageComponent
+    RegisterStudentPageComponent,
+    GradientBackgroundComponent,
   ],
     imports: [
         BrowserModule,
