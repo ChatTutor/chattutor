@@ -1,0 +1,16 @@
+.message-inside-db {
+    background-color: white;
+    display: flex;
+}
+
+.message-content {
+
+}
+
+.table-cell {
+    max-height: 50px;
+    overflow: hidden;
+    background-color: rgb(204, 204, 204);
+    margin: 5px;
+    border-radius: 5px;
+}

@@ -1,0 +1,6 @@
+version: "3.7"
+services:
+  web:
+    build: ./web
+    ports: [ '5000:5000' ]
+    volumes: [ './web:/app/frontend', './web:/app' ]

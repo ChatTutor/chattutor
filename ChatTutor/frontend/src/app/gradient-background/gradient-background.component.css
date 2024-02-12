@@ -1,0 +1,22 @@
+.main-title-filter {
+    filter: blur(40px);
+    -webkit-filter: blur(40px);
+    inset: 0;
+    position: fixed;
+    background: linear-gradient(navy, #7470db);
+    mask: radial-gradient(at 25%, red, rgba(255, 0, 0, 20%) 50%, transparent 70%);
+    -webkit-mask: radial-gradient(at 25%, red, rgba(255, 0, 0, 20%) 50%, transparent 70%);
+    /*opacity: 30%;*/
+    position: fixed;
+    min-width: 100vw;
+    min-height: 100vh;
+    opacity: 70%;
+
+}
+
+.trnaslate_self {
+    background: linear-gradient(#104d9f, #688ad0);
+    mask: radial-gradient(at 85% 90%, red, rgba(255, 0, 0, 20%) 50%, transparent 70%);
+    -webkit-mask: radial-gradient(at 85% 90%, red, rgba(255, 0, 0, 20%) 50%, transparent 70%);
+
+}

@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@geometricpanda/angular-tilt": "^0.4.0"
+  }
+}
