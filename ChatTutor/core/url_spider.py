@@ -104,10 +104,8 @@ class URLSpider:
         """
         lock.acquire()
         print("starting thread!")
-        if (
-            len(self.spider_urls) == 0
-            or len(self.spider_urls) > self.max_number_of_urls
-        ):
+        if (len(self.spider_urls) == 0
+                or len(self.spider_urls) > self.max_number_of_urls):
             return
 
         urltoapp = self.spider_urls.pop(0)
@@ -117,9 +115,14 @@ class URLSpider:
         lock.release()
         s_urls = []
 
-        page = requests.get(urltoapp)
-        if page.status_code != 200:
+        try:
+            page = requests.get(urltoapp)
+            if page.status_code != 200:
+                return
+        except:
+            print(f"error while parsing {urltoapp}")
             return
+
 
         soup = BeautifulSoup(page.content, "html.parser")
         hrefs = soup.find_all("a", href=True)
@@ -157,7 +160,7 @@ class URLSpider:
             g = "OK"
 
             if (
-                "http://" in shr or "https://" in shr
+                    "http://" in shr or "https://" in shr
             ) and dom not in shr:  # if url be havin' http://
                 g = "NO"
             else:
@@ -179,9 +182,9 @@ class URLSpider:
                     if not self.visited.get(g):
                         self.node_degree[g] = self.node_degree[urltoapp] + 1
                         if (
-                            self.node_degree[g] < self.MAX_LEVEL_PARQ
-                            and g not in self.spider_urls
-                            and g not in s_urls
+                                self.node_degree[g] < self.MAX_LEVEL_PARQ
+                                and g not in self.spider_urls
+                                and g not in s_urls
                         ):
                             print("g: " + g)
                             print(s_urls)
@@ -276,13 +279,13 @@ class URLSpider:
         return section_id, to_add
 
     def parse_url_array(
-        self,
-        lock: Lock,
-        message_db: MessageDB,
-        chroma_db,
-        collection_name,
-        course_id,
-        addToMessageDB=True,
+            self,
+            lock: Lock,
+            message_db: MessageDB,
+            chroma_db,
+            collection_name,
+            course_id,
+            addToMessageDB=True,
     ):
         """
         The function `parse_url_array` parses a URL array, extracts text from the URLs, adds the text to
@@ -334,11 +337,7 @@ class URLSpider:
         section_id = navn
         print("finish ..")
         print("adding texts... ", strv)
-        try:
-            chroma_db.add_texts_chroma_lock(texts, lock=lock)
-        except:
-            print("\t\t\t\terror")
-        print("added texts...", strv)
+        chroma_db.add_texts_chroma_lock(texts, lock=lock)
 
         message_db.insert_section(
             section_id=section_id, pulling_from=section_id, sectionurl=strv
@@ -391,16 +390,16 @@ class URLSpider:
         return self.all_urls
 
     def new_spider_function(
-        self,
-        urltoapp,
-        save_to_database,
-        collection_name,
-        message_db: MessageDB,
-        course_name,
-        proffessor,
-        course_id,
-        produce_bfs=True,
-        current_user=None,
+            self,
+            urltoapp,
+            save_to_database,
+            collection_name,
+            message_db: MessageDB,
+            course_name,
+            proffessor,
+            course_id,
+            produce_bfs=True,
+            current_user=None,
     ):
         """
         The function `new_spider_function` is used to crawl and scrape data from a website, save it to a
@@ -478,6 +477,7 @@ class URLSpider:
                 )
                 thread.start()
                 threads.append(thread)
+
 
             for thread in threads:
                 thread.join()

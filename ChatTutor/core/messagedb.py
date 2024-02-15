@@ -58,6 +58,7 @@ class MessageDB:
         chat_key varchar(100) NOT NULL,
         clear_number integer NOT NULL,
         time_created datetime NOT NULL,
+        credential_token varchar(100),
         FOREIGN KEY (chat_key) REFERENCES lchats (chat_id)
         )"""
 
@@ -90,6 +91,7 @@ class MessageDB:
             username varchar(100) PRIMARY KEY,
             email varchar(100),
             password varchar(100),
+            user_type varchar(100)
         )
         """
 
