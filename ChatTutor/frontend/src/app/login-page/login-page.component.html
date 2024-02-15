@@ -1,7 +1,8 @@
-<app-navbar></app-navbar>
+<app-navbar [onhomepage]="true"></app-navbar>
+<app-gradient-background></app-gradient-background>
 <div class="body">
-<div class="all-form">
-    <h2>CHATTUTOR Login:</h2>
+<div class="all-form chattutor_course_container" style="padding: 20px">
+    <h2>Login to ChatTutor</h2>
     <form ngNoForm class="aot" [action]='endpoint' method='POST'>
         <mat-form-field>
             <mat-label>Username</mat-label>
@@ -17,5 +18,6 @@
 
         </mat-form-field>
     </form>
-<div>
+
+</div>
 </div>

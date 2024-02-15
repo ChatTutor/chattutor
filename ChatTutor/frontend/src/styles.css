@@ -52,3 +52,62 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; }
     display: flex;
     flex-direction: row;
 }
+
+.talk_to_chattutor {
+    padding: 10px;
+    padding-right: 20px;
+    padding-left: 20px;
+    transition: all 0.3s ease-in-out;
+    margin-left: 10px;
+    margin-right: 10px;
+    background: rgba(255, 255, 255, 0.11);
+    border-radius: 16px;
+    box-shadow: 0 4px 3px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(13.8px);
+    -webkit-backdrop-filter: blur(13.8px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.talk_to_chattutor:hover {
+    box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.1);
+}
+
+.chattutor_course {
+    padding: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+    transition: all 0.3s ease-in-out;
+    margin-left: 5px;
+    margin-right: 5px;
+    background: rgba(255, 255, 255, 0.11);
+    border-radius: 16px;
+    box-shadow: 0 4px 3px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(13.8px);
+    -webkit-backdrop-filter: blur(13.8px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.chattutor_course_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+    margin-top: 10px;
+    transition: all 0.3s ease-in-out;
+    margin-left: 5px;
+    margin-right: 5px;
+    background: rgba(0, 0, 0, 0.11);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(13.8px);
+    -webkit-backdrop-filter: blur(13.8px);
+    border: 1px solid rgba(70, 70, 70, 0.6);
+    transform: translateZ(12px);
+}
+
+.chattutor_course:hover {
+    box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.1);
+}

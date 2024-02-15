@@ -1,28 +1,29 @@
-<app-navbar></app-navbar>
+<app-navbar [onhomepage]="true"></app-navbar>
+<app-gradient-background></app-gradient-background>
 <div class="body">
-<div class="all-form">
-<h2>CHATTUTOR Register:</h2>
-<form ngNoForm class="aot" [action]='endpoint' method='POST'>
-    <mat-form-field>
-        <mat-label>Username</mat-label>
+    <div class="all-form chattutor_course_container">
+        <h2>Register to ChatTutor</h2>
+        <form ngNoForm class="aot" [action]='endpoint' method='POST'>
+            <mat-form-field>
+                <mat-label>Username</mat-label>
 
-    <input matInput type='text' name='username' id='username' placeholder='username'/>
-    </mat-form-field>
-    <mat-form-field>
-        <mat-label>E-Mail</mat-label>
+                <input matInput type='text' name='username' id='username' placeholder='username'/>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>E-Mail</mat-label>
 
-    <input matInput type='text' name='email' id='email' placeholder='email'/>
-    </mat-form-field>
-    <mat-form-field>
-        <mat-label>Password</mat-label>
+                <input matInput type='text' name='email' id='email' placeholder='email'/>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Password</mat-label>
 
-    <input matInput type='password' name='password' id='password' placeholder='password'/>
-    </mat-form-field>
-    <mat-form-field>
+                <input matInput type='password' name='password' id='password' placeholder='password'/>
+            </mat-form-field>
+            <mat-form-field>
 
-    <input matInput type='submit' name='submit'/>
-    </mat-form-field>
+                <input matInput type='submit' name='submit'/>
+            </mat-form-field>
 
-</form>
-</div>
+        </form>
+    </div>
 </div>
