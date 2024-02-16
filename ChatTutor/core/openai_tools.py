@@ -1,6 +1,7 @@
 import os
 import openai
 
+OPENAI_DEFAULT_MODEL = "gpt-4-1106-preview"
 
 def load_api_keys():
     if "CHATTUTOR_GCP" in os.environ or "_CHATUTOR_GCP" in os.environ:

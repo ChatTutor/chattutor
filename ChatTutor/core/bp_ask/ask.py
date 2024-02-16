@@ -1,9 +1,11 @@
 
 from core.extensions import (db)
-from core.tutor import (Tutor, cqn_system_message, default_system_message,
-                        interpreter_system_message)
 from flask import (Blueprint, Response, request, stream_with_context)
-
+from core.tutor.tutorfactory import TutorFactory
+from core.tutor.tutorfactory import CourseTutorType, NSFTutorType
+from core.tutor.systemmsg import (cqn_system_message, default_system_message,
+                        interpreter_system_message)
+tutorfactory = TutorFactory(db)
 ask_bp = Blueprint("bp_ask", __name__)
 
 
@@ -33,25 +35,11 @@ def ask():
     print("SELECTED MODEL:", selected_model)
     print(collection_name)
     # Logging whether the request is specific to a document or can be from any document
-    chattutor = Tutor(db)
-    if collection_name and collection_name != []:
-        if multiple == None:
-            name = collection_desc if collection_desc else ""
-            chattutor.add_collection(collection_name, name)
-        else:
-            chattutor = Tutor(db, system_message=default_system_message)
-            if "test_embedding" in collection_name:
-                chattutor = Tutor(db, system_message=cqn_system_message)
-            for cname in collection_name:
-                message = (
-                    f"CQN papers "
-                    if cname == "test_embedding"
-                    else """Use the following user uploaded files to provide information if asked about content from them. 
-                User uploaded files """
-                )
-                chattutor.add_collection(cname, message)
-
-    generate = chattutor.stream_response_generator(
+    # todo: get bot type from token
+    _chattutor = tutorfactory.build_empty(CourseTutorType.COURSE_RESTRICTED)
+    if collection_name != None and collection_name != []:
+        _chattutor = tutorfactory.build(CourseTutorType.COURSE_FOCUSED, collection_name, collection_desc)
+    generate = _chattutor.stream_response_generator(
         conversation, from_doc, selected_model
     )
     return Response(stream_with_context(generate()), content_type="text/event-stream")
@@ -81,22 +69,8 @@ def ask_interpreter():
     print("SELECTED MODEL:", selected_model)
     print(collection_name)
     # Logging whether the request is specific to a document or can be from any document
-    chattutor = Tutor(db)
-    if collection_name:
-        if multiple == None:
-            name = collection_desc if collection_desc else ""
-            chattutor.add_collection(collection_name, name)
-        else:
-            chattutor = Tutor(db, system_message=interpreter_system_message)
-            for cname in collection_name:
-                message = (
-                    f"CQN papers "
-                    if cname == "test_embedding"
-                    else """Use the following user uploaded files to provide information if asked about content from them. 
-                User uploaded files """
-                )
-                chattutor.add_collection(cname, message)
-    generate = chattutor.stream_interpreter_response_generator(
+    _chattutor = tutorfactory.build(CourseTutorType.COURSE_RESTRICTED, collection_name, collection_desc)
+    generate = _chattutor.stream_interpreter_response_generator(
         conversation, from_doc, selected_model
     )
     return stream_with_context(generate())

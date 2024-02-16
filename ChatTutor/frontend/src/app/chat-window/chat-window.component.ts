@@ -18,7 +18,7 @@ export class ChatWindowComponent implements OnInit{
     documentInfo: any = undefined
     loadingFiles: boolean = false
     status: WStatus = WStatus.Idle
-    endpoint: string = `${environment.apiUrl}/ask`
+    endpoint: string = `/ask`
 
     pleaseStopGeneratingConvo: boolean = false
     @Input() openingMessage: string = `Hello, I am here to respond to any questions you might have about this chapter or course.\nFeel free to ask me anything!`

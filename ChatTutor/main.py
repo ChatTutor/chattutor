@@ -21,12 +21,6 @@ from core.extensions import (
     generate_unique_name,
     stream_text,
 )  # Importing the database object from extensions module
-from core.tutor import Tutor
-from core.tutor import (
-    cqn_system_message,
-    default_system_message,
-    interpreter_system_message,
-)
 import json
 import time
 import os
