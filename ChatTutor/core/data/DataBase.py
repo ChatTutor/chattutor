@@ -141,6 +141,3 @@ class DataBase(metaclass=Singleton):
             session.commit()
             session.refresh(section)
             return section, session
-
-
-DataBase().insert_section(section_id="ADI")

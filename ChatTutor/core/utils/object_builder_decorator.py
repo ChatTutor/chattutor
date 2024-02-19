@@ -8,7 +8,7 @@ def build_model_from_params(from_keys : list, model : type, is_method : bool = F
             model_obj = None
             keys = from_keys
             loadedargs = []
-            if len(args) >= 0:
+            if len(args) > 0:
                 if isinstance(args[0], model):
                     model_obj = args[0]
                 else:
