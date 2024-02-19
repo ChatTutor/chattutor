@@ -58,6 +58,13 @@ from core.bp_data.data import data_bp
 from core.bp_users.users import users_bp, User
 from core.bp_prep.prep import prep_bp
 from core.bp_reader.reader import reader_bp
+from core.models import (
+    DataBase,
+    Chat,
+    Course,
+    Message,
+    Section,
+)
 
 load_env()
 load_api_keys()

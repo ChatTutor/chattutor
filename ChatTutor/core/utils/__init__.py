@@ -1,0 +1,1 @@
+from core.utils.object_builder_decorator import build_model_from_params
