@@ -18,7 +18,47 @@ class NSFTutorType(Enum):
     NSF_CQN = 1
     NSF_DEFAULT = 2 # not available for now
     
+class TutorTypes:
+    """Tutor Types from string
+
+    Returns:
+        match id:
+            case "COURSE_FOCUSED":
+                return CourseTutorType.COURSE_FOCUSED
+            case "COURSE_RESTRICTED":
+                return CourseTutorType.COURSE_RESTRICTED
+            case "NSF_CQN":
+                return NSFTutorType.NSF_CQN
+            case "NSF_DEFAULT":
+                return NSFTutorType.NSF_DEFAULT
+            case _:
+                return CourseTutorType.COURSE_RESTRICTED   
+    """
+    @staticmethod
+    def from_string(type_id: str):
+        """Returns type from string
+
+        Args:
+            type_id (str): type
+
+        Returns:
+            CourseTutorType | NSFTutorType: the type
+        """
+        match type_id:
+            case "COURSE_FOCUSED":
+                return CourseTutorType.COURSE_FOCUSED
+            case "COURSE_RESTRICTED":
+                return CourseTutorType.COURSE_RESTRICTED
+            case "NSF_CQN":
+                return NSFTutorType.NSF_CQN
+            case "NSF_DEFAULT":
+                return NSFTutorType.NSF_DEFAULT
+            case _:
+                return CourseTutorType.COURSE_RESTRICTED          
+    
 class TutorFactory:
+    """Generates tutors based on type, and collections
+    """
     def __init__(self, embedding_db):
         self.db = embedding_db
 

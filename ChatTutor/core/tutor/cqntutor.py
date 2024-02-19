@@ -133,7 +133,6 @@ class CQNTutor(Tutor):
                 # if is_generic_message:
                 #    continue
                 if self.embedding_db:
-
                     keep_only_first_x_tokens_for_processing = None # none means all
                     if coll_name == "test_embedding" and required_level_of_information == "basic":
                         self.embedding_db.load_datasource(f"{coll_name}_basic")
@@ -181,9 +180,6 @@ class CQNTutor(Tutor):
                                     "distance": dist,
                                 }
                             )
-            # removing duplicates
-            # arr = list(set(arr))
-            # sort by distance, increasing
             sorted_docs = sorted(arr, key=lambda el: el["distance"])
             valid_docs = sorted_docs[:process_limit]
 
@@ -227,13 +223,7 @@ class CQNTutor(Tutor):
             # debug log
         pprint("collections", self.collections)
         pprint("len collections", len(self.collections))
-        # print(
-        #     "\n\n\nSYSTEM MESSAGE",
-        #     self.system_message,
-        #     len(self.collections),
-        #     self.collections,
-        #     self.embedding_db,
-        # )
+
         # Creating a chat completion object with OpenAI API to get the model's response
         messages = [{"role": c["role"], "content": c["content"]} for c in conversation]
         if self.embedding_db and len(self.collections) > 0:

@@ -19,21 +19,17 @@ def addtodb():
     :return: a response with the content "inserted!" and the content type "text".
     """
     data = request.json
+    message_id = data.get("message_id", "nan")
     content = data["content"]
     role = data["role"]
-    chat_k_id = data.get("chat_k")
-    if chat_k_id is None:
-        chat_k_id = "none"
-    clear_number = data.get("clear_number")
-    if clear_number is None:
-        clear_number = 0
+    chat_k_id = data.get("chat_k", "none")
+    clear_number = data.get("clear_number", 0)
     time_created = data["time_created"]
     time_created = datetime.utcfromtimestamp(int(time_created) / 1000)
-    credential_token = data.get("credential_token")
-    if credential_token is None:
-        credential_token = "Not a valid token"
+    credential_token = data.get("credential_token", "Not a valid token")
     messageDatabase.insert_chat(chat_k_id)
     message_to_upload = {
+        "message_id": message_id,
         "content": content,
         "role": role,
         "chat": chat_k_id,
@@ -42,10 +38,16 @@ def addtodb():
         "credential_token": credential_token
     }
 
-
     print("adding ", message_to_upload, " to db")
-    messageDatabase.insert_message(message_to_upload)
-    return Response("inserted!", content_type="text")
+    message_id = messageDatabase.insert_message(message_to_upload)
+    # jsonify({"message": "error"})
+    return jsonify({"message_id": message_id,
+                    "content": content,
+                    "role": role,
+                    "chat": chat_k_id,
+                    "clear_number": clear_number,
+                    "time_created": time_created,
+                    "credential_token": credential_token})
 
 
 @data_bp.route("/getfromdb", methods=["POST", "GET"])
@@ -59,8 +61,6 @@ def getfromdb():
     data = request.form
     username = data.get("lusername", "nan")
     passcode = data.get("lpassword", "nan")
-    print(data)
-    print(username, passcode)
     if username == os.getenv('ROOT_USER') and passcode == os.getenv('ROOT_PW'):
         messages_arr = messageDatabase.execute_sql(
             "SELECT * FROM lmessages ORDER BY chat_key, clear_number, time_created",
@@ -74,6 +74,19 @@ def getfromdb():
         return flask.render_template_string(
             'Error, please <a href="/static/display_db.html">Go back</a>'
         )
+
+
+@data_bp.route("/addmessagefeedback", methods=["POST", "GET"])
+def addmessagefeedback():
+    data = request.json
+    message_id = data.get("message_id")
+    if message_id is None:
+        return jsonify({"message": "error"}), 404
+    feedback_content = data.get("content")
+    print(feedback_content)
+    print(message_id)
+    fid = messageDatabase.insert_feedback(feedback_content=feedback_content, message_id=message_id)
+    return jsonify({"message_id": message_id, "feedback_id": fid, "feedback_content": feedback_content}), 200
 
 
 @data_bp.route("/getfromdbng", methods=["POST", "GET"])

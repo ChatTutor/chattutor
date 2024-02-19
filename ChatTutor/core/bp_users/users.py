@@ -263,19 +263,6 @@ def addtoken():
     token_id = f"{uuid.uuid4()}"
     isdef = 1 if (args.get("is_default", "off") == "on") else 0
 
-    print(
-        flask_login.current_user.username,
-        cid,
-        curl,
-        rulocally,
-        testmode,
-        isstatic,
-        buildwith,
-        server_port,
-        chattutor_server,
-        token_id,
-        isdef,
-    )
     messageDatabase.insert_config(
         flask_login.current_user.username,
         cid,

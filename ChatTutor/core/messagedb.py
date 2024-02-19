@@ -220,28 +220,45 @@ class MessageDB:
         cur.execute(self.create_relationship_between_sections_and_courses)
         con.commit()
 
-    def insert_message(self, a_message):
+    def insert_message(self, a_message) -> str:
         """This inserts a message into the sqlite3 database. the message must be sent as a dictionary"""
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             role = a_message["role"]
+            message_id = a_message.get("message_id");
+            if message_id is None:
+                message_id = f"{uuid.uuid4()}"
             content = a_message["content"]
             chat_key = a_message["chat"]
             clear_number = a_message["clear_number"]
             time_created = a_message["time_created"]
             credential_token = a_message["credential_token"]
-            insert_format_lmessages = f"INSERT INTO lmessages (mes_id ,role, content, chat_key, clear_number, time_created, credential_token) VALUES ('{uuid.uuid4()}','{role}', %s, '{chat_key}', {clear_number}, '{time_created}', '{credential_token}')"
+
+            insert_format_lmessages = f"INSERT INTO lmessages (mes_id ,role, content, chat_key, clear_number, time_created, credential_token) VALUES ('{message_id}','{role}', %s, '{chat_key}', {clear_number}, '{time_created}', '{credential_token}')"
             cur.execute(insert_format_lmessages, (content,))
             con.commit()
+            return message_id
 
-    def insert_chat(self, chat_key):
+    def insert_chat(self, chat_key: str):
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             insert_format_lchats = ""
             cur.execute(f"INSERT IGNORE INTO lchats (chat_id) VALUES ('{chat_key}')")
             con.commit()
 
-    def insert_course(self, course_id, name, proffessor, mainpage, collectionname):
+
+    def insert_feedback(self, feedback_content: str, message_id: str, feedback_id: str | None = None):
+        with self.connect_to_messages_database() as con:
+            cur = con.cursor()
+            if feedback_id is None:
+                feedback_id = uuid.uuid4()
+            cur.execute(f"INSERT IGNORE INTO lfeedbacks (feedback_id, message_id, content) VALUES ('{feedback_id}', '{message_id}', '{feedback_content}')")
+            con.commit()
+            return feedback_id
+            
+
+    
+    def insert_course(self, course_id: str, name: str, proffessor: str, mainpage: str, collectionname: str):
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             cur.execute(
@@ -249,7 +266,7 @@ class MessageDB:
             )
             con.commit()
 
-    def insert_section(self, section_id, pulling_from, sectionurl):
+    def insert_section(self, section_id: str, pulling_from: str, sectionurl: str):
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             cur.execute(
@@ -258,7 +275,7 @@ class MessageDB:
 
             con.commit()
 
-    def establish_course_section_relationship(self, section_id, course_id):
+    def establish_course_section_relationship(self, section_id: str, course_id: str):
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             cur.execute(
@@ -266,7 +283,7 @@ class MessageDB:
             )
             con.commit()
 
-    def update_section_add_fromdoc(self, section_id, from_doc):
+    def update_section_add_fromdoc(self, section_id: str, from_doc):
         with self.connect_to_messages_database() as con:
             cur = con.cursor()
             cur.execute(

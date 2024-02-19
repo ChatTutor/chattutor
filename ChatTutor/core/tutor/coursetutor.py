@@ -20,8 +20,8 @@ class CourseTutor(Tutor):
         valid_docs = []
         query_limit = limit * 5
         process_limit = limit + 2 # each is close to 800
-        # add al docs with distance below threshold to array
         
+        # add all docs with distance below threshold to array
         for coll_name, coll_desc in self.collections.items():
             # if is_generic_message:
             #    continue
@@ -30,7 +30,6 @@ class CourseTutor(Tutor):
                 self.embedding_db.load_datasource(coll_name)
                 arr = arr + self.get_collection_valid_docs(prompt, coll_name, coll_desc, from_doc, threshold, query_limit)
 
-                
         # sort by distance, increasing
         sorted_docs = sorted(arr, key=lambda el: el["distance"])
         valid_docs = sorted_docs[:process_limit]
@@ -41,6 +40,14 @@ class CourseTutor(Tutor):
         return valid_docs
     
     def prettify(self, valid_docs):
+        """Generate string of valid documents
+
+        Args:
+            valid_docs : documents
+
+        Returns:
+            string: string containing the docs' contents
+        """
         docs = ""
         for doc in valid_docs:
             doc_title_or_file_name = doc["metadata"].get("title", None) or doc["metadata"].get("doc", None)
@@ -56,6 +63,11 @@ class CourseTutor(Tutor):
         return docs
     
     def debug_log_valid_docs(self, valid_docs):
+        """Log valid_docs
+
+        Args:
+            valid_docs (doc): documents
+        """
         pprint("valid_docs")
         for idoc, doc in  enumerate(valid_docs):
             pprint(f"- {idoc}", doc["metadata"].get("docname", "(not defined)"), "/",  doc["metadata"].get("doc", "(not defined)"))
