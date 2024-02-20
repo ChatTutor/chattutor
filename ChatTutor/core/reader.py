@@ -6,7 +6,6 @@ from google.cloud import storage
 from io import BytesIO
 import PyPDF2
 from core.vectordatabase import VectorDatabase
-from core.url_reader import URLReader
 
 
 def read_folder_gcp(bucket_name, folder_name):

@@ -3,7 +3,7 @@ import uuid
 
 # import markdown
 import flask_login
-from core.extensions import (db, messageDatabase)
+from core.extensions import (db)
 from core.url_spider import URLSpider
 from flask import (Blueprint, Response, jsonify, request, stream_with_context)
 from nice_functions import pprint
@@ -38,7 +38,6 @@ def urlcrawler():
                 urltoapp=url,
                 save_to_database=db,
                 collection_name=collection_name,
-                message_db=messageDatabase,
                 course_name=course_name,
                 proffessor=proffessor,
                 course_id=course_id,

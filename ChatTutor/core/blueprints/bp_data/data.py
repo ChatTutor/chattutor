@@ -1,12 +1,21 @@
 # import pymysql
-
+## search for TODO : modify
 import flask
 import os
 # import markdown
 import flask_login
-from core.extensions import (db, messageDatabase)
+from core.extensions import (db)
 from flask import (Blueprint, Response, jsonify, request)
 from datetime import datetime
+from core.data import (
+    DataBase,
+    UserModel,
+    MessageModel,
+    FeedbackModel,
+    SectionModel,
+    CourseModel,
+    ChatModel
+)
 
 data_bp = Blueprint("bp_data", __name__)
 
@@ -27,7 +36,8 @@ def addtodb():
     time_created = data["time_created"]
     time_created = datetime.utcfromtimestamp(int(time_created) / 1000)
     credential_token = data.get("credential_token", "Not a valid token")
-    messageDatabase.insert_chat(chat_k_id)
+    # messageDatabase.insert_chat(chat_k_id)
+    DataBase().insert_chat(chat_k_id)
     message_to_upload = {
         "message_id": message_id,
         "content": content,
@@ -39,9 +49,10 @@ def addtodb():
     }
 
     print("adding ", message_to_upload, " to db")
-    message_id = messageDatabase.insert_message(message_to_upload)
+    uploaded_message, _ = DataBase().insert_message(message_to_upload)
+    # message_id = messageDatabase.insert_message(message_to_upload) ## TODO : modify
     # jsonify({"message": "error"})
-    return jsonify({"message_id": message_id,
+    return jsonify({"message_id": uploaded_message.mes_id,
                     "content": content,
                     "role": role,
                     "chat": chat_k_id,
@@ -50,30 +61,31 @@ def addtodb():
                     "credential_token": credential_token})
 
 
-@data_bp.route("/getfromdb", methods=["POST", "GET"])
-def getfromdb():
-    """
-    The function `getfromdb()` retrieves data from a form, checks if the username and password match a
-    specific value, and returns a rendered template based on the result.
-    :return: either a rendered template for displaying messages or a rendered template string for
-    displaying an error message.
-    """
-    data = request.form
-    username = data.get("lusername", "nan")
-    passcode = data.get("lpassword", "nan")
-    if username == os.getenv('ROOT_USER') and passcode == os.getenv('ROOT_PW'):
-        messages_arr = messageDatabase.execute_sql(
-            "SELECT * FROM lmessages ORDER BY chat_key, clear_number, time_created",
-            True,
-        )
-        renderedString = messageDatabase.parse_messages(messages_arr)
-        return flask.render_template(
-            "display_messages.html", renderedString=renderedString
-        )
-    else:
-        return flask.render_template_string(
-            'Error, please <a href="/static/display_db.html">Go back</a>'
-        )
+# @data_bp.route("/getfromdb", methods=["POST", "GET"])
+# def getfromdb():
+#     """
+#     The function `getfromdb()` retrieves data from a form, checks if the username and password match a
+#     specific value, and returns a rendered template based on the result.
+#     :return: either a rendered template for displaying messages or a rendered template string for
+#     displaying an error message.
+#     """
+#     data = request.form
+#     username = data.get("lusername", "nan")
+#     passcode = data.get("lpassword", "nan")
+#     if username == os.getenv('ROOT_USER') and passcode == os.getenv('ROOT_PW'):
+#         # messages_arr = messageDatabase.execute_sql(
+#         #     "SELECT * FROM lmessages ORDER BY chat_key, clear_number, time_created",
+#         #     True,
+#         # ) ## TODO : modify
+#         messages_arr = DataBase().all_messages()
+#         renderedString = DataBase().parse_messages(messages_arr)
+#         return flask.render_template(
+#             "display_messages.html", renderedString=renderedString
+#         )
+#     else:
+#         return flask.render_template_string(
+#             'Error, please <a href="/static/display_db.html">Go back</a>'
+#         )
 
 
 @data_bp.route("/addmessagefeedback", methods=["POST", "GET"])
@@ -85,8 +97,8 @@ def addmessagefeedback():
     feedback_content = data.get("content")
     print(feedback_content)
     print(message_id)
-    fid = messageDatabase.insert_feedback(feedback_content=feedback_content, message_id=message_id)
-    return jsonify({"message_id": message_id, "feedback_id": fid, "feedback_content": feedback_content}), 200
+    feedback, _ = DataBase().insert_feedback(FeedbackModel(feedback_content=feedback_content, message_id=message_id))
+    return jsonify({"message_id": message_id, "feedback_id": feedback.feedback_id, "feedback_content": feedback_content}), 200
 
 
 @data_bp.route("/getfromdbng", methods=["POST", "GET"])
@@ -105,26 +117,23 @@ def getfromdbng():
     print(data)
     print(username, passcode)
     if username == os.getenv('ROOT_USER') and passcode == os.getenv('ROOT_PW'):
-        messages_arr = messageDatabase.execute_sql(
-            "SELECT * FROM lmessages ORDER BY chat_key, clear_number, time_created",
-            True,
-        )
+        messages_arr = DataBase().all_messages()
         return jsonify({"message": "success", "messages": messages_arr})
     else:
         return jsonify({"message": "error"})
 
 
-@data_bp.route("/exesql", methods=["POST", "GET"])
-def exesql():
-    data = request.json
-    username = data["lusername"]
-    passcode = data["lpassword"]
-    sqlexec = data["lexesql"]
-    if username == os.getenv('ROOT_USER') and passcode == os.getenv('ROOT_PW'):
-        messages_arr = messageDatabase.execute_sql(sqlexec)
-        return Response(f"{messages_arr}", 200)
-    else:
-        return Response("wrong password", 404)
+# @data_bp.route("/exesql", methods=["POST", "GET"])
+# def exesql():
+#     data = request.json
+#     username = data["lusername"]
+#     passcode = data["lpassword"]
+#     sqlexec = data["lexesql"]
+#     if username == os.getenv('ROOT_USER') and passcode == os.getenv('ROOT_PW'):
+#         messages_arr = messageDatabase.execute_sql(sqlexec) ## TODO : modify
+#         return Response(f"{messages_arr}", 200)
+#     else:
+#         return Response("wrong password", 404)
 
 
 @data_bp.route("/delete_uploaded_data", methods=["POST"])
@@ -174,9 +183,10 @@ def add_fromdoc_tosection():
     section_id = data["section_id"]
     url_to_add = data["url_to_add"]
 
-    messageDatabase.update_section_add_fromdoc(
-        section_id=section_id, from_doc=url_to_add
-    )
+    DataBase().update_section_add_fromdoc(section_id=section_id, from_doc=url_to_add)
+    # messageDatabase.update_section_add_fromdoc(
+    #     section_id=section_id, from_doc=url_to_add
+    # ) ## TODO : modify
     return jsonify({"added": url_to_add, "to_collection": collection_name})
 
 
@@ -191,8 +201,9 @@ def get_section():
     collection_name = data["collection"]
     section_id = data["section_id"]
 
-    sections = messageDatabase.execute_sql(
-        f"SELECT * FROM lsections WHERE section_id = '{section_id}'"
-    )
-    pfrom = [s["pulling_from"] for s in sections]
+    # sections = messageDatabase.execute_sql(
+    #     f"SELECT * FROM lsections WHERE section_id = '{section_id}'"
+    # ) ## TODO : modify
+    sections, _ = DataBase().get_sections_by_id(section_id=section_id)
+    pfrom = [s.pulling_from for s in sections]
     return jsonify({"sections": sections, "pulling_from": pfrom})

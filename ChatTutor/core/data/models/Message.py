@@ -2,9 +2,10 @@ from typing import Optional
 from sqlmodel import Field, Session, SQLModel, create_engine
 import uuid as uuid_pkg
 from datetime import datetime
-from sqlalchemy import Field
 from sqlmodel import Field
+from dataclasses import dataclass
 
+@dataclass
 class Message(SQLModel, table=True):
     """### Message Model
     
@@ -21,7 +22,7 @@ class Message(SQLModel, table=True):
         SQLModel (SQLModel): SQLModel
         table (bool, optional): Defaults to True.
     """
-    mes_id: uuid_pkg.UUID = Field(
+    mes_id: str = Field(
         default_factory=uuid_pkg.uuid4,
         primary_key=True,
         index=True,
@@ -29,7 +30,12 @@ class Message(SQLModel, table=True):
     )
     role: str
     content: str
-    chat_key: uuid_pkg.UUID = Field(foreign_key="chat.chat_id")
+    chat_key: str = Field(foreign_key="chat.chat_id")
     clear_number: Optional[int]
     time_created : datetime = Field(default_factory=datetime.now)
     credential_token : str
+
+    def jsonserialize(self):
+        d = self.__dict__
+        d["_sa_instance_state"] = None
+        return d

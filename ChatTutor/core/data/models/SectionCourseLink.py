@@ -2,9 +2,10 @@ from typing import Optional
 from sqlmodel import Field, Session, SQLModel, create_engine
 import uuid as uuid_pkg
 from datetime import datetime
-from sqlalchemy import Field
 from sqlmodel import Field
+from dataclasses import dataclass
 
+@dataclass
 class SectionCourseLink(SQLModel, table=True):
     """Section <-> Course Link (MtoM)
     
@@ -16,6 +17,10 @@ class SectionCourseLink(SQLModel, table=True):
         SQLModel (SQLModel): SQLModel
         table (bool, optional): Defaults to True.
     """
-    section_id: uuid_pkg.UUID = Field(foreign_key="section.section_id", primary_key=True)
-    course_id: uuid_pkg.UUID = Field(foreign_key="course.course_id", primary_key=True)
+    section_id: str = Field(foreign_key="section.section_id", primary_key=True)
+    course_id: str = Field(foreign_key="course.course_id", primary_key=True)
   
+    def jsonserialize(self):
+        d = self.__dict__
+        d["_sa_instance_state"] = None
+        return d

@@ -3,11 +3,12 @@ from typing import Deque, List, Optional, Tuple
 from sqlmodel import Field, Session, SQLModel, create_engine
 import uuid as uuid_pkg
 from datetime import datetime
-from sqlalchemy import Field
 from sqlmodel import Field, Relationship
 from core.data.models.SectionCourseLink import SectionCourseLink
 from core.data.models.UserCourseLink import UserCourseLink
+from dataclasses import dataclass
 
+@dataclass
 class Course(SQLModel, table=True):
     """### Course Model
 
@@ -26,7 +27,7 @@ class Course(SQLModel, table=True):
         SQLModel (SQLModel): SQLModel
         table (bool, optional): Defaults to True.
     """
-    course_id: uuid_pkg.UUID = Field(
+    course_id: str = Field(
         default_factory=uuid_pkg.uuid4,
         primary_key=True,
         index=True,
@@ -39,3 +40,7 @@ class Course(SQLModel, table=True):
     sections: List["Section"] = Relationship(back_populates="courses", link_model=SectionCourseLink)
     users: List["User"] = Relationship(back_populates="courses", link_model=UserCourseLink)
 
+    def jsonserialize(self):
+        d = self.__dict__
+        d["_sa_instance_state"] = None
+        return d

@@ -9,4 +9,4 @@ from core.data.models.User import User as UserModel
 from core.data.models.Feedback import Feedback as FeedbackModel
 
 from sqlmodel import create_engine, SQLModel
-from connect import Connection, Singleton
+from core.data.models.connect import Connection, Singleton

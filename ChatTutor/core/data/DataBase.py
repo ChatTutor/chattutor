@@ -1,5 +1,4 @@
 from core.data.models import Singleton, Connection
-from core.bp_users.users import User as UserFlaskMixin
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 from core.data.models import (
     UserModel,
@@ -10,8 +9,42 @@ from core.data.models import (
     FeedbackModel
 )
 from core.utils import build_model_from_params
+import flask_login
+import bcrypt
 
-def user_to_model(user: UserFlaskMixin):
+class User(flask_login.UserMixin):
+    username = "NO FACE"
+    email = "NO NAME"
+    password_hash = "NO NUMBER"
+    user_type = ""
+
+    def get_id(self):
+        return self.username
+
+    @property
+    def password(self):
+        raise AttributeError("password not readable")
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = bcrypt.hashpw(
+            password.encode("utf-8", "ignore"), bcrypt.gensalt()
+        )
+
+    def verify_password(self, p):
+        print(
+            self.password_hash,
+            bcrypt.hashpw(p.encode("utf8", "ignore"), bcrypt.gensalt()).decode("utf-8"),
+        )
+        print(
+            self.password_hash,
+            bcrypt.hashpw(p.encode("utf8", "ignore"), bcrypt.gensalt()).decode("utf-8"),
+        )
+        print(self.password_hash.encode("utf-8"), p.encode("utf-8"))
+        return bcrypt.checkpw(p.encode("utf-8"), self.password_hash.encode("utf-8"))
+
+
+def user_to_model(user: User):
     return UserModel(username=user.username, email=user.email, password=user.password_hash.decode('utf-8'), user_type=user.user_type)
 
 def message_oldformat_to_new(a_message : MessageModel | dict):
@@ -33,7 +66,7 @@ class DataBase(metaclass=Singleton):
         print("Initializing DataBase")
         self.connection = Connection()
     
-    def insert_user(self, user : UserFlaskMixin):
+    def insert_user(self, user : User):
         """Insert User Based on Mixin Flask Object
 
         Args:
@@ -45,9 +78,9 @@ class DataBase(metaclass=Singleton):
             session.commit()
             return user_model, session
     
-    def insert_message(self, message : MessageModel | dict):
+    def insert_message(self, message : MessageModel | dict) -> tuple[MessageModel, Session]:
         if isinstance(message, MessageModel) is False:
-            message = message_oldformat_to_new(message)
+            message : MessageModel = message_oldformat_to_new(message)
         with self.connection.session() as session:
             session.add(message)
             session.commit()
@@ -62,22 +95,29 @@ class DataBase(metaclass=Singleton):
             return chat, session
     
     @build_model_from_params(from_keys=["content", "message_id", "feedback_id"], model=FeedbackModel, is_method=True)
-    def insert_feedback(self, *args, **kwargs):
+    def insert_feedback(self, *args, **kwargs) -> tuple[FeedbackModel, Session]:
         with self.connection.session() as session:
             session.add(args[0])
             session.commit()
+            return args[0], session
+
     
     @build_model_from_params(from_keys=["course_id", "name", "proffessor", "mainpage", "collectionname"], model=CourseModel, is_method=True)
-    def insert_course(self, *args, **kwargs):
+    def insert_course(self, *args, **kwargs) -> tuple[CourseModel, Session]:
         with self.connection.session() as session:
             session.add(args[0])
             session.commit()
+            return args[0], session
+
     
     @build_model_from_params(from_keys=["section_id", "pulling_from", "sectionurl"], model=SectionModel, is_method=True)
-    def insert_section(self, *args, **kwargs):
+    def insert_section(self, *args, **kwargs) -> tuple[SectionModel, Session]:
         with self.connection.session() as session:
+            print("INSERTING SECTION: ")
+            print(args[0])
             session.add(args[0])
             session.commit()
+            return args[0], session
          
     def get_users_by_username(self, username : str):
         """Gets users by username
@@ -87,7 +127,7 @@ class DataBase(metaclass=Singleton):
         """
         with self.connection.session() as session:
             statement = select(UserModel).where(UserModel.username == username)
-            results = session.exec(statement)
+            results = session.exec(statement).all()
             return results, session
     
     def insert_user_to_course(self, username : str, course_id):
@@ -124,14 +164,21 @@ class DataBase(metaclass=Singleton):
             name = course.name
             result = [
                 {
-                    "section_id": section["section_id"],
+                    "section_id": section.section_id,
                     "course_id": course_id,
-                    "section_url": section["sectionurl"],
+                    "section_url": section.sectionurl,
+                    "pullingfrom": section.pulling_from,
                     "course_chroma_collection": name,
                 }
                 for section in course.sections
             ]
             return result, session
+
+    def get_sections_by_id(self, section_id):
+        with self.connection.session() as session:
+            sections = session.exec(select(SectionModel).where(SectionModel.section_id == section_id)).all()
+            return sections, session
+        
         
     def update_section_add_fromdoc(self, section_id: str, from_doc):
         with self.connection.session() as session:
@@ -141,3 +188,10 @@ class DataBase(metaclass=Singleton):
             session.commit()
             session.refresh(section)
             return section, session
+        
+    def all_messages(self):
+        with self.connection.session() as session:
+            stmt = select(MessageModel).order_by(MessageModel.chat_key).order_by(MessageModel.time_created)
+            result = session.exec(stmt).all()
+            return result
+    

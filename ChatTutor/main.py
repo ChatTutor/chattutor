@@ -16,7 +16,6 @@ from nice_functions import pprint, time_it
 from core.extensions import (
     db,
     user_db,
-    messageDatabase,
     get_random_string,
     generate_unique_name,
     stream_text,
@@ -35,10 +34,8 @@ import re
 # import pymysql
 import sqlite3
 import openai
-import core.loader
 from core.reader import read_filearray, extract_file, parse_plaintext_file_read
 from datetime import datetime
-from core.messagedb import MessageDB
 # import interpreter
 from core.definitions import Text
 from core.definitions import Doc
@@ -53,19 +50,14 @@ import flask_login
 
 # interpreter.auto_run = True
 from core.openai_tools import load_api_keys, load_env
-from core.bp_ask.ask import ask_bp
-from core.bp_data.data import data_bp
-from core.bp_users.users import users_bp, User
-from core.bp_prep.prep import prep_bp
-from core.bp_reader.reader import reader_bp
-from core.models import (
-    DataBase,
-    Chat,
-    Course,
-    Message,
-    Section,
+from core.blueprints.bp_ask.ask import ask_bp
+from core.blueprints.bp_data.data import data_bp
+from core.blueprints.bp_users.users import users_bp, User
+from core.blueprints.bp_prep.prep import prep_bp
+from core.blueprints.bp_reader.reader import reader_bp
+from core.data import (
+    DataBase
 )
-
 load_env()
 load_api_keys()
 
@@ -75,7 +67,6 @@ CORS(app, origins=["http://127.0.0.1:5000", "https://barosandu.github.io", "http
 app.secret_key = "fhslcigiuchsvjksvjksgkgs"
 db.init_db()
 user_db.init_db()
-messageDatabase.initialize_ldatabase()
 
 app.register_blueprint(ask_bp, url_prefix="/ask")
 app.register_blueprint(data_bp)
@@ -96,15 +87,15 @@ def unauthorized_handler():
 
 @login_manager.user_loader
 def user_loader(username):
-    users = messageDatabase.get_user(username=username)
+    users, _ = DataBase().get_users_by_username(username=username)
 
     if len(users) == 0:
         return
     user = User()
-    user.username = users[0]["username"]
-    user.email = users[0]["email"]
-    print(users[0]["password"])
-    user.password_hash = users[0]["password"]
+    user.username = users[0].username
+    user.email = users[0].email
+    print(users[0].password)
+    user.password_hash = users[0].password
 
     return user
 
@@ -113,15 +104,15 @@ def user_loader(username):
 def request_loader(request):
     username = request.form.get("username")
 
-    users = messageDatabase.get_user(username=username)
+    users, _ = DataBase().get_users_by_username(username=username)
 
     if len(users) == 0:
         return
 
     user = User()
-    user.username = users[0]["username"]
-    user.email = users[0]["email"]
-    user.password_hash = users[0]["password"]
+    user.username = users[0].username
+    user.email = users[0].email
+    user.password_hash = users[0].password
 
     return user
 

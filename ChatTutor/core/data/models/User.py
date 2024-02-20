@@ -2,11 +2,13 @@ from typing import Deque, List, Optional, Tuple
 from sqlmodel import Field, Session, SQLModel, create_engine
 import uuid as uuid_pkg
 from datetime import datetime
-from sqlalchemy import Field
 from sqlmodel import Field, Relationship
 from core.data.models.Course import Course
 from core.data.models.SectionCourseLink import SectionCourseLink
 from core.data.models.UserCourseLink import UserCourseLink
+from dataclasses import dataclass
+
+@dataclass
 class User(SQLModel, table=True):
     """User Model
     
@@ -29,3 +31,8 @@ class User(SQLModel, table=True):
     password : str
     user_type : str
     courses: List[Course] = Relationship(back_populates="users", link_model=UserCourseLink)
+    
+    def jsonserialize(self):
+        d = self.__dict__
+        d["_sa_instance_state"] = None
+        return d
