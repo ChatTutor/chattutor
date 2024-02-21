@@ -15,7 +15,7 @@ class Connection(metaclass=Singleton):
         connection_string = "mysql+pymysql://%s:%s@%s/%s" % (os.getenv('SQL_DB_USER'), os.getenv('SQL_DB_PASSWORD'), os.getenv('SQL_DB_HOST'), os.getenv('SQL_DB'))
         self.engine = create_engine(connection_string, echo=True)
         # SQLModel.metadata.drop_all(self.engine)
-        # SQLModel.metadata.create_all(self.engine)
+        SQLModel.metadata.create_all(self.engine)
     
     def get_engine(self):
         return self.engine

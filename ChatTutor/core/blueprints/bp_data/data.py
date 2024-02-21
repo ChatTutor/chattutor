@@ -28,7 +28,7 @@ def addtodb():
     :return: a response with the content "inserted!" and the content type "text".
     """
     data = request.json
-    message_id = data.get("message_id", "nan")
+    message_id = data.get("message_id", None)
     content = data["content"]
     role = data["role"]
     chat_k_id = data.get("chat_k", "none")
@@ -37,12 +37,14 @@ def addtodb():
     time_created = datetime.utcfromtimestamp(int(time_created) / 1000)
     credential_token = data.get("credential_token", "Not a valid token")
     # messageDatabase.insert_chat(chat_k_id)
-    DataBase().insert_chat(chat_k_id)
+    chat_id, _ = DataBase().insert_chat("none")
+    print("> CHATKEY")
+    print(chat_id)
     message_to_upload = {
         "message_id": message_id,
         "content": content,
         "role": role,
-        "chat": chat_k_id,
+        "chat": chat_id,
         "clear_number": clear_number,
         "time_created": time_created,
         "credential_token": credential_token
@@ -50,8 +52,6 @@ def addtodb():
 
     print("adding ", message_to_upload, " to db")
     uploaded_message, _ = DataBase().insert_message(message_to_upload)
-    # message_id = messageDatabase.insert_message(message_to_upload) ## TODO : modify
-    # jsonify({"message": "error"})
     return jsonify({"message_id": uploaded_message.mes_id,
                     "content": content,
                     "role": role,

@@ -6,7 +6,8 @@ from core.data.models import (
     SectionModel,
     ChatModel,
     CourseModel,
-    FeedbackModel
+    FeedbackModel,
+    DevsModel
 )
 from core.utils import build_model_from_params
 import flask_login
@@ -84,15 +85,20 @@ class DataBase(metaclass=Singleton):
         with self.connection.session() as session:
             session.add(message)
             session.commit()
+            session.refresh(message)
+            session.expunge_all()
             return message, session
     
     def insert_chat(self, chat : ChatModel | str):
         if isinstance(chat, ChatModel) is False:
-            chat = ChatModel(chat_id=chat)
+            if (chat == "none"):
+                chat = ChatModel()
+            else:
+                chat = ChatModel(chat_id=chat)
         with self.connection.session() as session:
             session.add(chat)
             session.commit()
-            return chat, session
+            return chat.chat_id, session
     
     @build_model_from_params(from_keys=["content", "message_id", "feedback_id"], model=FeedbackModel, is_method=True)
     def insert_feedback(self, *args, **kwargs) -> tuple[FeedbackModel, Session]:

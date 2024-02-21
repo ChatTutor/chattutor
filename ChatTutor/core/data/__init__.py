@@ -6,5 +6,6 @@ from core.data.DataBase import (
     SectionModel,
     CourseModel,
     ChatModel,
-    User
+    User,
+    DevsModel
 )
