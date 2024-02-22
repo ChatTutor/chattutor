@@ -105,6 +105,8 @@ class DataBase(metaclass=Singleton):
         with self.connection.session() as session:
             session.add(args[0])
             session.commit()
+            session.refresh(args[0])
+            session.expunge_all()
             return args[0], session
 
     
@@ -113,6 +115,8 @@ class DataBase(metaclass=Singleton):
         with self.connection.session() as session:
             session.add(args[0])
             session.commit()
+            session.refresh(args[0])
+            session.expunge_all()
             return args[0], session
 
     
@@ -123,6 +127,8 @@ class DataBase(metaclass=Singleton):
             print(args[0])
             session.add(args[0])
             session.commit()
+            session.refresh(args[0])
+            session.expunge_all()
             return args[0], session
          
     def get_users_by_username(self, username : str):

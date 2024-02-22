@@ -1,5 +1,5 @@
 from typing import Optional
-from sqlmodel import Field, Session, SQLModel, create_engine
+from sqlmodel import Field, Session, SQLModel, create_engine, Text
 import uuid as uuid_pkg
 from datetime import datetime
 from sqlmodel import Field
@@ -29,7 +29,7 @@ class Message(SQLModel, table=True):
         nullable=False,
     )
     role: str
-    content: str
+    content: str = Text(length=4000)
     chat_key: str = Field(foreign_key="chat.chat_id")
     clear_number: Optional[int]
     time_created : datetime = Field(default_factory=datetime.now)

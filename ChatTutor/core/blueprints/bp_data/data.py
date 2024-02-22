@@ -95,10 +95,15 @@ def addmessagefeedback():
     if message_id is None:
         return jsonify({"message": "error"}), 404
     feedback_content = data.get("content")
+    print("\n>> FEEDBACK")
     print(feedback_content)
     print(message_id)
-    feedback, _ = DataBase().insert_feedback(FeedbackModel(feedback_content=feedback_content, message_id=message_id))
-    return jsonify({"message_id": message_id, "feedback_id": feedback.feedback_id, "feedback_content": feedback_content}), 200
+    print(type(message_id))
+
+    DataBase().insert_feedback(FeedbackModel(content=feedback_content, message_id=message_id))
+    print("<< FEEDBACK\n")
+
+    return jsonify({"message_id": message_id, "feedback_id": "idk", "feedback_content": feedback_content}), 200
 
 
 @data_bp.route("/getfromdbng", methods=["POST", "GET"])

@@ -105,7 +105,7 @@ class CourseTutor(Tutor):
             conversation, context=self.engineer_prompts
         )  # if contest is st to False, it is equivalent to conversation[-1]["content"]
         # Querying the database to retrieve relevant documents to the user's question
-        
+        pprint(blue(prompt))
         valid_docs = self.get_valid_docs(prompt, from_doc, threshold, limit)
         self.debug_log_valid_docs(valid_docs)
         docs = self.prettify(valid_docs)

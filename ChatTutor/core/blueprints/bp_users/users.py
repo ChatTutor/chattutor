@@ -141,9 +141,7 @@ def getusercourses(username):
     if username != flask_login.current_user.username:
         return 'Not allowed, <a href="/">Return</a>'
     courses, _ = DataBase().get_user_courses(username=username)
-    print("> GET /mycourses")
     arr = [c.jsonserialize() for c in courses]
-    print("<<<<<<<<<<<", arr)
     return jsonify({"courses": arr})
 
 
