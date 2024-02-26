@@ -32,6 +32,8 @@ export class OAuthCallbackComponent implements OnInit {
       console.error('Error during login:', err);
     });
   }
+
+
 }
 
 
