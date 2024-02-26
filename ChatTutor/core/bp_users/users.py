@@ -60,7 +60,6 @@ class User(flask_login.UserMixin):
 @users_bp.route('/auth/google', methods=['POST'])
 def oauth_register():
     user_info = request.json
-    print('aaaaa',user_info)
     google_id = user_info.get('google_id')
     email = user_info.get('email')
     name = user_info.get('name')
@@ -77,9 +76,10 @@ def oauth_register():
         user.name = name
         try:
             messageDatabase.insert_oauth_user(user)
-            return jsonify({"message": "User created", "user": {"google_id": google_id, "email": email, "name": name}}), 201
+            return jsonify({'message': 'User created', 'user': {'google_id': google_id, 'email': email, 'name': name}}), 201
         except Exception as e:
-            return jsonify({"error": str(e)}), 500
+            return jsonify({'error': str(e)}), 500
+    return jsonify({'message': 'User logged in', 'user': {'google_id': google_id, 'email': email, 'name': name}}), 201
 
 @users_bp.route("/register", methods=["POST"])
 def register_user():

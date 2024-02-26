@@ -94,7 +94,6 @@ def read_filearray(files):
     texts = []
 
     for file in files:
-        print("AAAAAAA")
         doc = Doc(docname=file[1], citation="", dockey=file[1])
         print(file[1])
         try:

@@ -39,7 +39,6 @@ export class AuthService {
   }
 
   handleLoginSuccess() {
-    console.log('aaaaaa')
     if (this.oauthService.hasValidAccessToken()) {
       const claims: any = this.oauthService.getIdentityClaims();
       if (claims) {
