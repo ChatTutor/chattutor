@@ -3,7 +3,7 @@
 
 # ChatTutor
 ![Code Size](https://img.shields.io/github/languages/code-size/ChatTutor/chattutor)
-![Repo Size](https://img.shields.io/github/repo-size/ChatTutor/chattutor) 
+![Repo Size](https://img.shields.io/github/repo-size/ChatTutor/chattutor)
 
 [ChatTutor](https://dkeathley.github.io/6.2410-lab/intro.html) is an AI-agent capable of teaching and research communications, ranging from new learners to industry professionals, undergraduates, and graduate students. We aim for ChatTutor to possess deep domain-specific, hierarchical, and trust-weighted knowledge. 
 
