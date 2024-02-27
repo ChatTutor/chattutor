@@ -19,7 +19,7 @@ export class OAuthCallbackComponent implements OnInit {
 
   ngOnInit() {
     this.oauthService.loadDiscoveryDocument().then(() => {
-      this.oauthService.tryLoginCodeFlow().then(() => {
+      this.oauthService.tryLoginImplicitFlow().then(() => {
         if (!this.oauthService.hasValidAccessToken()) {
           console.log('OAuth login failed or was cancelled.');
         }
