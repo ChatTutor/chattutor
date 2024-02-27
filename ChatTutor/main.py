@@ -52,11 +52,12 @@ import flask_login
 from core.openai_tools import load_api_keys, load_env
 from core.blueprints.bp_ask.ask import ask_bp
 from core.blueprints.bp_data.data import data_bp
-from core.blueprints.bp_users.users import users_bp, User
+from core.blueprints.bp_users.users import users_bp
 from core.blueprints.bp_prep.prep import prep_bp
 from core.blueprints.bp_reader.reader import reader_bp
 from core.data import (
-    DataBase
+    DataBase,
+    UserModel
 )
 load_env()
 load_api_keys()
@@ -86,35 +87,29 @@ def unauthorized_handler():
 
 
 @login_manager.user_loader
-def user_loader(username):
-    users, _ = DataBase().get_users_by_username(username=username)
+def user_loader(email):
+    users, _ = DataBase().get_users_by_email(email=email)
 
     if len(users) == 0:
         return
-    user = User()
-    user.username = users[0].username
-    user.email = users[0].email
-    print(users[0].password)
-    user.password_hash = users[0].password
-
-    return user
+    return users[0]
 
 
 @login_manager.request_loader
-def request_loader(request):
-    username = request.form.get("username")
-
-    users, _ = DataBase().get_users_by_username(username=username)
+def request_loader(req):
+    email = req.form.get("email")
+    uid = req.form.get("id")
+    
+    users = []
+    if email is not None:
+        users, _ = DataBase().get_users_by_email(email=email)
+    if uid is not None:
+        users, _ = DataBase().get_users_by_id(uid=uid)
 
     if len(users) == 0:
         return
 
-    user = User()
-    user.username = users[0].username
-    user.email = users[0].email
-    user.password_hash = users[0].password
-
-    return user
+    return users[0]
 
 
 # ----------- ANGULAR -----------

@@ -151,3 +151,20 @@ def time_it(func, message=""):
         return result
 
     return func_wrapper
+
+def time_it_r(func, message=""):
+    if message != "":
+        message = f" ({blue(message)})"
+
+    @functools.wraps(func)  # preserve information from original funct.
+    def func_wrapper(*args, **kwargs):
+        ts = time.time()
+        result = func(*args, **kwargs)
+        te = time.time()
+        if "log_time" in kwargs:
+            name = kwargs.get("log_name", func.__name__.upper())
+            kwargs["log_time"][name] = int((te - ts) * 1000)
+        else:
+            return result, te - ts
+
+    return func_wrapper

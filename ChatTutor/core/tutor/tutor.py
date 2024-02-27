@@ -7,7 +7,7 @@ import tiktoken
 import time
 import json
 from core.extensions import stream_text
-from nice_functions import (pprint, bold, green, blue, red, time_it)
+from nice_functions import (pprint, bold, green, blue, red, time_it, time_it_r)
 from core.tutor.systemmsg import cqn_system_message, default_system_message, interpreter_system_message
 from core.tutor.utils import remove_score_and_doc_from_valid_docs, yield_docs_and_first_sentence_if_tutor_id_not_apologizing
 class Tutor(ABC):
@@ -174,11 +174,12 @@ class Tutor(ABC):
             a tipewriter effect
         """
         
-        
+        st = time.time()
         messages, valid_docs = self.process_prompt(conversation, from_doc, threshold, limit)
-        
+        en = time.time()
+        processing_prompt_time = en - st
         try:
-            response = time_it(openai.ChatCompletion.create)(
+            response, elapsed_time = time_it_r(openai.ChatCompletion.create)(
                 model=selectedModel,
                 messages=messages,
                 temperature=0.7,
@@ -206,6 +207,8 @@ class Tutor(ABC):
                     first_sentence+=chunk["choices"][0]["delta"]["content"]
                     print("first_sentence", green(first_sentence))
                     for yielded_chain in yield_docs_and_first_sentence_if_tutor_id_not_apologizing(first_sentence, valid_docs):
+                        yielded_chain["elapsed_time"] = elapsed_time
+                        yielded_chain["processing_prompt_time"] = processing_prompt_time
                         yield yielded_chain
                     continue               
 

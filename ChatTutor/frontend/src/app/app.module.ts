@@ -27,7 +27,6 @@ import { ChatTutorWrapperComponent } from './chat-tutor-wrapper/chat-tutor-wrapp
 import { CQNChatTutorWrapperComponent } from './cqnchat-tutor-wrapper/cqnchat-tutor-wrapper.component';
 import {HashLocationStrategy, LocationStrategy, PathLocationStrategy} from "@angular/common";
 import { LandingPageComponent } from './landing-page/landing-page.component';
-import { ChattutorDatabaseComponent } from './chattutor-database/chattutor-database.component';
 import { MessageInsideDatabaseComponent } from './message-inside-database/message-inside-database.component';
 import {MatTableModule} from "@angular/material/table";
 import {MatPaginatorModule} from "@angular/material/paginator";
@@ -55,7 +54,6 @@ import { GradientBackgroundComponent } from './gradient-background/gradient-back
     ChatTutorWrapperComponent,
     CQNChatTutorWrapperComponent,
     LandingPageComponent,
-    ChattutorDatabaseComponent,
     MessageInsideDatabaseComponent,
     MathjaxComponent,
     CourseInputComponent,

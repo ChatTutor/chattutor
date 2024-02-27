@@ -10,43 +10,6 @@ from core.data.models import (
     DevsModel
 )
 from core.utils import build_model_from_params
-import flask_login
-import bcrypt
-
-class User(flask_login.UserMixin):
-    username = "NO FACE"
-    email = "NO NAME"
-    password_hash = "NO NUMBER"
-    user_type = ""
-
-    def get_id(self):
-        return self.username
-
-    @property
-    def password(self):
-        raise AttributeError("password not readable")
-
-    @password.setter
-    def password(self, password):
-        self.password_hash = bcrypt.hashpw(
-            password.encode("utf-8", "ignore"), bcrypt.gensalt()
-        )
-
-    def verify_password(self, p):
-        print(
-            self.password_hash,
-            bcrypt.hashpw(p.encode("utf8", "ignore"), bcrypt.gensalt()).decode("utf-8"),
-        )
-        print(
-            self.password_hash,
-            bcrypt.hashpw(p.encode("utf8", "ignore"), bcrypt.gensalt()).decode("utf-8"),
-        )
-        print(self.password_hash.encode("utf-8"), p.encode("utf-8"))
-        return bcrypt.checkpw(p.encode("utf-8"), self.password_hash.encode("utf-8"))
-
-
-def user_to_model(user: User):
-    return UserModel(username=user.username, email=user.email, password=user.password_hash.decode('utf-8'), user_type=user.user_type)
 
 def message_oldformat_to_new(a_message : MessageModel | dict):
     if (isinstance(a_message, MessageModel)):
@@ -67,17 +30,16 @@ class DataBase(metaclass=Singleton):
         print("Initializing DataBase")
         self.connection = Connection()
     
-    def insert_user(self, user : User):
+    def insert_user(self, user : UserModel):
         """Insert User Based on Mixin Flask Object
 
         Args:
             user (User : UserFlaskMixin): user object
         """
         with self.connection.session() as session:
-            user_model = user_to_model(user=user)
-            session.add(user_model)
+            session.add(user)
             session.commit()
-            return user_model, session
+            return user, session
     
     def insert_message(self, message : MessageModel | dict) -> tuple[MessageModel, Session]:
         if isinstance(message, MessageModel) is False:
@@ -131,20 +93,33 @@ class DataBase(metaclass=Singleton):
             session.expunge_all()
             return args[0], session
          
-    def get_users_by_username(self, username : str):
-        """Gets users by username
+    def get_users_by_email(self, email : str):
+        """Gets users by email
 
         Args:
-            username (str): username
+            email (str): email
         """
         with self.connection.session() as session:
-            statement = select(UserModel).where(UserModel.username == username)
+            statement = select(UserModel).where(UserModel.email == email)
             results = session.exec(statement).all()
+            session.expunge_all()
             return results, session
     
-    def insert_user_to_course(self, username : str, course_id):
+    def get_users_by_id(self, uid : str):
+        """Gets users by id
+
+        Args:
+            uid (str): uid
+        """
         with self.connection.session() as session:
-            user = session.exec(select(UserModel).where(UserModel.username == username)).one()
+            statement = select(UserModel).where(UserModel.user_id == uid)
+            results = session.exec(statement).all()
+            session.expunge_all()
+            return results, session
+    
+    def insert_user_to_course(self, user_id : str, course_id):
+        with self.connection.session() as session:
+            user = session.exec(select(UserModel).where(UserModel.user_id == user_id)).one()
             course = session.exec(select(CourseModel).where(CourseModel.course_id == course_id)).one()
             user.courses.append(course)
             session.add(user)
@@ -160,9 +135,14 @@ class DataBase(metaclass=Singleton):
             session.commit()
             return section, course, session
 
-    def get_user_courses(self, username : str):
+    def get_user_courses(self, user_id : str):
         with self.connection.session() as session:
-            user = session.exec(select(UserModel).where(UserModel.username == username)).one()
+            user = session.exec(select(UserModel).where(UserModel.user_id == user_id)).one()
+            return user.courses, session
+
+    def get_user_by_email_courses(self, email : str):
+        with self.connection.session() as session:
+            user = session.exec(select(UserModel).where(UserModel.email == email)).one()
             return user.courses, session
     
     def get_courses_sections(self, course_id):

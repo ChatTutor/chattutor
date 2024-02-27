@@ -10,7 +10,7 @@ import {Processes} from "../models/processing.model";
 export class CourseDashboardComponent implements OnInit {
     course_id: string | null
     sections: any = []
-    username: string
+    email: string
     process_of: any = {}
     course_name: string = '[]'
     loading: boolean = true
@@ -32,8 +32,8 @@ export class CourseDashboardComponent implements OnInit {
         console.log(this.course_id)
         fetch('/getuser', {method: 'POST', headers: {'Content-Type': 'application/json'}}).then(res => res.json())
             .then(user => {
-                this.username = user['username']
-                fetch(`/users/${this.username}/courses/${this.course_id}`, {
+                this.email = user['email']
+                fetch(`/users/${this.email}/courses/${this.course_id}`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'}
                 }).then(

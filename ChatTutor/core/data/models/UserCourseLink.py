@@ -17,7 +17,7 @@ class UserCourseLink(SQLModel, table=True):
         SQLModel (SQLModel): SQLModel
         table (bool, optional): Defaults to True.
     """
-    username: str = Field(foreign_key="user.username", primary_key=True)
+    user_id: str = Field(foreign_key="user.user_id", primary_key=True)
     course_id: str = Field(foreign_key="course.course_id", primary_key=True)
 
     def jsonserialize(self):

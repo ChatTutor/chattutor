@@ -111,3 +111,11 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; }
 .chattutor_course:hover {
     box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.1);
 }
+
+.right-aligned-header > .mat-content {
+    justify-content: space-between;
+}
+
+.mat-content > mat-panel-title, .mat-content > mat-panel-description {
+  flex: 0 0 auto;
+}

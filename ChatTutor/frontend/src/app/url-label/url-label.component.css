@@ -44,3 +44,9 @@ ul {
     border-radius: 10px;
     /* border: 1px solid rgb(135, 133, 133); */
 }
+
+.fill-available {
+    width: fill;
+
+    width: max-content;
+}

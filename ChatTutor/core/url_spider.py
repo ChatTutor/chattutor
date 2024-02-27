@@ -423,7 +423,7 @@ class URLSpider:
         generate the BFS array, defaults to True (optional)
         :param current_user: The `current_user` parameter is used to specify the current user who is
         executing the spider function. It is an object that represents the user and contains information
-        such as the username
+        such as the user_id
         """
 
         print("New spider func")
@@ -437,7 +437,7 @@ class URLSpider:
             )
         )
         
-        DataBase().insert_user_to_course(username=current_user.username, course_id=course_id)
+        DataBase().insert_user_to_course(user_id=current_user.user_id, course_id=course_id)
         save_to_database.load_datasource(collection_name)
         print("inserted date")
 

@@ -5,7 +5,7 @@ import bcrypt
 import flask
 import flask_login
 from flask import (Blueprint, jsonify, request)
-
+from core.data.DataBase import UserModel
 users_bp = Blueprint("bp_users", __name__)
 
 # def generate_token(email):
@@ -25,37 +25,31 @@ users_bp = Blueprint("bp_users", __name__)
 
 from core.data import (
     DataBase,
-    User
 )
 
 @users_bp.route("/register", methods=["POST"])
 def register_user():
     """
-    The function `register_user()` registers a new user by retrieving their username, email, and
-    password from a form, checking if the username already exists in the database, creating a new User
+    The function `register_user()` registers a new user by retrieving their email, email, and
+    password from a form, checking if the email already exists in the database, creating a new User
     object with the provided information, and inserting the user into the database.
-    :return: a string message indicating the result of the user registration process. If the username
-    already exists in the database, it returns a message stating that the username already exists. If
+    :return: a string message indicating the result of the user registration process. If the email
+    already exists in the database, it returns a message stating that the email already exists. If
     the registration is successful, it returns a message indicating that the user has been inserted and
     provides a link to the login page.
     """
-    username = flask.request.form["username"]
     email = flask.request.form["email"]
     password = flask.request.form["password"]
 
     email = flask.request.form["email"]
-    users, _ = DataBase().get_users_by_username(username=username)
-    #.get_user(username=username)
+    users, _ = DataBase().get_users_by_email(email=email)
 
     if len(users) != 0:
-        return f"Username {username} already exists!"
+        return f"email {email} already exists!"
 
     print(password)
-    user = User()
-    user.email = email
-    user.password = password
-    user.username = username
-    user.user_type = "PROFESSOR"
+    user = UserModel(email=email, password_hash="unset", user_type="PROFESSOR")
+    user.set_password(password=password)
     print(user.password_hash)
     DataBase().insert_user(user=user)
     return f'User {user} inserted, please <a href="/login">Login</a>'
@@ -64,22 +58,19 @@ def register_user():
 @users_bp.route("/login", methods=["POST"])
 def login():
     """
-    The login function checks if the username and password provided by the user match the stored
-    username and password in the database, and logs the user in if they match.
-    :return: The function `login()` returns either 'Invalid username', 'Bad login, <a
+    The login function checks if the email and password provided by the user match the stored
+    email and password in the database, and logs the user in if they match.
+    :return: The function `login()` returns either 'Invalid email', 'Bad login, <a
     href="/">Return</a>', or a redirect to "/protected" depending on the conditions met in the code.
     """
-    username = flask.request.form["username"]
-    users, _ = DataBase().get_users_by_username(username=username)
+    email = flask.request.form["email"]
+    users, _ = DataBase().get_users_by_email(email=email)
     if len(users) == 0:
-        return "Invalid username"
-    print(users[0].password)
-    user = User()
-    user.username = users[0].username
-    user.email = users[0].email
-    user.password_hash = users[0].password
-    if user.verify_password(flask.request.form["password"]):
-        flask_login.login_user(user)
+        return "Invalid email"
+    print("\n\nUser:")
+    print(users[0])
+    if users[0].verify_password(flask.request.form["password"]):
+        flask_login.login_user(users[0])
         return flask.redirect("/protected")
     return 'Bad login, <a href="/">Return</a>'
 
@@ -87,7 +78,7 @@ def login():
 @users_bp.route("/protected")
 @flask_login.login_required
 def protected():
-    return f'Logged in as: {flask_login.current_user.username}, <a href="/">Return</a>'
+    return f'Logged in as: {flask_login.current_user.email}, <a href="/">Return</a>'
 
 
 @users_bp.route("/logout")
@@ -104,12 +95,12 @@ def logout():
 @flask_login.login_required
 def getuser():
     """
-    The function `getuser` prints the username of the currently logged in user and returns it as a JSON
+    The function `getuser` prints the email of the currently logged in user and returns it as a JSON
     object.
-    :return: a JSON object containing the username of the currently logged in user.
+    :return: a JSON object containing the email of the currently logged in user.
     """
-    print("Logged in as", flask_login.current_user.username)
-    return jsonify({"username": flask_login.current_user.username})
+    print("Logged in as", flask_login.current_user.email)
+    return jsonify({"email": flask_login.current_user.email})
 
 
 @users_bp.route("/isloggedin", methods=["POST"])
@@ -127,57 +118,57 @@ def isloggedin():
     return jsonify({"loggedin": False})
 
 
-@users_bp.route("/users/<username>/mycourses", methods=["POST"])
+@users_bp.route("/users/<email>/mycourses", methods=["POST"])
 @flask_login.login_required
-def getusercourses(username):
+def getusercourses(email):
     """
-    The function `getusercourses` retrieves the courses associated with a given username and returns
+    The function `getusercourses` retrieves the courses associated with a given email and returns
     them in JSON format.
 
-    :param username: The `username` parameter is the username of the user for whom you want to retrieve
+    :param email: The `email` parameter is the email of the user for whom you want to retrieve
     the courses
-    :return: a JSON response containing the courses associated with the given username.
+    :return: a JSON response containing the courses associated with the given email.
     """
-    if username != flask_login.current_user.username:
+    if email != flask_login.current_user.email:
         return 'Not allowed, <a href="/">Return</a>'
-    courses, _ = DataBase().get_user_courses(username=username)
+    courses, _ = DataBase().get_user_by_email_courses(email=email)
     arr = [c.jsonserialize() for c in courses]
     return jsonify({"courses": arr})
 
 
-@users_bp.route("/users/<username>/courses/<course>", methods=["POST"])
+@users_bp.route("/users/<email>/courses/<course>", methods=["POST"])
 @flask_login.login_required
-def getusercoursessections(username, course):
+def getusercoursessections(email, course):
     """
     The function `getusercoursessections` returns the sections of a given course for a specific user,
-    but only if the username matches the currently logged in user.
+    but only if the email matches the currently logged in user.
 
-    :param username: The `username` parameter is the username of the user for whom we want to retrieve
+    :param email: The `email` parameter is the email of the user for whom we want to retrieve
     the courses and sections. It is used to check if the user is authorized to access the information
     :param course: The "course" parameter is the ID or name of the course for which you want to retrieve
     the sections
     :return: a JSON object containing the sections of a specific course.
     """
-    if username != flask_login.current_user.username:
+    if email != flask_login.current_user.email:
         return 'Not allowed, <a href="/">Return</a>'
     sections, _ = DataBase().get_courses_sections_format(course_id=course)
     return jsonify({"sections": sections})
 
 
-@users_bp.route("/users/<username>/coursesv1/<course>", methods=["POST"])
+@users_bp.route("/users/<email>/coursesv1/<course>", methods=["POST"])
 @flask_login.login_required
-def getusercoursessectionsv1(username, course):
+def getusercoursessectionsv1(email, course):
     """
     The function `getusercoursessectionsv1` returns the sections of a given course for a specific user,
     but only if the user is currently logged in.
 
-    :param username: The username parameter is the username of the user for whom we want to retrieve the
+    :param email: The email parameter is the email of the user for whom we want to retrieve the
     course sections
     :param course: The "course" parameter is the ID or name of the course for which you want to retrieve
     the sections
     :return: a JSON object containing the sections of a given course.
     """
-    if username != flask_login.current_user.username:
+    if email != flask_login.current_user.email:
         return 'Not allowed, <a href="/">Return</a>'
     sections, _ = DataBase().get_courses_sections(course_id=course)
     return jsonify({"sections": sections})
@@ -186,30 +177,26 @@ def getusercoursessectionsv1(username, course):
 @users_bp.route("/student/register", methods=["POST"])
 def student_register():
     """
-    The function `student_register` registers a new student user by retrieving the username, email, and
-    password from a form, checking if the username already exists, creating a new User object with the
+    The function `student_register` registers a new student user by retrieving the email, email, and
+    password from a form, checking if the email already exists, creating a new User object with the
     provided information, and inserting the user into the message database.
-    :return: a string message indicating the result of the user registration process. If the username
-    already exists in the database, it returns a message stating that the username already exists. If
+    :return: a string message indicating the result of the user registration process. If the email
+    already exists in the database, it returns a message stating that the email already exists. If
     the registration is successful, it returns a message indicating that the user has been inserted and
     provides a link to the login page.
     """
-    username = flask.request.form["username"]
     email = flask.request.form["email"]
     password = flask.request.form["password"]
 
     email = flask.request.form["email"]
-    users = DataBase().get_users_by_username(username=username)
+    users, _ = DataBase().get_users_by_email(email=email)
 
     if len(users) != 0:
-        return f"Username {username} already exists!"
+        return f"email {email} already exists!"
 
     print(password)
-    user = User()
-    user.email = email
+    user = UserModel(email=email, password_hash="unset", user_type="STUDENT")
     user.password = password
-    user.username = username
-    user.user_type = "STUDENT"
     print(user.password_hash)
     DataBase().insert_user(user=user)
     return f'User {user} inserted, please <a href="/login">Login</a>'
@@ -237,7 +224,7 @@ def student_register():
 #     isdef = 1 if (args.get("is_default", "off") == "on") else 0
 
 #     messageDatabase.insert_config(
-#         flask_login.current_user.username,
+#         flask_login.current_user.email,
 #         cid,
 #         curl,
 #         rulocally,
