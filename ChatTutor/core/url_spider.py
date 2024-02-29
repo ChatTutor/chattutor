@@ -274,7 +274,7 @@ class URLSpider:
     #     :param section_id: The section_id parameter is the identifier of the section where the content
     #     will be added from the document
     #     :param to_add: The `to_add` parameter is the content that you want to add to a specific section
-    #     in the `message_db`
+    #     in the `DataBase()`
     #     :return: a tuple containing the section_id and to_add.
     #     """
     #     DataBase().update_section_add_fromdoc(section_id=section_id, from_doc=to_add)
@@ -305,8 +305,8 @@ class URLSpider:
         :param course_id: The `course_id` parameter is used to identify the course to which the parsed
         URL belongs. It is a unique identifier for the course
         :param addToMessageDB: The `addToMessageDB` parameter is a boolean flag that determines whether
-        or not to add the parsed section to the `message_db`. If `addToMessageDB` is set to `True`, the
-        section will be added to the `message_db`. If it is set to `False`, the section, defaults to
+        or not to add the parsed section to the `DataBase()`. If `addToMessageDB` is set to `True`, the
+        section will be added to the `DataBase()`. If it is set to `False`, the section, defaults to
         True (optional)
         :return: The function does not explicitly return anything.
         """

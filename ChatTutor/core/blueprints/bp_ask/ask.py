@@ -15,10 +15,41 @@ def ask():
     based on an embedding.
 
     URLParams:
-        conversation (List({role: ... , content: ...})):  snapshot of the current conversation
-        collection: embedding used for vectorization
+        ```
+        {
+            "conversation" : list(
+                {
+                    "role": ... ,
+                    "content": ...
+                }
+            ) # snapshot of the current conversation
+            "collection": str | list[str], # embedding collection(s) name(s) that the spawned tutor should inform from
+            "description": Opional[str], # description of the collection / opening line of to inform the tutor how to act
+            "from_doc" : str # section the represents the (focused/restricted) knowledge base for the tutor when providing
+            # the answer TODO: remove from_doc and add a section_id instead, or add a section_id as a separate param
+            "response_type": str "COURSE_RESTRICTED" | "COURSE_FOCUSED" defaults to "COURSE_RESTRICTED" # informs the tutor how to gather information
+            # if restricted, it will only inform itself from the current section (page), if focused, it will focus on the current
+            # page but would also have access to other sections (pages)
+            "selectedModel": str # selected model
+        }
+        ```
+    Returns:
+        - a stream response generator
     Yields:
-        response: {data: {time: ..., message: ...}}
+        response: str # text chunks that look like this: 
+        ```
+            "data: {time: int, message: Message.json}}"
+        ```
+        where `Message` looks like this 
+        ```
+        {
+            "content" : str, # chunk content (part of the response)
+            "valid_docs" : Oprional[list], # documents the query used to gain information
+            # yielded only once at the begining
+            "elapsed_time" : seconds, # time taken to generate the first response chunk
+            "processing_prompt_time" : seconds # time taken to process prompt (gain context/use knowledge base etc.)   
+        }
+        ```
     """
     data = request.json
 
@@ -47,7 +78,7 @@ def ask():
     )
     return Response(stream_with_context(generate()), content_type="text/event-stream")
 
-
+# TODO: see what's going on here with the interpreter
 @ask_bp.route("/interpreter", methods=["POST", "GET"])
 def ask_interpreter():
     """Route that facilitates the asking of questions. The response is generated

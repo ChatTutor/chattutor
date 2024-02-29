@@ -12,10 +12,55 @@ class CourseTutor(Tutor):
     @abstractmethod
     def get_collection_valid_docs(self, prompt, coll_name, coll_desc, from_doc=None, 
                         threshold=0.5, query_limit=3):
+        """_summary_
+
+        Args:
+            prompt (str): prompt message
+            coll_name (str): collection name
+            coll_desc (str): collection desc
+            from_doc (str | list[str], optional): doc(s) to pull from. Defaults to None.
+            threshold (float, optional): Maximum distance from the query. Defaults to 0.5.
+            query_limit (int, optional): Maximum documents to be returned. Defaults to 3.
+        
+        Advised Return:
+            ```
+            list[{
+                "coll_desc": str, # collection description or empty
+                "coll_name": str, # collection name,
+                "doc": doc , # document returned
+                "metadata": meta, # metadata
+                "distance": float, # distance from the query
+            }]
+            ```
+            : the valid documents (closest to the query)
+            that will be used as knowledge base by the tutor
+        """
         pass
         
     def get_valid_docs(self, prompt, from_doc=None, 
                         threshold=0.5, limit=3):
+        """Gets valid docs for each collection in self.collections
+        Makes use of the abstract `get_collection_valid_docs` function
+
+        Args:
+            prompt (str): prompt message
+            from_doc (str | list[str], optional): doc(s) to pull from. Defaults to None.
+            threshold (float, optional): Maximum distance from the query. Defaults to 0.5.
+            limit (int, optional): Maximum documents to be returned. Defaults to 3.
+
+        Advised Return:
+            ```
+            list[{
+                "coll_desc": str, # collection description or empty
+                "coll_name": str, # collection name,
+                "doc": doc , # document returned
+                "metadata": meta, # metadata
+                "distance": float, # distance from the query
+            }]
+            ```
+            : the valid documents (closest to the query)
+            that will be used as knowledge base by the tutor
+        """
         arr = []
         valid_docs = []
         query_limit = limit * 5

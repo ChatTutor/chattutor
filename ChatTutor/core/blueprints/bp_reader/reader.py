@@ -16,9 +16,22 @@ def upload_data_to_process():
     """
     The function `upload_data_to_process` uploads data from a file, extracts the contents, and adds them
     to a database collection with a generated name.
-    :return: a JSON response containing the "collection_name" key. The value of "collection_name" is
-    either False if no file was uploaded, or a generated unique name for the collection if a file was
-    uploaded.
+    URLParams:
+        ```
+        {
+            "file" : list[FormFile]
+        }
+        ```
+    Returns:
+        -  a JSON response containing the "collection_name" key. The value of "collection_name" is
+    either False if no file was uploaded, or a generated unique name for the collection the file was added to
+    if a file was uploaded.
+
+        ```
+        {
+            "collection_name" : str # collection the file was uploaded to
+        }
+        ```
     """
     file = request.files.getlist("file")
     print(file)
@@ -50,9 +63,23 @@ def upload_data_from_drop():
     """
     The function `upload_data_from_drop` uploads data from a file to a database collection, extracts the
     file contents, and adds the extracted texts to the collection.
-    :return: a JSON response. If the try block is executed successfully, it will return a JSON object
-    containing the collection name and the names of the uploaded files. If there is an exception, it
-    will return a JSON object with a message indicating an error.
+    
+    URLParams:
+        ```
+        {
+            "file" : list[FormFile],
+            "collection_name" : str # collection to add to
+        }
+        ```
+    Returns:
+        -  a JSON response containing the "collection_name" key if a file was uploaded.
+
+        ```
+        {
+            "collection_name" : str # collection the file was uploaded to
+            "files_uploaded_name" : list[FormFiles] # uploaded files
+        }
+        ```
     """
     try:
         cname = request.form.get("collection_name")
@@ -87,9 +114,22 @@ def upload_site_url():
     parses the content of each URL, and adds the parsed text to a database. It returns a JSON response
     containing the collection name, URLs, and a list of document names that were successfully added to
     the database.
-    :return: a JSON response. If the code executes without any exceptions, it will return a JSON object
-    containing the collection name, URLs, and a list of document names that were successfully uploaded.
-    If an exception occurs, it will return a JSON object with a message indicating an error.
+    
+    URLParams:
+        ```
+        {
+            "url" : list[str],
+            "name" : str # collection to add to
+        }
+        ```
+    Returns:
+        ```
+        {
+            "collection_name" : str, # collection the urls were uploaded to
+            "urls" : list[str], # original urls
+            "docs" : list[any], # succesfully uploaded urls 
+        }
+        ```
     """
     try:
         ajson = request.json

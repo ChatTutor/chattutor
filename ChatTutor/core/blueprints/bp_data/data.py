@@ -25,7 +25,25 @@ def addtodb():
     """
     The `addtodb` function inserts a message into a database with the provided content, role, chat ID,
     clear number, and time created.
-    :return: a response with the content "inserted!" and the content type "text".
+    
+    URLParams:
+        ```
+        {
+            "content" : str, # content of the message
+            "role" : str  "User" | "Assistant", 
+            "chat_k" : Optional[str],
+            "clear_number" : int, # number of times the chat was cleared
+            "time_created" : int,
+            "credential_token" : Oprional[str] # unused for now
+        }
+        ```
+    Returns:
+        ```
+        {
+            "message_id" : str # inserted message db id
+            ... + all provided info
+        }
+        ```
     """
     data = request.json
     message_id = data.get("message_id", None)
@@ -60,36 +78,26 @@ def addtodb():
                     "time_created": time_created,
                     "credential_token": credential_token})
 
-
-# @data_bp.route("/getfromdb", methods=["POST", "GET"])
-# def getfromdb():
-#     """
-#     The function `getfromdb()` retrieves data from a form, checks if the username and password match a
-#     specific value, and returns a rendered template based on the result.
-#     :return: either a rendered template for displaying messages or a rendered template string for
-#     displaying an error message.
-#     """
-#     data = request.form
-#     username = data.get("lusername", "nan")
-#     passcode = data.get("lpassword", "nan")
-#     if username == os.getenv('ROOT_USER') and passcode == os.getenv('ROOT_PW'):
-#         # messages_arr = messageDatabase.execute_sql(
-#         #     "SELECT * FROM lmessages ORDER BY chat_key, clear_number, time_created",
-#         #     True,
-#         # ) ## TODO : modify
-#         messages_arr = DataBase().all_messages()
-#         renderedString = DataBase().parse_messages(messages_arr)
-#         return flask.render_template(
-#             "display_messages.html", renderedString=renderedString
-#         )
-#     else:
-#         return flask.render_template_string(
-#             'Error, please <a href="/static/display_db.html">Go back</a>'
-#         )
-
-
 @data_bp.route("/addmessagefeedback", methods=["POST", "GET"])
 def addmessagefeedback():
+    """Adds message feedback:
+    URLParams:
+        ```
+        {
+            "message_id" : str, # message id of the liked/unliked message
+            "content" : str "Positive" | "Negative", #  feedback content : positive/negative
+        }
+        ```
+
+    Returns:
+        ```
+        {
+            "message_id": str, # same message id,
+            "feedback_id": str, # inserted feedback id,
+            "feedback_content": str "Positive" | "Negative", # same feedback content
+        }
+        ```
+    """
     data = request.json
     message_id = data.get("message_id")
     if message_id is None:
@@ -100,59 +108,23 @@ def addmessagefeedback():
     print(message_id)
     print(type(message_id))
 
-    DataBase().insert_feedback(FeedbackModel(content=feedback_content, message_id=message_id))
+    feedback, _ = DataBase().insert_feedback(FeedbackModel(content=feedback_content, message_id=message_id))
     print("<< FEEDBACK\n")
+    return jsonify({"message_id": message_id, "feedback_id": feedback.feedback_id, "feedback_content": feedback_content}), 200
 
-    return jsonify({"message_id": message_id, "feedback_id": "idk", "feedback_content": feedback_content}), 200
-
-
-@data_bp.route("/getfromdbng", methods=["POST", "GET"])
-def getfromdbng():
-    """
-    The function `getfromdbng` retrieves messages from a database if the provided username and password
-    match the credentials for the root user.
-    :return: a JSON response. If the username and passcode are os.getenv('ROOT_USER') and os.getenv('ROOT_PW') respectively, it will
-    return a JSON object with a "message" key set to "success" and a "messages" key containing an array
-    of messages. If the username and passcode do not match, it will return a JSON object with a
-    "message" key set to "error".
-    """
-    data = request.json
-    username = data.get("lusername", "nan")
-    passcode = data.get("lpassword", "nan")
-    print(data)
-    print(username, passcode)
-    if username == os.getenv('ROOT_USER') and passcode == os.getenv('ROOT_PW'):
-        messages_arr = DataBase().all_messages()
-        return jsonify({"message": "success", "messages": messages_arr})
-    else:
-        return jsonify({"message": "error"})
-
-
-# @data_bp.route("/exesql", methods=["POST", "GET"])
-# def exesql():
+# TODO : remove this
+# @data_bp.route("/delete_uploaded_data", methods=["POST"])
+# def delete_uploaded_data():
+#     """
+#     The function `delete_uploaded_data` deletes a data source with a given collection name from a
+#     database.
+#     :return: a JSON response with the key "deleted" and the value being the name of the collection that
+#     was deleted.
+#     """
 #     data = request.json
-#     username = data["lusername"]
-#     passcode = data["lpassword"]
-#     sqlexec = data["lexesql"]
-#     if username == os.getenv('ROOT_USER') and passcode == os.getenv('ROOT_PW'):
-#         messages_arr = messageDatabase.execute_sql(sqlexec) ## TODO : modify
-#         return Response(f"{messages_arr}", 200)
-#     else:
-#         return Response("wrong password", 404)
-
-
-@data_bp.route("/delete_uploaded_data", methods=["POST"])
-def delete_uploaded_data():
-    """
-    The function `delete_uploaded_data` deletes a data source with a given collection name from a
-    database.
-    :return: a JSON response with the key "deleted" and the value being the name of the collection that
-    was deleted.
-    """
-    data = request.json
-    collection_name = data["collection"]
-    db.delete_datasource_chroma(collection_name)
-    return jsonify({"deleted": collection_name})
+#     collection_name = data["collection"]
+#     db.delete_datasource_chroma(collection_name)
+#     return jsonify({"deleted": collection_name})
 
 
 @data_bp.route("/delete_doc", methods=["POST"])
@@ -160,8 +132,19 @@ def delete_uploaded_data():
 def delete_doc():
     """
     The `delete_doc` function deletes a document from a specified collection in a database.
-    :return: a JSON response containing the name of the deleted document and the name of the collection
+    URLParams:
+        ```
+        {
+            "collection" : str, # specified chroma collection name
+            "doc" : str # document to remove
+        }
+        ```
+    Returns:
+        - a JSON response containing the name of the deleted document and the name of the collection
     it was deleted from.
+        ```
+        {"deleted": deleted doc, "from_collection": collection}
+        ```
     """
     data = request.json
     collection_name = data["collection"]
@@ -180,8 +163,27 @@ def add_fromdoc_tosection():
     """
     The function `add_fromdoc_tosection` adds a URL to a specific section in a collection and returns a
     JSON response indicating the URL that was added and the collection it was added to.
-    :return: a JSON response containing the URL that was added and the name of the collection it was
+    URLParams:
+        ```
+        {
+            "collection" : str, # specified chroma collection name
+            "section_id" : str, # section id to add url/file to
+            "url_to_add" : str # url that will be added to the section knowledge base
+            # for now only urls are supported in this operation
+        }
+        ```
+    TODO: add another param : "file_to_add" form/multipart that would add files
+    to the knowledge base.
+    
+    Returns:
+    - a JSON response containing the URL that was added and the name of the collection it was
     added to.
+        ```
+        {
+            "added": str, # url_to_add received from body
+            "to_collection": str # collection name received from body
+        }
+        ```
     """
     data = request.json
     collection_name = data["collection"]
@@ -189,9 +191,6 @@ def add_fromdoc_tosection():
     url_to_add = data["url_to_add"]
 
     DataBase().update_section_add_fromdoc(section_id=section_id, from_doc=url_to_add)
-    # messageDatabase.update_section_add_fromdoc(
-    #     section_id=section_id, from_doc=url_to_add
-    # ) ## TODO : modify
     return jsonify({"added": url_to_add, "to_collection": collection_name})
 
 
@@ -199,16 +198,28 @@ def add_fromdoc_tosection():
 def get_section():
     """
     The function `get_section` retrieves a specific section from a collection and returns the section
-    details along with the pulling_from information.
-    :return: a JSON object that contains the sections and the pulling_from values.
+    details along with the pulling_from (knowledge base urls) information.
+
+    URLParams:
+        ```
+        {
+            "collection" : str # collection name
+            "section_id" : str # section id
+        }
+        ```
+    Returns:
+    - a JSON object that contains the sections and the pulling_from values.
+        
+        ```
+        {
+            "sections": list[Section] # sections (at least one),
+            "pulling_from": list[str] # knowledge base of each section
+        }
+        ```
     """
     data = request.json
     collection_name = data["collection"]
     section_id = data["section_id"]
-
-    # sections = messageDatabase.execute_sql(
-    #     f"SELECT * FROM lsections WHERE section_id = '{section_id}'"
-    # ) ## TODO : modify
     sections, _ = DataBase().get_sections_by_id(section_id=section_id)
     pfrom = [s.pulling_from for s in sections]
     return jsonify({"sections": sections, "pulling_from": pfrom})

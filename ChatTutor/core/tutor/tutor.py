@@ -152,6 +152,30 @@ class Tutor(ABC):
         threshold=0.5,
         limit=3,
     ):
+        """Abstract function that should 
+        1. Engineer the prompt based on context (last few messages).
+        2. return the most valid (closest to the question)
+        documents from the embedding database. 
+
+        Args:
+            conversation (list[{"role": str, "content":str}]): conversation
+            from_doc (str | list[str], optional): doc(s) to pull from. Defaults to None.
+            threshold (float, optional): Maximum distance from the query. Defaults to 0.5.
+            limit (int, optional): Maximum documents to be returned. Defaults to 3.
+        
+        Advised Return:
+            ```
+            tuple[list[{"role": str, "content":str}], list[{
+                "coll_desc": str, # collection description or empty
+                "coll_name": str, # collection name,
+                "doc": doc , # document returned
+                "metadata": meta, # metadata
+                "distance": float, # distance from the query
+            }]]
+            ``` : a tuple containing the messages arraywith the latest message
+            modified to fit the context, and the valid documents (closest to the query)
+            that will be used as knowledge base by the tutor
+        """
         pass
 
     def ask_question(
@@ -165,13 +189,31 @@ class Tutor(ABC):
         """Function that responds to an asked question based
         on the current database and the loaded collections from the database
 
+        Makes use of the abstract `process_prompt` function.
+        
         Args:
             conversation : List({role: ... , content: ...})
             from_doc (Doc, optional): Defaults to None.
+            selectedModel (str) : model to use,
+            threshold (float) : maximum distance (distance = 1/ similarity)
+            limit (int) : maximum documents that can be used from the knowledge base
 
         Yields:
-            chunks of text from the response that are provided as such to achieve
-            a tipewriter effect
+            - response: str # text chunks that look like this: 
+            
+            ```
+                "data: {time: int, message: Message.json}}"
+            ```
+            where `Message` looks like this 
+            ```
+            {
+                "content" : str, # chunk content (part of the response)
+                "valid_docs" : Oprional[list], # documents the query used to gain information
+                # yielded only once at the begining
+                "elapsed_time" : seconds, # time taken to generate the first response chunk
+                "processing_prompt_time" : seconds # time taken to process prompt (gain context/use knowledge base etc.)   
+            }
+            ```
         """
         
         st = time.time()
@@ -210,9 +252,9 @@ class Tutor(ABC):
                         yielded_chain["elapsed_time"] = elapsed_time
                         yielded_chain["processing_prompt_time"] = processing_prompt_time
                         yield yielded_chain
-                    continue               
+                    continue
 
-                yield chunk["choices"][0]["delta"]  
+                yield chunk["choices"][0]["delta"]
         except Exception as e:
             import logging
 
@@ -319,8 +361,8 @@ class Tutor(ABC):
         """Returns the generator that generates the response stream of ChatTutor.
 
         Args:
-            conversation (List({role: ... , content: ...})): the current conversation
-            from_doc: specify document if necesary, otherwise set to None
+            conversation (List({role: str , content: str})): the current conversation
+            from_doc (str): specify document if necesary, otherwise set to None
         """
 
         def generate():
