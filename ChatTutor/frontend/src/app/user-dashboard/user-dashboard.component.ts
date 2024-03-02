@@ -1,9 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
+import { DataProviderService } from 'app/dataprovider.service';
 
 @Component({
     selector: 'app-user-dashboard',
     templateUrl: './user-dashboard.component.html',
-    styleUrls: ['./user-dashboard.component.css']
+    styleUrls: ['./user-dashboard.component.css'],
+    providers: [DataProviderService]
 })
 export class UserDashboardComponent implements OnInit {
     email: string
@@ -12,7 +14,8 @@ export class UserDashboardComponent implements OnInit {
     status: String = 'courses'
 
     courses: any[] = []
-
+    constructor(private dataProvider : DataProviderService) {
+    }
 
     switchStatus(newstatus : String) : void {
         this.status = newstatus
@@ -21,16 +24,11 @@ export class UserDashboardComponent implements OnInit {
 
     async ngOnInit(): Promise<void> {
         this.loading = true
-        const respuser = await fetch('/getuser', {method: 'POST', headers: {'Content-Type': 'application/json'}})
-        const user = await respuser.json()
+        const user = await this.dataProvider.getLoggedInUser();
         console.log(user)
         this.email = user["email"]
 
-        const resp = await fetch(`/users/${this.email}/mycourses`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'}
-        })
-        const coursess = await resp.json()
+        const coursess = await this.dataProvider.getUserCourses(this.email);
         console.log(coursess)
 
         this.courses = coursess["courses"]

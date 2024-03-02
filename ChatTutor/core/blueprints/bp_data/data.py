@@ -149,7 +149,7 @@ def delete_doc():
     data = request.json
     collection_name = data["collection"]
     doc_name = data["doc"]
-
+    # TODO: check if collection is owned by the user
     collection = db.client.get_collection(name=collection_name)
     print(collection)
     collection.delete(where={"from_doc": doc_name})
@@ -189,7 +189,7 @@ def add_fromdoc_tosection():
     collection_name = data["collection"]
     section_id = data["section_id"]
     url_to_add = data["url_to_add"]
-
+    # TODO: check if collection is owned by the user
     DataBase().update_section_add_fromdoc(section_id=section_id, from_doc=url_to_add)
     return jsonify({"added": url_to_add, "to_collection": collection_name})
 
@@ -217,6 +217,7 @@ def get_section():
         }
         ```
     """
+    # TODO: check if collection is owned by the user
     data = request.json
     collection_name = data["collection"]
     section_id = data["section_id"]

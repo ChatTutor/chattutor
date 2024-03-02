@@ -15,10 +15,10 @@ class="example-stepper">
         <mat-label>Course Main Page</mat-label>
         <input matInput [(ngModel)]="urltoparse" placeholder="url to parse">
     </mat-form-field>
-    <mat-form-field>
+    <!-- <mat-form-field>
         <mat-label>Custom Course Collection Name/UUID</mat-label>
         <input matInput [(ngModel)]="collectionname" placeholder="collection name">
-    </mat-form-field>
+    </mat-form-field> -->
     <button mat-button color="primary" matStepperNext type="submit" name="submit" (click)="submitUrlScrape()">
         Next
     </button>
@@ -57,7 +57,7 @@ class="example-stepper">
         (your-url))</span>
     </div> -->
 
-    <button mat-button><a href="/">View my new AI-augmented course website!</a></button>
+    <button mat-button><a href="/mycourses">Customize my new AI-augmented course!</a></button>
 </div>
 </mat-step>
 
