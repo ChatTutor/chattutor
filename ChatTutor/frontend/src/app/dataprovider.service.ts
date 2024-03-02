@@ -8,29 +8,60 @@ export class DataProviderService {
 
   constructor(private http: HttpClient) { }
 
+  /**
+   * Generate random string from given chars
+   * @param length 
+   * @param chars 
+   * @returns 
+   */
   randomString(length : number, chars : any) {
       var result = '';
       for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
       return result;
   }
 
+  /**
+   * Generate random string from a-z
+   * @param length 
+   * @returns 
+   */
   randomAlphaString(length : number) {
     return this.randomString(length, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
   }
+
+  /**
+   * Generate random string from a-z 0-9
+   * @param length 
+   * @returns 
+   */
   randomAlphaNumString(length : number) {
     return this.randomString(length, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
   }
 
+  /**
+   * Return logged in user if loggedin
+   * @returns User
+   */
   async getLoggedInUser():  Promise<any> {
     const resp = await fetch('/getuser', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
     return await resp.json();
   }
 
+  /**
+   * 
+   * @returns {"isloggedin" : true/false} true if session is authed, false otherwise
+   */
   async isAuthd():  Promise<any> {
     const resp = await fetch('/isloggedin', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
     return await resp.json();
   }
 
+  /**
+   * Get course sections
+   * @param email owner user email
+   * @param course_id course_id of the course
+   * @returns the user sections
+   */
   async getUserCourseSections(email : string, course_id : any):  Promise<any>  {
     const resp = await fetch(`/users/${email}/courses/${course_id}`, {
       method: 'POST',
@@ -39,6 +70,11 @@ export class DataProviderService {
     return await resp.json();
   }
 
+  /**
+   * Get courses of user
+   * @param email email of user
+   * @returns 
+   */
   async getUserCourses(email: string):  Promise<any> {
     const resp = await fetch(`/users/${email}/mycourses`, {
         method: 'POST',
@@ -47,6 +83,12 @@ export class DataProviderService {
     return await resp.json()
   }
 
+  /**
+   * Delecte a doc from a section
+   * @param doc doc (section) to delete
+   * @param collection collection to delete from
+   * @returns response
+   */
   async deleteDoc_Unsafe(doc : any, collection : any):  Promise<any> {
     let data = JSON.stringify({
         collection: collection,
@@ -56,6 +98,13 @@ export class DataProviderService {
     return await response.json()
   }
 
+  /**
+   * Create collection using webpages specified by the list of urls as sections
+   * @param urls array of strings specifying urls to parse
+   * @param coursename collection name
+   * @param prof prof name
+   * @returns 
+   */
   async addUrlsToKnowledgeBase(urls : string[], coursename : string, prof : string) {
     let data = JSON.stringify({url_to_parse: urls, collection_name: coursename, course_name: coursename, coursename: coursename, proffessor: prof})
     let response = await fetch('/prep/course/parse', {method: 'POST', headers:{'Content-Type':'application/json'}, body: data})
