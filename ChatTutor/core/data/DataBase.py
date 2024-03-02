@@ -67,7 +67,6 @@ class DataBase(metaclass=Singleton):
     """
     def __init__(self) -> None:
         print("Initializing DataBase")
-        self.connection = Connection()
     
     def insert_user(self, user : UserModel):
         """Insert User
@@ -75,7 +74,7 @@ class DataBase(metaclass=Singleton):
         Args:
             user (User : UserModel): user object
         """
-        with self.connection.session() as session:
+        with Connection().session() as session:
             session.add(user)
             session.commit()
             return user, session
@@ -91,7 +90,7 @@ class DataBase(metaclass=Singleton):
         """
         if isinstance(message, MessageModel) is False:
             message : MessageModel = message_oldformat_to_new(message)
-        with self.connection.session() as session:
+        with Connection().session() as session:
             session.add(message)
             session.commit()
             session.refresh(message)
@@ -112,7 +111,7 @@ class DataBase(metaclass=Singleton):
                 chat = ChatModel()
             else:
                 chat = ChatModel(chat_id=chat)
-        with self.connection.session() as session:
+        with Connection().session() as session:
             session.add(chat)
             session.commit()
             return chat.chat_id, session
@@ -126,7 +125,7 @@ class DataBase(metaclass=Singleton):
         Returns:
             tuple[FeedbackModel, Session]: _description_
         """
-        with self.connection.session() as session:
+        with Connection().session() as session:
             session.add(args[0])
             session.commit()
             session.refresh(args[0])
@@ -141,7 +140,7 @@ class DataBase(metaclass=Singleton):
         Returns:
             tuple[CourseModel, Session]: _description_
         """
-        with self.connection.session() as session:
+        with Connection().session() as session:
             session.add(args[0])
             session.commit()
             session.refresh(args[0])
@@ -156,7 +155,7 @@ class DataBase(metaclass=Singleton):
         Returns:
             tuple[SectionModel, Session]: _description_
         """
-        with self.connection.session() as session:
+        with Connection().session() as session:
             print("INSERTING SECTION: ")
             print(args[0])
             session.add(args[0])
@@ -171,7 +170,7 @@ class DataBase(metaclass=Singleton):
         Args:
             email (str): email
         """
-        with self.connection.session() as session:
+        with Connection().session() as session:
             statement = select(UserModel).where(UserModel.email == email)
             results = session.exec(statement).all()
             session.expunge_all()
@@ -183,7 +182,7 @@ class DataBase(metaclass=Singleton):
         Args:
             uid (str): uid
         """
-        with self.connection.session() as session:
+        with Connection().session() as session:
             statement = select(UserModel).where(UserModel.user_id == uid)
             results = session.exec(statement).all()
             session.expunge_all()
@@ -199,7 +198,7 @@ class DataBase(metaclass=Singleton):
         Returns:
             tuple[UserModel, CourseModel, Session]: user, course, session
         """
-        with self.connection.session() as session:
+        with Connection().session() as session:
             user = session.exec(select(UserModel).where(UserModel.user_id == user_id)).one()
             course = session.exec(select(CourseModel).where(CourseModel.course_id == course_id)).one()
             user.courses.append(course)
@@ -217,7 +216,7 @@ class DataBase(metaclass=Singleton):
         Returns:
             _type_: _description_
         """
-        with self.connection.session() as session:
+        with Connection().session() as session:
             section = session.exec(select(SectionModel).where(SectionModel.section_id == section_id)).one()
             course = session.exec(select(CourseModel).where(CourseModel.course_id == course_id)).one()
             section.courses.append(course)
@@ -234,7 +233,7 @@ class DataBase(metaclass=Singleton):
         Returns:
             tuple[list[CourseModel], Session]: courses and session
         """
-        with self.connection.session() as session:
+        with Connection().session() as session:
             user = session.exec(select(UserModel).where(UserModel.user_id == user_id)).one()
             return user.courses, session
 
@@ -247,7 +246,7 @@ class DataBase(metaclass=Singleton):
         Returns:
             tuple[list[CourseModel], Session]: courses and session
         """
-        with self.connection.session() as session:
+        with Connection().session() as session:
             user = session.exec(select(UserModel).where(UserModel.email == email)).one()
             return user.courses, session
     
@@ -260,7 +259,7 @@ class DataBase(metaclass=Singleton):
         Returns:
             tuple[list[SectionModel], Session]: sections and session
         """
-        with self.connection.session() as session:
+        with Connection().session() as session:
             course = session.exec(select(CourseModel).where(CourseModel.course_id == course_id)).one()
             return course.sections, session
     
@@ -273,7 +272,7 @@ class DataBase(metaclass=Singleton):
         Returns:
             tuple[list[dict | any], Session]: sections and session
         """
-        with self.connection.session() as session:
+        with Connection().session() as session:
             course = session.exec(select(CourseModel).where(CourseModel.course_id == course_id)).one()
             name = course.name
             result = [
@@ -297,7 +296,7 @@ class DataBase(metaclass=Singleton):
         Returns:
             tuple[Sequence[SectionModel], Session]: sections and session
         """
-        with self.connection.session() as session:
+        with Connection().session() as session:
             sections = session.exec(select(SectionModel).where(SectionModel.section_id == section_id)).all()
             return sections, session
         
@@ -313,7 +312,7 @@ class DataBase(metaclass=Singleton):
         Returns:
             tuple[SectionModel, Session]: section and session
         """
-        with self.connection.session() as session:
+        with Connection().session() as session:
             section = session.exec(select(SectionModel).where(SectionModel.section_id == section_id)).one()
             section.pulling_from = section.pulling_from + "$" + from_doc
             session.add(section)
@@ -327,7 +326,7 @@ class DataBase(metaclass=Singleton):
         Returns:
             Sequence[MessageModel]: all messages
         """
-        with self.connection.session() as session:
+        with Connection().session() as session:
             stmt = select(MessageModel).order_by(MessageModel.chat_key).order_by(MessageModel.time_created)
             result = session.exec(stmt).all()
             return result

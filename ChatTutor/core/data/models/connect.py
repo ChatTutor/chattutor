@@ -1,12 +1,30 @@
 from sqlmodel import Field, Session, SQLModel, create_engine, select, delete
 import os
+import threading
+import functools
+
+def synchronized(wrapped):
+    lock = threading.Lock()
+    @functools.wraps(wrapped)
+    def _wrap(*args, **kwargs):
+        print("Calling '%s' with Lock %s", (wrapped.__name__, id(lock)))
+        with lock:
+            return wrapped(*args, **kwargs)
+    return _wrap
 
 class Singleton(type):
     _instances = {}
+
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+            print(cls)
+            cls._locked_call(*args, **kwargs)
         return cls._instances[cls]
+
+    @synchronized
+    def _locked_call(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
 
 #Python3
 class Connection(metaclass=Singleton):
