@@ -42,6 +42,7 @@ from core.definitions import Doc
 import io
 import uuid
 from werkzeug.datastructures import FileStorage
+from authlib.integrations.flask_client import OAuth
 
 # import markdown
 import flask_login
@@ -74,6 +75,21 @@ app.register_blueprint(data_bp)
 app.register_blueprint(users_bp)
 app.register_blueprint(prep_bp, url_prefix="/prep")
 app.register_blueprint(reader_bp)
+
+# ------------ OAuth ------------
+oauth = OAuth(app)
+google = oauth.register(
+    name='google',
+    client_id=os.environ['OAUTH_CLIENT_ID'],
+    client_secret=os.environ['OAUTH_CLIENT_SECRET'],
+    access_token_url='https://accounts.google.com/o/oauth2/token',
+    access_token_params=None,
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    authorize_params=None,
+    api_base_url='https://www.googleapis.com/oauth2/v1/',
+    userinfo_endpoint='https://openidconnect.googleapis.com/v1/userinfo',
+    client_kwargs={'scope': 'openid email profile'},
+)
 
 # ------------ LOGIN ------------
 

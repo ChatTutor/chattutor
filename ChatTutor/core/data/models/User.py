@@ -34,6 +34,8 @@ class User(flask_login.UserMixin, SQLModel, table=True):
         index=True,
         nullable=False,
     )
+    google_id: Optional[str]
+    name: Optional[str]
     email : str
     password_hash : str
     user_type : str

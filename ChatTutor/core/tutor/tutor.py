@@ -172,7 +172,8 @@ class Tutor(ABC):
                 "metadata": meta, # metadata
                 "distance": float, # distance from the query
             }]]
-            ``` : a tuple containing the messages arraywith the latest message
+            ```
+            : a tuple containing the messages arraywith the latest message
             modified to fit the context, and the valid documents (closest to the query)
             that will be used as knowledge base by the tutor
         """

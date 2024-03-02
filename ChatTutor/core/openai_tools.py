@@ -29,7 +29,7 @@ def load_env():
         
         print(keys)
         
-        envars = ["VECTOR_DB_HOST", "SQL_DB_HOST", "SQL_DB_USER", "SQL_DB_PASSWORD", "SQL_DB", "STAT_SQL_DB", "ROOT_USER", "ROOT_PW"]
+        envars = ["VECTOR_DB_HOST", "SQL_DB_HOST", "SQL_DB_USER", "SQL_DB_PASSWORD", "SQL_DB", "STAT_SQL_DB", "ROOT_USER", "ROOT_PW", "TRIGGER_ID", "OAUTH_CLIENT_ID", "OAUTH_CLIENT_SECRET", "PLATFORM", "SERVICE_NAME"]
         
         for envar in envars:
             if envar in keys:

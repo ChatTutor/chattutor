@@ -14,6 +14,7 @@ class Connection(metaclass=Singleton):
         print("Initializing DataBase connection")
         connection_string = "mysql+pymysql://%s:%s@%s/%s" % (os.getenv('SQL_DB_USER'), os.getenv('SQL_DB_PASSWORD'), os.getenv('SQL_DB_HOST'), os.getenv('SQL_DB'))
         self.engine = create_engine(connection_string, echo=True)
+        # Only use these when resetting the tables
         # SQLModel.metadata.drop_all(self.engine)
         # SQLModel.metadata.create_all(self.engine)
     

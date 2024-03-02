@@ -70,10 +70,10 @@ class DataBase(metaclass=Singleton):
         self.connection = Connection()
     
     def insert_user(self, user : UserModel):
-        """Insert User Based on Mixin Flask Object
+        """Insert User
 
         Args:
-            user (User : UserFlaskMixin): user object
+            user (User : UserModel): user object
         """
         with self.connection.session() as session:
             session.add(user)
