@@ -5,10 +5,11 @@ from datetime import datetime
 from sqlmodel import Field
 from dataclasses import dataclass
 
+
 @dataclass
 class SectionCourseLink(SQLModel, table=True):
     """Section <-> Course Link (MtoM)
-    
+
     Columns:
         - section_id (UUID): foreign_key "section.section_id" - id of course
         - course_id (UUID): foreign_key "course.course_id" - id of section
@@ -17,9 +18,10 @@ class SectionCourseLink(SQLModel, table=True):
         SQLModel (SQLModel): SQLModel
         table (bool, optional): Defaults to True.
     """
+
     section_id: str = Field(foreign_key="section.section_id", primary_key=True)
     course_id: str = Field(foreign_key="course.course_id", primary_key=True)
-  
+
     def jsonserialize(self):
         d = self.__dict__
         d["_sa_instance_state"] = None

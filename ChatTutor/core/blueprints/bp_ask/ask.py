@@ -1,10 +1,13 @@
-
-from core.extensions import (db)
-from flask import (Blueprint, Response, request, stream_with_context)
+from core.extensions import db
+from flask import Blueprint, Response, request, stream_with_context
 from core.tutor.tutorfactory import TutorFactory, TutorTypes
 from core.tutor.tutorfactory import CourseTutorType, NSFTutorType
-from core.tutor.systemmsg import (cqn_system_message, default_system_message,
-                        interpreter_system_message)
+from core.tutor.systemmsg import (
+    cqn_system_message,
+    default_system_message,
+    interpreter_system_message,
+)
+
 tutorfactory = TutorFactory(db)
 ask_bp = Blueprint("bp_ask", __name__)
 
@@ -36,18 +39,18 @@ def ask():
     Returns:
         - a stream response generator
     Yields:
-        response: str # text chunks that look like this: 
+        response: str # text chunks that look like this:
         ```
             "data: {time: int, message: Message.json}}"
         ```
-        where `Message` looks like this 
+        where `Message` looks like this
         ```
         {
             "content" : str, # chunk content (part of the response)
             "valid_docs" : Oprional[list], # documents the query used to gain information
             # yielded only once at the begining
             "elapsed_time" : seconds, # time taken to generate the first response chunk
-            "processing_prompt_time" : seconds # time taken to process prompt (gain context/use knowledge base etc.)   
+            "processing_prompt_time" : seconds # time taken to process prompt (gain context/use knowledge base etc.)
         }
         ```
     """
@@ -63,9 +66,9 @@ def ask():
     response_type = data.get("response_type", "COURSE_RESTRICTED")
     from_doc = data.get("from_doc")
     selected_model = data.get("selectedModel", "gpt-3.5-turbo-16k")
-    
+
     tutor_type = TutorTypes.from_string(response_type)
-    
+
     # Logging whether the request is specific to a document or can be from any document
     # todo: get bot type from token
     print("SELECTED MODEL:", selected_model)
@@ -73,10 +76,9 @@ def ask():
     _chattutor = tutorfactory.build_empty(tutor_type)
     if collection_name != None and collection_name != []:
         _chattutor = tutorfactory.build(tutor_type, collection_name, collection_desc)
-    generate = _chattutor.stream_response_generator(
-        conversation, from_doc, selected_model
-    )
+    generate = _chattutor.stream_response_generator(conversation, from_doc, selected_model)
     return Response(stream_with_context(generate()), content_type="text/event-stream")
+
 
 # TODO: see what's going on here with the interpreter
 @ask_bp.route("/interpreter", methods=["POST", "GET"])
@@ -100,11 +102,11 @@ def ask_interpreter():
     from_doc = data.get("from_doc")
     selected_model = data.get("selectedModel", "gpt-4")
     tutor_type = TutorTypes.from_string(response_type)
-    
+
     # Logging whether the request is specific to a document or can be from any document
     print("SELECTED MODEL:", selected_model)
     print(collection_name)
-    
+
     _chattutor = tutorfactory.build(tutor_type, collection_name, collection_desc)
     generate = _chattutor.stream_interpreter_response_generator(
         conversation, from_doc, selected_model

@@ -4,8 +4,9 @@ import uuid
 import bcrypt
 import flask
 import flask_login
-from flask import (Blueprint, jsonify, request)
+from flask import Blueprint, jsonify, request
 from core.data.DataBase import UserModel
+
 users_bp = Blueprint("bp_users", __name__)
 
 # def generate_token(email):
@@ -27,13 +28,14 @@ from core.data import (
     DataBase,
 )
 
+
 @users_bp.route("/register", methods=["POST"])
 def register_user():
     """
     The function `register_user()` registers a new user by retrieving their email, email, and
     password from a form, checking if the email already exists in the database, creating a new User
     object with the provided information, and inserting the user into the database.
-    
+
     Returns:
         - a string message indicating the result of the user registration process. If the email
     already exists in the database, it returns a message stating that the email already exists. If
@@ -57,12 +59,12 @@ def register_user():
     return f'User {user} inserted, please <a href="/login">Login</a>'
 
 
-@users_bp.route('/auth/google', methods=['POST'])
+@users_bp.route("/auth/google", methods=["POST"])
 def oauth_register():
     user_info = request.json
-    google_id = user_info.get('google_id')
-    email = user_info.get('email')
-    name = user_info.get('name')
+    google_id = user_info.get("google_id")
+    email = user_info.get("email")
+    name = user_info.get("name")
 
     if not google_id or not email or not name:
         return jsonify({"error": "Missing information from Google OAuth"}), 400
@@ -70,24 +72,47 @@ def oauth_register():
     # Register user if it doesn't exist
     users, _ = DataBase().get_users_by_email(email=email)
     if len(users) == 0:
-        user = UserModel(email=email, password_hash="unset", user_type="PROFESSOR", google_id=google_id, name=name)
+        user = UserModel(
+            email=email,
+            password_hash="unset",
+            user_type="PROFESSOR",
+            google_id=google_id,
+            name=name,
+        )
         print(user)
         try:
             DataBase().insert_user(user)
-            return jsonify({'message': 'User created', 'user': {'google_id': google_id, 'email': email, 'name': name}}), 201
+            return (
+                jsonify(
+                    {
+                        "message": "User created",
+                        "user": {"google_id": google_id, "email": email, "name": name},
+                    }
+                ),
+                201,
+            )
         except Exception as e:
-            return jsonify({'error': str(e)}), 500
-    
+            return jsonify({"error": str(e)}), 500
+
     flask_login.login_user(users[0])
-    
-    return jsonify({'message': 'User logged in', 'user': {'google_id': google_id, 'email': email, 'name': name}}), 201
+
+    return (
+        jsonify(
+            {
+                "message": "User logged in",
+                "user": {"google_id": google_id, "email": email, "name": name},
+            }
+        ),
+        201,
+    )
+
 
 @users_bp.route("/login", methods=["POST"])
 def login():
     """
     The login function checks if the email and password provided by the user match the stored
     email and password in the database, and logs the user in if they match.
-    
+
     Returns:
         - The function `login()` returns either 'Invalid email', 'Bad login, <a
     href="/">Return</a>', or a redirect to "/protected" depending on the conditions met in the code.
@@ -144,7 +169,11 @@ def isloggedin():
     the user is logged in or not. If the current user is authenticated, it returns {'loggedin': True},
     otherwise it returns {'loggedin': False}.
     """
-    print("Is logged in: ", flask_login.current_user, flask_login.current_user.is_authenticated)
+    print(
+        "Is logged in: ",
+        flask_login.current_user,
+        flask_login.current_user.is_authenticated,
+    )
     if flask_login.current_user.is_authenticated:
         return jsonify({"loggedin": True})
     return jsonify({"loggedin": False})
@@ -165,7 +194,7 @@ def getusercourses(email):
         ```
     Returns:
         - a JSON response containing the courses associated with the given email.
-        
+
         ```
         {
             "courses" : list[CourseModel]
@@ -189,13 +218,13 @@ def getusercoursessections(email, course):
     Args:
         email (str): The `email` parameter is the email of the user for whom we want to retrieve
     the courses and sections. It is used to check if the user is authorized to access the information
-        
+
         course (str): The "course" parameter is the ID or name of the course for which you want to retrieve
     the sections
-    
+
     Returns:
         - a JSON object containing the sections of a specific course.
-        
+
         ```
         {
             "sections": list[{
@@ -224,13 +253,13 @@ def getusercoursessectionsv1(email, course):
     Args:
         email (str): The `email` parameter is the email of the user for whom we want to retrieve
     the courses and sections. It is used to check if the user is authorized to access the information
-        
+
         course (str): The "course" parameter is the ID or name of the course for which you want to retrieve
     the sections
-    
+
     Returns:
         - a JSON object containing the sections of a specific course.
-        
+
         ```
         {
             "sections": list[SectionModel] # sections in new format
@@ -249,7 +278,7 @@ def student_register():
     The function `student_register` registers a new student user by retrieving the email, email, and
     password from a form, checking if the email already exists, creating a new User object with the
     provided information, and inserting the user into the message database.
-    
+
     Returns:
     - a string message indicating the result of the user registration process. If the email
     already exists in the database, it returns a message stating that the email already exists. If

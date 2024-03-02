@@ -1,10 +1,9 @@
 # import pymysql
 
 import flask
-from core.extensions import (db)
-from core.tutor import (Tutor)
-from flask import (Blueprint, redirect,
-                   url_for)
+from core.extensions import db
+from core.tutor import Tutor
+from flask import Blueprint, redirect, url_for
 from nice_functions import pprint, time_it
 
 # import markdown

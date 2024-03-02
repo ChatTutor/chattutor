@@ -25,7 +25,7 @@ from core.data import (
     SectionModel,
     ChatModel,
     CourseModel,
-    FeedbackModel
+    FeedbackModel,
 )
 
 
@@ -111,8 +111,7 @@ class URLSpider:
         """
         lock.acquire()
         print("starting thread!")
-        if (len(self.spider_urls) == 0
-                or len(self.spider_urls) > self.max_number_of_urls):
+        if len(self.spider_urls) == 0 or len(self.spider_urls) > self.max_number_of_urls:
             return
 
         urltoapp = self.spider_urls.pop(0)
@@ -129,7 +128,6 @@ class URLSpider:
         except:
             print(f"error while parsing {urltoapp}")
             return
-
 
         soup = BeautifulSoup(page.content, "html.parser")
         hrefs = soup.find_all("a", href=True)
@@ -167,7 +165,7 @@ class URLSpider:
             g = "OK"
 
             if (
-                    "http://" in shr or "https://" in shr
+                "http://" in shr or "https://" in shr
             ) and dom not in shr:  # if url be havin' http://
                 g = "NO"
             else:
@@ -189,9 +187,9 @@ class URLSpider:
                     if not self.visited.get(g):
                         self.node_degree[g] = self.node_degree[urltoapp] + 1
                         if (
-                                self.node_degree[g] < self.MAX_LEVEL_PARQ
-                                and g not in self.spider_urls
-                                and g not in s_urls
+                            self.node_degree[g] < self.MAX_LEVEL_PARQ
+                            and g not in self.spider_urls
+                            and g not in s_urls
                         ):
                             print("g: " + g)
                             print(s_urls)
@@ -281,12 +279,12 @@ class URLSpider:
     #     return section_id, to_add
 
     def parse_url_array(
-            self,
-            lock: Lock,
-            chroma_db,
-            collection_name,
-            course_id,
-            addToMessageDB=True,
+        self,
+        lock: Lock,
+        chroma_db,
+        collection_name,
+        course_id,
+        addToMessageDB=True,
     ):
         """
         The function `parse_url_array` parses a URL array, extracts text from the URLs, adds the text to
@@ -325,13 +323,11 @@ class URLSpider:
         file = FileStorage(stream=io.BytesIO(bytes(site_text, "utf-8")), name=navn)
         f_f = (file, navn)
         doc = Doc(docname=f_f[1], citation="", dockey=f_f[1])
-        texts = parse_plaintext_file_read(
-            f_f[0], doc=doc, chunk_chars=2000, overlap=100
-        )
+        texts = parse_plaintext_file_read(f_f[0], doc=doc, chunk_chars=2000, overlap=100)
 
         section_id = navn
         print("finish ..")
-        print("@chroma: adding texts... ",  len(texts), strv)
+        print("@chroma: adding texts... ", len(texts), strv)
         chroma_db.add_texts_chroma_lock(texts, lock=lock)
         print("@chroma: added texts! ", strv)
         print("@database: adding to db... ", strv)
@@ -339,9 +335,7 @@ class URLSpider:
         DataBase().insert_section(
             SectionModel(section_id=section_id, pulling_from=section_id, sectionurl=strv)
         )
-        DataBase().establish_course_section_relationship(
-            section_id=section_id, course_id=course_id
-        )
+        DataBase().establish_course_section_relationship(section_id=section_id, course_id=course_id)
         print("@database: added section & link to db! ", strv)
 
         lock.acquire()
@@ -353,7 +347,6 @@ class URLSpider:
         }
         lock.release()
         print("\n\n")
-
 
     def dfsjdlf(self):
         print("Yeyyy")
@@ -391,15 +384,15 @@ class URLSpider:
         return self.all_urls
 
     def new_spider_function(
-            self,
-            urltoapp,
-            save_to_database,
-            collection_name,
-            course_name,
-            proffessor,
-            course_id,
-            produce_bfs=True,
-            current_user=None,
+        self,
+        urltoapp,
+        save_to_database,
+        collection_name,
+        course_name,
+        proffessor,
+        course_id,
+        produce_bfs=True,
+        current_user=None,
     ):
         """
         The function `new_spider_function` is used to crawl and scrape data from a website, save it to a
@@ -433,10 +426,10 @@ class URLSpider:
                 name=course_name,
                 proffessor=proffessor,
                 mainpage=urltoapp,
-                collectionname=collection_name
+                collectionname=collection_name,
             )
         )
-        
+
         DataBase().insert_user_to_course(user_id=current_user.user_id, course_id=course_id)
         save_to_database.load_datasource(collection_name)
         print("inserted date")
@@ -449,7 +442,6 @@ class URLSpider:
             self.produce_bfs_array(urltoapp=urltoapp, lock=lock)
             print("All urls", self.all_urls)
             print("produced bfs array!!")
-
 
         THREAD_COUNT = self.TH_COUNT
         print("produced array successfully!")
@@ -473,7 +465,6 @@ class URLSpider:
                 )
                 thread.start()
                 threads.append(thread)
-
 
             for thread in threads:
                 thread.join()

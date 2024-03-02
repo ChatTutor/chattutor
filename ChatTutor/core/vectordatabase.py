@@ -7,7 +7,7 @@ import openai
 from chromadb.utils import embedding_functions
 from core.definitions import Text
 
-# Setting up user 
+# Setting up user
 username = "mit.quantum.ai"
 
 
@@ -25,10 +25,7 @@ def embedding_function(texts, model="text-embedding-ada-002"):
     if isinstance(texts, str):
         texts = [texts]
     texts = [t.replace("\n", " ") for t in texts]
-    return [
-        data["embedding"]
-        for data in openai.Embedding.create(input=texts, model=model)["data"]
-    ]
+    return [data["embedding"] for data in openai.Embedding.create(input=texts, model=model)["data"]]
 
 
 # Loading API keys from .env.yaml
@@ -91,9 +88,7 @@ class VectorDatabase:
 
     def load_datasource_chroma(self, collection_name):
         """Load Chroma collection"""
-        openai_ef = embedding_functions.OpenAIEmbeddingFunction(
-            model_name="text-embedding-ada-002"
-        )
+        openai_ef = embedding_functions.OpenAIEmbeddingFunction(model_name="text-embedding-ada-002")
         self.datasource = self.client.get_or_create_collection(
             name=collection_name, embedding_function=openai_ef
         )
@@ -208,9 +203,7 @@ class VectorDatabase:
                     include=include,
                 )
         else:
-            return self.datasource.query(
-                query_texts=prompt, n_results=n_results, include=include
-            )
+            return self.datasource.query(query_texts=prompt, n_results=n_results, include=include)
 
     def get_chroma(self, n_results, from_doc, include=["documents"]):
         """

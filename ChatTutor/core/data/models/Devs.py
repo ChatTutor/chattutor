@@ -8,6 +8,7 @@ from core.data.models.SectionCourseLink import SectionCourseLink
 from core.data.models.UserCourseLink import UserCourseLink
 from dataclasses import dataclass
 
+
 @dataclass
 class Devs(SQLModel, table=True):
     """DevUser Model
@@ -22,6 +23,7 @@ class Devs(SQLModel, table=True):
         SQLModel (SQLModel): SQLModel
         table (bool, optional): Defaults to True.
     """
+
     username: str = Field(primary_key=True)
     email: str
     password: str

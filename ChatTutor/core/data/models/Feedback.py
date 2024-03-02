@@ -5,10 +5,11 @@ from datetime import datetime
 from sqlmodel import Field
 from dataclasses import dataclass
 
+
 @dataclass
 class Feedback(SQLModel, table=True):
     """### Feedback Model
-    
+
     Columns:
         - feedback_id (UUID) : factory generated feedback id
         - message_id (UUID) : foreign_key "message.mes_id"
@@ -17,6 +18,7 @@ class Feedback(SQLModel, table=True):
         SQLModel (SQLModel): SQLModel
         table (bool, optional): Defaults to True.
     """
+
     feedback_id: str = Field(
         default_factory=uuid_pkg.uuid4,
         primary_key=True,

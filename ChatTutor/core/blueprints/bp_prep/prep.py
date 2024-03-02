@@ -3,9 +3,9 @@ import uuid
 
 # import markdown
 import flask_login
-from core.extensions import (db)
+from core.extensions import db
 from core.url_spider import URLSpider
-from flask import (Blueprint, Response, jsonify, request, stream_with_context)
+from flask import Blueprint, Response, jsonify, request, stream_with_context
 from nice_functions import pprint
 
 prep_bp = Blueprint("bp_prep", __name__)

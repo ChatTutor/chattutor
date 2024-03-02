@@ -7,9 +7,18 @@ import tiktoken
 import time
 import json
 from core.extensions import stream_text
-from nice_functions import (pprint, bold, green, blue, red, time_it, time_it_r)
-from core.tutor.systemmsg import cqn_system_message, default_system_message, interpreter_system_message
-from core.tutor.utils import remove_score_and_doc_from_valid_docs, yield_docs_and_first_sentence_if_tutor_id_not_apologizing
+from nice_functions import pprint, bold, green, blue, red, time_it, time_it_r
+from core.tutor.systemmsg import (
+    cqn_system_message,
+    default_system_message,
+    interpreter_system_message,
+)
+from core.tutor.utils import (
+    remove_score_and_doc_from_valid_docs,
+    yield_docs_and_first_sentence_if_tutor_id_not_apologizing,
+)
+
+
 class Tutor(ABC):
     """
     Tutor class
@@ -58,7 +67,6 @@ class Tutor(ABC):
         """
         self.collections[name] = desc
 
-
     def engineer_prompt(self, conversation, truncating_at=10, context=True):
         """
         Args:
@@ -71,26 +79,24 @@ class Tutor(ABC):
         if not context:
             return conversation[-1]["content"], False, False, ""
         truncated_convo = [
-            f"\n\n{c['role']}: {c['content']}"
-            for c in conversation[-truncating_at:][:-1]
+            f"\n\n{c['role']}: {c['content']}" for c in conversation[-truncating_at:][:-1]
         ]
         # todo: fix prompt to take context from all messages
         prompt = conversation[-1]["content"]
         print("entering engineer_prompt")
         # pprint("truncated_convo", truncated_convo)
-        
-         
-        is_generic_message = "NO" # currenlty not used
+
+        is_generic_message = "NO"  # currenlty not used
         # is_generic_message = time_it(self.simple_gpt, "is_generic_message")(
         #     f"""
-        #     You are a model that detects weather a user given message is or isn't a generic message (a greeting or thanks of anything like that). 
+        #     You are a model that detects weather a user given message is or isn't a generic message (a greeting or thanks of anything like that).
         #     Respond ONLY with YES or NO.
         #         - YES if the message is a generic message (a greeting or thanks of anything like that)
         #         - NO if the message asks something about a topic, person, scientist, or asks for further explanations on concepts that were discussed above.
 
         #     The current conversation between the user and the bot is:
-            
-        #     {truncated_convo}            
+
+        #     {truncated_convo}
         #     """,
         #     f"If the usere were to ask this: '{prompt}', would you clasify it as a message that refers to above messages from context? Respond only with YES or NO!",
         # )
@@ -117,7 +123,6 @@ class Tutor(ABC):
         pprint("is_furthering_message", is_furthering_message)
         pprint("get_furthering_message", get_furthering_message)
 
-        
         if is_furthering_message:
             pprint("getting contex...")
             get_furthering_message = time_it(self.simple_gpt, "get_furthering_message")(
@@ -138,7 +143,6 @@ class Tutor(ABC):
             get_furthering_message = "NO"
         if is_furthering_message:
             prompt += f"\n({get_furthering_message[4:]})"
-        
 
         pprint("engineered prompt", green(prompt))
 
@@ -152,17 +156,17 @@ class Tutor(ABC):
         threshold=0.5,
         limit=3,
     ):
-        """Abstract function that should 
+        """Abstract function that should
         1. Engineer the prompt based on context (last few messages).
         2. return the most valid (closest to the question)
-        documents from the embedding database. 
+        documents from the embedding database.
 
         Args:
             conversation (list[{"role": str, "content":str}]): conversation
             from_doc (str | list[str], optional): doc(s) to pull from. Defaults to None.
             threshold (float, optional): Maximum distance from the query. Defaults to 0.5.
             limit (int, optional): Maximum documents to be returned. Defaults to 3.
-        
+
         Advised Return:
             ```
             tuple[list[{"role": str, "content":str}], list[{
@@ -191,7 +195,7 @@ class Tutor(ABC):
         on the current database and the loaded collections from the database
 
         Makes use of the abstract `process_prompt` function.
-        
+
         Args:
             conversation : List({role: ... , content: ...})
             from_doc (Doc, optional): Defaults to None.
@@ -200,23 +204,23 @@ class Tutor(ABC):
             limit (int) : maximum documents that can be used from the knowledge base
 
         Yields:
-            - response: str # text chunks that look like this: 
-            
+            - response: str # text chunks that look like this:
+
             ```
                 "data: {time: int, message: Message.json}}"
             ```
-            where `Message` looks like this 
+            where `Message` looks like this
             ```
             {
                 "content" : str, # chunk content (part of the response)
                 "valid_docs" : Oprional[list], # documents the query used to gain information
                 # yielded only once at the begining
                 "elapsed_time" : seconds, # time taken to generate the first response chunk
-                "processing_prompt_time" : seconds # time taken to process prompt (gain context/use knowledge base etc.)   
+                "processing_prompt_time" : seconds # time taken to process prompt (gain context/use knowledge base etc.)
             }
             ```
         """
-        
+
         st = time.time()
         messages, valid_docs = self.process_prompt(conversation, from_doc, threshold, limit)
         en = time.time()
@@ -230,7 +234,7 @@ class Tutor(ABC):
                 presence_penalty=0.0,
                 stream=True,
             )
-            
+
             # first_sentence = rf"({required_level_of_information}) "
             first_sentence = ""
             first_sentence_processed = False
@@ -239,17 +243,19 @@ class Tutor(ABC):
             valid_docs = remove_score_and_doc_from_valid_docs(valid_docs)
 
             for chunk in response:
-                # cache first setences to process it content and decide later on if we send or not documents  
+                # cache first setences to process it content and decide later on if we send or not documents
                 if len(first_sentence) < 20:
-                    first_sentence+=chunk["choices"][0]["delta"]["content"]
+                    first_sentence += chunk["choices"][0]["delta"]["content"]
                     continue
 
                 # process first sentence
                 if len(first_sentence) >= 20 and not first_sentence_processed:
                     first_sentence_processed = True
-                    first_sentence+=chunk["choices"][0]["delta"]["content"]
+                    first_sentence += chunk["choices"][0]["delta"]["content"]
                     print("first_sentence", green(first_sentence))
-                    for yielded_chain in yield_docs_and_first_sentence_if_tutor_id_not_apologizing(first_sentence, valid_docs):
+                    for yielded_chain in yield_docs_and_first_sentence_if_tutor_id_not_apologizing(
+                        first_sentence, valid_docs
+                    ):
                         yielded_chain["elapsed_time"] = elapsed_time
                         yielded_chain["processing_prompt_time"] = processing_prompt_time
                         yield yielded_chain
@@ -260,7 +266,7 @@ class Tutor(ABC):
             import logging
 
             logging.error("Error at %s", "division", exc_info=e)
-            yield {"content": "", "valid_docs": []}   
+            yield {"content": "", "valid_docs": []}
             # An error occured
             yield {
                 "content": """Sorry, I am not able to provide a response. 
@@ -306,7 +312,13 @@ class Tutor(ABC):
         pprint("total tokens in conversation (does not include system role):", tokens)
         return conversation
 
-    def simple_gpt(self, system_message, user_message, models_to_try = [OPENAI_DEFAULT_MODEL], temperature=1):
+    def simple_gpt(
+        self,
+        system_message,
+        user_message,
+        models_to_try=[OPENAI_DEFAULT_MODEL],
+        temperature=1,
+    ):
         """Getting model's response for a simple conversation consisting of a system message and a user message
 
         Args:
@@ -334,7 +346,8 @@ class Tutor(ABC):
                 return response.choices[0].message.content
             except Exception as e:
                 print(red(model_to_try), "FAILED!")
-                if model_to_try == models_to_try[-1]: raise(e)
+                if model_to_try == models_to_try[-1]:
+                    raise (e)
 
     def conversation_gpt(self, system_message, conversation):
         """Getting model's response for a conversation with multiple messages
@@ -356,9 +369,7 @@ class Tutor(ABC):
         )
         return response.choices[0].message.content
 
-    def stream_response_generator(
-        self, conversation, from_doc, selectedModel="gpt-3.5-turbo-16k"
-    ):
+    def stream_response_generator(self, conversation, from_doc, selectedModel="gpt-3.5-turbo-16k"):
         """Returns the generator that generates the response stream of ChatTutor.
 
         Args:

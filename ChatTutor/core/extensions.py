@@ -8,8 +8,8 @@ from core.openai_tools import load_env
 
 load_env()
 
-db = VectorDatabase(os.getenv('VECTOR_DB_HOST'), "chroma", hosted=True)
-user_db = VectorDatabase(os.getenv('VECTOR_DB_HOST'), "chroma", hosted=True)
+db = VectorDatabase(os.getenv("VECTOR_DB_HOST"), "chroma", hosted=True)
+user_db = VectorDatabase(os.getenv("VECTOR_DB_HOST"), "chroma", hosted=True)
 
 import random
 import string
@@ -29,11 +29,7 @@ def generate_unique_name(desc):
         desc
         + "_"
         + get_random_string(20)
-        + datetime.now()
-        .isoformat()
-        .replace(".", "a")
-        .replace(":", "n")
-        .replace("-", "d")
+        + datetime.now().isoformat().replace(".", "a").replace(":", "n").replace("-", "d")
     )
 
 

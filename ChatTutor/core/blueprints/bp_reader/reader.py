@@ -2,10 +2,10 @@ import io
 import re
 
 from core.definitions import Doc
-from core.extensions import (db, generate_unique_name, get_random_string)
-from core.reader import (extract_file, parse_plaintext_file_read, read_filearray)
+from core.extensions import db, generate_unique_name, get_random_string
+from core.reader import extract_file, parse_plaintext_file_read, read_filearray
 from core.url_spider import URLSpider
-from flask import (Blueprint, jsonify, request)
+from flask import Blueprint, jsonify, request
 from werkzeug.datastructures import FileStorage
 
 reader_bp = Blueprint("bp_reader", __name__)
@@ -63,7 +63,7 @@ def upload_data_from_drop():
     """
     The function `upload_data_from_drop` uploads data from a file to a database collection, extracts the
     file contents, and adds the extracted texts to the collection.
-    
+
     URLParams:
         ```
         {
@@ -114,7 +114,7 @@ def upload_site_url():
     parses the content of each URL, and adds the parsed text to a database. It returns a JSON response
     containing the collection name, URLs, and a list of document names that were successfully added to
     the database.
-    
+
     URLParams:
         ```
         {
@@ -127,7 +127,7 @@ def upload_site_url():
         {
             "collection_name" : str, # collection the urls were uploaded to
             "urls" : list[str], # original urls
-            "docs" : list[any], # succesfully uploaded urls 
+            "docs" : list[any], # succesfully uploaded urls
         }
         ```
     """
@@ -155,9 +155,7 @@ def upload_site_url():
             f_f = (file, navn)
 
             doc = Doc(docname=f_f[1], citation="", dockey=f_f[1])
-            texts = parse_plaintext_file_read(
-                f_f[0], doc=doc, chunk_chars=2000, overlap=100
-            )
+            texts = parse_plaintext_file_read(f_f[0], doc=doc, chunk_chars=2000, overlap=100)
             db.load_datasource(collection_name)
             db.add_texts(texts)
             resp["docs"] = resp["docs"] + [navn]

@@ -152,6 +152,7 @@ def time_it(func, message=""):
 
     return func_wrapper
 
+
 def time_it_r(func, message=""):
     if message != "":
         message = f" ({blue(message)})"

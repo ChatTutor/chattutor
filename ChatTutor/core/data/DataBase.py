@@ -7,12 +7,13 @@ from core.data.models import (
     ChatModel,
     CourseModel,
     FeedbackModel,
-    DevsModel
+    DevsModel,
 )
 from core.utils import build_model_from_params
 
-def message_oldformat_to_new(a_message : MessageModel | dict) -> MessageModel:
-    """Change old format to new format on messages, 
+
+def message_oldformat_to_new(a_message: MessageModel | dict) -> MessageModel:
+    """Change old format to new format on messages,
     if a dict is provided, or leaves the object unaffected and
     returns it if a MessageModel is proivded
 
@@ -23,22 +24,23 @@ def message_oldformat_to_new(a_message : MessageModel | dict) -> MessageModel:
         MessageModel: new format compliant message object build from the dict,
         or same MessageModel object if provided
     """
-    if (isinstance(a_message, MessageModel)):
+    if isinstance(a_message, MessageModel):
         return a_message
-    message_new =  {
+    message_new = {
         "role": a_message["role"],
         "content": a_message["content"],
         "chat_key": a_message["chat"],
         "clear_number": a_message["clear_number"],
-        "credential_token": a_message["credential_token"]
+        "credential_token": a_message["credential_token"],
     }
     if a_message.get("message_id") is not None:
         message_new["mes_id"] = a_message.get("message_id")
     return MessageModel(**message_new)
 
+
 class DataBase(metaclass=Singleton):
     """## DataBase singleton
-    
+
     Call as such:
         ```py
         DataBase().<method>
@@ -61,14 +63,15 @@ class DataBase(metaclass=Singleton):
     - get_sections_by_id
     - update_section_add_fromdoc
     - all_messages
-    
+
     Args:
         metaclass (_type_, optional): Defaults to Singleton.
     """
+
     def __init__(self) -> None:
         print("Initializing DataBase")
-    
-    def insert_user(self, user : UserModel):
+
+    def insert_user(self, user: UserModel):
         """Insert User
 
         Args:
@@ -78,8 +81,10 @@ class DataBase(metaclass=Singleton):
             session.add(user)
             session.commit()
             return user, session
-    
-    def insert_message(self, message : MessageModel | dict) -> tuple[MessageModel, Session]:
+
+    def insert_message(
+        self, message: MessageModel | dict
+    ) -> tuple[MessageModel, Session]:
         """Insert message in DataBase
 
         Args:
@@ -89,15 +94,15 @@ class DataBase(metaclass=Singleton):
             tuple[MessageModel, Session]: message and session
         """
         if isinstance(message, MessageModel) is False:
-            message : MessageModel = message_oldformat_to_new(message)
+            message: MessageModel = message_oldformat_to_new(message)
         with Connection().session() as session:
             session.add(message)
             session.commit()
             session.refresh(message)
             session.expunge_all()
             return message, session
-    
-    def insert_chat(self, chat : ChatModel | str) -> tuple[str, Session]:
+
+    def insert_chat(self, chat: ChatModel | str) -> tuple[str, Session]:
         """Insert chat (id) into db
 
         Args:
@@ -107,7 +112,7 @@ class DataBase(metaclass=Singleton):
             tuple[any | str, Session]: chat id and session
         """
         if isinstance(chat, ChatModel) is False:
-            if (chat == "none"):
+            if chat == "none":
                 chat = ChatModel()
             else:
                 chat = ChatModel(chat_id=chat)
@@ -115,8 +120,12 @@ class DataBase(metaclass=Singleton):
             session.add(chat)
             session.commit()
             return chat.chat_id, session
-    
-    @build_model_from_params(from_keys=["content", "message_id", "feedback_id"], model=FeedbackModel, is_method=True)
+
+    @build_model_from_params(
+        from_keys=["content", "message_id", "feedback_id"],
+        model=FeedbackModel,
+        is_method=True,
+    )
     def insert_feedback(self, *args, **kwargs) -> tuple[FeedbackModel, Session]:
         """Insert feedback
         Args:
@@ -132,8 +141,11 @@ class DataBase(metaclass=Singleton):
             session.expunge_all()
             return args[0], session
 
-    
-    @build_model_from_params(from_keys=["course_id", "name", "proffessor", "mainpage", "collectionname"], model=CourseModel, is_method=True)
+    @build_model_from_params(
+        from_keys=["course_id", "name", "proffessor", "mainpage", "collectionname"],
+        model=CourseModel,
+        is_method=True,
+    )
     def insert_course(self, *args, **kwargs) -> tuple[CourseModel, Session]:
         """Insert course
 
@@ -147,8 +159,11 @@ class DataBase(metaclass=Singleton):
             session.expunge_all()
             return args[0], session
 
-    
-    @build_model_from_params(from_keys=["section_id", "pulling_from", "sectionurl"], model=SectionModel, is_method=True)
+    @build_model_from_params(
+        from_keys=["section_id", "pulling_from", "sectionurl"],
+        model=SectionModel,
+        is_method=True,
+    )
     def insert_section(self, *args, **kwargs) -> tuple[SectionModel, Session]:
         """Insert course
 
@@ -163,8 +178,8 @@ class DataBase(metaclass=Singleton):
             session.refresh(args[0])
             session.expunge_all()
             return args[0], session
-         
-    def get_users_by_email(self, email : str):
+
+    def get_users_by_email(self, email: str):
         """Gets users by email
 
         Args:
@@ -175,8 +190,8 @@ class DataBase(metaclass=Singleton):
             results = session.exec(statement).all()
             session.expunge_all()
             return results, session
-    
-    def get_users_by_id(self, uid : str):
+
+    def get_users_by_id(self, uid: str):
         """Gets users by id
 
         Args:
@@ -187,9 +202,11 @@ class DataBase(metaclass=Singleton):
             results = session.exec(statement).all()
             session.expunge_all()
             return results, session
-    
-    def insert_user_to_course(self, user_id : str, course_id) -> tuple[UserModel, CourseModel, Session]:
-        """Make user as owner of the specified course 
+
+    def insert_user_to_course(
+        self, user_id: str, course_id
+    ) -> tuple[UserModel, CourseModel, Session]:
+        """Make user as owner of the specified course
 
         Args:
             user_id (str): user id
@@ -199,14 +216,20 @@ class DataBase(metaclass=Singleton):
             tuple[UserModel, CourseModel, Session]: user, course, session
         """
         with Connection().session() as session:
-            user = session.exec(select(UserModel).where(UserModel.user_id == user_id)).one()
-            course = session.exec(select(CourseModel).where(CourseModel.course_id == course_id)).one()
+            user = session.exec(
+                select(UserModel).where(UserModel.user_id == user_id)
+            ).one()
+            course = session.exec(
+                select(CourseModel).where(CourseModel.course_id == course_id)
+            ).one()
             user.courses.append(course)
             session.add(user)
             session.commit()
             return user, course, session
-    
-    def establish_course_section_relationship(self, section_id: str, course_id: str) -> tuple[SectionModel, CourseModel, Session]:
+
+    def establish_course_section_relationship(
+        self, section_id: str, course_id: str
+    ) -> tuple[SectionModel, CourseModel, Session]:
         """Add section to course
 
         Args:
@@ -217,14 +240,18 @@ class DataBase(metaclass=Singleton):
             _type_: _description_
         """
         with Connection().session() as session:
-            section = session.exec(select(SectionModel).where(SectionModel.section_id == section_id)).one()
-            course = session.exec(select(CourseModel).where(CourseModel.course_id == course_id)).one()
+            section = session.exec(
+                select(SectionModel).where(SectionModel.section_id == section_id)
+            ).one()
+            course = session.exec(
+                select(CourseModel).where(CourseModel.course_id == course_id)
+            ).one()
             section.courses.append(course)
             session.add(section)
             session.commit()
             return section, course, session
 
-    def get_user_courses(self, user_id : str) -> tuple[list[CourseModel], Session]:
+    def get_user_courses(self, user_id: str) -> tuple[list[CourseModel], Session]:
         """Get user courses
 
         Args:
@@ -234,10 +261,14 @@ class DataBase(metaclass=Singleton):
             tuple[list[CourseModel], Session]: courses and session
         """
         with Connection().session() as session:
-            user = session.exec(select(UserModel).where(UserModel.user_id == user_id)).one()
+            user = session.exec(
+                select(UserModel).where(UserModel.user_id == user_id)
+            ).one()
             return user.courses, session
 
-    def get_user_by_email_courses(self, email : str) -> tuple[list[CourseModel], Session]:
+    def get_user_by_email_courses(
+        self, email: str
+    ) -> tuple[list[CourseModel], Session]:
         """Get user courses specified by email
 
         Args:
@@ -249,7 +280,7 @@ class DataBase(metaclass=Singleton):
         with Connection().session() as session:
             user = session.exec(select(UserModel).where(UserModel.email == email)).one()
             return user.courses, session
-    
+
     def get_courses_sections(self, course_id) -> tuple[list[SectionModel], Session]:
         """Get courses sections
 
@@ -260,9 +291,11 @@ class DataBase(metaclass=Singleton):
             tuple[list[SectionModel], Session]: sections and session
         """
         with Connection().session() as session:
-            course = session.exec(select(CourseModel).where(CourseModel.course_id == course_id)).one()
+            course = session.exec(
+                select(CourseModel).where(CourseModel.course_id == course_id)
+            ).one()
             return course.sections, session
-    
+
     def get_courses_sections_format(self, course_id) -> tuple[list, Session]:
         """Get sections of course and format in old format
 
@@ -273,7 +306,9 @@ class DataBase(metaclass=Singleton):
             tuple[list[dict | any], Session]: sections and session
         """
         with Connection().session() as session:
-            course = session.exec(select(CourseModel).where(CourseModel.course_id == course_id)).one()
+            course = session.exec(
+                select(CourseModel).where(CourseModel.course_id == course_id)
+            ).one()
             name = course.name
             result = [
                 {
@@ -297,12 +332,15 @@ class DataBase(metaclass=Singleton):
             tuple[Sequence[SectionModel], Session]: sections and session
         """
         with Connection().session() as session:
-            sections = session.exec(select(SectionModel).where(SectionModel.section_id == section_id)).all()
+            sections = session.exec(
+                select(SectionModel).where(SectionModel.section_id == section_id)
+            ).all()
             return sections, session
-        
-        
-    def update_section_add_fromdoc(self, section_id: str, from_doc) -> tuple[SectionModel, Session]:
-        """Add from_doc to section's pulling_from which specifies which urls the section 
+
+    def update_section_add_fromdoc(
+        self, section_id: str, from_doc
+    ) -> tuple[SectionModel, Session]:
+        """Add from_doc to section's pulling_from which specifies which urls the section
         allows a tutor to know about.
 
         Args:
@@ -313,13 +351,15 @@ class DataBase(metaclass=Singleton):
             tuple[SectionModel, Session]: section and session
         """
         with Connection().session() as session:
-            section = session.exec(select(SectionModel).where(SectionModel.section_id == section_id)).one()
+            section = session.exec(
+                select(SectionModel).where(SectionModel.section_id == section_id)
+            ).one()
             section.pulling_from = section.pulling_from + "$" + from_doc
             session.add(section)
             session.commit()
             session.refresh(section)
             return section, session
-        
+
     def all_messages(self) -> Sequence[MessageModel]:
         """Get all messages ever sent by all users
 
@@ -327,7 +367,10 @@ class DataBase(metaclass=Singleton):
             Sequence[MessageModel]: all messages
         """
         with Connection().session() as session:
-            stmt = select(MessageModel).order_by(MessageModel.chat_key).order_by(MessageModel.time_created)
+            stmt = (
+                select(MessageModel)
+                .order_by(MessageModel.chat_key)
+                .order_by(MessageModel.time_created)
+            )
             result = session.exec(stmt).all()
             return result
-    

@@ -2,10 +2,11 @@
 ## search for TODO : modify
 import flask
 import os
+
 # import markdown
 import flask_login
-from core.extensions import (db)
-from flask import (Blueprint, Response, jsonify, request)
+from core.extensions import db
+from flask import Blueprint, Response, jsonify, request
 from datetime import datetime
 from core.data import (
     DataBase,
@@ -14,7 +15,7 @@ from core.data import (
     FeedbackModel,
     SectionModel,
     CourseModel,
-    ChatModel
+    ChatModel,
 )
 
 data_bp = Blueprint("bp_data", __name__)
@@ -25,12 +26,12 @@ def addtodb():
     """
     The `addtodb` function inserts a message into a database with the provided content, role, chat ID,
     clear number, and time created.
-    
+
     URLParams:
         ```
         {
             "content" : str, # content of the message
-            "role" : str  "User" | "Assistant", 
+            "role" : str  "User" | "Assistant",
             "chat_k" : Optional[str],
             "clear_number" : int, # number of times the chat was cleared
             "time_created" : int,
@@ -65,18 +66,23 @@ def addtodb():
         "chat": chat_id,
         "clear_number": clear_number,
         "time_created": time_created,
-        "credential_token": credential_token
+        "credential_token": credential_token,
     }
 
     print("adding ", message_to_upload, " to db")
     uploaded_message, _ = DataBase().insert_message(message_to_upload)
-    return jsonify({"message_id": uploaded_message.mes_id,
-                    "content": content,
-                    "role": role,
-                    "chat": chat_k_id,
-                    "clear_number": clear_number,
-                    "time_created": time_created,
-                    "credential_token": credential_token})
+    return jsonify(
+        {
+            "message_id": uploaded_message.mes_id,
+            "content": content,
+            "role": role,
+            "chat": chat_k_id,
+            "clear_number": clear_number,
+            "time_created": time_created,
+            "credential_token": credential_token,
+        }
+    )
+
 
 @data_bp.route("/addmessagefeedback", methods=["POST", "GET"])
 def addmessagefeedback():
@@ -108,9 +114,21 @@ def addmessagefeedback():
     print(message_id)
     print(type(message_id))
 
-    feedback, _ = DataBase().insert_feedback(FeedbackModel(content=feedback_content, message_id=message_id))
+    feedback, _ = DataBase().insert_feedback(
+        FeedbackModel(content=feedback_content, message_id=message_id)
+    )
     print("<< FEEDBACK\n")
-    return jsonify({"message_id": message_id, "feedback_id": feedback.feedback_id, "feedback_content": feedback_content}), 200
+    return (
+        jsonify(
+            {
+                "message_id": message_id,
+                "feedback_id": feedback.feedback_id,
+                "feedback_content": feedback_content,
+            }
+        ),
+        200,
+    )
+
 
 # TODO : remove this
 # @data_bp.route("/delete_uploaded_data", methods=["POST"])
@@ -174,7 +192,7 @@ def add_fromdoc_tosection():
         ```
     TODO: add another param : "file_to_add" form/multipart that would add files
     to the knowledge base.
-    
+
     Returns:
     - a JSON response containing the URL that was added and the name of the collection it was
     added to.
@@ -209,7 +227,7 @@ def get_section():
         ```
     Returns:
     - a JSON object that contains the sections and the pulling_from values.
-        
+
         ```
         {
             "sections": list[Section] # sections (at least one),
