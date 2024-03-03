@@ -10,12 +10,12 @@ export class UrlLabelComponent implements OnInit {
     @Input() section_info: any = []
     @Output() onRemove: EventEmitter<any> = new EventEmitter()
     @Input() isDeleting: boolean = false
-    from_doc_joined = this.section_info['pullingfrom']
+    from_doc_joined = this.section_info['pullingfrom'] != null ? this.section_info['pullingfrom'] : this.section_info['section_id']
     toggle_input = false
     url_to_add = ''
 
     ngOnInit(): void {
-        this.from_doc_joined = this.section_info['pullingfrom']
+      this.from_doc_joined = this.section_info['pullingfrom'] != null ? this.section_info['pullingfrom'] : this.section_info['section_id']
     }
 
     emitRemove(doc:string, collection:string) {
