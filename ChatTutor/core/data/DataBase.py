@@ -288,7 +288,7 @@ class DataBase(metaclass=Singleton):
             ).one()
             return course.sections, session
 
-    def validate_course_owner(self, collectionname: str, user_email: str):
+    def validate_course_owner(self, collectionname: str, user_email: str) -> bool:
         """_summary_
 
         Args:
