@@ -82,9 +82,7 @@ class DataBase(metaclass=Singleton):
             session.commit()
             return user, session
 
-    def insert_message(
-        self, message: MessageModel | dict
-    ) -> tuple[MessageModel, Session]:
+    def insert_message(self, message: MessageModel | dict) -> tuple[MessageModel, Session]:
         """Insert message in DataBase
 
         Args:
@@ -216,9 +214,7 @@ class DataBase(metaclass=Singleton):
             tuple[UserModel, CourseModel, Session]: user, course, session
         """
         with Connection().session() as session:
-            user = session.exec(
-                select(UserModel).where(UserModel.user_id == user_id)
-            ).one()
+            user = session.exec(select(UserModel).where(UserModel.user_id == user_id)).one()
             course = session.exec(
                 select(CourseModel).where(CourseModel.course_id == course_id)
             ).one()
@@ -261,14 +257,10 @@ class DataBase(metaclass=Singleton):
             tuple[list[CourseModel], Session]: courses and session
         """
         with Connection().session() as session:
-            user = session.exec(
-                select(UserModel).where(UserModel.user_id == user_id)
-            ).one()
+            user = session.exec(select(UserModel).where(UserModel.user_id == user_id)).one()
             return user.courses, session
 
-    def get_user_by_email_courses(
-        self, email: str
-    ) -> tuple[list[CourseModel], Session]:
+    def get_user_by_email_courses(self, email: str) -> tuple[list[CourseModel], Session]:
         """Get user courses specified by email
 
         Args:
@@ -295,6 +287,22 @@ class DataBase(metaclass=Singleton):
                 select(CourseModel).where(CourseModel.course_id == course_id)
             ).one()
             return course.sections, session
+
+    def validate_course_owner(self, collectionname: str, user_email: str):
+        """_summary_
+
+        Args:
+            collectionname (str): _description_
+            user_email (str): _description_
+        """
+        with Connection().session() as session:
+            course = session.exec(
+                select(CourseModel).where(CourseModel.collectionname == collectionname)
+            ).one()
+            users_emails = [u.email for u in course.users]
+            if user_email in users_emails:
+                return True
+            return False
 
     def get_courses_sections_format(self, course_id) -> tuple[list, Session]:
         """Get sections of course and format in old format
@@ -337,9 +345,7 @@ class DataBase(metaclass=Singleton):
             ).all()
             return sections, session
 
-    def update_section_add_fromdoc(
-        self, section_id: str, from_doc
-    ) -> tuple[SectionModel, Session]:
+    def update_section_add_fromdoc(self, section_id: str, from_doc) -> tuple[SectionModel, Session]:
         """Add from_doc to section's pulling_from which specifies which urls the section
         allows a tutor to know about.
 
