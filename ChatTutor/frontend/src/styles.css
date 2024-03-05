@@ -114,6 +114,8 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; }
 
 .right-aligned-header > .mat-content {
     justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
 }
 
 .mat-content > mat-panel-title, .mat-content > mat-panel-description {

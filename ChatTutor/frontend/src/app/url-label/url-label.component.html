@@ -3,9 +3,14 @@
         <mat-expansion-panel-header class="right-aligned-header">
             <mat-panel-title>
                 <div class="please-horizontal">
-                    <span style="display: inline-block; width: 200px">Section active on</span> <a [href]="url_name" target="_blank">{{url_name}}</a>
+                    <div>
+                        <span style="display: inline-block">Section active on <a [href]="url_name"
+                                                                                 target="_blank">{{url_name}}</a></span>
+                    </div>
                 </div>
             </mat-panel-title>
+
+
             <mat-panel-description>
                 <button mat-icon-button
                         (click)="emitRemove(section_info['section_id'], section_info['course_chroma_collection'])">

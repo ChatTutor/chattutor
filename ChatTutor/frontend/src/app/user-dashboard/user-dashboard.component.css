@@ -72,5 +72,7 @@ table {
 }
 
 .right {
+    max-width: 100vw;
+    overflow: scroll;
     padding-left: 20px;
 }
