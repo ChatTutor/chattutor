@@ -59,9 +59,9 @@ def build_model_from_params(from_keys: list, model: type, is_method: bool = Fals
                     object_dict[key] = value
                 model_obj = model(**object_dict)
             if is_method:
-                func(class_obj, model_obj)
+                return func(class_obj, model_obj)
             else:
-                func(model_obj)
+                return func(model_obj)
 
         return new_function
 
