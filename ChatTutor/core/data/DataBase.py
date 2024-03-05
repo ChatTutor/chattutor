@@ -119,11 +119,11 @@ class DataBase(metaclass=Singleton):
             session.commit()
             return chat.chat_id, session
 
-    @build_model_from_params(
-        from_keys=["content", "message_id", "feedback_id"],
-        model=FeedbackModel,
-        is_method=True,
-    )
+    # @build_model_from_params(
+    #     from_keys=["content", "message_id", "feedback_id"],
+    #     model=FeedbackModel,
+    #     is_method=True,
+    # )
     def insert_feedback(self, *args, **kwargs) -> tuple[FeedbackModel, Session]:
         """Insert feedback
         Args:
@@ -133,11 +133,11 @@ class DataBase(metaclass=Singleton):
             tuple[FeedbackModel, Session]: _description_
         """
         with Connection().session() as session:
-            session.add(args[0])
+            fd = args[0]
+            print(fd)
+            session.add(fd)
             session.commit()
-            session.refresh(args[0])
-            session.expunge_all()
-            return args[0], session
+            return fd.feedback_id, session
 
     @build_model_from_params(
         from_keys=["course_id", "name", "proffessor", "mainpage", "collectionname"],

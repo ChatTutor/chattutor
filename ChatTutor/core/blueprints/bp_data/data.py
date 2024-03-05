@@ -112,9 +112,8 @@ def addmessagefeedback():
     print("\n>> FEEDBACK")
     print(feedback_content)
     print(message_id)
-    print(type(message_id))
 
-    feedback, _ = DataBase().insert_feedback(
+    feedback_id, _ = DataBase().insert_feedback(
         FeedbackModel(content=feedback_content, message_id=message_id)
     )
     print("<< FEEDBACK\n")
@@ -122,7 +121,7 @@ def addmessagefeedback():
         jsonify(
             {
                 "message_id": message_id,
-                "feedback_id": feedback.feedback_id,
+                "feedback_id": feedback_id,
                 "feedback_content": feedback_content,
             }
         ),
