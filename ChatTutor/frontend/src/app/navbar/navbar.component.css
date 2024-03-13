@@ -13,8 +13,6 @@
     padding: 20px;
     display: flex;
     flex-direction: row-reverse;
-    
-
 }
 
 .fl-right {
@@ -70,7 +68,6 @@
 
 .menu {
     background-color: transparent;
-    line-height: 80px;
     /* position: fixed; */
     top: 0;
 
@@ -183,11 +180,11 @@ a:visited {
 }
 
 .section {
-    background:  linear-gradient(45deg, #2c7de7, #3cb2ff);;
+    background:  linear-gradient(black, black, black);;
 }
 
 .menu {
-    background:  linear-gradient(45deg, #2c7de7, #3cb2ff);;
+    background:  linear-gradient(black, black, black);;
 }
 
 
@@ -224,7 +221,7 @@ a:visited {
 .onhomepage {
     background: none;
     background-color: transparent;
-    position: fixed;
+    position: sticky;
 }
 
 .onhomepagemenu {
@@ -232,5 +229,26 @@ a:visited {
     background: none;
     background-color: transparent;
     position: fixed;
+}
+    
+.onhomepagemenu {
+    background: linear-gradient(black,black, rgba(0, 0, 0, 0.553));
+    position: fixed;
+}
+@media screen and (max-height: 600px)  {
+      
+    .onhomepagemenu {
+        background: linear-gradient(black,black, rgba(0, 0, 0, 0.553));
+        position: fixed;
+    }
+}
+
+@media screen and (max-height: 700px)  {
+        
+    .onhomepagemenu {
+        background: linear-gradient(black,black, rgba(0, 0, 0, 0.553));
+        position: fixed;
+    }
+    
 }
 

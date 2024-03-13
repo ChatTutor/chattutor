@@ -66,6 +66,7 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; }
     backdrop-filter: blur(13.8px);
     -webkit-backdrop-filter: blur(13.8px);
     border: 1px solid rgba(255, 255, 255, 0.6);
+    margin: 5px;
 }
 
 .talk_to_chattutor:hover {
@@ -85,6 +86,7 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; }
     backdrop-filter: blur(13.8px);
     -webkit-backdrop-filter: blur(13.8px);
     border: 1px solid rgba(255, 255, 255, 0.6);
+    margin: 5px;
 }
 
 .chattutor_course_container {

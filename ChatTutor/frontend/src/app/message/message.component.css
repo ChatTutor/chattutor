@@ -16,6 +16,12 @@
     flex-grow: 1;
 }
 
+@media screen and (max-width: 400px)  {
+    .message {
+        min-width: 0px !important;
+    }
+}
+
 .paper-info {
     width: 18%;
     min-width: 18%;
