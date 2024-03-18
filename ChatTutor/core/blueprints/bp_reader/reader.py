@@ -58,6 +58,7 @@ def upload_data_to_process():
     return jsonify(resp)
 
 
+
 @reader_bp.route("/upload_data_from_drop", methods=["POST"])
 def upload_data_from_drop():
     """
@@ -83,7 +84,9 @@ def upload_data_from_drop():
     """
     try:
         cname = request.form.get("collection_name")
+
         file = request.files.getlist("file")
+        print('Uploading: ', file, ' to: ', cname)
         f_arr = []
         for fil in file:
             f_arr.append(fil.filename)

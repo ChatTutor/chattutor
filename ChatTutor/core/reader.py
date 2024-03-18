@@ -93,11 +93,13 @@ def read_filearray(files):
     texts = []
 
     for file in files:
-        print("AAAAAAA")
+        # print("AAAAAAA")
         doc = Doc(docname=file[1], citation="", dockey=file[1])
         print(file[1])
         try:
+            # print("Aolo")
             if file[1].endswith(".pdf"):
+                # print("aololo")
                 new_texts = parse_pdf(file[0], doc, 2000, 100)
             elif file[1].endswith(".ipynb"):
                 new_texts = parse_notebook_file(file[0], doc, 2000, 100)
@@ -166,12 +168,16 @@ def parse_pdf(file_contents: str, doc: Doc, chunk_chars: int, overlap: int) -> L
     """
 
     # pdfFileObj = open(path, "rb")
-    pdfReader = PyPDF2.PdfReader(BytesIO(file_contents))
+    # print("linia 169")
+    pdfReader = PyPDF2.PdfReader(BytesIO(file_contents), strict=False)
     # pdfReader = PyPDF2.PdfReader(file_contents)
+    # print("linia 172")
     split = ""
     pages: List[str] = []
     texts: List[Text] = []
+    print(pdfReader.pages)
     for i, page in enumerate(pdfReader.pages):
+        # print('for::')
         split += page.extract_text()
         pages.append(str(i + 1))
 

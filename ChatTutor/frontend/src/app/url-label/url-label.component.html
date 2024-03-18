@@ -43,6 +43,15 @@
             </button>
         </mat-form-field>
 
+        <mat-form-field [class.hidden]="!toggle_input" class="add-input">
+            <mat-label>Add a file</mat-label>
+            <input matInput type="file" (change)="onFileChanged($event)" multiple #fileUpload />
+            <button mat-icon-button color="primary" matSuffix (click)="addFileToSection()">
+                <mat-icon>add</mat-icon>
+            </button>
+
+        </mat-form-field>
+
     </mat-expansion-panel>
     <mat-divider></mat-divider>
 
