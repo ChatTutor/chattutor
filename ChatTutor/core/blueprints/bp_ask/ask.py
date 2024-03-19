@@ -1,6 +1,7 @@
 from core.extensions import db
 from flask import Blueprint, Response, request, stream_with_context
 from core.tutor.tutorfactory import TutorFactory, TutorTypes
+from core.data import DataBase
 from core.tutor.tutorfactory import CourseTutorType, NSFTutorType
 from core.tutor.systemmsg import (
     cqn_system_message,
@@ -65,18 +66,26 @@ def ask():
     collection_desc = data.get("description")
     response_type = data.get("response_type", "COURSE_RESTRICTED")
     from_doc = data.get("from_doc")
+
+    sections, session = DataBase().get_one_section_by_id(from_doc)
+    pulling_from_section = sections
+
     selected_model = data.get("selectedModel", "gpt-3.5-turbo-16k")
 
     tutor_type = TutorTypes.from_string(response_type)
 
     # Logging whether the request is specific to a document or can be from any document
     # todo: get bot type from token
-    print("SELECTED MODEL:", selected_model)
+    print("FROM_DOC: ", from_doc)
+
+    pulling_from: list[str] = pulling_from_section.pulling_from.split('$')
+
+    print("SELECTED MODEL: ", selected_model, "Pulling from: ", pulling_from)
     print(collection_name)
     _chattutor = tutorfactory.build_empty(tutor_type)
     if collection_name != None and collection_name != []:
         _chattutor = tutorfactory.build(tutor_type, collection_name, collection_desc)
-    generate = _chattutor.stream_response_generator(conversation, from_doc, selected_model)
+    generate = _chattutor.stream_response_generator(conversation, pulling_from, selected_model)
     return Response(stream_with_context(generate()), content_type="text/event-stream")
 
 

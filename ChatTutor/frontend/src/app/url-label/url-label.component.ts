@@ -74,7 +74,7 @@ export class UrlLabelComponent implements OnInit {
 
         console.log(message)
 
-        const just_added = fv.substring(0, fv.length - 2)
+        const just_added = fv.substring(0, fv.length - 1)
 
         this.from_doc_joined = this.from_doc_joined + "$" + just_added
 

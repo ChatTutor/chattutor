@@ -345,6 +345,21 @@ class DataBase(metaclass=Singleton):
             ).all()
             return sections, session
 
+    def get_one_section_by_id(self, section_id) -> tuple[SectionModel, Session]:
+        """Get connections specified by an id
+
+        Args:
+            section_id (str): section id
+
+        Returns:
+            tuple[Sequence[SectionModel], Session]: sections and session
+        """
+        with Connection().session() as session:
+            sections = session.exec(
+                select(SectionModel).where(SectionModel.section_id == section_id)
+            ).first()
+            return sections, session
+
     def update_section_add_fromdoc(self, section_id: str, from_doc) -> tuple[SectionModel, Session]:
         """Add from_doc to section's pulling_from which specifies which urls the section
         allows a tutor to know about.

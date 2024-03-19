@@ -369,7 +369,7 @@ class Tutor(ABC):
         )
         return response.choices[0].message.content
 
-    def stream_response_generator(self, conversation, from_doc, selectedModel="gpt-3.5-turbo-16k"):
+    def stream_response_generator(self, conversation, from_doc: list[str], selectedModel="gpt-3.5-turbo-16k"):
         """Returns the generator that generates the response stream of ChatTutor.
 
         Args:
