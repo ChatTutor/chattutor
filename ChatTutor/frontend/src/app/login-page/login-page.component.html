@@ -5,8 +5,8 @@
     <h2>Login to ChatTutor</h2>
     <form ngNoForm class="aot" [action]='endpoint' method='POST'>
         <mat-form-field>
-            <mat-label>Username</mat-label>
-            <input matInput type='text' name='username' id='username'/>
+            <mat-label>E-mail</mat-label>
+            <input matInput type='text' name='email' id='email'/>
         </mat-form-field>
         <mat-form-field>
             <mat-label>Password</mat-label>
@@ -18,6 +18,10 @@
 
         </mat-form-field>
     </form>
+
+    <div class="login-container aot">
+        <button (click)="continueOAuth()" class="login-with-google-btn">Continue with Google</button>
+    </div>
 
 </div>
 </div>

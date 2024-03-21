@@ -27,7 +27,6 @@ import { ChatTutorWrapperComponent } from './chat-tutor-wrapper/chat-tutor-wrapp
 import { CQNChatTutorWrapperComponent } from './cqnchat-tutor-wrapper/cqnchat-tutor-wrapper.component';
 import {HashLocationStrategy, LocationStrategy, PathLocationStrategy} from "@angular/common";
 import { LandingPageComponent } from './landing-page/landing-page.component';
-import { ChattutorDatabaseComponent } from './chattutor-database/chattutor-database.component';
 import { MessageInsideDatabaseComponent } from './message-inside-database/message-inside-database.component';
 import {MatTableModule} from "@angular/material/table";
 import {MatPaginatorModule} from "@angular/material/paginator";
@@ -43,6 +42,20 @@ import { LoginPageComponent } from './login-page/login-page.component';
 import { RegisterPageComponent } from './register-page/register-page.component';
 import { RegisterStudentPageComponent } from './register-student-page/register-student-page.component';
 import { GradientBackgroundComponent } from './gradient-background/gradient-background.component';
+import { OAuthCallbackComponent } from './oauth-callback/oauth-callback.component';
+
+
+import { OAuthModule, AuthConfig, JwksValidationHandler, ValidationHandler, OAuthStorage, OAuthModuleConfig } from 'angular-oauth2-oidc'; // Added
+import { AuthService } from './auth.service';
+import { HttpClientModule } from '@angular/common/http';
+
+const authModuleConfig: OAuthModuleConfig = {
+  resourceServer: {
+    allowedUrls: ['http://localhost:5000', 'https://beta-chattutor-nbqjgewnea-uc.a.run.app', 'https://chattutor.org/'],
+    sendAccessToken: true,
+  },
+};
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -55,7 +68,6 @@ import { GradientBackgroundComponent } from './gradient-background/gradient-back
     ChatTutorWrapperComponent,
     CQNChatTutorWrapperComponent,
     LandingPageComponent,
-    ChattutorDatabaseComponent,
     MessageInsideDatabaseComponent,
     MathjaxComponent,
     CourseInputComponent,
@@ -68,6 +80,7 @@ import { GradientBackgroundComponent } from './gradient-background/gradient-back
     RegisterPageComponent,
     RegisterStudentPageComponent,
     GradientBackgroundComponent,
+    OAuthCallbackComponent,
   ],
     imports: [
         BrowserModule,
@@ -87,10 +100,14 @@ import { GradientBackgroundComponent } from './gradient-background/gradient-back
         MatTableModule,
         MatPaginatorModule,
         MatStepperModule,
-        MatExpansionModule
+        MatExpansionModule,
+        HttpClientModule,
+        OAuthModule.forRoot(authModuleConfig),
     ],
   providers: [
     { provide: ENDPOINT_TOKEN, useValue: 'your_endpoint_url_here' },
+    { provide: OAuthModuleConfig, useValue: authModuleConfig },
+    { provide: OAuthStorage, useValue: localStorage },
   ],
   bootstrap: [AppComponent]
 })

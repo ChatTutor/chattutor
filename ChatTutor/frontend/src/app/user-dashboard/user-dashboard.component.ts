@@ -1,18 +1,21 @@
 import {Component, Input, OnInit} from '@angular/core';
+import { DataProviderService } from 'app/dataprovider.service';
 
 @Component({
     selector: 'app-user-dashboard',
     templateUrl: './user-dashboard.component.html',
-    styleUrls: ['./user-dashboard.component.css']
+    styleUrls: ['./user-dashboard.component.css'],
+    providers: [DataProviderService]
 })
 export class UserDashboardComponent implements OnInit {
-    username: string
+    email: string
     displayedColumns: string[] = ['mainpage', 'name', 'collectionname', 'professor', 'accesslink'];
     loading: boolean = true
     status: String = 'courses'
 
     courses: any[] = []
-
+    constructor(private dataProvider : DataProviderService) {
+    }
 
     switchStatus(newstatus : String) : void {
         this.status = newstatus
@@ -21,34 +24,14 @@ export class UserDashboardComponent implements OnInit {
 
     async ngOnInit(): Promise<void> {
         this.loading = true
-        const respuser = await fetch('/getuser', {method: 'POST', headers: {'Content-Type': 'application/json'}})
-        const user = await respuser.json()
+        const user = await this.dataProvider.getLoggedInUser();
         console.log(user)
-        this.username = user["username"]
+        this.email = user["email"]
 
-        const resp = await fetch(`/users/${this.username}/mycourses`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'}
-        })
-        const coursess = await resp.json()
+        const coursess = await this.dataProvider.getUserCourses(this.email);
         console.log(coursess)
 
         this.courses = coursess["courses"]
-
-
-
         this.loading = false
-        // fetch('/getuser', {method: 'POST', headers:{'Content-Type':'application/json'}}).then(res=>res.json())
-        //   .then(user => {
-        //       this.username = user['username']
-        //       fetch(`/users/${this.username}/courses`, {method: 'POST', headers:{'Content-Type':'application/json'}}).then(
-        //         resp => {
-
-        //           return resp.json()
-        //         }
-        //       ).then(data => {
-        //           this.courses = data["courses"]
-        //       })
-        //   })
     }
 }

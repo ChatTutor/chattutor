@@ -16,17 +16,10 @@ from nice_functions import pprint, time_it
 from core.extensions import (
     db,
     user_db,
-    messageDatabase,
     get_random_string,
     generate_unique_name,
     stream_text,
 )  # Importing the database object from extensions module
-from core.tutor import Tutor
-from core.tutor import (
-    cqn_system_message,
-    default_system_message,
-    interpreter_system_message,
-)
 import json
 import time
 import os
@@ -41,16 +34,16 @@ import re
 # import pymysql
 import sqlite3
 import openai
-import core.loader
 from core.reader import read_filearray, extract_file, parse_plaintext_file_read
 from datetime import datetime
-from core.messagedb import MessageDB
+
 # import interpreter
 from core.definitions import Text
 from core.definitions import Doc
 import io
 import uuid
 from werkzeug.datastructures import FileStorage
+from authlib.integrations.flask_client import OAuth
 
 # import markdown
 import flask_login
@@ -59,28 +52,52 @@ import flask_login
 
 # interpreter.auto_run = True
 from core.openai_tools import load_api_keys, load_env
-from core.bp_ask.ask import ask_bp
-from core.bp_data.data import data_bp
-from core.bp_users.users import users_bp, User
-from core.bp_prep.prep import prep_bp
-from core.bp_reader.reader import reader_bp
+from core.blueprints.bp_ask.ask import ask_bp
+from core.blueprints.bp_data.data import data_bp
+from core.blueprints.bp_users.users import users_bp
+from core.blueprints.bp_prep.prep import prep_bp
+from core.blueprints.bp_reader.reader import reader_bp
+from core.data import DataBase, UserModel
 
 load_env()
 load_api_keys()
 
 app = Flask(__name__, static_folder="frontend/dist/frontend/", static_url_path="")
-CORS(app, origins=["http://127.0.0.1:5000", "https://barosandu.github.io", "https://pymit6101-nbqjgewnea-uc.a.run.app",
-     "https://byucamacholab.github.io", "https://pr4jitd.github.io", "https://introcomp.mit.edu"])
+CORS(
+    app,
+    origins=[
+        "http://127.0.0.1:5000",
+        "https://barosandu.github.io",
+        "https://pymit6101-nbqjgewnea-uc.a.run.app",
+        "https://byucamacholab.github.io",
+        "https://pr4jitd.github.io",
+        "https://introcomp.mit.edu",
+    ],
+)
 app.secret_key = "fhslcigiuchsvjksvjksgkgs"
 db.init_db()
 user_db.init_db()
-messageDatabase.initialize_ldatabase()
 
 app.register_blueprint(ask_bp, url_prefix="/ask")
 app.register_blueprint(data_bp)
 app.register_blueprint(users_bp)
 app.register_blueprint(prep_bp, url_prefix="/prep")
 app.register_blueprint(reader_bp)
+
+# ------------ OAuth ------------
+oauth = OAuth(app)
+google = oauth.register(
+    name="google",
+    client_id=os.environ["OAUTH_CLIENT_ID"],
+    client_secret=os.environ["OAUTH_CLIENT_SECRET"],
+    access_token_url="https://accounts.google.com/o/oauth2/token",
+    access_token_params=None,
+    authorize_url="https://accounts.google.com/o/oauth2/auth",
+    authorize_params=None,
+    api_base_url="https://www.googleapis.com/oauth2/v1/",
+    userinfo_endpoint="https://openidconnect.googleapis.com/v1/userinfo",
+    client_kwargs={"scope": "openid email profile"},
+)
 
 # ------------ LOGIN ------------
 
@@ -94,35 +111,29 @@ def unauthorized_handler():
 
 
 @login_manager.user_loader
-def user_loader(username):
-    users = messageDatabase.get_user(username=username)
+def user_loader(email):
+    users, _ = DataBase().get_users_by_email(email=email)
 
     if len(users) == 0:
         return
-    user = User()
-    user.username = users[0]["username"]
-    user.email = users[0]["email"]
-    print(users[0]["password"])
-    user.password_hash = users[0]["password"]
-
-    return user
+    return users[0]
 
 
 @login_manager.request_loader
-def request_loader(request):
-    username = request.form.get("username")
+def request_loader(req):
+    email = req.form.get("email")
+    uid = req.form.get("id")
 
-    users = messageDatabase.get_user(username=username)
+    users = []
+    if email is not None:
+        users, _ = DataBase().get_users_by_email(email=email)
+    if uid is not None:
+        users, _ = DataBase().get_users_by_id(uid=uid)
 
     if len(users) == 0:
         return
 
-    user = User()
-    user.username = users[0]["username"]
-    user.email = users[0]["email"]
-    user.password_hash = users[0]["password"]
-
-    return user
+    return users[0]
 
 
 # ----------- ANGULAR -----------
@@ -174,6 +185,7 @@ def angular(path):
     if path not in __angular_paths:
         path = __angular_default_path
     return send_from_directory(__root, path)
+
 
 # testing
 if __name__ == "__main__":

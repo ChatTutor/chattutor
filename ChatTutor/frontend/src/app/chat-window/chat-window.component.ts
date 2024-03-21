@@ -18,7 +18,7 @@ export class ChatWindowComponent implements OnInit{
     documentInfo: any = undefined
     loadingFiles: boolean = false
     status: WStatus = WStatus.Idle
-    endpoint: string = `${environment.apiUrl}/ask`
+    endpoint: string = `/ask`
 
     pleaseStopGeneratingConvo: boolean = false
     @Input() openingMessage: string = `Hello, I am here to respond to any questions you might have about this chapter or course.\nFeel free to ask me anything!`
@@ -78,7 +78,8 @@ export class ChatWindowComponent implements OnInit{
             conversation: this.messages,
             selectedModel: "gpt-3.5-turbo-16k",
             multiple: true,
-            credential_token: "none"
+            credential_token: "none",
+            response_type: "NSF_CQN"
         }
 
         if (this.collections) {

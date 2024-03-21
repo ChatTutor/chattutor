@@ -25,10 +25,10 @@
 }
 
 .please-horizontal {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
+    max-width: calc( 30vw );
+    overflow: scroll;
+    white-space: nowrap;
+
 }
 
 .mat-expansion-panel:not([class*=mat-elevation-z])  {
@@ -43,4 +43,10 @@ ul {
     padding-bottom: 10px;
     border-radius: 10px;
     /* border: 1px solid rgb(135, 133, 133); */
+}
+
+.fill-available {
+    width: fill;
+
+    width: max-content;
 }

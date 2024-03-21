@@ -6,5 +6,6 @@ export interface ChatTutor {
     multiple: boolean,
     collection?: string[] | ['test_embedding']
     from_doc?: string
-    credential_token?: string
+    credential_token?: string,
+    response_type?: string
 }

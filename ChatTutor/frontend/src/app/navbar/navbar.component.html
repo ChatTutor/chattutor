@@ -1,11 +1,8 @@
-<header class="section menu" [class.ondashboardmenu]="ondashboard" [class.onhomepagemenu]="onhomepage">
+<div class="section menu" [class.ondashboardmenu]="ondashboard" [class.onhomepagemenu]="onhomepage">
     <!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT09TQMs5SsRhsLscHDKkO-uP-QTJRmz-JM2lDrXbhYvgAUi7uXJWtbMYgBGjg&s"/> -->
     <div class="fl-right" [class.ondashboard]="ondashboard" [class.onhomepage]="onhomepage">
         <div>
             <a href="/">Home</a>
-        </div>
-        <div *ngIf="!hidden">
-            <a href="/chattutordatabase">Database</a>
         </div>
         <div *ngIf="loggedin && !hidden">
             <a href="/mycourses">My courses</a>
@@ -20,4 +17,4 @@
             <a href="/logout">Logout</a>
         </div>
     </div>
-</header>
+</div>

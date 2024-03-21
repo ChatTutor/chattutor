@@ -1,16 +1,18 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Processes} from "../models/processing.model";
+import { DataProviderService } from 'app/dataprovider.service';
 
 @Component({
     selector: 'app-course-dashboard',
     templateUrl: './course-dashboard.component.html',
-    styleUrls: ['./course-dashboard.component.css']
+    styleUrls: ['./course-dashboard.component.css'],
+    providers: [DataProviderService]
 })
 export class CourseDashboardComponent implements OnInit {
     course_id: string | null
     sections: any = []
-    username: string
+    email: string
     process_of: any = {}
     course_name: string = '[]'
     loading: boolean = true
@@ -18,7 +20,8 @@ export class CourseDashboardComponent implements OnInit {
     testmode: boolean = false
     runlocally: boolean = false
     tokens: any[] = []
-    constructor(private route: ActivatedRoute) {
+    constructor(private route: ActivatedRoute,
+        private dataProvider : DataProviderService) {
     }
 
     switchStatus(newstatus : String) : void {
@@ -30,28 +33,16 @@ export class CourseDashboardComponent implements OnInit {
         console.log(this.route.snapshot.paramMap)
         this.course_id = this.route.snapshot.paramMap.get('id')
         console.log(this.course_id)
-        fetch('/getuser', {method: 'POST', headers: {'Content-Type': 'application/json'}}).then(res => res.json())
-            .then(user => {
-                this.username = user['username']
-                fetch(`/users/${this.username}/courses/${this.course_id}`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'}
-                }).then(
-                    resp => resp.json()
-                ).then(data => {
-                    this.sections = data["sections"]
-                    this.course_name = this.sections[0]['course_chroma_collection']
-                    console.log('sections:',this.sections)
-                    this.loading = false
-                })
 
-                fetch(`/course/${this.course_id}/gettokens`, {method: 'POST', headers: {'Content-Type': 'application/json'}}).then(res => res.json())
-                .then(toks => {
-                    this.tokens = toks
-                })
+        this.dataProvider.getLoggedInUser().then(user => {
+            this.email = user['email']
+            this.dataProvider.getUserCourseSections(this.email, this.course_id).then(data => {
+                this.sections = data["sections"]
+                this.course_name = this.sections[0]['course_chroma_collection']
+                console.log('sections:',this.sections)
+                this.loading = false
             })
-
-
+        })
     }
 
 
@@ -68,23 +59,14 @@ export class CourseDashboardComponent implements OnInit {
     }
 
     async removeFromCollection(d: any) {
-        let doc= d.doc
-        let collection = d.collection
-        let data = JSON.stringify({
-            collection: collection,
-            doc: doc
-        })
         this.process_of[d.doc] = Processes.Deleting
-        let response = await fetch('/delete_doc', {method: 'POST', headers:{'Content-Type':'application/json'}, body: data})
-        const deleted_data = await response.json()
-
+        const deleted_data = await this.dataProvider.deleteDoc_Unsafe(d.doc, d.collection)
         console.log(deleted_data['deleted'])
 
         this.sections = this.sections.filter((s:any) => {
             console.log(s['section_id'], deleted_data['deleted'])
             return s['section_id'] != deleted_data['deleted']
         })
-
         console.log("Removed from db")
     }
 

@@ -3,23 +3,13 @@
 """
 
 from core.vectordatabase import VectorDatabase
-from core.messagedb import MessageDB
 import os
 from core.openai_tools import load_env
 
 load_env()
 
-db = VectorDatabase(os.getenv('VECTOR_DB_HOST'), "chroma", hosted=True)
-user_db = VectorDatabase(os.getenv('VECTOR_DB_HOST'), "chroma", hosted=True)
-
-
-messageDatabase = MessageDB(
-    host=os.getenv('SQL_DB_HOST'),
-    user=os.getenv('SQL_DB_USER'),
-    password=os.getenv('SQL_DB_PASSWORD'),
-    database=os.getenv('SQL_DB'),
-    statistics_database=os.getenv('STAT_SQL_DB'),
-)
+db = VectorDatabase(os.getenv("VECTOR_DB_HOST"), "chroma", hosted=True)
+user_db = VectorDatabase(os.getenv("VECTOR_DB_HOST"), "chroma", hosted=True)
 
 import random
 import string
@@ -39,11 +29,7 @@ def generate_unique_name(desc):
         desc
         + "_"
         + get_random_string(20)
-        + datetime.now()
-        .isoformat()
-        .replace(".", "a")
-        .replace(":", "n")
-        .replace("-", "d")
+        + datetime.now().isoformat().replace(".", "a").replace(":", "n").replace("-", "d")
     )
 
 

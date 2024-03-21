@@ -16,10 +16,17 @@ from flask import jsonify
 from werkzeug.datastructures import FileStorage
 from core.definitions import Text
 from core.definitions import Doc
-from core.messagedb import MessageDB
 from core.reader import parse_plaintext_file, parse_plaintext_file_read
 from core.extensions import get_random_string
-from core.url_reader import URLReader
+from core.data import (
+    DataBase,
+    UserModel,
+    MessageModel,
+    SectionModel,
+    ChatModel,
+    CourseModel,
+    FeedbackModel,
+)
 
 
 class URLSpider:
@@ -40,6 +47,7 @@ class URLSpider:
         self.node_degree = {}
         self.max_number_of_urls = max_number_of_urls
 
+    @staticmethod
     def parse_url(url: str):
         """
         The function `parse_url` takes a URL as input, retrieves the content of the web page at that
@@ -69,6 +77,7 @@ class URLSpider:
         x = " ".join(soup.stripped_strings)
         return x
 
+    @staticmethod
     def parse_urls(urls: List[str]):
         """
         The function `parse_urls` takes a list of URLs, calls the `parse_url` function on each URL using
@@ -84,9 +93,7 @@ class URLSpider:
     spider_urls: [str] = []
     degree: int = 0
     visited: {str: bool} = {}
-
     global_url_reading_queue: [str]
-
     all_urls: [str] = []
 
     def neighbouring_urls(self, lock: Lock, url2app):
@@ -104,8 +111,7 @@ class URLSpider:
         """
         lock.acquire()
         print("starting thread!")
-        if (len(self.spider_urls) == 0
-                or len(self.spider_urls) > self.max_number_of_urls):
+        if len(self.spider_urls) == 0 or len(self.spider_urls) > self.max_number_of_urls:
             return
 
         urltoapp = self.spider_urls.pop(0)
@@ -122,7 +128,6 @@ class URLSpider:
         except:
             print(f"error while parsing {urltoapp}")
             return
-
 
         soup = BeautifulSoup(page.content, "html.parser")
         hrefs = soup.find_all("a", href=True)
@@ -160,7 +165,7 @@ class URLSpider:
             g = "OK"
 
             if (
-                    "http://" in shr or "https://" in shr
+                "http://" in shr or "https://" in shr
             ) and dom not in shr:  # if url be havin' http://
                 g = "NO"
             else:
@@ -182,9 +187,9 @@ class URLSpider:
                     if not self.visited.get(g):
                         self.node_degree[g] = self.node_degree[urltoapp] + 1
                         if (
-                                self.node_degree[g] < self.MAX_LEVEL_PARQ
-                                and g not in self.spider_urls
-                                and g not in s_urls
+                            self.node_degree[g] < self.MAX_LEVEL_PARQ
+                            and g not in self.spider_urls
+                            and g not in s_urls
                         ):
                             print("g: " + g)
                             print(s_urls)
@@ -240,52 +245,46 @@ class URLSpider:
 
     global_results: {str: dict} = {}
 
-    def add_to_andudb(self, section_dict, from_doc_joined, message_db: MessageDB):
-        """
-        The function adds a section to a message database and establishes a relationship between the
-        section and a course.
+    # def add_to_sqldatabase(self, section_dict, from_doc_joined):
+    #     """
+    #     The function adds a section to a message database and establishes a relationship between the
+    #     section and a course.
 
-        :param section_dict: A dictionary containing information about a section, including the section
-        ID and course ID
-        :param from_doc_joined: The parameter "from_doc_joined" is a string that represents the document
-        from which the section is being pulled
-        :param message_db: The parameter `message_db` is an instance of the `MessageDB` class
-        :type message_db: MessageDB
-        :return: a tuple containing the section_dict and from_doc_joined.
-        """
-        message_db.insert_section(
-            section_id=section_dict["section_id"], pulling_from=from_doc_joined
-        )
-        message_db.establish_course_section_relationship(
-            section_id=section_dict["section_id"], course_id=section_dict["course_id"]
-        )
-        return section_dict, from_doc_joined
+    #     :param section_dict: A dictionary containing information about a section, including the section
+    #     ID and course ID
+    #     :param from_doc_joined: The parameter "from_doc_joined" is a string that represents the document
+    #     from which the section is being pulled
+    #     :return: a tuple containing the section_dict and from_doc_joined.
+    #     """
+    #     DataBase().insert_section(
+    #         SectionModel(section_id=section_dict["section_id"], pulling_from=from_doc_joined)
+    #     )
+    #     DataBase().establish_course_section_relationship(
+    #         section_id=section_dict["section_id"], course_id=section_dict["course_id"]
+    #     )
+    #     return section_dict, from_doc_joined
 
-    def add_from_doc_to_section(self, section_id, to_add, message_db: MessageDB):
-        """
-        The function `add_from_doc_to_section` updates a section in a message database by adding a value
-        from a document, and returns the section ID and the value added.
+    # def add_from_doc_to_section(self, section_id, to_add):
+    #     """
+    #     The function `add_from_doc_to_section` updates a section in a message database by adding a value
+    #     from a document, and returns the section ID and the value added.
 
-        :param section_id: The section_id parameter is the identifier of the section where the content
-        will be added from the document
-        :param to_add: The `to_add` parameter is the content that you want to add to a specific section
-        in the `message_db`
-        :param message_db: The `message_db` parameter is an instance of the `MessageDB` class. It is used
-        to interact with a database that stores messages
-        :type message_db: MessageDB
-        :return: a tuple containing the section_id and to_add.
-        """
-        message_db.update_section_add_fromdoc(section_id, from_doc=to_add)
-        return section_id, to_add
+    #     :param section_id: The section_id parameter is the identifier of the section where the content
+    #     will be added from the document
+    #     :param to_add: The `to_add` parameter is the content that you want to add to a specific section
+    #     in the `DataBase()`
+    #     :return: a tuple containing the section_id and to_add.
+    #     """
+    #     DataBase().update_section_add_fromdoc(section_id=section_id, from_doc=to_add)
+    #     return section_id, to_add
 
     def parse_url_array(
-            self,
-            lock: Lock,
-            message_db: MessageDB,
-            chroma_db,
-            collection_name,
-            course_id,
-            addToMessageDB=True,
+        self,
+        lock: Lock,
+        chroma_db,
+        collection_name,
+        course_id,
+        addToMessageDB=True,
     ):
         """
         The function `parse_url_array` parses a URL array, extracts text from the URLs, adds the text to
@@ -296,11 +295,6 @@ class URLSpider:
         acquiring and releasing the lock, the code ensures that only one thread can execute the critical
         section at a time
         :type lock: Lock
-        :param message_db: The `message_db` parameter is an instance of the `MessageDB` class. It is
-        used to interact with a message database and perform operations such as inserting sections,
-        establishing relationships between sections and courses, and retrieving information from the
-        database
-        :type message_db: MessageDB
         :param chroma_db: The parameter `chroma_db` is a database object that is used to interact with a
         database for storing and retrieving text data. It is used in the `add_texts_chroma_lock` method
         to add the parsed texts to the database
@@ -309,12 +303,11 @@ class URLSpider:
         :param course_id: The `course_id` parameter is used to identify the course to which the parsed
         URL belongs. It is a unique identifier for the course
         :param addToMessageDB: The `addToMessageDB` parameter is a boolean flag that determines whether
-        or not to add the parsed section to the `message_db`. If `addToMessageDB` is set to `True`, the
-        section will be added to the `message_db`. If it is set to `False`, the section, defaults to
+        or not to add the parsed section to the `DataBase()`. If `addToMessageDB` is set to `True`, the
+        section will be added to the `DataBase()`. If it is set to `False`, the section, defaults to
         True (optional)
         :return: The function does not explicitly return anything.
         """
-        print("...parsing url arr")
         lock.acquire()
         strv = self.all_urls.pop(0)
 
@@ -330,21 +323,21 @@ class URLSpider:
         file = FileStorage(stream=io.BytesIO(bytes(site_text, "utf-8")), name=navn)
         f_f = (file, navn)
         doc = Doc(docname=f_f[1], citation="", dockey=f_f[1])
-        texts = parse_plaintext_file_read(
-            f_f[0], doc=doc, chunk_chars=2000, overlap=100
-        )
+        texts = parse_plaintext_file_read(f_f[0], doc=doc, chunk_chars=2000, overlap=100)
 
         section_id = navn
         print("finish ..")
-        print("adding texts... ", strv)
+        print("@chroma: adding texts... ", len(texts), strv)
         chroma_db.add_texts_chroma_lock(texts, lock=lock)
+        print("@chroma: added texts! ", strv)
+        print("@database: adding to db... ", strv)
 
-        message_db.insert_section(
-            section_id=section_id, pulling_from=section_id, sectionurl=strv
+        DataBase().insert_section(
+            SectionModel(section_id=section_id, pulling_from=section_id, sectionurl=strv)
         )
-        message_db.establish_course_section_relationship(
-            section_id=section_id, course_id=course_id
-        )
+        DataBase().establish_course_section_relationship(section_id=section_id, course_id=course_id)
+        print("@database: added section & link to db! ", strv)
+
         lock.acquire()
         self.global_results[navn] = {
             "section_id": section_id,
@@ -353,6 +346,7 @@ class URLSpider:
             "course_chroma_collection": collection_name,
         }
         lock.release()
+        print("\n\n")
 
     def dfsjdlf(self):
         print("Yeyyy")
@@ -390,16 +384,15 @@ class URLSpider:
         return self.all_urls
 
     def new_spider_function(
-            self,
-            urltoapp,
-            save_to_database,
-            collection_name,
-            message_db: MessageDB,
-            course_name,
-            proffessor,
-            course_id,
-            produce_bfs=True,
-            current_user=None,
+        self,
+        urltoapp,
+        save_to_database,
+        collection_name,
+        course_name,
+        proffessor,
+        course_id,
+        produce_bfs=True,
+        current_user=None,
     ):
         """
         The function `new_spider_function` is used to crawl and scrape data from a website, save it to a
@@ -412,11 +405,6 @@ class URLSpider:
         from a specific collection in the database
         :param collection_name: The `collection_name` parameter is a string that represents the name of
         the collection in the database where the spider data will be saved
-        :param message_db: The `message_db` parameter is an instance of the `MessageDB` class, which is
-        used to interact with a database to store and retrieve messages related to the spider function.
-        It is used to insert course information, insert user to course, and insert data into the
-        database
-        :type message_db: MessageDB
         :param course_name: The name of the course
         :param proffessor: The "proffessor" parameter in the function represents the name of the
         professor teaching the course
@@ -428,18 +416,21 @@ class URLSpider:
         generate the BFS array, defaults to True (optional)
         :param current_user: The `current_user` parameter is used to specify the current user who is
         executing the spider function. It is an object that represents the user and contains information
-        such as the username
+        such as the user_id
         """
 
         print("New spider func")
-        message_db.insert_course(
-            course_id=course_id,
-            name=course_name,
-            proffessor=proffessor,
-            mainpage=urltoapp,
-            collectionname=collection_name,
+        DataBase().insert_course(
+            CourseModel(
+                course_id=course_id,
+                name=course_name,
+                proffessor=proffessor,
+                mainpage=urltoapp,
+                collectionname=collection_name,
+            )
         )
-        message_db.insert_user_to_course(current_user.username, course_id=course_id)
+
+        DataBase().insert_user_to_course(user_id=current_user.user_id, course_id=course_id)
         save_to_database.load_datasource(collection_name)
         print("inserted date")
 
@@ -451,8 +442,6 @@ class URLSpider:
             self.produce_bfs_array(urltoapp=urltoapp, lock=lock)
             print("All urls", self.all_urls)
             print("produced bfs array!!")
-        # print(self.spider_urls)
-        # print(self.all_urls)
 
         THREAD_COUNT = self.TH_COUNT
         print("produced array successfully!")
@@ -469,7 +458,6 @@ class URLSpider:
                     target=self.parse_url_array,
                     args=(
                         lock,
-                        message_db,
                         save_to_database,
                         collection_name,
                         course_id,
@@ -477,7 +465,6 @@ class URLSpider:
                 )
                 thread.start()
                 threads.append(thread)
-
 
             for thread in threads:
                 thread.join()

@@ -6,7 +6,6 @@ from google.cloud import storage
 from io import BytesIO
 import PyPDF2
 from core.vectordatabase import VectorDatabase
-from core.url_reader import URLReader
 
 
 def read_folder_gcp(bucket_name, folder_name):
@@ -94,11 +93,13 @@ def read_filearray(files):
     texts = []
 
     for file in files:
-        print("AAAAAAA")
+        # print("AAAAAAA")
         doc = Doc(docname=file[1], citation="", dockey=file[1])
         print(file[1])
         try:
+            # print("Aolo")
             if file[1].endswith(".pdf"):
+                # print("aololo")
                 new_texts = parse_pdf(file[0], doc, 2000, 100)
             elif file[1].endswith(".ipynb"):
                 new_texts = parse_notebook_file(file[0], doc, 2000, 100)
@@ -153,9 +154,7 @@ def parse_notebook(path: str, doc: Doc, chunk_chars: int, overlap: int):
         return texts_from_str(text_str, doc, chunk_chars, overlap)
 
 
-def parse_pdf(
-    file_contents: str, doc: Doc, chunk_chars: int, overlap: int
-) -> List[Text]:
+def parse_pdf(file_contents: str, doc: Doc, chunk_chars: int, overlap: int) -> List[Text]:
     """Parses a pdf file and generates texts from its content.
 
     Args:
@@ -169,12 +168,16 @@ def parse_pdf(
     """
 
     # pdfFileObj = open(path, "rb")
-    pdfReader = PyPDF2.PdfReader(BytesIO(file_contents))
+    # print("linia 169")
+    pdfReader = PyPDF2.PdfReader(BytesIO(file_contents), strict=False)
     # pdfReader = PyPDF2.PdfReader(file_contents)
+    # print("linia 172")
     split = ""
     pages: List[str] = []
     texts: List[Text] = []
+    print(pdfReader.pages)
     for i, page in enumerate(pdfReader.pages):
+        # print('for::')
         split += page.extract_text()
         pages.append(str(i + 1))
 
@@ -183,20 +186,14 @@ def parse_pdf(
             pg = "-".join([pages[0], pages[-1]])
 
             # print(split[:chunk_chars])
-            text = [
-                Text(
-                    text=split[:chunk_chars], name=f"{doc.docname} pages {pg}", doc=doc
-                )
-            ]
+            text = [Text(text=split[:chunk_chars], name=f"{doc.docname} pages {pg}", doc=doc)]
             # database.add_texts_chroma(text)
             texts.append(text[0])
             split = split[chunk_chars - overlap :]
             pages = [str(i + 1)]
     if len(split) > overlap:
         pg = "-".join([pages[0], pages[-1]])
-        texts.append(
-            Text(text=split[:chunk_chars], name=f"{doc.docname} pages {pg}", doc=doc)
-        )
+        texts.append(Text(text=split[:chunk_chars], name=f"{doc.docname} pages {pg}", doc=doc))
     # pdfFileObj.close()
     return texts
 
