@@ -79,9 +79,10 @@ def ask():
     print("FROM_DOC: ", from_doc)
 
     pulling_from = [from_doc]
-    if pulling_from_section != None:
+    if pulling_from_section != None and tutor_type != NSFTutorType.NSF_CQN:
         pulling_from: list[str] = pulling_from_section.pulling_from.split("$")
-
+    if from_doc == None:
+        pulling_from = None
     print("SELECTED MODEL: ", selected_model, "Pulling from: ", pulling_from)
     print(collection_name)
     _chattutor = tutorfactory.build_empty(tutor_type)

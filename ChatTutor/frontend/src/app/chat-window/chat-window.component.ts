@@ -78,7 +78,8 @@ export class ChatWindowComponent implements OnInit{
             conversation: this.messages,
             selectedModel: "gpt-3.5-turbo-16k",
             multiple: true,
-            credential_token: "none"
+            credential_token: "none",
+            response_type: "NSF_CQN"
         }
 
         if (this.collections) {
