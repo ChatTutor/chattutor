@@ -4,6 +4,8 @@ import uuid as uuid_pkg
 from datetime import datetime
 from sqlmodel import Field
 from dataclasses import dataclass
+from sqlalchemy.dialects.mysql import LONGTEXT
+from sqlalchemy import Column
 
 
 @dataclass
@@ -31,7 +33,7 @@ class Message(SQLModel, table=True):
         nullable=False,
     )
     role: str
-    content: str = Text(length=4000)
+    content: str = Column(LONGTEXT)
     chat_key: str = Field(foreign_key="chat.chat_id")
     clear_number: Optional[int]
     time_created: datetime = Field(default_factory=datetime.now)

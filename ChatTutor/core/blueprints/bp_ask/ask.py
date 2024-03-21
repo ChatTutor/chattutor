@@ -78,7 +78,9 @@ def ask():
     # todo: get bot type from token
     print("FROM_DOC: ", from_doc)
 
-    pulling_from: list[str] = pulling_from_section.pulling_from.split('$')
+    pulling_from = [from_doc]
+    if pulling_from_section != None:
+        pulling_from: list[str] = pulling_from_section.pulling_from.split("$")
 
     print("SELECTED MODEL: ", selected_model, "Pulling from: ", pulling_from)
     print(collection_name)
