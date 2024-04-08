@@ -8,8 +8,10 @@ from core.data.models import (
     CourseModel,
     FeedbackModel,
     DevsModel,
+    VerificationCodeModel,
 )
 from core.utils import build_model_from_params
+from sqlalchemy.exc import IntegrityError
 
 
 def message_oldformat_to_new(a_message: MessageModel | dict) -> MessageModel:
@@ -120,6 +122,51 @@ class DataBase(metaclass=Singleton):
             return chat.chat_id, session
 
     @build_model_from_params(
+        from_keys=["id", "user_id"],
+        model=VerificationCodeModel,
+        is_method=True,
+    )
+    def insert_verif(self, *args, **kwargs) -> tuple[VerificationCodeModel, Session]:
+        """Insert E-mail verification code
+        Args:
+            args[0] (VerificationCodeModel) : verification code object
+
+
+        Returns:
+            tuple[VerificationCodeModel, Session]: _description_
+        """
+        with Connection().session() as session:
+            print("INSERTING VERIF: ")
+            print(args[0])
+
+            try:
+                # Add the new_user object to the session
+                session.add(args[0])
+                # Commit the session to persist the changes
+                session.commit()
+                print("Verif added successfully.")
+            except IntegrityError as e:
+                session.rollback()
+                print("Verif already exists or integrity constraint violation:", e)
+                # Query the existing entry with the duplicate primary key
+                existing_verif = session.exec(
+                    select(VerificationCodeModel).where(
+                        VerificationCodeModel.user_id == args[0].user_id
+                    )
+                ).one()
+                if existing_verif:
+                    # Update the attributes of the existing entry
+                    existing_verif.id = args[0].id
+                    existing_verif.user_id = args[0].user_id
+                    # Commit the changes
+                    session.commit()
+                    print("Existing verif updated successfully.")
+                else:
+                    print("Existing verif not found.")
+
+            return args[0], session
+
+    @build_model_from_params(
         from_keys=["content", "message_id", "feedback_id"],
         model=FeedbackModel,
         is_method=True,
@@ -157,11 +204,11 @@ class DataBase(metaclass=Singleton):
             session.expunge_all()
             return args[0], session
 
-    @build_model_from_params(
-        from_keys=["section_id", "pulling_from", "sectionurl"],
-        model=SectionModel,
-        is_method=True,
-    )
+    # @build_model_from_params(
+    #     from_keys=["section_id", "pulling_from", "sectionurl"],
+    #     model=SectionModel,
+    #     is_method=True,
+    # )
     def insert_section(self, *args, **kwargs) -> tuple[SectionModel, Session]:
         """Insert course
 
@@ -171,11 +218,43 @@ class DataBase(metaclass=Singleton):
         with Connection().session() as session:
             print("INSERTING SECTION: ")
             print(args[0])
-            session.add(args[0])
-            session.commit()
-            session.refresh(args[0])
-            session.expunge_all()
+
+            try:
+                # Add the new_user object to the session
+                session.add(args[0])
+                # Commit the session to persist the changes
+                session.commit()
+                print("Section added successfully.")
+            except IntegrityError as e:
+                session.rollback()
+                print("Section already exists or integrity constraint violation:", e)
+                # Query the existing entry with the duplicate primary key
+                existing_section = session.exec(
+                    select(SectionModel).where(SectionModel.section_id == args[0].section_id)
+                ).one()
+                if existing_section:
+                    # Update the attributes of the existing entry
+                    existing_section.pulling_from = args[0].pulling_from
+                    existing_section.sectionurl = args[0].sectionurl
+                    existing_section.courses = args[0].courses
+                    # Commit the changes
+                    session.commit()
+                    print("Existing user updated successfully.")
+                else:
+                    print("Existing user not found.")
+            # session.add(args[0])
+            # session.merge(args[0])
+            # session.commit()
+            # session.refresh(args[0])
+            # session.expunge_all()
             return args[0], session
+
+    def get_verif(self, code):
+        with Connection().session() as session:
+            statement = select(VerificationCodeModel).where(VerificationCodeModel.id == code)
+            res = session.exec(statement).first()
+            session.expunge_all()
+            return res, session
 
     def get_users_by_email(self, email: str):
         """Gets users by email
@@ -395,3 +474,22 @@ class DataBase(metaclass=Singleton):
             )
             result = session.exec(stmt).all()
             return result
+
+    def verify_user(self, user_id: str) -> tuple[UserModel, Session]:
+        """verifies a user by user_id
+
+        Args:
+            user_id (str): user_id
+
+        Returns:
+            tuple[UserModel, Session]: _description_
+        """
+        with Connection().session() as session:
+            try:
+                user = session.exec(select(UserModel).where(UserModel.user_id == user_id)).one()
+                user.verified = "true"
+                session.commit()
+                session.expunge_all()
+                return user, session
+            except Exception as e:
+                return None, session

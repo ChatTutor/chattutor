@@ -43,6 +43,7 @@ import { RegisterPageComponent } from './register-page/register-page.component';
 import { RegisterStudentPageComponent } from './register-student-page/register-student-page.component';
 import { GradientBackgroundComponent } from './gradient-background/gradient-background.component';
 import { OAuthCallbackComponent } from './oauth-callback/oauth-callback.component';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 
 import { OAuthModule, AuthConfig, JwksValidationHandler, ValidationHandler, OAuthStorage, OAuthModuleConfig } from 'angular-oauth2-oidc'; // Added
@@ -102,6 +103,7 @@ const authModuleConfig: OAuthModuleConfig = {
         MatStepperModule,
         MatExpansionModule,
         HttpClientModule,
+        MatCheckboxModule,
         OAuthModule.forRoot(authModuleConfig),
     ],
   providers: [

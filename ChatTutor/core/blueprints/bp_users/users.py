@@ -6,6 +6,7 @@ import flask
 import flask_login
 from flask import Blueprint, jsonify, request
 from core.data.DataBase import UserModel
+from core.utils.email import EmailSender
 
 users_bp = Blueprint("bp_users", __name__)
 
@@ -175,8 +176,9 @@ def isloggedin():
         flask_login.current_user.is_authenticated,
     )
     if flask_login.current_user.is_authenticated:
-        return jsonify({"loggedin": True})
-    return jsonify({"loggedin": False})
+        print(flask_login.current_user)
+        return jsonify({"loggedin": True, "verified": flask_login.current_user.verified == "true"})
+    return jsonify({"loggedin": False, "verified": False})
 
 
 @users_bp.route("/users/<email>/mycourses", methods=["POST"])
@@ -300,3 +302,29 @@ def student_register():
     print(user.password_hash)
     DataBase().insert_user(user=user)
     return f'User {user} inserted, please <a href="/login">Login</a>'
+
+
+@users_bp.route("/users/send_verification_mail", methods=["POST", "GET"])
+def user_send_mail():
+    current_user = flask_login.current_user
+
+    code, ok = EmailSender().send(current_user)
+    if ok:
+        return jsonify({"code": code, "user_id": current_user.user_id})
+    else:
+        # return "Error! <a href='/users/send_verification_mail'> Try again! </a>"
+        return jsonify(
+            {"error": 1, "message": "Could not send mail!", "user_id": current_user.user_id}
+        )
+
+
+@users_bp.route("/users/verify/<code>", methods=["POST", "GET"])
+def user_verify(code):
+    current_user = flask_login.current_user
+
+    res, _ = DataBase().get_verif(code)
+    if not res or (res.user_id != current_user.user_id):
+        return "Something went wrong <a href='/'>Go home and try again!</a>"
+    else:
+        DataBase().verify_user(current_user.user_id)
+        return "User verified! <a href='/'>Go home!</a>"

@@ -44,6 +44,9 @@ def load_env():
             "OAUTH_CLIENT_SECRET",
             "PLATFORM",
             "SERVICE_NAME",
+            "VERITAI_EMAIL",
+            "VERITAI_EMAIL_PASSWD",
+            "SERVICE_BASE_URL",
         ]
 
         for envar in envars:

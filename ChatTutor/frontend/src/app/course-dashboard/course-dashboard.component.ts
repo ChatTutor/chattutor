@@ -38,8 +38,8 @@ export class CourseDashboardComponent implements OnInit {
             this.email = user['email']
             this.dataProvider.getUserCourseSections(this.email, this.course_id).then(data => {
                 this.sections = data["sections"]
-                this.course_name = this.sections[0]['course_chroma_collection']
                 console.log('sections:',this.sections)
+                this.course_name = this.sections[0]['course_chroma_collection']
                 this.loading = false
             })
         })

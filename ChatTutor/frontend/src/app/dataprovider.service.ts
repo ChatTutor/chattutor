@@ -111,6 +111,11 @@ export class DataProviderService {
     return await response.json()
   }
 
+  async sendCollection(url : string, coursename : string, prof : string, component_state : any) {
+    let data = JSON.stringify({url_to_parse: url, collection_name: coursename, course_name: coursename, coursename: coursename, proffessor: prof, manual: true})
+    let response = await fetch('/prep/course/register', {method: 'POST', headers:{'Content-Type':'application/json'}, body: data})
+    return await response.json();
+  }
 
   /**
    * 

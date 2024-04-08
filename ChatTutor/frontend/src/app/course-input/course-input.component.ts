@@ -18,6 +18,7 @@ export class CourseInputComponent {
     is_ready: boolean = false
     url_collection_name: string = ''
     urls_to_parse: string[]
+    manual: boolean = false
     process_of: any = {}
     @Input() dashboard_only: boolean = false
     constructor(private dataProvider : DataProviderService) {
@@ -54,6 +55,11 @@ export class CourseInputComponent {
     }
 
     async submitUrlScrape() {
+        // if (this.manual == false) {
         this.dataProvider.scrapeOriginURLNode(this.urltoparse, this.course_name, this.proffessor, this);
+        // } else {
+            // console.log(this.urltoparse, this.course_name, this.proffessor)
+            // let data = await this.dataProvider.sendCollection(this.urltoparse, this.course_name, this.proffessor, this)
+        // }
     }
 }

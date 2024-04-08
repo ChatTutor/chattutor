@@ -41,9 +41,8 @@ class User(flask_login.UserMixin, SQLModel, table=True):
     email: str
     password_hash: str
     user_type: str
-    courses: List[Course] = Relationship(
-        back_populates="users", link_model=UserCourseLink
-    )
+    courses: List[Course] = Relationship(back_populates="users", link_model=UserCourseLink)
+    verified: str = Field(default="false")
 
     def get_id(self):
         return self.email
@@ -59,14 +58,10 @@ class User(flask_login.UserMixin, SQLModel, table=True):
 
     @password.setter
     def password(self, password):
-        self.password_hash = bcrypt.hashpw(
-            password.encode("utf-8", "ignore"), bcrypt.gensalt()
-        )
+        self.password_hash = bcrypt.hashpw(password.encode("utf-8", "ignore"), bcrypt.gensalt())
 
     def set_password(self, password):
-        self.password_hash = bcrypt.hashpw(
-            password.encode("utf-8", "ignore"), bcrypt.gensalt()
-        )
+        self.password_hash = bcrypt.hashpw(password.encode("utf-8", "ignore"), bcrypt.gensalt())
 
     def verify_password(self, p):
         print(
