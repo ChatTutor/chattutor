@@ -323,8 +323,41 @@ def user_verify(code):
     current_user = flask_login.current_user
 
     res, _ = DataBase().get_verif(code)
-    if not res or (res.user_id != current_user.user_id):
+    if not res or (res.user_id != current_user.user_id) or res.type != "USER_VERIFICATION":
         return "Something went wrong <a href='/'>Go home and try again!</a>"
     else:
         DataBase().verify_user(current_user.user_id)
         return "User verified! <a href='/'>Go home!</a>"
+
+
+@users_bp.route("/users/forgotpassword", methods=["POST", "GET"])
+def user_forgotpassword():
+    new_password = flask.request.form['new_password']
+    code = flask.request.form['code']
+    email = flask.request.form['emaila']
+    res, _ = DataBase().get_reset_code(email, code)
+    if not res or res.code != code:
+        return f"Something went wrong <a href='/'>Go home and try again! {res.code}</a>"
+    else:
+
+        ok, session = DataBase().reset_user_password(new_password, code=code)
+
+        if ok is None:
+            return "Error: User password NOT reset! <a href='/'>Go home!</a>"
+        else:
+            return "User password reset! <a href='/'>Go home!</a>"
+
+
+@users_bp.route("/users/sendresetemail", methods=["POST", "GET"])
+def forgot_password_send():
+    email = flask.request.form['email']
+    code, ok = EmailSender().send_forgot_password(email)
+    if ok:
+        return jsonify({"code": code})
+    else:
+        # return "Error! <a href='/users/send_verification_mail'> Try again! </a>"
+        return jsonify(
+            {"error": 1, "message": "Could not send mail!"}
+        )
+
+

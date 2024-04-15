@@ -5,12 +5,15 @@ from email.mime.multipart import MIMEMultipart
 from numpy import random
 from core.data import DataBase
 from core.data.DataBase import VerificationCodeModel
+from core.data.models import User
 import uuid
+
+from core.data.models.ResetCode import ResetCodeModel
 
 
 def random_with_N_digits(n):
     range_start = 10 ** (n - 1)
-    range_end = (10**n) - 1
+    range_end = (10 ** n) - 1
     return random.randint(range_start, range_end)
 
 
@@ -25,7 +28,7 @@ class EmailSender:
             "VERITAI_EMAIL"
         )  # This must be the verified sender identity in your SendGrid account
 
-    def send(self, user, add_to_db=True):
+    def send(self, user: User):
         base_url = os.getenv("SERVICE_BASE_URL")
         receiver_email = user.email
         message = MIMEMultipart("alternative")
@@ -57,6 +60,48 @@ class EmailSender:
                 server.login("apikey", self.password)  # Note: the username is always 'apikey'
                 server.sendmail(self.sender_email, receiver_email, message.as_string())
                 DataBase().insert_verif(VerificationCodeModel(id=code, user_id=user.user_id))
+                return code, True
+        except Exception as e:
+            print(f"Error sending email or adding to db: {e}")
+            return 0, False
+
+    def send_forgot_password(self, email: str, add_to_db=True):
+        base_url = os.getenv("SERVICE_BASE_URL")
+        receiver_email = email
+        message = MIMEMultipart("alternative")
+        message["Subject"] = "Subject Here"
+        message["From"] = self.sender_email
+        message["To"] = receiver_email
+
+        code = random_code()
+
+        user_1, a = DataBase().get_users_by_email(email=email)
+
+        if(len(user_1) == 0):
+            print("Not any user with this mail!")
+            return 0, False
+
+        text = f"""\
+        <h1> VeritAI </h1>
+        
+        <h2> Hello {user_1[0]}. Reset your password </h2>
+        
+        <p>Reset your password at <a clicktracking='off' href='{base_url}users/resetpassword'> {base_url}users/resetpassword </a></p>
+        <p>The reset code is <span>{code}</span></p>
+        <br/>
+        <p> Thank you! </p>
+        """
+
+        part1 = MIMEText(text, "html")
+
+        # Attach parts into message container
+        message.attach(part1)
+
+        try:
+            with smtplib.SMTP_SSL("smtp.sendgrid.net", 465) as server:
+                server.login("apikey", self.password)  # Note: the username is always 'apikey'
+                server.sendmail(self.sender_email, receiver_email, message.as_string())
+                DataBase().insert_reset_code(ResetCodeModel(id=code, code=code, email=email))
                 return code, True
         except Exception as e:
             print(f"Error sending email or adding to db: {e}")

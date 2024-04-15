@@ -49,6 +49,7 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import { OAuthModule, AuthConfig, JwksValidationHandler, ValidationHandler, OAuthStorage, OAuthModuleConfig } from 'angular-oauth2-oidc'; // Added
 import { AuthService } from './auth.service';
 import { HttpClientModule } from '@angular/common/http';
+import { UserPasswordResetComponent } from './user-password-reset/user-password-reset.component';
 
 const authModuleConfig: OAuthModuleConfig = {
   resourceServer: {
@@ -82,6 +83,7 @@ const authModuleConfig: OAuthModuleConfig = {
     RegisterStudentPageComponent,
     GradientBackgroundComponent,
     OAuthCallbackComponent,
+    UserPasswordResetComponent,
   ],
     imports: [
         BrowserModule,

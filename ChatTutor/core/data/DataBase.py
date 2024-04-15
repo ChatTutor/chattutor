@@ -1,4 +1,6 @@
-from core.data.models import Singleton, Connection
+from sqlalchemy import delete
+
+from core.data.models import Singleton, Connection, User
 from sqlmodel import Field, Session, SQLModel, create_engine, select, Sequence
 from core.data.models import (
     UserModel,
@@ -9,7 +11,9 @@ from core.data.models import (
     FeedbackModel,
     DevsModel,
     VerificationCodeModel,
+    ResetCode
 )
+from core.data.models.ResetCode import ResetCodeModel
 from core.utils import build_model_from_params
 from sqlalchemy.exc import IntegrityError
 
@@ -167,6 +171,62 @@ class DataBase(metaclass=Singleton):
             return args[0], session
 
     @build_model_from_params(
+        from_keys=["id", "code", "email"],
+        model=ResetCodeModel,
+        is_method=True,
+    )
+    def insert_reset_code(self, *args, **kwargs) -> tuple[ResetCodeModel, Session]:
+        """Insert E-mail verification code
+        Args:
+            args[0] (VerificationCodeModel) : verification code object
+
+
+        Returns:
+            tuple[VerificationCodeModel, Session]: _description_
+        """
+
+        with Connection().session() as session:
+            all_existing = session.exec(
+                delete(ResetCodeModel).where(
+                    ResetCodeModel.email == args[0].email
+                )
+            )
+
+            session.commit()
+
+        with Connection().session() as session:
+            print("INSERTING reset: ")
+            print(args[0])
+
+            try:
+                # Add the new_user object to the session
+                session.add(args[0])
+                # Commit the session to persist the changes
+                session.commit()
+                print("Verif added successfully.")
+            except IntegrityError as e:
+                session.rollback()
+                print("Verif already exists or integrity constraint violation:", e)
+                # Query the existing entry with the duplicate primary key
+                existing_verif = session.exec(
+                    select(ResetCodeModel).where(
+                        ResetCodeModel.email == args[0].email
+                    )
+                ).one()
+                if existing_verif:
+                    # Update the attributes of the existing entry
+                    existing_verif.id = args[0].id
+                    existing_verif.code = args[0].code
+                    existing_verif.email = args[0].email
+                    # Commit the changes
+                    session.commit()
+                    print("Existing verif updated successfully.")
+                else:
+                    print("Existing verif not found.")
+
+            return args[0], session
+
+    @build_model_from_params(
         from_keys=["content", "message_id", "feedback_id"],
         model=FeedbackModel,
         is_method=True,
@@ -255,6 +315,14 @@ class DataBase(metaclass=Singleton):
             res = session.exec(statement).first()
             session.expunge_all()
             return res, session
+
+    def get_reset_code(self, email, code):
+        with Connection().session() as session:
+            statement = select(ResetCodeModel).where(ResetCodeModel.email == email and ResetCodeModel.code == code)
+            res = session.exec(statement).first()
+            session.expunge_all()
+            return res, session
+
 
     def get_users_by_email(self, email: str):
         """Gets users by email
@@ -492,4 +560,19 @@ class DataBase(metaclass=Singleton):
                 session.expunge_all()
                 return user, session
             except Exception as e:
+                return None, session
+
+    def reset_user_password(self, new_password: str, code: str) -> tuple[UserModel, Session]:
+        with Connection().session() as session:
+            print("Trying...")
+            try:
+                v_model = session.exec(select(ResetCodeModel).where(ResetCodeModel.code == code)).one()
+                user = session.exec(select(UserModel).where(UserModel.email == v_model.email)).one()
+                print("User email: ", user.email)
+                user.password = new_password
+                session.commit()
+                session.expunge_all()
+                return user, session
+            except Exception as e:
+                print(f"Exception! {e}: ", user.email)
                 return None, session
