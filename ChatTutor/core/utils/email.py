@@ -84,10 +84,10 @@ class EmailSender:
         text = f"""\
         <h1> VeritAI </h1>
         
-        <h2> Hello {user_1[0]}. Reset your password </h2>
+        <h2> Hello, {email}. Reset your password </h2>
         
         <p>Reset your password at <a clicktracking='off' href='{base_url}users/resetpassword'> {base_url}users/resetpassword </a></p>
-        <p>The reset code is <span>{code}</span></p>
+        <p>The reset code is <b>{code}</b></p>
         <br/>
         <p> Thank you! </p>
         """
