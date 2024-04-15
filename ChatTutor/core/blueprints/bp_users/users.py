@@ -323,7 +323,7 @@ def user_verify(code):
     current_user = flask_login.current_user
 
     res, _ = DataBase().get_verif(code)
-    if not res or (res.user_id != current_user.user_id) or res.type != "USER_VERIFICATION":
+    if not res or (res.user_id != current_user.user_id):
         return "Something went wrong <a href='/'>Go home and try again!</a>"
     else:
         DataBase().verify_user(current_user.user_id)
