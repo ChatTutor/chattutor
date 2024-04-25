@@ -396,6 +396,15 @@ class DataBase(metaclass=Singleton):
             urls = [x.mainpage for x in res]
             return urls
 
+    def get_course_messages(self, course_id):
+        with Connection().session() as session:
+            statement = select(CourseModel).where(CourseModel.course_id == course_id)
+            res = session.exec(statement).first()
+            if res is None:
+                return None, session
+            msgs = [x.jsonserialize() for x in res.messages]
+            return msgs, session
+
     def get_users_by_email(self, email: str):
         """Gets users by email
 
