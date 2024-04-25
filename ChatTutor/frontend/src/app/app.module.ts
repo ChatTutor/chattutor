@@ -50,6 +50,7 @@ import { OAuthModule, AuthConfig, JwksValidationHandler, ValidationHandler, OAut
 import { AuthService } from './auth.service';
 import { HttpClientModule } from '@angular/common/http';
 import { UserPasswordResetComponent } from './user-password-reset/user-password-reset.component';
+import { OauthCallbackStudentsComponent } from './oauth-callback-students/oauth-callback-students.component';
 
 const authModuleConfig: OAuthModuleConfig = {
   resourceServer: {
@@ -84,6 +85,7 @@ const authModuleConfig: OAuthModuleConfig = {
     GradientBackgroundComponent,
     OAuthCallbackComponent,
     UserPasswordResetComponent,
+    OauthCallbackStudentsComponent,
   ],
     imports: [
         BrowserModule,

@@ -24,9 +24,10 @@ export class AuthService {
     this.oauthService.configure(authConfig);
   }
 
-  oauthLogin(): void {
+  oauthLogin(utype: string): void {
+    console.log("Utype", utype);
     this.oauthService.loadDiscoveryDocument().then(() => {
-      this.oauthService.initImplicitFlow(); // For PKCE
+      this.oauthService.initImplicitFlow(utype); // For PKCE
     }).catch((err: OAuthErrorEvent) => console.error(err));
   }
 
@@ -34,19 +35,22 @@ export class AuthService {
     this.oauthService.logOut();
   }
 
-  sendUserInfoToBackend(user_info: { google_id: string; email: string; name: string }) {
-    return this.http.post('/auth/google', user_info);
+  sendUserInfoToBackend(user_info: { google_id: string; email: string; name: string; utype: string}) {
+    return this.http.post('/auth/google', user_info);    
   }
 
   handleLoginSuccess() {
     if (this.oauthService.hasValidAccessToken()) {
+      console.log(this.oauthService.state)
       const claims: any = this.oauthService.getIdentityClaims();
       if (claims) {
         // Assuming you get the google_id, email, and name from Google's OAuth response.
+        const a = this.oauthService.state == undefined ? "" :this.oauthService.state; 
         const user_info = {
           google_id: claims.sub, // This might need adjustment based on the actual claims structure
           email: claims.email,
           name: claims.name,
+          utype: a,
         };
         console.log('sending to backend', user_info);
         this.sendUserInfoToBackend(user_info).subscribe(

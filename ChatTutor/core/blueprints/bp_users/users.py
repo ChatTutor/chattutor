@@ -64,9 +64,11 @@ def register_user():
 @users_bp.route("/auth/google", methods=["POST"])
 def oauth_register():
     user_info = request.json
+    print(f"[OAUTH REGISTER] {user_info}")
     google_id = user_info.get("google_id")
     email = user_info.get("email")
     name = user_info.get("name")
+    utype = user_info.get("utype")  # PROFESSOR | STUDENT
 
     if not google_id or not email or not name:
         return jsonify({"error": "Missing information from Google OAuth"}), 400
@@ -77,7 +79,7 @@ def oauth_register():
         user = UserModel(
             email=email,
             password_hash="unset",
-            user_type="PROFESSOR",
+            user_type=utype,
             google_id=google_id,
             name=name,
         )
