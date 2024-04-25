@@ -35,7 +35,8 @@ def addtodb():
             "chat_k" : Optional[str],
             "clear_number" : int, # number of times the chat was cleared
             "time_created" : int,
-            "credential_token" : Oprional[str] # unused for now
+            "credential_token" : Oprional[str], # unused for now
+            "course" : Optional[str], # course which the message should be linked to
         }
         ```
     Returns:
@@ -47,6 +48,7 @@ def addtodb():
         ```
     """
     data = request.json
+    course_col = data.get("course", None)  # HERE
     message_id = data.get("message_id", None)
     content = data["content"]
     role = data["role"]
@@ -70,7 +72,7 @@ def addtodb():
     }
 
     print("adding ", message_to_upload, " to db")
-    uploaded_message, _ = DataBase().insert_message(message_to_upload)
+    uploaded_message, _ = DataBase().insert_message(message_to_upload, course_col)  # HERE
     return jsonify(
         {
             "message_id": uploaded_message.mes_id,

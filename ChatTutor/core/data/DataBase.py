@@ -88,7 +88,9 @@ class DataBase(metaclass=Singleton):
             session.commit()
             return user, session
 
-    def insert_message(self, message: MessageModel | dict) -> tuple[MessageModel, Session]:
+    def insert_message(
+        self, message: MessageModel | dict, course_collname=None
+    ) -> tuple[MessageModel, Session]:
         """Insert message in DataBase
 
         Args:
@@ -103,6 +105,15 @@ class DataBase(metaclass=Singleton):
             session.add(message)
             session.commit()
             session.refresh(message)
+
+            if course_collname is not None:
+                stmt = select(CourseModel).where(CourseModel.collectionname == course_collname)
+                course = session.exec(stmt).one()
+                course.messages.append(message)
+                session.add(course)
+                session.commit()
+                session.refresh(course)
+
             session.expunge_all()
             return message, session
 
@@ -494,6 +505,28 @@ class DataBase(metaclass=Singleton):
             course = session.exec(
                 select(CourseModel).where(CourseModel.mainpage == course_mainpage)
             ).one()
+            return course.collectionname, session
+
+    def get_course_name_by_sections_mainpage(self, course_mainpage) -> tuple[str, Session]:
+        """Get course by specified mainpage url
+
+        Args:
+            course_mainpage (str): mainpage url
+
+        Returns:
+            tuple[str, Session]: collection name, and session
+        """
+        with Connection().session() as session:
+            sect = session.exec(
+                select(SectionModel).where(course_mainpage == SectionModel.sectionurl)
+            ).first()
+            if sect == None:
+                return None, session
+            if len(sect.courses) == None:
+                return None, session
+            course = sect.courses[0]
+            if course == None:
+                return None, session
             return course.collectionname, session
 
     def get_course_id_by_mainpage(self, course_mainpage) -> tuple[str, Session]:

@@ -7,6 +7,7 @@ from sqlmodel import Field, Relationship
 from core.data.models.SectionCourseLink import SectionCourseLink
 from core.data.models.UserCourseLink import UserCourseLink
 from core.data.models.StudentCourseLink import StudentCourseLink
+from core.data.models.MessageCourseLink import MessageCourseLink
 
 from dataclasses import dataclass
 
@@ -46,6 +47,7 @@ class Course(SQLModel, table=True):
     students: List["User"] = Relationship(
         back_populates="studied_courses", link_model=StudentCourseLink
     )
+    messages: List["Message"] = Relationship(link_model=MessageCourseLink, back_populates="courses")
 
     def jsonserialize(self):
         d = self.__dict__
