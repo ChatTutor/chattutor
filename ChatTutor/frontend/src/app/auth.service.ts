@@ -24,11 +24,17 @@ export class AuthService {
     this.oauthService.configure(authConfig);
   }
 
-  oauthLogin(utype: string): void {
-    console.log("Utype", utype);
+  oauthLogin(utype: string, redirect_from: string | undefined | null): void {
+    if (redirect_from === null)
+      redirect_from = undefined
+    console.log("Utype", utype, "red from", redirect_from);
     this.oauthService.loadDiscoveryDocument().then(() => {
-      this.oauthService.initImplicitFlow(utype); // For PKCE
+      this.oauthService.initImplicitFlow(JSON.stringify({"utype" : utype, "redirect_from": redirect_from})); // For PKCE
     }).catch((err: OAuthErrorEvent) => console.error(err));
+  }
+
+  navigateToExternalUrl(url: string): void {
+    window.open(url, '_blank'); // Open in a new tab/window
   }
 
   logout(): void {
@@ -45,18 +51,25 @@ export class AuthService {
       const claims: any = this.oauthService.getIdentityClaims();
       if (claims) {
         // Assuming you get the google_id, email, and name from Google's OAuth response.
-        const a = this.oauthService.state == undefined ? "" :this.oauthService.state; 
+        const a = JSON.parse(this.oauthService.state == undefined ? "{utype: 'PROFFESSOR', 'redirect_from': undefined}" :this.oauthService.state); 
         const user_info = {
           google_id: claims.sub, // This might need adjustment based on the actual claims structure
           email: claims.email,
           name: claims.name,
-          utype: a,
+          utype: a['utype'],
+          redirect_from: a['redirect_from']
         };
         console.log('sending to backend', user_info);
         this.sendUserInfoToBackend(user_info).subscribe(
           response =>{ 
             console.log(response)
-            this.router.navigate(['/']);
+            const data = JSON.parse(JSON.stringify(response))
+            if (data["redirect_to"] == undefined)
+              this.router.navigate(['/']);
+            else {
+              this.navigateToExternalUrl(data["redirect_to"])
+              this.router.navigate(['/']);
+            }
           },
           error => {
             console.error(error)

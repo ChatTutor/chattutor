@@ -260,6 +260,63 @@ class DataBase(metaclass=Singleton):
             session.expunge_all()
             return args[0], session
 
+    # def enroll_user_to_course_by_id(
+    #     self, user_id, course_id
+    # ) -> tuple[UserModel, CourseModel, Session]:
+    #     """Mark user as student of the specified course
+
+    #     Args:
+    #         user_id (str): user id
+    #         course_id (str): course id
+
+    #     Returns:
+    #         tuple[UserModel, CourseModel, Session]: user, course, session
+    #     """
+    #     with Connection().session() as session:
+    #         user = session.exec(select(UserModel).where(UserModel.user_id == user_id)).one()
+    #         course = session.exec(
+    #             select(CourseModel).where(CourseModel.course_id == course_id)
+    #         ).one()
+    #         user.studied_courses.append(course)
+    #         session.add(user)
+    #         session.commit()
+    #         return user, course, session
+
+    def enroll_user_to_course_by_collectionname(
+        self, user_id, course_collectionname
+    ) -> tuple[str, Session]:
+        """Mark user as student of the specified course
+
+        Args:
+            user_id (str): user id
+            course_collectionname (str): course collectionname
+
+        Returns:
+            tuple[UserModel, CourseModel, Session]: user, course, session
+        """
+        with Connection().session() as session:
+            try:
+                user = session.exec(select(UserModel).where(UserModel.user_id == user_id)).one()
+                course = session.exec(
+                    select(CourseModel).where(CourseModel.collectionname == course_collectionname)
+                ).one()
+                try:
+                    if user.studied_courses.count(course) == 0:
+                        user.studied_courses.append(course)
+                        session.add(user)
+                        session.commit()
+                        mainpage = course.mainpage
+                except IntegrityError as e:
+                    print("[ERROR] User is already enrolled!!")
+                    mainpage = course.mainpage
+                    return mainpage, session
+                mainpage = course.mainpage
+                print(f"[SUCCESS] {mainpage}")
+                return mainpage, session
+            except:
+                print("[ERROR] Something went wrong with enrolling user to course!!")
+                return None, session
+
     # @build_model_from_params(
     #     from_keys=["section_id", "pulling_from", "sectionurl"],
     #     model=SectionModel,
@@ -424,6 +481,36 @@ class DataBase(metaclass=Singleton):
             user = session.exec(select(UserModel).where(UserModel.email == email)).one()
             return user.courses, session
 
+    def get_course_name_by_mainpage(self, course_mainpage) -> tuple[str, Session]:
+        """Get course by specified mainpage url
+
+        Args:
+            course_mainpage (str): mainpage url
+
+        Returns:
+            tuple[str, Session]: collection name, and session
+        """
+        with Connection().session() as session:
+            course = session.exec(
+                select(CourseModel).where(CourseModel.mainpage == course_mainpage)
+            ).one()
+            return course.collectionname, session
+
+    def get_course_id_by_mainpage(self, course_mainpage) -> tuple[str, Session]:
+        """Get course by specified mainpage url
+
+        Args:
+            course_mainpage (str): mainpage url
+
+        Returns:
+            tuple[str, Session]: collection id, and session
+        """
+        with Connection().session() as session:
+            course = session.exec(
+                select(CourseModel).where(CourseModel.mainpage == course_mainpage)
+            ).one()
+            return course.course_id, session
+
     def get_courses_sections(self, course_id) -> tuple[list[SectionModel], Session]:
         """Get courses sections
 
@@ -438,6 +525,21 @@ class DataBase(metaclass=Singleton):
                 select(CourseModel).where(CourseModel.course_id == course_id)
             ).one()
             return course.sections, session
+
+    def get_courses_students(self, course_id) -> tuple[list[UserModel], Session]:
+        """Get courses students
+
+        Args:
+            course_id (str): course id
+
+        Returns:
+            tuple[list[SectionModel], Session]: sections and session
+        """
+        with Connection().session() as session:
+            course = session.exec(
+                select(CourseModel).where(CourseModel.course_id == course_id)
+            ).one()
+            return [s.jsonserialize() for s in course.students], session
 
     def validate_course_owner(self, collectionname: str, user_email: str) -> bool:
         """_summary_

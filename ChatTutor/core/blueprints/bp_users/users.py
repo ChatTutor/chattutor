@@ -69,12 +69,14 @@ def oauth_register():
     email = user_info.get("email")
     name = user_info.get("name")
     utype = user_info.get("utype")  # PROFESSOR | STUDENT
+    redirect_from = user_info.get("redirect_from", None)
 
     if not google_id or not email or not name:
         return jsonify({"error": "Missing information from Google OAuth"}), 400
 
     # Register user if it doesn't exist
     users, _ = DataBase().get_users_by_email(email=email)
+
     if len(users) == 0:
         user = UserModel(
             email=email,
@@ -86,6 +88,23 @@ def oauth_register():
         print(user)
         try:
             DataBase().insert_user(user)
+            if redirect_from != None:
+                print("[Enrolling]")
+                c, s = DataBase().enroll_user_to_course_by_collectionname(
+                    user.user_id, redirect_from
+                )
+                if c != None:
+                    return (
+                        jsonify(
+                            {
+                                "message": "User created",
+                                "user": {"google_id": google_id, "email": email, "name": name},
+                                "redirect_to": c,
+                            }
+                        ),
+                        201,
+                    )
+
             return (
                 jsonify(
                     {
@@ -99,6 +118,21 @@ def oauth_register():
             return jsonify({"error": str(e)}), 500
 
     flask_login.login_user(users[0])
+    if redirect_from != None:
+        print("[Enrolling]")
+
+        c, s = DataBase().enroll_user_to_course_by_collectionname(users[0].user_id, redirect_from)
+        if c is not None:
+            return (
+                jsonify(
+                    {
+                        "message": "User logged in",
+                        "user": {"google_id": google_id, "email": email, "name": name},
+                        "redirect_to": c,
+                    }
+                ),
+                201,
+            )
 
     return (
         jsonify(
@@ -246,7 +280,8 @@ def getusercoursessections(email, course):
     if email != flask_login.current_user.email:
         return 'Not allowed, <a href="/">Return</a>'
     sections, _ = DataBase().get_courses_sections_format(course_id=course)
-    return jsonify({"sections": sections})
+    students, _ = DataBase().get_courses_students(course_id=course)
+    return jsonify({"sections": sections, "students": students})
 
 
 @users_bp.route("/users/<email>/coursesv1/<course>", methods=["POST"])

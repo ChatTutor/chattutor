@@ -12,6 +12,8 @@ import { DataProviderService } from 'app/dataprovider.service';
 export class CourseDashboardComponent implements OnInit {
     course_id: string | null
     sections: any = []
+    students: any = []
+    messages: any = []
     email: string
     process_of: any = {}
     course_name: string = '[]'
@@ -38,7 +40,9 @@ export class CourseDashboardComponent implements OnInit {
             this.email = user['email']
             this.dataProvider.getUserCourseSections(this.email, this.course_id).then(data => {
                 this.sections = data["sections"]
-                console.log('sections:',this.sections)
+                this.students = data["students"]
+                this.messages = data["messages"]
+                console.log('sections:',this.sections, "students:", this.students, "messages:", this.messages)
                 this.course_name = this.sections[0]['course_chroma_collection']
                 this.loading = false
             })

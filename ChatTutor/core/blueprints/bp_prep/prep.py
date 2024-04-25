@@ -21,6 +21,16 @@ from core.data import (
 prep_bp = Blueprint("bp_prep", __name__)
 
 
+@prep_bp.route("/course/bymainpage", methods=["POST", "GET"])
+def get_course_by_main_page():
+    data = request.json
+    course_maipage = data.get("mainpage", None)
+    if course_maipage is not None:
+        colname, _ = DataBase().get_course_name_by_mainpage()
+        return jsonify({"collection": colname, "message": "success"})
+    return jsonify({"error": 1, "message": "failure"})
+
+
 @prep_bp.route("/course/register", methods=["POST", "GET"])
 @flask_login.login_required
 def urlcrawler():

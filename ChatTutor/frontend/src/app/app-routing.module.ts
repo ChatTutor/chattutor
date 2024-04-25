@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import {RouterModule, Routes, UrlSegment} from '@angular/router';
 import {CQNChatTutorWrapperComponent} from "./cqnchat-tutor-wrapper/cqnchat-tutor-wrapper.component";
 import {ChatTutorWrapperComponent} from "./chat-tutor-wrapper/chat-tutor-wrapper.component";
 import {LandingPageComponent} from './landing-page/landing-page.component';
@@ -22,6 +22,7 @@ const routes: Routes = [
     {path: 'courses/:id', component: CourseDashboardComponent},
     {path: 'login', component: LoginPageComponent, data: {stud: false}},
     {path: 'student/login', component: LoginPageComponent, data: {stud: true}},
+    {path: 'student/login/:redirect_from', component: LoginPageComponent, data: {stud: true}},
     {path: 'register', component: RegisterPageComponent},
     {path: 'student/register', component: RegisterStudentPageComponent},
     {path: 'oauth-callback', component: OAuthCallbackComponent},

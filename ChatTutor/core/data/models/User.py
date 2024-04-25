@@ -3,7 +3,9 @@ from sqlmodel import Field, Session, SQLModel, create_engine
 import uuid as uuid_pkg
 from datetime import datetime
 from sqlmodel import Field, Relationship
-from core.data.models.Course import Course
+
+# from core.data.models.Course import Course
+from core.data.models.StudentCourseLink import StudentCourseLink
 from core.data.models.SectionCourseLink import SectionCourseLink
 from core.data.models.UserCourseLink import UserCourseLink
 from dataclasses import dataclass
@@ -41,7 +43,10 @@ class User(flask_login.UserMixin, SQLModel, table=True):
     email: str
     password_hash: str
     user_type: str
-    courses: List[Course] = Relationship(back_populates="users", link_model=UserCourseLink)
+    courses: List["Course"] = Relationship(back_populates="users", link_model=UserCourseLink)
+    studied_courses: List["Course"] = Relationship(
+        back_populates="students", link_model=StudentCourseLink
+    )
     verified: str = Field(default="false")
 
     def get_id(self):

@@ -14,12 +14,16 @@
                             <button class="menu-btn" (click)="switchStatus('content')">Content</button>
                         </mat-list-item>
                         <mat-divider></mat-divider>
-                        <mat-list-item>
+                        <!-- <mat-list-item>
                             <button class="menu-btn" (click)="switchStatus('tokens')">Access Tokens</button>
-                        </mat-list-item>
-                        <mat-divider></mat-divider>
+                        </mat-list-item> -->
                         <mat-list-item>
                             <button class="menu-btn" (click)="switchStatus('students')">Students</button>
+                        </mat-list-item>
+
+                        <mat-divider></mat-divider>
+                        <mat-list-item>
+                            <button class="menu-btn" (click)="switchStatus('messages')">Messages</button>
                         </mat-list-item>
                     </mat-list>
                 </div>
@@ -49,7 +53,7 @@
             
                         </div>
                     </div>
-                    <div *ngIf="status=='tokens'">
+                    <!-- <div *ngIf="status=='tokens'">
                         
                         <div class="acc-center">
                             <h3>Add a token!</h3>
@@ -147,9 +151,19 @@
                             </div>
                             
                         </div>
-                    </div>
+                    </div> -->
+
                     <div *ngIf="status=='students'">
-                        Students
+                        <div *ngFor="let stud of students">
+                            <div>{{stud.email}}</div>
+
+                        </div>
+                    </div>
+                    <div *ngIf="status=='messages'">
+                        <div *ngFor="let mes of messages">
+                            <div>{{mes}}</div>
+
+                        </div>
                     </div>
                 </div>
             </div>
