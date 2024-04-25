@@ -4,7 +4,7 @@ import uuid
 import bcrypt
 import flask
 import flask_login
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, redirect
 from core.data.DataBase import UserModel
 from core.utils.email import EmailSender
 
@@ -57,6 +57,7 @@ def register_user():
     user.set_password(password=password)
     print(user.password_hash)
     DataBase().insert_user(user=user)
+    return redirect("/login")
     return f'User {user} inserted, please <a href="/login">Login</a>'
 
 
@@ -126,14 +127,14 @@ def login():
     print(users[0])
     if users[0].verify_password(flask.request.form["password"]):
         flask_login.login_user(users[0])
-        return flask.redirect("/protected")
+        return flask.redirect("/")
     return 'Bad login, <a href="/">Return</a>'
 
 
 @users_bp.route("/protected")
 @flask_login.login_required
 def protected():
-    return f'Logged in as: {flask_login.current_user.email}, <a href="/">Return</a>'
+    return redirect("/")
 
 
 @users_bp.route("/logout")
@@ -144,6 +145,7 @@ def logout():
         - The string 'Logged out, <a href="/">Return</a>' is being returned.
     """
     flask_login.logout_user()
+    return redirect("/")
     return 'Logged out, <a href="/">Return</a>'
 
 
@@ -332,9 +334,9 @@ def user_verify(code):
 
 @users_bp.route("/users/forgotpassword", methods=["POST", "GET"])
 def user_forgotpassword():
-    new_password = flask.request.form['new_password']
-    code = flask.request.form['code']
-    email = flask.request.form['emaila']
+    new_password = flask.request.form["new_password"]
+    code = flask.request.form["code"]
+    email = flask.request.form["emaila"]
     res, _ = DataBase().get_reset_code(email, code)
     if not res or res.code != code:
         return f"Something went wrong <a href='/'>Go home and try again! {res.code}</a>"
@@ -350,14 +352,10 @@ def user_forgotpassword():
 
 @users_bp.route("/users/sendresetemail", methods=["POST", "GET"])
 def forgot_password_send():
-    email = flask.request.form['email']
+    email = flask.request.form["email"]
     code, ok = EmailSender().send_forgot_password(email)
     if ok:
         return jsonify({"code": code})
     else:
         # return "Error! <a href='/users/send_verification_mail'> Try again! </a>"
-        return jsonify(
-            {"error": 1, "message": "Could not send mail!"}
-        )
-
-
+        return jsonify({"error": 1, "message": "Could not send mail!"})

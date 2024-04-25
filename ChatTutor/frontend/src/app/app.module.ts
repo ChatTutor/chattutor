@@ -53,7 +53,7 @@ import { UserPasswordResetComponent } from './user-password-reset/user-password-
 
 const authModuleConfig: OAuthModuleConfig = {
   resourceServer: {
-    allowedUrls: ['http://localhost:5000', 'https://beta-chattutor-nbqjgewnea-uc.a.run.app', 'https://chattutor.org/'],
+    allowedUrls: ['http://localhost:5000/', 'https://beta-chattutor-nbqjgewnea-uc.a.run.app/', 'https://chattutor.org/'],
     sendAccessToken: true,
   },
 };

@@ -11,7 +11,7 @@ from core.data.models import (
     FeedbackModel,
     DevsModel,
     VerificationCodeModel,
-    ResetCode
+    ResetCode,
 )
 from core.data.models.ResetCode import ResetCodeModel
 from core.utils import build_model_from_params
@@ -187,9 +187,7 @@ class DataBase(metaclass=Singleton):
 
         with Connection().session() as session:
             all_existing = session.exec(
-                delete(ResetCodeModel).where(
-                    ResetCodeModel.email == args[0].email
-                )
+                delete(ResetCodeModel).where(ResetCodeModel.email == args[0].email)
             )
 
             session.commit()
@@ -209,9 +207,7 @@ class DataBase(metaclass=Singleton):
                 print("Verif already exists or integrity constraint violation:", e)
                 # Query the existing entry with the duplicate primary key
                 existing_verif = session.exec(
-                    select(ResetCodeModel).where(
-                        ResetCodeModel.email == args[0].email
-                    )
+                    select(ResetCodeModel).where(ResetCodeModel.email == args[0].email)
                 ).one()
                 if existing_verif:
                     # Update the attributes of the existing entry
@@ -318,11 +314,19 @@ class DataBase(metaclass=Singleton):
 
     def get_reset_code(self, email, code):
         with Connection().session() as session:
-            statement = select(ResetCodeModel).where(ResetCodeModel.email == email and ResetCodeModel.code == code)
+            statement = select(ResetCodeModel).where(
+                ResetCodeModel.email == email and ResetCodeModel.code == code
+            )
             res = session.exec(statement).first()
             session.expunge_all()
             return res, session
 
+    def get_all_courses_urls(self) -> list[str]:
+        with Connection().session() as session:
+            statement = select(CourseModel)
+            res = session.exec(statement).all()
+            urls = [x.mainpage for x in res]
+            return urls
 
     def get_users_by_email(self, email: str):
         """Gets users by email
@@ -566,7 +570,9 @@ class DataBase(metaclass=Singleton):
         with Connection().session() as session:
             print("Trying...")
             try:
-                v_model = session.exec(select(ResetCodeModel).where(ResetCodeModel.code == code)).one()
+                v_model = session.exec(
+                    select(ResetCodeModel).where(ResetCodeModel.code == code)
+                ).one()
                 user = session.exec(select(UserModel).where(UserModel.email == v_model.email)).one()
                 print("User email: ", user.email)
                 user.password = new_password
