@@ -282,6 +282,7 @@ def getusercoursessections(email, course):
     sections, _ = DataBase().get_courses_sections_format(course_id=course)
     students, _ = DataBase().get_courses_students(course_id=course)
     messages, _ = DataBase().get_course_messages(course_id=course)
+
     # messages, _ = DataBase().get_mes
     return jsonify({"sections": sections, "students": students, "messages": messages})
 

@@ -161,8 +161,13 @@
                     </div>
                     <div *ngIf="status=='messages'">
                         <div *ngFor="let mes of messages">
-                            <div>{{mes}}</div>
-
+                            <div style="flex-direction: column; align-items: center; justify-content: left; background-color: #b4ddff; padding: 10px; margin: 5px; border-radius: 10px">
+                                <div>at <i>{{mes.time_created}}</i> by <i>{{mes.role}}</i></div>
+                                <div>{{mes.content}}</div>
+                                <div *ngFor="let feed of mes.feedbacks">
+                                    <div style="background-color: white; padding: 5px; margin: 5px; border-radius: 10px"><span>{{feed.content}}</span></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

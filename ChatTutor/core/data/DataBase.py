@@ -113,6 +113,7 @@ class DataBase(metaclass=Singleton):
                 session.add(course)
                 session.commit()
                 session.refresh(course)
+                session.refresh(message)
 
             session.expunge_all()
             return message, session
@@ -399,11 +400,26 @@ class DataBase(metaclass=Singleton):
     def get_course_messages(self, course_id):
         with Connection().session() as session:
             statement = select(CourseModel).where(CourseModel.course_id == course_id)
+            print("debug_exec statement:", statement)
             res = session.exec(statement).first()
             if res is None:
                 return None, session
             msgs = [x.jsonserialize() for x in res.messages]
+            message_ids = [x['mes_id'] for x in msgs]
+            print('message_ids:', message_ids)
+
+            for message in msgs:
+                message['feedbacks'] = []
+
+            for message in msgs:
+                m_id = message['mes_id']
+                statement = select(FeedbackModel).where(FeedbackModel.message_id == m_id)
+                feed_res = session.exec(statement).all()
+                feedbacks = [x.jsonserialize() for x in feed_res]
+                for feedback in feedbacks:
+                    message['feedbacks'].append(feedback)
             return msgs, session
+
 
     def get_users_by_email(self, email: str):
         """Gets users by email
