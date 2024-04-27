@@ -13,6 +13,7 @@ from core.data.models import (
     VerificationCodeModel,
     ResetCode,
 )
+from core.data.models.AccessCodes import AccessCodeModel
 from core.data.models.ResetCode import ResetCodeModel
 from core.utils import build_model_from_params
 from sqlalchemy.exc import IntegrityError
@@ -117,6 +118,15 @@ class DataBase(metaclass=Singleton):
 
             session.expunge_all()
             return message, session
+
+    def insert_access_code(self, access_code: AccessCodeModel | str) -> tuple[AccessCodeModel, Session]:
+        with Connection().session() as session:
+            session.add(access_code)
+            session.commit()
+            session.refresh(access_code)
+            session.expunge_all()
+            return access_code, session
+
 
     def insert_chat(self, chat: ChatModel | str) -> tuple[str, Session]:
         """Insert chat (id) into db

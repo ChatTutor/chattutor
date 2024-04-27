@@ -6,6 +6,7 @@ import flask
 import flask_login
 from flask import Blueprint, jsonify, request, redirect
 from core.data.DataBase import UserModel
+from core.data.models.AccessCodes import AccessCodeModel
 from core.utils.email import EmailSender
 
 users_bp = Blueprint("bp_users", __name__)
@@ -94,12 +95,20 @@ def oauth_register():
                     user.user_id, redirect_from
                 )
                 if c != None:
+                    # aici
+                    code_code = f'{uuid.uuid4()}'
+                    user_access_code = AccessCodeModel(
+                        code=code_code,
+                        email=email
+                    )
+                    DataBase().insert_access_code(user_access_code)
                     return (
                         jsonify(
                             {
                                 "message": "User created",
                                 "user": {"google_id": google_id, "email": email, "name": name},
                                 "redirect_to": c,
+                                "sid": code_code
                             }
                         ),
                         201,
@@ -123,12 +132,21 @@ def oauth_register():
 
         c, s = DataBase().enroll_user_to_course_by_collectionname(users[0].user_id, redirect_from)
         if c is not None:
+            # aici
+            # creezi keye
+            code_code = f'{uuid.uuid4()}'
+            user_access_code = AccessCodeModel(
+                code=code_code,
+                email=email
+            )
+            DataBase().insert_access_code(user_access_code)
             return (
                 jsonify(
                     {
                         "message": "User logged in",
                         "user": {"google_id": google_id, "email": email, "name": name},
                         "redirect_to": c,
+                        "sid": code_code
                     }
                 ),
                 201,

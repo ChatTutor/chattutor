@@ -67,7 +67,8 @@ export class AuthService {
             if (data["redirect_to"] == undefined)
               this.router.navigate(['/']);
             else {
-              this.navigateToExternalUrl(data["redirect_to"])
+                console.log(data["redirect_to"] +  '?' + data["sid"])
+              this.navigateToExternalUrl(data["redirect_to"] +  '?' + data["sid"])
               this.router.navigate(['/']);
             }
           },
