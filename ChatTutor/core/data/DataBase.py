@@ -90,7 +90,7 @@ class DataBase(metaclass=Singleton):
             return user, session
 
     def insert_message(
-        self, message: MessageModel | dict, course_collname=None
+            self, message: MessageModel | dict, course_collname=None
     ) -> tuple[MessageModel, Session]:
         """Insert message in DataBase
 
@@ -121,12 +121,26 @@ class DataBase(metaclass=Singleton):
 
     def insert_access_code(self, access_code: AccessCodeModel | str) -> tuple[AccessCodeModel, Session]:
         with Connection().session() as session:
-            session.add(access_code)
-            session.commit()
-            session.refresh(access_code)
-            session.expunge_all()
-            return access_code, session
+            existing_ = session.exec(select(AccessCodeModel).where(AccessCodeModel.id == access_code.id)).first()
+            if existing_ is not None:
+                existing_.code = access_code.code
+                existing_.email = access_code.email
+                session.commit()
+                session.refresh(existing_)
+                session.expunge_all()
+                return access_code.jsonserialize(), session
+            else:
+                session.add(access_code)
+                session.commit()
+                session.refresh(access_code)
+                session.expunge_all()
+                return access_code.jsonserialize(), session
 
+    def get_access_code_by_code(self, code: str) -> tuple[AccessCodeModel, Session]:
+        with Connection().session() as session:
+            existing_ = session.exec(select(AccessCodeModel).where(AccessCodeModel.code == code)).first()
+            session.expunge_all()
+            return existing_.jsonserialize(), session
 
     def insert_chat(self, chat: ChatModel | str) -> tuple[str, Session]:
         """Insert chat (id) into db
@@ -305,7 +319,7 @@ class DataBase(metaclass=Singleton):
     #         return user, course, session
 
     def enroll_user_to_course_by_collectionname(
-        self, user_id, course_collectionname
+            self, user_id, course_collectionname
     ) -> tuple[str, Session]:
         """Mark user as student of the specified course
 
@@ -430,7 +444,6 @@ class DataBase(metaclass=Singleton):
                     message['feedbacks'].append(feedback)
             return msgs, session
 
-
     def get_users_by_email(self, email: str):
         """Gets users by email
 
@@ -456,7 +469,7 @@ class DataBase(metaclass=Singleton):
             return results, session
 
     def insert_user_to_course(
-        self, user_id: str, course_id
+            self, user_id: str, course_id
     ) -> tuple[UserModel, CourseModel, Session]:
         """Make user as owner of the specified course
 
@@ -478,7 +491,7 @@ class DataBase(metaclass=Singleton):
             return user, course, session
 
     def establish_course_section_relationship(
-        self, section_id: str, course_id: str
+            self, section_id: str, course_id: str
     ) -> tuple[SectionModel, CourseModel, Session]:
         """Add section to course
 

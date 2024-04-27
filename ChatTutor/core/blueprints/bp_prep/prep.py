@@ -41,6 +41,24 @@ def get_course_by_main_page():
     return jsonify({"error": 1, "message": "failure"})
 
 
+@prep_bp.route("/accescodes/getuseridandemail", methods=["POST", "GET"])
+def get_accescode_by_code():
+    data = request.json
+    code = data.get('code', None)
+    if code is not None:
+        accesscode, _ = DataBase().get_access_code_by_code(code)
+        user_id = accesscode['id']
+        user, _ = DataBase().get_users_by_id(uid=user_id)
+        if len(user) > 0:
+            usr = user[0]
+            usrjson = usr.jsonserialize()
+            return jsonify({'message': 'success', 'email': usr.email, 'id': usr.user_id})
+        else:
+            return jsonify({'message': 'error2'})
+    else:
+        return jsonify({'message': 'error'})
+
+
 @prep_bp.route("/course/register", methods=["POST", "GET"])
 @flask_login.login_required
 def urlcrawler():

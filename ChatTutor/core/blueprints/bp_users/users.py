@@ -98,6 +98,7 @@ def oauth_register():
                     # aici
                     code_code = f'{uuid.uuid4()}'
                     user_access_code = AccessCodeModel(
+                        id=user.user_id,
                         code=code_code,
                         email=email
                     )
@@ -136,6 +137,7 @@ def oauth_register():
             # creezi keye
             code_code = f'{uuid.uuid4()}'
             user_access_code = AccessCodeModel(
+                id=users[0].user_id,
                 code=code_code,
                 email=email
             )

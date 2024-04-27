@@ -61,14 +61,15 @@ export class AuthService {
         };
         console.log('sending to backend', user_info);
         this.sendUserInfoToBackend(user_info).subscribe(
-          response =>{ 
+          response =>{
+              console.log('getting res...\n')
             console.log(response)
             const data = JSON.parse(JSON.stringify(response))
             if (data["redirect_to"] == undefined)
               this.router.navigate(['/']);
             else {
-                console.log(data["redirect_to"] +  '?' + data["sid"])
-              this.navigateToExternalUrl(data["redirect_to"] +  '?' + data["sid"])
+                console.log(data["redirect_to"] + '?chattutor_sid_' + data["sid"])
+              this.navigateToExternalUrl(data["redirect_to"] + '?chattutor_sid_' + data["sid"])
               this.router.navigate(['/']);
             }
           },
