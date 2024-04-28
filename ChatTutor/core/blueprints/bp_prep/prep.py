@@ -58,6 +58,15 @@ def get_accescode_by_code():
     else:
         return jsonify({'message': 'error'})
 
+@prep_bp.route("/accescodes/delete_key", methods=["POST", "GET"])
+def delete_accescode_key():
+    data = request.json
+    code = data.get('code', None)
+    user_id = data.get('user_id', None)
+    if code is not None and data is not None:
+        DataBase().remove_acces_code(code=code, uid=user_id)
+        return jsonify({"message": "success"})
+
 
 @prep_bp.route("/course/register", methods=["POST", "GET"])
 @flask_login.login_required

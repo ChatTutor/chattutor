@@ -136,6 +136,13 @@ class DataBase(metaclass=Singleton):
                 session.expunge_all()
                 return access_code.jsonserialize(), session
 
+    def remove_acces_code(self, code: str, uid: str):
+        with Connection().session() as session:
+            stmt = delete(AccessCodeModel).where(AccessCodeModel.code == code).where(AccessCodeModel.id == uid)
+            print('statement' ,stmt)
+            existing_ = session.exec(stmt)
+            session.commit()
+
     def get_access_code_by_code(self, code: str) -> tuple[AccessCodeModel, Session]:
         with Connection().session() as session:
             existing_ = session.exec(select(AccessCodeModel).where(AccessCodeModel.code == code)).first()
