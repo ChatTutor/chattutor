@@ -39,6 +39,7 @@ class Message(SQLModel, table=True):
     clear_number: Optional[int]
     time_created: datetime = Field(default_factory=datetime.now)
     credential_token: str
+    user_id: str = Field(foreign_key="user.user_id")
     courses: List["Course"] = Relationship(back_populates="messages", link_model=MessageCourseLink)
 
     def jsonserialize(self):

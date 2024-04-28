@@ -50,6 +50,7 @@ def addtodb():
     data = request.json
     course_col = data.get("course", None)  # HERE
     message_id = data.get("message_id", None)
+    user_id = data.get("user_id", "LOGGED_OFF")
     content = data["content"]
     role = data["role"]
     chat_k_id = data.get("chat_k", "none")
@@ -69,6 +70,7 @@ def addtodb():
         "clear_number": clear_number,
         "time_created": time_created,
         "credential_token": credential_token,
+        "user_id": user_id,
     }
 
     print("adding ", message_to_upload, " to db")
