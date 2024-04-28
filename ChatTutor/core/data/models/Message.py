@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from sqlalchemy.dialects.mysql import LONGTEXT
 from sqlalchemy import Column
 from core.data.models.MessageCourseLink import MessageCourseLink
+from core.data.models.MessageUserLink import MessageUserLink
 
 
 @dataclass
@@ -39,8 +40,8 @@ class Message(SQLModel, table=True):
     clear_number: Optional[int]
     time_created: datetime = Field(default_factory=datetime.now)
     credential_token: str
-    user_id: str = Field(foreign_key="user.user_id", default="LOGGED_OUT")
     courses: List["Course"] = Relationship(back_populates="messages", link_model=MessageCourseLink)
+    users: List["User"] = Relationship(back_populates="messages", link_model=MessageUserLink)
 
     def jsonserialize(self):
         d = self.__dict__

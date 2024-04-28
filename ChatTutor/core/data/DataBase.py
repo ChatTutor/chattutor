@@ -90,7 +90,7 @@ class DataBase(metaclass=Singleton):
             return user, session
 
     def insert_message(
-            self, message: MessageModel | dict, course_collname=None
+        self, message: MessageModel | dict, course_collname=None
     ) -> tuple[MessageModel, Session]:
         """Insert message in DataBase
 
@@ -119,9 +119,13 @@ class DataBase(metaclass=Singleton):
             session.expunge_all()
             return message, session
 
-    def insert_access_code(self, access_code: AccessCodeModel | str) -> tuple[AccessCodeModel, Session]:
+    def insert_access_code(
+        self, access_code: AccessCodeModel | str
+    ) -> tuple[AccessCodeModel, Session]:
         with Connection().session() as session:
-            existing_ = session.exec(select(AccessCodeModel).where(AccessCodeModel.id == access_code.id)).first()
+            existing_ = session.exec(
+                select(AccessCodeModel).where(AccessCodeModel.id == access_code.id)
+            ).first()
             if existing_ is not None:
                 existing_.code = access_code.code
                 existing_.email = access_code.email
@@ -138,14 +142,22 @@ class DataBase(metaclass=Singleton):
 
     def remove_acces_code(self, code: str, uid: str):
         with Connection().session() as session:
-            stmt = delete(AccessCodeModel).where(AccessCodeModel.code == code).where(AccessCodeModel.id == uid)
-            print('statement' ,stmt)
+            stmt = (
+                delete(AccessCodeModel)
+                .where(AccessCodeModel.code == code)
+                .where(AccessCodeModel.id == uid)
+            )
+            print("statement", stmt)
             existing_ = session.exec(stmt)
             session.commit()
 
     def get_acces_code(self, code: str, uid: str) -> tuple[AccessCodeModel, Session]:
         with Connection().session() as session:
-            stmt = select(AccessCodeModel).where(AccessCodeModel.code == code).where(AccessCodeModel.id == uid)
+            stmt = (
+                select(AccessCodeModel)
+                .where(AccessCodeModel.code == code)
+                .where(AccessCodeModel.id == uid)
+            )
             existing_ = session.exec(stmt).first()
             session.expunge_all()
             if existing_:
@@ -154,7 +166,9 @@ class DataBase(metaclass=Singleton):
 
     def get_access_code_by_code(self, code: str) -> tuple[AccessCodeModel, Session]:
         with Connection().session() as session:
-            existing_ = session.exec(select(AccessCodeModel).where(AccessCodeModel.code == code)).first()
+            existing_ = session.exec(
+                select(AccessCodeModel).where(AccessCodeModel.code == code)
+            ).first()
             session.expunge_all()
             return existing_.jsonserialize(), session
 
@@ -335,7 +349,7 @@ class DataBase(metaclass=Singleton):
     #         return user, course, session
 
     def enroll_user_to_course_by_collectionname(
-            self, user_id, course_collectionname
+        self, user_id, course_collectionname
     ) -> tuple[str, Session]:
         """Mark user as student of the specified course
 
@@ -444,20 +458,28 @@ class DataBase(metaclass=Singleton):
             res = session.exec(statement).first()
             if res is None:
                 return None, session
+            print([m.users for m in res.messages])
             msgs = [x.jsonserialize() for x in res.messages]
-            message_ids = [x['mes_id'] for x in msgs]
-            print('message_ids:', message_ids)
+            message_ids = [x["mes_id"] for x in msgs]
+            print("message_ids:", message_ids)
 
             for message in msgs:
-                message['feedbacks'] = []
+                message["feedbacks"] = []
 
             for message in msgs:
-                m_id = message['mes_id']
+                m_id = message["mes_id"]
                 statement = select(FeedbackModel).where(FeedbackModel.message_id == m_id)
                 feed_res = session.exec(statement).all()
                 feedbacks = [x.jsonserialize() for x in feed_res]
                 for feedback in feedbacks:
-                    message['feedbacks'].append(feedback)
+                    message["feedbacks"].append(feedback)
+            for message, m in zip(msgs, res.messages):
+                if len(m.users) > 0:
+                    message["user_email"] = m.users[0].email
+                    message["user_id"] = m.users[0].user_id
+                else:
+                    message["user_email"] = "LOGGED_OUT"
+                    message["user_id"] = "LOGGED_OUT"
             return msgs, session
 
     def get_users_by_email(self, email: str):
@@ -485,7 +507,7 @@ class DataBase(metaclass=Singleton):
             return results, session
 
     def insert_user_to_course(
-            self, user_id: str, course_id
+        self, user_id: str, course_id
     ) -> tuple[UserModel, CourseModel, Session]:
         """Make user as owner of the specified course
 
@@ -507,7 +529,7 @@ class DataBase(metaclass=Singleton):
             return user, course, session
 
     def establish_course_section_relationship(
-            self, section_id: str, course_id: str
+        self, section_id: str, course_id: str
     ) -> tuple[SectionModel, CourseModel, Session]:
         """Add section to course
 

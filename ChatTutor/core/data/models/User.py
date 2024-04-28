@@ -11,6 +11,7 @@ from core.data.models.UserCourseLink import UserCourseLink
 from dataclasses import dataclass
 import flask_login
 import bcrypt
+from core.data.models.MessageUserLink import MessageUserLink
 
 
 @dataclass
@@ -47,6 +48,7 @@ class User(flask_login.UserMixin, SQLModel, table=True):
     studied_courses: List["Course"] = Relationship(
         back_populates="students", link_model=StudentCourseLink
     )
+    messages: List["Message"] = Relationship(back_populates="users", link_model=MessageUserLink)
     verified: str = Field(default="false")
 
     def get_id(self):
