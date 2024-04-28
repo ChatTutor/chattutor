@@ -143,6 +143,15 @@ class DataBase(metaclass=Singleton):
             existing_ = session.exec(stmt)
             session.commit()
 
+    def get_acces_code(self, code: str, uid: str) -> tuple[AccessCodeModel, Session]:
+        with Connection().session() as session:
+            stmt = select(AccessCodeModel).where(AccessCodeModel.code == code).where(AccessCodeModel.id == uid)
+            existing_ = session.exec(stmt).first()
+            session.expunge_all()
+            if existing_:
+                return existing_.jsonserialize(), session
+            return None, session
+
     def get_access_code_by_code(self, code: str) -> tuple[AccessCodeModel, Session]:
         with Connection().session() as session:
             existing_ = session.exec(select(AccessCodeModel).where(AccessCodeModel.code == code)).first()

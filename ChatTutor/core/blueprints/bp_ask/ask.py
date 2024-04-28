@@ -1,5 +1,5 @@
 from core.extensions import db
-from flask import Blueprint, Response, request, stream_with_context
+from flask import Blueprint, Response, request, stream_with_context, jsonify
 from core.tutor.tutorfactory import TutorFactory, TutorTypes
 from core.data import DataBase
 from core.tutor.tutorfactory import CourseTutorType, NSFTutorType
@@ -60,6 +60,18 @@ def ask():
     # get credentials
     credential_user = data.get("credential_token")
     multiple = data.get("multiple")
+
+    key = data.get('key')
+    ver = data.get('chattutor_version', 'donotaskforkey')
+    user_id = data.get('user_id')
+    if ver != 'donotaskforkey':
+        acc, _ = DataBase().get_acces_code(code=key, uid=user_id)
+        if acc is None:
+            # MARK: do not change this
+            print('unauthorised')
+            return jsonify({"message": "notloggedin"})
+
+    print("Asked: ", key, ver)
 
     conversation = data["conversation"]
     collection_name = data.get("collection")
