@@ -1,3 +1,5 @@
+from typing import List
+
 from sqlalchemy import delete
 
 from core.data.models import Singleton, Connection, User
@@ -90,8 +92,8 @@ class DataBase(metaclass=Singleton):
             return user, session
 
     def insert_message(
-        self, message: MessageModel | dict, course_collname=None
-    ) -> tuple[MessageModel, Session]:
+        self, message: MessageModel | dict, course_collname=None, user_id=None
+    ) -> tuple[MessageModel, Session, List]:
         """Insert message in DataBase
 
         Args:
@@ -105,19 +107,28 @@ class DataBase(metaclass=Singleton):
         with Connection().session() as session:
             session.add(message)
             session.commit()
-            session.refresh(message)
+            # session.refresh(message)
+
+            if user_id is not None:
+                stmt = select(UserModel).where(UserModel.user_id == user_id)
+                usr = session.exec(stmt).first()
+                if usr is not None:
+                    usr.messages.append(message)
+                    session.commit()
+                    session.refresh(message)
+                    session.refresh(usr)
 
             if course_collname is not None:
                 stmt = select(CourseModel).where(CourseModel.collectionname == course_collname)
                 course = session.exec(stmt).one()
                 course.messages.append(message)
-                session.add(course)
                 session.commit()
                 session.refresh(course)
                 session.refresh(message)
 
+            # session.refresh(message)
             session.expunge_all()
-            return message, session
+            return message, session, ['usr']
 
     def insert_access_code(
         self, access_code: AccessCodeModel | str
@@ -458,7 +469,7 @@ class DataBase(metaclass=Singleton):
             res = session.exec(statement).first()
             if res is None:
                 return None, session
-            print([m.users for m in res.messages])
+            # print([m.users for m in res.messages])
             msgs = [x.jsonserialize() for x in res.messages]
             message_ids = [x["mes_id"] for x in msgs]
             print("message_ids:", message_ids)
@@ -474,9 +485,11 @@ class DataBase(metaclass=Singleton):
                 for feedback in feedbacks:
                     message["feedbacks"].append(feedback)
             for message, m in zip(msgs, res.messages):
-                if len(m.users) > 0:
+                if True:
                     message["user_email"] = m.users[0].email
                     message["user_id"] = m.users[0].user_id
+                    # message["user_email"] = "LOGGED_OUT_NOT"
+                    # message["user_id"] = "LOGGED_OUT_NOT"
                 else:
                     message["user_email"] = "LOGGED_OUT"
                     message["user_id"] = "LOGGED_OUT"

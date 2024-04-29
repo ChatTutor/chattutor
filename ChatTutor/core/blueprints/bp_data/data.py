@@ -74,7 +74,8 @@ def addtodb():
     }
 
     print("adding ", message_to_upload, " to db")
-    uploaded_message, _ = DataBase().insert_message(message_to_upload, course_col)  # HERE
+    uploaded_message, _, user = DataBase().insert_message(message_to_upload, course_col, user_id)  # HERE
+    print('succesfully added message ', 'with users', user)
     return jsonify(
         {
             "message_id": uploaded_message.mes_id,
@@ -84,6 +85,7 @@ def addtodb():
             "clear_number": clear_number,
             "time_created": time_created,
             "credential_token": credential_token,
+            "users": user
         }
     )
 
