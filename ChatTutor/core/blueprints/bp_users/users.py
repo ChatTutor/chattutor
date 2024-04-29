@@ -86,6 +86,7 @@ def oauth_register():
             user_type=utype,
             google_id=google_id,
             name=name,
+            verified=True,
         )
         print(user)
         try:
