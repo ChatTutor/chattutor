@@ -12,6 +12,7 @@ import {RegisterStudentPageComponent} from './register-student-page/register-stu
 import {OAuthCallbackComponent} from './oauth-callback/oauth-callback.component';
 import {UserPasswordResetComponent} from "./user-password-reset/user-password-reset.component";
 import { OauthCallbackStudentsComponent } from './oauth-callback-students/oauth-callback-students.component';
+import { UserMessageAnalizerComponent } from './user-message-analizer/user-message-analizer.component';
 
 const routes: Routes = [
     {path: '', component: LandingPageComponent},
@@ -20,6 +21,7 @@ const routes: Routes = [
     {path: 'scrape', component: CourseInputComponent},
     {path: 'mycourses', component: UserDashboardComponent},
     {path: 'courses/:id', component: CourseDashboardComponent},
+    {path: 'courses/:id/messages/:uid', component: UserMessageAnalizerComponent},
     {path: 'login', component: LoginPageComponent, data: {stud: false}},
     {path: 'student/login', component: LoginPageComponent, data: {stud: true}},
     {path: 'student/login/:redirect_from', component: LoginPageComponent, data: {stud: true}},

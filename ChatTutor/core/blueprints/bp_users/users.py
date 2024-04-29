@@ -8,6 +8,7 @@ from flask import Blueprint, jsonify, request, redirect
 from core.data.DataBase import UserModel
 from core.data.models.AccessCodes import AccessCodeModel
 from core.utils.email import EmailSender
+from core.data.models import Connection
 
 users_bp = Blueprint("bp_users", __name__)
 
@@ -96,12 +97,8 @@ def oauth_register():
                 )
                 if c != None:
                     # aici
-                    code_code = f'{uuid.uuid4()}'
-                    user_access_code = AccessCodeModel(
-                        id=user.user_id,
-                        code=code_code,
-                        email=email
-                    )
+                    code_code = f"{uuid.uuid4()}"
+                    user_access_code = AccessCodeModel(id=user.user_id, code=code_code, email=email)
                     DataBase().insert_access_code(user_access_code)
                     return (
                         jsonify(
@@ -109,7 +106,7 @@ def oauth_register():
                                 "message": "User created",
                                 "user": {"google_id": google_id, "email": email, "name": name},
                                 "redirect_to": c,
-                                "sid": code_code
+                                "sid": code_code,
                             }
                         ),
                         201,
@@ -135,12 +132,8 @@ def oauth_register():
         if c is not None:
             # aici
             # creezi keye
-            code_code = f'{uuid.uuid4()}'
-            user_access_code = AccessCodeModel(
-                id=users[0].user_id,
-                code=code_code,
-                email=email
-            )
+            code_code = f"{uuid.uuid4()}"
+            user_access_code = AccessCodeModel(id=users[0].user_id, code=code_code, email=email)
             DataBase().insert_access_code(user_access_code)
             return (
                 jsonify(
@@ -148,7 +141,7 @@ def oauth_register():
                         "message": "User logged in",
                         "user": {"google_id": google_id, "email": email, "name": name},
                         "redirect_to": c,
-                        "sid": code_code
+                        "sid": code_code,
                     }
                 ),
                 201,
@@ -301,10 +294,27 @@ def getusercoursessections(email, course):
         return 'Not allowed, <a href="/">Return</a>'
     sections, _ = DataBase().get_courses_sections_format(course_id=course)
     students, _ = DataBase().get_courses_students(course_id=course)
-    messages, _ = DataBase().get_course_messages(course_id=course)
+    messages, _ = DataBase().get_course_messages_2(course_id=course)
 
+    print("MAIN FUNC")
+    print(messages)
     # messages, _ = DataBase().get_mes
     return jsonify({"sections": sections, "students": students, "messages": messages})
+
+
+@users_bp.route("/users/<email>/courses/<course>/<uid>", methods=["POST"])
+@flask_login.login_required
+def getusercoursessections_byuid(email, course, uid):
+    """
+    TODO: comment
+    """
+    if email != flask_login.current_user.email:
+        return 'Not allowed, <a href="/">Return</a>'
+    messages, _ = DataBase().get_course_messages_by_user(course_id=course, user_id=uid)
+    print("MAIN FUNC")
+    print(messages)
+    # messages, _ = DataBase().get_mes
+    return jsonify({"messages": messages})
 
 
 @users_bp.route("/users/<email>/coursesv1/<course>", methods=["POST"])

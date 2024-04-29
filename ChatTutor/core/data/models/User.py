@@ -59,6 +59,11 @@ class User(flask_login.UserMixin, SQLModel, table=True):
         d["_sa_instance_state"] = None
         return d
 
+    def jsonserialize_noclear(self):
+        d = self.__dict__
+        # d["_sa_instance_state"] = None
+        return d
+
     @property
     def password(self):
         raise AttributeError("password not readable")

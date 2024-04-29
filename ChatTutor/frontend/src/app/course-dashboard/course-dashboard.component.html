@@ -155,14 +155,18 @@
 
                     <div *ngIf="status=='students'">
                         <div *ngFor="let stud of students">
-                            <div>{{stud.email}}</div>
+                            <div style="flex-direction: column; align-items: center; justify-content: left; background-color: #b4ddff; padding: 10px; margin: 5px; border-radius: 10px;">
+                                <div style=" display: flex;flex-direction: row;justify-content: space-between;"><div>ID: <i>{{stud.user_id}}</i> </div> </div>
+                                <div>Email: {{stud.email}}</div>
+                                <a href="/courses/{{course_id}}/messages/{{stud.user_id}}">{{stud.user_id}}</a>
+                            </div>
 
                         </div>
                     </div>
                     <div *ngIf="status=='messages'">
                         <div *ngFor="let mes of messages">
-                            <div style="flex-direction: column; align-items: center; justify-content: left; background-color: #b4ddff; padding: 10px; margin: 5px; border-radius: 10px">
-                                <div>at <i>{{mes.time_created}}</i> by <i>{{mes.role}}</i> <i>{{mes.user_id}}</i> </div>
+                            <div style="flex-direction: column; align-items: center; justify-content: left; background-color: #b4ddff; padding: 10px; margin: 5px; border-radius: 10px;">
+                                <div style=" display: flex;flex-direction: row;justify-content: space-between;"><div>at <i>{{mes.time_created}}</i> by <i>{{mes.role}}</i></div> <i>{{mes.user_email}} | {{mes.user_id}}</i> </div>
                                 <div>{{mes.content}}</div>
                                 <div *ngFor="let feed of mes.feedbacks">
                                     <div style="background-color: white; padding: 5px; margin: 5px; border-radius: 10px"><span>{{feed.content}}</span></div>

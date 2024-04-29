@@ -71,6 +71,21 @@ export class DataProviderService {
   }
 
   /**
+   * Get course messages by user
+   * @param email owner user email
+   * @param course_id course_id of the course
+   * @param uid user to retreive conversation from
+   * @returns the user sections
+   */
+  async getCourseMessagesByUID(email : string, course_id : any, uid: any):  Promise<any>  {
+    const resp = await fetch(`/users/${email}/courses/${course_id}/${uid}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return await resp.json();
+  }
+
+  /**
    * Get courses of user
    * @param email email of user
    * @returns 

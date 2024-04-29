@@ -40,10 +40,21 @@ class Message(SQLModel, table=True):
     clear_number: Optional[int]
     time_created: datetime = Field(default_factory=datetime.now)
     credential_token: str
-    courses: List["Course"] = Relationship(back_populates="messages", link_model=MessageCourseLink)
-    users: List["User"] = Relationship(back_populates="messages", link_model=MessageUserLink)
+    courses: List["Course"] = Relationship(
+        back_populates="messages",
+        link_model=MessageCourseLink,
+    )
+    users: List["User"] = Relationship(
+        back_populates="messages",
+        link_model=MessageUserLink,
+    )
 
     def jsonserialize(self):
         d = self.__dict__
         d["_sa_instance_state"] = None
+        return d
+
+    def jsonserialize_noclear(self):
+        d = self.__dict__
+        # d["_sa_instance_state"] = None
         return d

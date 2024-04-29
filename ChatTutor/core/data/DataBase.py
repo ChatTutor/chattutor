@@ -1,6 +1,9 @@
 from typing import List
+from sqlalchemy import func
 
 from sqlalchemy import delete
+import json
+from sqlalchemy.orm import joinedload
 
 from core.data.models import Singleton, Connection, User
 from sqlmodel import Field, Session, SQLModel, create_engine, select, Sequence
@@ -14,11 +17,27 @@ from core.data.models import (
     DevsModel,
     VerificationCodeModel,
     ResetCode,
+    MessageCourseLink,
+    MessageUserLink,
 )
 from core.data.models.AccessCodes import AccessCodeModel
 from core.data.models.ResetCode import ResetCodeModel
 from core.utils import build_model_from_params
 from sqlalchemy.exc import IntegrityError
+
+
+def message_from_joined(message, user, uuser, c, feeds):
+    print("U S E R")
+    print(user)
+    message.update(
+        {
+            "user_id": user.get("user_id", "LOGGED_OUT"),
+            "user_email": uuser.get("email", "LOGGED_OUT"),
+            "feedbacks": [x for x in json.loads(f"[{feeds}]") if x["content"] != None],
+            "course_id": c["course_id"],
+        }
+    )
+    return message
 
 
 def message_oldformat_to_new(a_message: MessageModel | dict) -> MessageModel:
@@ -128,7 +147,7 @@ class DataBase(metaclass=Singleton):
 
             # session.refresh(message)
             session.expunge_all()
-            return message, session, ['usr']
+            return message, session, ["usr"]
 
     def insert_access_code(
         self, access_code: AccessCodeModel | str
@@ -462,6 +481,106 @@ class DataBase(metaclass=Singleton):
             urls = [x.mainpage for x in res]
             return urls
 
+    def get_course_messages_by_user(self, user_id, course_id):
+        with Connection().session() as session:
+            statement = (
+                select(
+                    MessageModel,
+                    MessageUserLink,
+                    MessageCourseLink,
+                    UserModel,
+                    func.group_concat(
+                        func.json_object(
+                            "feedback_id",
+                            FeedbackModel.feedback_id,
+                            "message_id",
+                            FeedbackModel.message_id,
+                            "content",
+                            FeedbackModel.content,
+                        )
+                    ).label("feedbacks"),
+                )
+                .join(
+                    MessageUserLink,
+                    MessageUserLink.message_id == MessageModel.mes_id,
+                )
+                .join(
+                    MessageCourseLink,
+                    MessageCourseLink.message_id == MessageModel.mes_id,
+                )
+                .outerjoin(FeedbackModel, FeedbackModel.message_id == MessageModel.mes_id)
+                .outerjoin(UserModel, UserModel.user_id == MessageUserLink.user_id)
+                .where(MessageUserLink.user_id == user_id)
+                .where(MessageCourseLink.course_id == course_id)
+                .group_by(MessageModel.mes_id)
+            )
+            res = session.exec(statement).all()
+            messages_with_feedback_json = [
+                (
+                    message.jsonserialize(),
+                    user.jsonserialize(),
+                    c.jsonserialize(),
+                    uuser.jsonserialize(),
+                    feeds,
+                )
+                for message, user, c, uuser, feeds in res
+            ]
+            messages_with_feedback_json = [
+                message_from_joined(message, user, uuser, c, feeds)
+                for message, user, c, uuser, feeds in messages_with_feedback_json
+            ]
+            return messages_with_feedback_json, session
+
+    def get_course_messages_2(self, course_id):
+        with Connection().session() as session:
+            statement = (
+                select(
+                    MessageModel,
+                    MessageUserLink,
+                    MessageCourseLink,
+                    UserModel,
+                    func.group_concat(
+                        func.json_object(
+                            "feedback_id",
+                            FeedbackModel.feedback_id,
+                            "message_id",
+                            FeedbackModel.message_id,
+                            "content",
+                            FeedbackModel.content,
+                        )
+                    ).label("feedbacks"),
+                )
+                .join(
+                    MessageUserLink,
+                    MessageUserLink.message_id == MessageModel.mes_id,
+                )
+                .join(
+                    MessageCourseLink,
+                    MessageCourseLink.message_id == MessageModel.mes_id,
+                )
+                .outerjoin(FeedbackModel, FeedbackModel.message_id == MessageModel.mes_id)
+                .outerjoin(UserModel, UserModel.user_id == MessageUserLink.user_id)
+                .group_by(MessageUserLink.user_id)
+                .where(MessageCourseLink.course_id == course_id)
+                .group_by(MessageModel.mes_id)
+            )
+            res = session.exec(statement).all()
+            messages_with_feedback_json = [
+                (
+                    message.jsonserialize(),
+                    user.jsonserialize(),
+                    c.jsonserialize(),
+                    uuser.jsonserialize(),
+                    feeds,
+                )
+                for message, user, c, uuser, feeds in res
+            ]
+            messages_with_feedback_json = [
+                message_from_joined(message, user, uuser, c, feeds)
+                for message, user, c, uuser, feeds in messages_with_feedback_json
+            ]
+            return messages_with_feedback_json, session
+
     def get_course_messages(self, course_id):
         with Connection().session() as session:
             statement = select(CourseModel).where(CourseModel.course_id == course_id)
@@ -469,10 +588,15 @@ class DataBase(metaclass=Singleton):
             res = session.exec(statement).first()
             if res is None:
                 return None, session
-            # print([m.users for m in res.messages])
-            msgs = [x.jsonserialize() for x in res.messages]
-            message_ids = [x["mes_id"] for x in msgs]
-            print("message_ids:", message_ids)
+
+            msgs = [json.loads(x.json()) for x in res.messages]
+            for message, mx in zip(msgs, res.messages):
+                try:
+                    message["user_email"] = json.loads(mx.users[0].json())["email"]
+                    message["user_id"] = json.loads(mx.users[0].json())["user_id"]
+                except:
+                    message["user_email"] = "LOGGED_OUT"
+                    message["user_id"] = "LOGGED_OUT"
 
             for message in msgs:
                 message["feedbacks"] = []
@@ -484,15 +608,9 @@ class DataBase(metaclass=Singleton):
                 feedbacks = [x.jsonserialize() for x in feed_res]
                 for feedback in feedbacks:
                     message["feedbacks"].append(feedback)
-            for message, m in zip(msgs, res.messages):
-                if True:
-                    message["user_email"] = m.users[0].email
-                    message["user_id"] = m.users[0].user_id
-                    # message["user_email"] = "LOGGED_OUT_NOT"
-                    # message["user_id"] = "LOGGED_OUT_NOT"
-                else:
-                    message["user_email"] = "LOGGED_OUT"
-                    message["user_id"] = "LOGGED_OUT"
+                # message["_sa_instance_state"] = None
+
+            print("MESSAGES [DEBUG]")
             return msgs, session
 
     def get_users_by_email(self, email: str):
