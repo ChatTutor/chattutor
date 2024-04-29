@@ -8,6 +8,18 @@ from flask import (
     url_for,
     render_template,
 )
+from core.url_spider import URLSpider
+from flask import Blueprint, Response, jsonify, request, stream_with_context
+from nice_functions import pprint
+from core.data import (
+    DataBase,
+    UserModel,
+    MessageModel,
+    SectionModel,
+    ChatModel,
+    CourseModel,
+    FeedbackModel,
+)
 from flask import stream_with_context, Response, abort, jsonify
 from flask_cors import CORS
 from itsdangerous import URLSafeTimedSerializer
@@ -72,6 +84,7 @@ default_origins = [
     "https://pr4jitd.github.io",
     "https://introcomp.mit.edu",
     "https://dkeathley.github.io",
+    "http://localhost:5000",
 ]
 
 db_origins = DataBase().get_all_courses_urls()
@@ -93,13 +106,118 @@ for url in db_origins:
 
 print(f"[CORS ORIGINS] received: {db_origins_parsed}")
 
-CORS(
+xcors = CORS(
     app,
-    origins=db_origins_parsed + default_origins,
 )
+
+# Define a list of allowed origins
+def_origins = db_origins_parsed + default_origins
+
 app.secret_key = "fhslcigiuchsvjksvjksgkgs"
 db.init_db()
 user_db.init_db()
+
+
+# ------------ CORS -------------
+
+
+# Function to check if origin is allowed
+def check_origin(request):
+    return True
+
+
+@app.before_request
+def before_request():
+    if not check_origin(request):
+        return jsonify({"error": "Origin not allowed"}), 403
+
+
+@prep_bp.route("/course/register", methods=["POST", "GET"])
+@flask_login.login_required
+def urlcrawler_():
+    """
+    Register course in our database to use a tutor on it.
+    URLParams:
+        ```
+        {
+            "url_to_parse" : str # origin page of your course
+            "course_name" : str # your course name
+            "proffessor" : str # the profs namse
+            "collection_name" : str # spawned collection (knowledge base) name
+            "maual" : bool # true / false
+            # TODO : generate collection_name automatically
+        }
+        ```
+    Returns:
+        - a stream of parsed urls as sections
+    Yields:
+        TODO: document this
+    """
+    data = request.json
+    url: str = data.get("url_to_parse", "https://www.google.com")
+    course_name: str = data.get("course_name", "No course")
+    proffessor: str = data.get("proffessor", "No professor")
+    manual: bool = data.get("manual", False)
+    collection_name: str = data.get("collection_name", f"{uuid.uuid4()}")
+    course_id = f"{uuid.uuid4()}"
+    print("Manual", manual)
+    if manual:
+        print(f"[CORS] Adding {url}")
+        def_origins.append(url)
+        DataBase().insert_course(
+            CourseModel(
+                course_id=course_id,
+                name=course_name,
+                proffessor=proffessor,
+                mainpage=url,
+                collectionname=course_name,
+            )
+        )
+        DataBase().insert_user_to_course(flask_login.current_user.user_id, course_id=course_id)
+        DataBase().insert_section(
+            SectionModel(
+                section_id=re.sub(r"[^A-Za-z0-9\-_]", "_", url),
+                pulling_from="",
+                course_id=course_id,
+                sectionurl=url,
+            )
+        )
+        DataBase().establish_course_section_relationship(
+            section_id=re.sub(r"[^A-Za-z0-9\-_]", "_", url), course_id=course_id
+        )
+
+        return Response(jsonify({"course_id": course_id, "collectionname": course_name}))
+
+    url_r = URLSpider(1, 200)
+    url_r.set_thread_count(25)
+    url_r.set_bfs_thread_count(25)
+    url_r.MAX_LEVEL_PARQ = 2
+    pprint(f"Crawling... {url_r.max_number_of_urls}")
+    print(f"[CORS] Adding {url}")
+
+    parsed: ParseResult = urlparse(url)
+    url_origin = parsed.scheme
+    if url_origin != "":
+        url_origin += "://"
+    if not (parsed.hostname is None):
+        url_origin += parsed.hostname
+        print("[+] " + url_origin + "\n")
+        db_origins_parsed.append(url_origin)
+    def_origins.append(url)
+    return Response(
+        stream_with_context(
+            url_r.new_spider_function(
+                urltoapp=url,
+                save_to_database=db,
+                collection_name=collection_name,
+                course_name=course_name,
+                proffessor=proffessor,
+                course_id=course_id,
+                current_user=flask_login.current_user,
+            )
+        )
+    )
+
 
 app.register_blueprint(ask_bp, url_prefix="/ask")
 app.register_blueprint(data_bp)
