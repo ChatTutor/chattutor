@@ -1,11 +1,13 @@
-from typing import Optional
+from typing import Deque, List, Optional, Tuple
 from sqlmodel import Field, Session, SQLModel, create_engine, Text
 import uuid as uuid_pkg
 from datetime import datetime
-from sqlmodel import Field
+from sqlmodel import Field, Relationship
 from dataclasses import dataclass
 from sqlalchemy.dialects.mysql import LONGTEXT
 from sqlalchemy import Column
+from core.data.models.MessageCourseLink import MessageCourseLink
+from core.data.models.MessageUserLink import MessageUserLink
 
 
 @dataclass
@@ -38,8 +40,21 @@ class Message(SQLModel, table=True):
     clear_number: Optional[int]
     time_created: datetime = Field(default_factory=datetime.now)
     credential_token: str
+    courses: List["Course"] = Relationship(
+        back_populates="messages",
+        link_model=MessageCourseLink,
+    )
+    users: List["User"] = Relationship(
+        back_populates="messages",
+        link_model=MessageUserLink,
+    )
 
     def jsonserialize(self):
         d = self.__dict__
         d["_sa_instance_state"] = None
+        return d
+
+    def jsonserialize_noclear(self):
+        d = self.__dict__
+        # d["_sa_instance_state"] = None
         return d

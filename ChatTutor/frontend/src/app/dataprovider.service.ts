@@ -71,6 +71,21 @@ export class DataProviderService {
   }
 
   /**
+   * Get course messages by user
+   * @param email owner user email
+   * @param course_id course_id of the course
+   * @param uid user to retreive conversation from
+   * @returns the user sections
+   */
+  async getCourseMessagesByUID(email : string, course_id : any, uid: any):  Promise<any>  {
+    const resp = await fetch(`/users/${email}/courses/${course_id}/${uid}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return await resp.json();
+  }
+
+  /**
    * Get courses of user
    * @param email email of user
    * @returns 
@@ -111,6 +126,11 @@ export class DataProviderService {
     return await response.json()
   }
 
+  async sendCollection(url : string, coursename : string, prof : string, component_state : any) {
+    let data = JSON.stringify({url_to_parse: url, collection_name: coursename, course_name: coursename, coursename: coursename, proffessor: prof, manual: true})
+    let response = await fetch('/prep/course/register', {method: 'POST', headers:{'Content-Type':'application/json'}, body: data})
+    return await response.json();
+  }
 
   /**
    * 

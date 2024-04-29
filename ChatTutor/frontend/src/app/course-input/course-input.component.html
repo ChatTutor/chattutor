@@ -1,6 +1,6 @@
 <app-navbar></app-navbar>
 <mat-stepper
-class="example-stepper">
+class="example-stepper" linear="true">
 <mat-step label="Fill out you course info">
 <div class="urldiv">
     <mat-form-field>
@@ -19,13 +19,13 @@ class="example-stepper">
         <mat-label>Custom Course Collection Name/UUID</mat-label>
         <input matInput [(ngModel)]="collectionname" placeholder="collection name">
     </mat-form-field> -->
+    <mat-checkbox class="example-margin" name="manual" [(ngModel)]="manual">Input Manually</mat-checkbox>
     <button mat-button color="primary" matStepperNext type="submit" name="submit" (click)="submitUrlScrape()">
         Next
     </button>
-
 </div>
 </mat-step>
-<mat-step label="Wait for us to compile your course">
+<mat-step label="Wait for us to compile your course" *ngIf="!manual">
 <div *ngIf="!is_ready">
     <p>ChatTutor will look through your course's website to understand it, and each page will represent a section, whether being a reading or a lab!</p>
     <p>This will take up to 5 minutes, so please do not refresh the page!</p>

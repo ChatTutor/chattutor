@@ -6,6 +6,9 @@ from datetime import datetime
 from sqlmodel import Field, Relationship
 from core.data.models.SectionCourseLink import SectionCourseLink
 from core.data.models.UserCourseLink import UserCourseLink
+from core.data.models.StudentCourseLink import StudentCourseLink
+from core.data.models.MessageCourseLink import MessageCourseLink
+
 from dataclasses import dataclass
 
 
@@ -39,12 +42,12 @@ class Course(SQLModel, table=True):
     proffessor: Optional[str]
     mainpage: str
     collectionname: str
-    sections: List["Section"] = Relationship(
-        back_populates="courses", link_model=SectionCourseLink
+    sections: List["Section"] = Relationship(back_populates="courses", link_model=SectionCourseLink)
+    users: List["User"] = Relationship(back_populates="courses", link_model=UserCourseLink)
+    students: List["User"] = Relationship(
+        back_populates="studied_courses", link_model=StudentCourseLink
     )
-    users: List["User"] = Relationship(
-        back_populates="courses", link_model=UserCourseLink
-    )
+    messages: List["Message"] = Relationship(link_model=MessageCourseLink, back_populates="courses")
 
     def jsonserialize(self):
         d = self.__dict__

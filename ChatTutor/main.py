@@ -44,6 +44,7 @@ import io
 import uuid
 from werkzeug.datastructures import FileStorage
 from authlib.integrations.flask_client import OAuth
+from urllib.parse import urlparse, ParseResult
 
 # import markdown
 import flask_login
@@ -63,16 +64,38 @@ load_env()
 load_api_keys()
 
 app = Flask(__name__, static_folder="frontend/dist/frontend/", static_url_path="")
+default_origins = [
+    "http://127.0.0.1:5000",
+    "https://barosandu.github.io",
+    "https://pymit6101-nbqjgewnea-uc.a.run.app",
+    "https://byucamacholab.github.io",
+    "https://pr4jitd.github.io",
+    "https://introcomp.mit.edu",
+    "https://dkeathley.github.io",
+]
+
+db_origins = DataBase().get_all_courses_urls()
+
+db_origins_parsed = []
+for url in db_origins:
+    if url == "":
+        continue
+
+    parsed: ParseResult = urlparse(url)
+    url_origin = parsed.scheme
+    if url_origin != "":
+        url_origin += "://"
+    if not (parsed.hostname is None):
+        url_origin += parsed.hostname
+        print("[+] " + url_origin + "\n")
+        db_origins_parsed.append(url_origin)
+
+
+print(f"[CORS ORIGINS] received: {db_origins_parsed}")
+
 CORS(
     app,
-    origins=[
-        "http://127.0.0.1:5000",
-        "https://barosandu.github.io",
-        "https://pymit6101-nbqjgewnea-uc.a.run.app",
-        "https://byucamacholab.github.io",
-        "https://pr4jitd.github.io",
-        "https://introcomp.mit.edu",
-    ],
+    origins=db_origins_parsed + default_origins,
 )
 app.secret_key = "fhslcigiuchsvjksvjksgkgs"
 db.init_db()

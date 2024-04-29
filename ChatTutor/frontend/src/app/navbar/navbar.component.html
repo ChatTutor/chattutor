@@ -7,6 +7,9 @@
         <div *ngIf="loggedin && !hidden">
             <a href="/mycourses">My courses</a>
         </div>
+        <div *ngIf="loggedin && show_verif">
+            <a href="/users/send_verification_mail">Verify</a>
+        </div>
         <div *ngIf="!loggedin && !hidden">
             <a href="/login">Login</a>
         </div>

@@ -3,12 +3,15 @@ from sqlmodel import Field, Session, SQLModel, create_engine
 import uuid as uuid_pkg
 from datetime import datetime
 from sqlmodel import Field, Relationship
-from core.data.models.Course import Course
+
+# from core.data.models.Course import Course
+from core.data.models.StudentCourseLink import StudentCourseLink
 from core.data.models.SectionCourseLink import SectionCourseLink
 from core.data.models.UserCourseLink import UserCourseLink
 from dataclasses import dataclass
 import flask_login
 import bcrypt
+from core.data.models.MessageUserLink import MessageUserLink
 
 
 @dataclass
@@ -41,9 +44,12 @@ class User(flask_login.UserMixin, SQLModel, table=True):
     email: str
     password_hash: str
     user_type: str
-    courses: List[Course] = Relationship(
-        back_populates="users", link_model=UserCourseLink
+    courses: List["Course"] = Relationship(back_populates="users", link_model=UserCourseLink)
+    studied_courses: List["Course"] = Relationship(
+        back_populates="students", link_model=StudentCourseLink
     )
+    messages: List["Message"] = Relationship(back_populates="users", link_model=MessageUserLink)
+    verified: str = Field(default="false")
 
     def get_id(self):
         return self.email
@@ -53,20 +59,21 @@ class User(flask_login.UserMixin, SQLModel, table=True):
         d["_sa_instance_state"] = None
         return d
 
+    def jsonserialize_noclear(self):
+        d = self.__dict__
+        # d["_sa_instance_state"] = None
+        return d
+
     @property
     def password(self):
         raise AttributeError("password not readable")
 
     @password.setter
     def password(self, password):
-        self.password_hash = bcrypt.hashpw(
-            password.encode("utf-8", "ignore"), bcrypt.gensalt()
-        )
+        self.password_hash = bcrypt.hashpw(password.encode("utf-8", "ignore"), bcrypt.gensalt())
 
     def set_password(self, password):
-        self.password_hash = bcrypt.hashpw(
-            password.encode("utf-8", "ignore"), bcrypt.gensalt()
-        )
+        self.password_hash = bcrypt.hashpw(password.encode("utf-8", "ignore"), bcrypt.gensalt())
 
     def verify_password(self, p):
         print(

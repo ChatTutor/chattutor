@@ -43,15 +43,19 @@ import { RegisterPageComponent } from './register-page/register-page.component';
 import { RegisterStudentPageComponent } from './register-student-page/register-student-page.component';
 import { GradientBackgroundComponent } from './gradient-background/gradient-background.component';
 import { OAuthCallbackComponent } from './oauth-callback/oauth-callback.component';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 
 import { OAuthModule, AuthConfig, JwksValidationHandler, ValidationHandler, OAuthStorage, OAuthModuleConfig } from 'angular-oauth2-oidc'; // Added
 import { AuthService } from './auth.service';
 import { HttpClientModule } from '@angular/common/http';
+import { UserPasswordResetComponent } from './user-password-reset/user-password-reset.component';
+import { OauthCallbackStudentsComponent } from './oauth-callback-students/oauth-callback-students.component';
+import { UserMessageAnalizerComponent } from './user-message-analizer/user-message-analizer.component';
 
 const authModuleConfig: OAuthModuleConfig = {
   resourceServer: {
-    allowedUrls: ['http://localhost:5000', 'https://beta-chattutor-nbqjgewnea-uc.a.run.app', 'https://chattutor.org/'],
+    allowedUrls: ['http://localhost:5000/', 'https://beta-chattutor-nbqjgewnea-uc.a.run.app/', 'https://chattutor.org/'],
     sendAccessToken: true,
   },
 };
@@ -81,6 +85,9 @@ const authModuleConfig: OAuthModuleConfig = {
     RegisterStudentPageComponent,
     GradientBackgroundComponent,
     OAuthCallbackComponent,
+    UserPasswordResetComponent,
+    OauthCallbackStudentsComponent,
+    UserMessageAnalizerComponent,
   ],
     imports: [
         BrowserModule,
@@ -102,6 +109,7 @@ const authModuleConfig: OAuthModuleConfig = {
         MatStepperModule,
         MatExpansionModule,
         HttpClientModule,
+        MatCheckboxModule,
         OAuthModule.forRoot(authModuleConfig),
     ],
   providers: [

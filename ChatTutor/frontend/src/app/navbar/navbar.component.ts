@@ -10,6 +10,7 @@ import { DataProviderService } from 'app/dataprovider.service';
 export class NavbarComponent implements OnInit {
     loggedin: boolean = false
     hidden: boolean = true
+    show_verif: boolean = false
     @Input() ondashboard: boolean = false
     @Input() onhomepage: boolean = false
 
@@ -19,8 +20,10 @@ export class NavbarComponent implements OnInit {
 
     async ngOnInit(): Promise<void> {
         const user = await this.dataProvider.isAuthd();
-        console.log(user['loggedin'])
+
+        console.log(user['loggedin'], user)
         this.loggedin = user['loggedin']
+        this.show_verif = user['loggedin'] && !(user['verified'])
         this.hidden = false
     }
 }
