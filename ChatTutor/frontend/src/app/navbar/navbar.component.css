@@ -6,7 +6,7 @@
     font-family: 'Montserrat', sans-serif;
 }
 .section {
-    width: calc(100% - 40px);
+    width: 100%;
     font-weight: 700;
     font-size: 20px;
     text-align: center;
