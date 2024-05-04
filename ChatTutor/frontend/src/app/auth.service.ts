@@ -50,12 +50,14 @@ export class AuthService {
       console.log(this.oauthService.state)
       const claims: any = this.oauthService.getIdentityClaims();
       if (claims) {
+        console.log("Claims: ", claims)
         // Assuming you get the google_id, email, and name from Google's OAuth response.
         const a = JSON.parse(this.oauthService.state == undefined ? "{utype: 'PROFFESSOR', 'redirect_from': undefined}" :this.oauthService.state); 
         const user_info = {
           google_id: claims.sub, // This might need adjustment based on the actual claims structure
           email: claims.email,
           name: claims.name,
+          picture: claims.picture,
           utype: a['utype'],
           redirect_from: a['redirect_from']
         };

@@ -50,6 +50,7 @@ class User(flask_login.UserMixin, SQLModel, table=True):
     )
     messages: List["Message"] = Relationship(back_populates="users", link_model=MessageUserLink)
     verified: str = Field(default="false")
+    picture: str = Field(default="unset")
 
     def get_id(self):
         return self.email

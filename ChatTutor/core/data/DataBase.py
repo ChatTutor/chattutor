@@ -637,6 +637,22 @@ class DataBase(metaclass=Singleton):
             session.expunge_all()
             return results, session
 
+    def update_profile_pic(self, user_id, picture):
+        """Insert User
+
+        Args:
+            user (User : UserModel): user object
+        """
+        with Connection().session() as session:
+            statement = select(UserModel).where(UserModel.user_id == user_id)
+            user = session.exec(statement).first()
+            if user is not None:
+                user.picture = picture
+                session.add(user)
+                session.commit()
+                session.refresh(user)
+            return user, session
+
     def insert_user_to_course(
         self, user_id: str, course_id
     ) -> tuple[UserModel, CourseModel, Session]:

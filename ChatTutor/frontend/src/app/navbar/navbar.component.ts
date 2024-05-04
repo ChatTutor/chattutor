@@ -11,6 +11,7 @@ export class NavbarComponent implements OnInit {
     loggedin: boolean = false
     hidden: boolean = true
     show_verif: boolean = false
+    user: any = undefined
     @Input() ondashboard: boolean = false
     @Input() onhomepage: boolean = false
 
@@ -25,5 +26,6 @@ export class NavbarComponent implements OnInit {
         this.loggedin = user['loggedin']
         this.show_verif = user['loggedin'] && !(user['verified'])
         this.hidden = false
+        this.user = user['user']
     }
 }

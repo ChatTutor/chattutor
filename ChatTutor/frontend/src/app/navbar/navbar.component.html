@@ -7,7 +7,7 @@
         <div *ngIf="loggedin && !hidden">
             <a href="/mycourses">My courses</a>
         </div>
-        <div *ngIf="loggedin && show_verif">
+        <div *ngIf="loggedin && show_verif && !user['google_id']">
             <a href="/users/send_verification_mail">Verify</a>
         </div>
         <div *ngIf="!loggedin && !hidden">
@@ -18,6 +18,16 @@
         </div>
         <div *ngIf="loggedin && !hidden">
             <a href="/logout">Logout</a>
+        </div>
+        <div *ngIf="loggedin && (user != undefined)">
+            <div *ngIf="user['picture'] != 'unset'">
+                <img class="profimg" src="{{user['picture']}}">
+
+            </div>
+            <div *ngIf="user['picture'] == 'unset'">
+                <a> {{user['email']}} </a>
+
+            </div>
         </div>
     </div>
 </div>
