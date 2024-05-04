@@ -19,13 +19,14 @@
         <div *ngIf="loggedin && !hidden">
             <a href="/logout">Logout</a>
         </div>
-        <div *ngIf="loggedin && (user != undefined)">
-            <div *ngIf="user['picture'] != 'unset'">
+        <div *ngIf="loggedin && (user != undefined)" style="display: flex; flex-direction: row; align-items: center; justify-content: center">
+            <div class="divider" style="background-color: white; width: 1px; height: calc(100% - 10px); margin-right: 10px"></div>
+            <div *ngIf="user['picture'] != 'unset'" style="display: flex; flex-direction: row; align-items: center; justify-content: center">
                 <img class="profimg" src="{{user['picture']}}">
-
+                <div style="display: flex; flex-direction: row; align-items: center; justify-content: center"> <a style="font-size: medium">{{user['email']}}</a> </div>
             </div>
-            <div *ngIf="user['picture'] == 'unset'">
-                <a> {{user['email']}} </a>
+            <div *ngIf="user['picture'] == 'unset'" style="display: flex; flex-direction: row; align-items: center; justify-content: center">
+                <div> <a>{{user['email']}}</a> </div>
 
             </div>
         </div>

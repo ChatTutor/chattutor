@@ -224,6 +224,14 @@ a:visited {
     position: sticky;
 }
 
+.divider {
+    background-color: white !important;
+}
+
+.ondashboard .divider {
+    background-color: black !important;
+}
+
 .onhomepagemenu {
     line-height: unset;
     background: none;
