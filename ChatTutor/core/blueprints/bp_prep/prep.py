@@ -67,7 +67,14 @@ def get_accescode_by_code():
         if len(user) > 0:
             usr = user[0]
             usrjson = usr.jsonserialize()
-            return jsonify({"message": "success", "email": usr.email, "id": usr.user_id})
+            return jsonify(
+                {
+                    "message": "success",
+                    "email": usr.email,
+                    "id": usr.user_id,
+                    "picture": usr.picture,
+                }
+            )
         else:
             return jsonify({"message": "error2"})
     else:

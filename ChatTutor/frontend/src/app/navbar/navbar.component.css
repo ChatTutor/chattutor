@@ -224,6 +224,14 @@ a:visited {
     position: sticky;
 }
 
+.divider {
+    background-color: white !important;
+}
+
+.ondashboard .divider {
+    background-color: black !important;
+}
+
 .onhomepagemenu {
     line-height: unset;
     background: none;
@@ -252,3 +260,8 @@ a:visited {
     
 }
 
+.profimg {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}

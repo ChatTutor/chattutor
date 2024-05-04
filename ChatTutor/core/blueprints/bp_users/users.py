@@ -72,6 +72,7 @@ def oauth_register():
     name = user_info.get("name")
     utype = user_info.get("utype")  # PROFESSOR | STUDENT
     redirect_from = user_info.get("redirect_from", None)
+    picture = user_info.get("picture", "unset")
 
     if not google_id or not email or not name:
         return jsonify({"error": "Missing information from Google OAuth"}), 400
@@ -87,6 +88,7 @@ def oauth_register():
             google_id=google_id,
             name=name,
             verified=True,
+            picture=picture,
         )
         print(user)
         try:
@@ -105,7 +107,12 @@ def oauth_register():
                         jsonify(
                             {
                                 "message": "User created",
-                                "user": {"google_id": google_id, "email": email, "name": name},
+                                "user": {
+                                    "google_id": google_id,
+                                    "email": email,
+                                    "name": name,
+                                    "picture": picture,
+                                },
                                 "redirect_to": c,
                                 "sid": code_code,
                             }
@@ -117,7 +124,12 @@ def oauth_register():
                 jsonify(
                     {
                         "message": "User created",
-                        "user": {"google_id": google_id, "email": email, "name": name},
+                        "user": {
+                            "google_id": google_id,
+                            "email": email,
+                            "name": name,
+                            "picture": picture,
+                        },
                     }
                 ),
                 201,
@@ -126,6 +138,7 @@ def oauth_register():
             return jsonify({"error": str(e)}), 500
 
     flask_login.login_user(users[0])
+    DataBase().update_profile_pic(users[0].user_id, picture)
     if redirect_from != None:
         print("[Enrolling]")
 
@@ -140,7 +153,12 @@ def oauth_register():
                 jsonify(
                     {
                         "message": "User logged in",
-                        "user": {"google_id": google_id, "email": email, "name": name},
+                        "user": {
+                            "google_id": google_id,
+                            "email": email,
+                            "name": name,
+                            "picture": picture,
+                        },
                         "redirect_to": c,
                         "sid": code_code,
                     }
@@ -152,7 +170,7 @@ def oauth_register():
         jsonify(
             {
                 "message": "User logged in",
-                "user": {"google_id": google_id, "email": email, "name": name},
+                "user": {"google_id": google_id, "email": email, "name": name, "picture": picture},
             }
         ),
         201,
@@ -229,7 +247,13 @@ def isloggedin():
     )
     if flask_login.current_user.is_authenticated:
         print(flask_login.current_user)
-        return jsonify({"loggedin": True, "verified": flask_login.current_user.verified == "true"})
+        return jsonify(
+            {
+                "loggedin": True,
+                "verified": flask_login.current_user.verified == "true",
+                "user": flask_login.current_user.jsonserialize(),
+            }
+        )
     return jsonify({"loggedin": False, "verified": False})
 
 
