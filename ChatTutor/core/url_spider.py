@@ -323,7 +323,13 @@ class URLSpider:
         file = FileStorage(stream=io.BytesIO(bytes(site_text, "utf-8")), name=navn)
         f_f = (file, navn)
         doc = Doc(docname=f_f[1], citation="", dockey=f_f[1])
-        texts = parse_plaintext_file_read(f_f[0], doc=doc, chunk_chars=2000, overlap=100)
+        texts = []
+        try:
+            texts = parse_plaintext_file_read(f_f[0], doc=doc, chunk_chars=2000, overlap=100)
+        except IOError:
+            print("[-] I/O error(): ")
+        except BaseException:
+            print("[-] error!")
 
         section_id = navn
         print("finish ..")
