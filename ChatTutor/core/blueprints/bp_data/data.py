@@ -29,7 +29,8 @@ from core.data import (
 from scholarly import scholarly, Author, Publication
 from google_scholar_py import *
 from core.reader import parse_pdf, Text, Doc
-from core.blueprints.bp_data.cqn import CQNPublications, process
+from core.blueprints.bp_data.cqn import CQNPublications, process, load_citations
+from serpapi import GoogleScholarSearch
 
 data_bp = Blueprint("bp_data", __name__)
 
@@ -41,11 +42,13 @@ def format_entry(entry):
 @data_bp.route("/refreshcqn", methods=["POST", "GET"])
 def refreshcqn():
     ps = SerpApiGoogleScholarOrganic()
+
     data = ps.scrape_google_scholar_organic_results(
         query="NSF-ERC CQN 1941583",
         api_key="ceab11c9dd478c94bd71fef9ba86cd4310bc24f7af920b17958a864dc9e58035",
         pagination=True,
     )
+
     data_formated: List[CQNPublications] = [CQNPublications(e) for e in data]
 
     data_filtered: List[CQNPublications] = list(
@@ -55,10 +58,13 @@ def refreshcqn():
 
     # for i in range(0, len(data_filtered) - 1):
     #     data_filtered[i].set_pdf_contents(content_url=data_filtered[i].get_first_file_link())
-    dt = process(data_filtered)
+    get_content = True
+    if get_content:
+        dt = process(data_filtered)
     print("----- DONE -----")
-    dt = [x for x in dt if x is not None]
-    return jsonify([x.toDict() for x in dt])
+    dt = [x for x in data_filtered if x is not None]
+    dt = [load_citations(x) for x in data_filtered]
+    return jsonify({"data": [x.toDict() for x in dt]})
 
 
 def getpdfcontentsfromlist(pubs: List[CQNPublications]):

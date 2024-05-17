@@ -33,6 +33,7 @@ from scholarly import scholarly, Author, Publication
 from google_scholar_py import *
 from core.reader import parse_pdf, Text, Doc
 import multiprocessing
+from serpapi import GoogleScholarSearch
 
 
 def run_with_timeout(func, timeout, *args, **kwargs):
@@ -46,6 +47,19 @@ def run_with_timeout(func, timeout, *args, **kwargs):
             return None
 
 
+def load_citations(data):
+    dt = GoogleScholarSearch(
+        {
+            "api_key": "ceab11c9dd478c94bd71fef9ba86cd4310bc24f7af920b17958a864dc9e58035",
+            "engine": "google_scholar_cite",
+            "q": data.entry["result_id"],
+        }
+    )
+    print(f"\n\n{dt}\n\n")
+    data.citations_unpacked = dt.get_dict()
+    return data
+
+
 class CQNPublications:
     title: str
     snippet: str
@@ -53,6 +67,7 @@ class CQNPublications:
     resources: List
     authors: List
     pdf_contents: List[Text] = []
+    citations_unpacked: dict
 
     def set_pdf_contents(self, content_url, i):
         doc = Doc(docname=f"{content_url}", citation="", dockey=f"{content_url}")
@@ -78,11 +93,14 @@ class CQNPublications:
         return f
 
     def __init__(self, entry):
-        self.link = entry.get("link", "none")
+        print(entry)
+        self.link = entry.get("link", "None")
         self.resources = entry.get("resources", "None")
-        self.authors = entry.get("authors", "none")
-        self.title = entry.get("title", "none")
-        self.snippet = entry.get("snippet", "no snippet")
+        self.publication_info = entry.get("publication_info", "{}")
+        self.authors = self.publication_info.get("authors", "None")
+        self.title = entry.get("title", "None")
+        self.snippet = entry.get("snippet", "None")
+        self.entry = entry
 
     def toDict(self):
         return {
@@ -91,7 +109,9 @@ class CQNPublications:
             "link": self.snippet,
             "files": self.resources,
             "authors": self.authors,
+            "entry": self.entry,
             "contents": "\n".join(x.text for x in self.pdf_contents) + "...",
+            "citations_unpacked": self.citations_unpacked,
         }
 
 
