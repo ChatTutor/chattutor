@@ -1,10 +1,18 @@
 # import pymysql
 ## search for TODO : modify
+import io
+import json
+from typing import List
+
+import PyPDF2
 import flask
 import os
 
+import pdfreader
 # import markdown
 import flask_login
+import requests
+
 from core.extensions import db
 from flask import Blueprint, Response, jsonify, request
 from datetime import datetime
@@ -17,8 +25,82 @@ from core.data import (
     CourseModel,
     ChatModel,
 )
+from scholarly import scholarly, Author, Publication
+from google_scholar_py import *
 
 data_bp = Blueprint("bp_data", __name__)
+
+
+
+class CQNPublications:
+    title: str
+    snippet: str
+    link: str
+    resources: List
+    authors: List
+    pdf_contents: List[str] = []
+
+    def set_pdf_contents(self, content_url):
+        texts = []
+        # for page in pdf.pages:
+        #     page_txt = page.extract_text()
+        #     texts.append(page_txt)
+        self.pdf_contents = texts
+
+    def get_first_file_link(self) -> str:
+        if self.resources == 'None':
+            return ''
+        f = self.resources[0]["link"]
+        return f
+
+    def __init__(self, entry):
+        self.link = entry.get('link', 'none')
+        self.resources = entry.get('resources', 'None')
+        self.authors = entry.get('authors', 'none')
+        self.title = entry.get('title', 'none')
+        self.snippet = entry.get('snippet', 'no snippet')
+
+    def toDict(self):
+        return {'title': self.title, 'snippet': self.snippet, 'link': self.snippet, 'files': self.resources,
+                'authors': self.authors, 'contents': self.pdf_contents}
+
+
+def format_entry(entry):
+    return CQNPublications(entry).toDict()
+
+
+@data_bp.route("/refreshcqn", methods=["POST", "GET"])
+def refreshcqn():
+    ps = SerpApiGoogleScholarOrganic()
+    data = ps.scrape_google_scholar_organic_results(query='NSF-ERC CQN 1941583',
+                                                    api_key='ceab11c9dd478c94bd71fef9ba86cd4310bc24f7af920b17958a864dc9e58035',
+                                                    pagination=True)
+    data_formated: List[CQNPublications] = [CQNPublications(e) for e in data]
+
+    data_filtered: List[CQNPublications] = list(filter(lambda x: x.resources != 'None', data_formated))
+    # string = json.dumps(data, indent=2)
+
+    for i in range(0, len(data_filtered) - 1):
+        data_filtered[i].set_pdf_contents(content_url=data_filtered[i].get_first_file_link())
+
+    return jsonify([x.toDict() for x in data_filtered])
+
+
+def getpdfcontentsfromlist(pubs: List[CQNPublications]):
+    for i in range(0, len(pubs) - 1):
+        f_link = pubs[i].get_first_file_link()
+        pubs[i].set_pdf_contents(content_url=f_link)
+
+
+
+@data_bp.route("/refreshcqnunformatted", methods=["POST", "GET"])
+def refresh_unformatted():
+    ps = SerpApiGoogleScholarOrganic()
+    data = ps.scrape_google_scholar_organic_results(query='NSF-ERC CQN 1941583',
+                                                    api_key='ceab11c9dd478c94bd71fef9ba86cd4310bc24f7af920b17958a864dc9e58035',
+                                                    pagination=True)
+    # string = json.dumps(data, indent=2)
+    return jsonify(data)
 
 
 @data_bp.route("/addtodb", methods=["POST", "GET"])
@@ -26,7 +108,7 @@ def addtodb():
     """
     The `addtodb` function inserts a message into a database with the provided content, role, chat ID,
     clear number, and time created.
-
+3
     URLParams:
         ```
         {
@@ -173,7 +255,7 @@ def delete_doc():
     collection_name = data["collection"]
     doc_name = data["doc"]
     if DataBase().validate_course_owner(
-        collectionname=collection_name, user_email=flask_login.current_user.email
+            collectionname=collection_name, user_email=flask_login.current_user.email
     ):
         collection = db.client.get_collection(name=collection_name)
         print(collection)
@@ -216,7 +298,7 @@ def add_fromdoc_tosection():
     section_id = data["section_id"]
     url_to_add = data["url_to_add"]
     if DataBase().validate_course_owner(
-        collectionname=collection_name, user_email=flask_login.current_user.email
+            collectionname=collection_name, user_email=flask_login.current_user.email
     ):
         DataBase().update_section_add_fromdoc(section_id=section_id, from_doc=url_to_add)
         return jsonify({"added": url_to_add, "to_collection": collection_name})
@@ -251,7 +333,7 @@ def get_section():
     collection_name = data["collection"]
     section_id = data["section_id"]
     if DataBase().validate_course_owner(
-        collectionname=collection_name, user_email=flask_login.current_user.email
+            collectionname=collection_name, user_email=flask_login.current_user.email
     ):
         sections, _ = DataBase().get_sections_by_id(section_id=section_id)
         pfrom = [s.pulling_from for s in sections]

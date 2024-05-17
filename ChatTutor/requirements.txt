@@ -19,3 +19,6 @@ pydantic==2.6.1
 pydantic-core==2.16.2
 sqlmodel==0.0.16
 authlib==1.3.0
+scholarly==1.7.11
+scrape-google-scholar-py==0.3.4
+pdfreader==0.1.15
