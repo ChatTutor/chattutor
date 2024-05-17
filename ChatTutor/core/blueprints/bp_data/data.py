@@ -9,6 +9,7 @@ import flask
 import os
 
 import pdfreader
+
 # import markdown
 import flask_login
 import requests
@@ -27,42 +28,10 @@ from core.data import (
 )
 from scholarly import scholarly, Author, Publication
 from google_scholar_py import *
+from core.reader import parse_pdf, Text, Doc
+from core.blueprints.bp_data.cqn import CQNPublications, process
 
 data_bp = Blueprint("bp_data", __name__)
-
-
-
-class CQNPublications:
-    title: str
-    snippet: str
-    link: str
-    resources: List
-    authors: List
-    pdf_contents: List[str] = []
-
-    def set_pdf_contents(self, content_url):
-        texts = []
-        # for page in pdf.pages:
-        #     page_txt = page.extract_text()
-        #     texts.append(page_txt)
-        self.pdf_contents = texts
-
-    def get_first_file_link(self) -> str:
-        if self.resources == 'None':
-            return ''
-        f = self.resources[0]["link"]
-        return f
-
-    def __init__(self, entry):
-        self.link = entry.get('link', 'none')
-        self.resources = entry.get('resources', 'None')
-        self.authors = entry.get('authors', 'none')
-        self.title = entry.get('title', 'none')
-        self.snippet = entry.get('snippet', 'no snippet')
-
-    def toDict(self):
-        return {'title': self.title, 'snippet': self.snippet, 'link': self.snippet, 'files': self.resources,
-                'authors': self.authors, 'contents': self.pdf_contents}
 
 
 def format_entry(entry):
@@ -72,18 +41,24 @@ def format_entry(entry):
 @data_bp.route("/refreshcqn", methods=["POST", "GET"])
 def refreshcqn():
     ps = SerpApiGoogleScholarOrganic()
-    data = ps.scrape_google_scholar_organic_results(query='NSF-ERC CQN 1941583',
-                                                    api_key='ceab11c9dd478c94bd71fef9ba86cd4310bc24f7af920b17958a864dc9e58035',
-                                                    pagination=True)
+    data = ps.scrape_google_scholar_organic_results(
+        query="NSF-ERC CQN 1941583",
+        api_key="ceab11c9dd478c94bd71fef9ba86cd4310bc24f7af920b17958a864dc9e58035",
+        pagination=True,
+    )
     data_formated: List[CQNPublications] = [CQNPublications(e) for e in data]
 
-    data_filtered: List[CQNPublications] = list(filter(lambda x: x.resources != 'None', data_formated))
+    data_filtered: List[CQNPublications] = list(
+        filter(lambda x: x.resources != "None", data_formated)
+    )
     # string = json.dumps(data, indent=2)
 
-    for i in range(0, len(data_filtered) - 1):
-        data_filtered[i].set_pdf_contents(content_url=data_filtered[i].get_first_file_link())
-
-    return jsonify([x.toDict() for x in data_filtered])
+    # for i in range(0, len(data_filtered) - 1):
+    #     data_filtered[i].set_pdf_contents(content_url=data_filtered[i].get_first_file_link())
+    dt = process(data_filtered)
+    print("-----DONE-----")
+    dt = [x for x in dt if x is not None]
+    return jsonify([x.toDict() for x in dt])
 
 
 def getpdfcontentsfromlist(pubs: List[CQNPublications]):
@@ -92,13 +67,14 @@ def getpdfcontentsfromlist(pubs: List[CQNPublications]):
         pubs[i].set_pdf_contents(content_url=f_link)
 
 
-
 @data_bp.route("/refreshcqnunformatted", methods=["POST", "GET"])
 def refresh_unformatted():
     ps = SerpApiGoogleScholarOrganic()
-    data = ps.scrape_google_scholar_organic_results(query='NSF-ERC CQN 1941583',
-                                                    api_key='ceab11c9dd478c94bd71fef9ba86cd4310bc24f7af920b17958a864dc9e58035',
-                                                    pagination=True)
+    data = ps.scrape_google_scholar_organic_results(
+        query="NSF-ERC CQN 1941583",
+        api_key="ceab11c9dd478c94bd71fef9ba86cd4310bc24f7af920b17958a864dc9e58035",
+        pagination=True,
+    )
     # string = json.dumps(data, indent=2)
     return jsonify(data)
 
@@ -106,28 +82,28 @@ def refresh_unformatted():
 @data_bp.route("/addtodb", methods=["POST", "GET"])
 def addtodb():
     """
-    The `addtodb` function inserts a message into a database with the provided content, role, chat ID,
-    clear number, and time created.
-3
-    URLParams:
-        ```
-        {
-            "content" : str, # content of the message
-            "role" : str  "User" | "Assistant",
-            "chat_k" : Optional[str],
-            "clear_number" : int, # number of times the chat was cleared
-            "time_created" : int,
-            "credential_token" : Oprional[str], # unused for now
-            "course" : Optional[str], # course which the message should be linked to
-        }
-        ```
-    Returns:
-        ```
-        {
-            "message_id" : str # inserted message db id
-            ... + all provided info
-        }
-        ```
+        The `addtodb` function inserts a message into a database with the provided content, role, chat ID,
+        clear number, and time created.
+    3
+        URLParams:
+            ```
+            {
+                "content" : str, # content of the message
+                "role" : str  "User" | "Assistant",
+                "chat_k" : Optional[str],
+                "clear_number" : int, # number of times the chat was cleared
+                "time_created" : int,
+                "credential_token" : Oprional[str], # unused for now
+                "course" : Optional[str], # course which the message should be linked to
+            }
+            ```
+        Returns:
+            ```
+            {
+                "message_id" : str # inserted message db id
+                ... + all provided info
+            }
+            ```
     """
     data = request.json
     course_col = data.get("course", None)  # HERE
@@ -156,8 +132,10 @@ def addtodb():
     }
 
     print("adding ", message_to_upload, " to db")
-    uploaded_message, _, user = DataBase().insert_message(message_to_upload, course_col, user_id)  # HERE
-    print('succesfully added message ', 'with users', user)
+    uploaded_message, _, user = DataBase().insert_message(
+        message_to_upload, course_col, user_id
+    )  # HERE
+    print("succesfully added message ", "with users", user)
     return jsonify(
         {
             "message_id": uploaded_message.mes_id,
@@ -167,7 +145,7 @@ def addtodb():
             "clear_number": clear_number,
             "time_created": time_created,
             "credential_token": credential_token,
-            "users": user
+            "users": user,
         }
     )
 
@@ -255,7 +233,7 @@ def delete_doc():
     collection_name = data["collection"]
     doc_name = data["doc"]
     if DataBase().validate_course_owner(
-            collectionname=collection_name, user_email=flask_login.current_user.email
+        collectionname=collection_name, user_email=flask_login.current_user.email
     ):
         collection = db.client.get_collection(name=collection_name)
         print(collection)
@@ -298,7 +276,7 @@ def add_fromdoc_tosection():
     section_id = data["section_id"]
     url_to_add = data["url_to_add"]
     if DataBase().validate_course_owner(
-            collectionname=collection_name, user_email=flask_login.current_user.email
+        collectionname=collection_name, user_email=flask_login.current_user.email
     ):
         DataBase().update_section_add_fromdoc(section_id=section_id, from_doc=url_to_add)
         return jsonify({"added": url_to_add, "to_collection": collection_name})
@@ -333,7 +311,7 @@ def get_section():
     collection_name = data["collection"]
     section_id = data["section_id"]
     if DataBase().validate_course_owner(
-            collectionname=collection_name, user_email=flask_login.current_user.email
+        collectionname=collection_name, user_email=flask_login.current_user.email
     ):
         sections, _ = DataBase().get_sections_by_id(section_id=section_id)
         pfrom = [s.pulling_from for s in sections]
