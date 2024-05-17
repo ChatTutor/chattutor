@@ -47,6 +47,7 @@ def load_env():
             "VERITAI_EMAIL",
             "VERITAI_EMAIL_PASSWD",
             "SERVICE_BASE_URL",
+            "SERP_API_KEY",
         ]
 
         for envar in envars:

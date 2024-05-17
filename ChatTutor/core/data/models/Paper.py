@@ -30,6 +30,7 @@ class Paper(SQLModel, table=True):
     snippet: str
     title: str
     courses: List[Course] = Relationship(back_populates="sections", link_model=SectionCourseLink)
+    citations: List[str]
 
     def jsonserialize(self):
         d = self.__dict__

@@ -50,13 +50,13 @@ def run_with_timeout(func, timeout, *args, **kwargs):
 def load_citations(data):
     dt = GoogleScholarSearch(
         {
-            "api_key": "ceab11c9dd478c94bd71fef9ba86cd4310bc24f7af920b17958a864dc9e58035",
+            "api_key": os.getenv("SERP_API_KEY"),
             "engine": "google_scholar_cite",
             "q": data.entry["result_id"],
         }
     )
-    print(f"\n\n{dt}\n\n")
-    data.citations_unpacked = dt.get_dict()
+    print(f"\n\n{dt.get_json()}\n\n")
+    data.citations_unpacked = dt.get_dictionary()
     return data
 
 
@@ -67,7 +67,7 @@ class CQNPublications:
     resources: List
     authors: List
     pdf_contents: List[Text] = []
-    citations_unpacked: dict
+    citations_unpacked: dict = {}
 
     def set_pdf_contents(self, content_url, i):
         doc = Doc(docname=f"{content_url}", citation="", dockey=f"{content_url}")
@@ -79,6 +79,8 @@ class CQNPublications:
         open_pdf_file = resp.content
         print(f"\n\tGettng texts {i}\n")
         texts = parse_pdf(open_pdf_file, doc, 2000, 100)
+        x = load_citations(self)
+        self.citations_unpacked = x.citations_unpacked
         print(f"----\n\n GOT TEXTS {i}")
         # for page in pdf.pages:
         #     page_txt = page.extract_text()

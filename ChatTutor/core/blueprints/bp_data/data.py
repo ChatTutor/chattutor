@@ -45,7 +45,7 @@ def refreshcqn():
 
     data = ps.scrape_google_scholar_organic_results(
         query="NSF-ERC CQN 1941583",
-        api_key="ceab11c9dd478c94bd71fef9ba86cd4310bc24f7af920b17958a864dc9e58035",
+        api_key=os.getenv("SERP_API_KEY"),
         pagination=True,
     )
 
@@ -59,11 +59,12 @@ def refreshcqn():
     # for i in range(0, len(data_filtered) - 1):
     #     data_filtered[i].set_pdf_contents(content_url=data_filtered[i].get_first_file_link())
     get_content = True
+    dt = data_filtered
     if get_content:
         dt = process(data_filtered)
+
     print("----- DONE -----")
     dt = [x for x in data_filtered if x is not None]
-    dt = [load_citations(x) for x in data_filtered]
     return jsonify({"data": [x.toDict() for x in dt]})
 
 
@@ -78,7 +79,7 @@ def refresh_unformatted():
     ps = SerpApiGoogleScholarOrganic()
     data = ps.scrape_google_scholar_organic_results(
         query="NSF-ERC CQN 1941583",
-        api_key="ceab11c9dd478c94bd71fef9ba86cd4310bc24f7af920b17958a864dc9e58035",
+        api_key=os.getenv("SERP_API_KEY"),
         pagination=True,
     )
     # string = json.dumps(data, indent=2)
