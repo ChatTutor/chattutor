@@ -56,7 +56,7 @@ def refreshcqn():
     # for i in range(0, len(data_filtered) - 1):
     #     data_filtered[i].set_pdf_contents(content_url=data_filtered[i].get_first_file_link())
     dt = process(data_filtered)
-    print("-----DONE-----")
+    print("----- DONE -----")
     dt = [x for x in dt if x is not None]
     return jsonify([x.toDict() for x in dt])
 
