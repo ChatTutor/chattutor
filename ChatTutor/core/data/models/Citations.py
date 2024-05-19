@@ -4,7 +4,9 @@ import uuid as uuid_pkg
 from datetime import datetime
 from sqlmodel import Field, Relationship
 
-from core.data.models.CQNAuthorLink import CQNAuthorLink
+from core.data.models.CQNCitationLink import CQNCitationLink
+from core.data.models.CQNPaperCourseLink import CQNPaperCourseLink
+from core.data.models.CQNPublicationModel import CQNPublicationModel
 from core.data.models.Course import Course
 from core.data.models.SectionCourseLink import SectionCourseLink
 from core.data.models.UserCourseLink import UserCourseLink
@@ -12,7 +14,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class Author(SQLModel, table=True):
+class Citations(SQLModel, table=True):
     """DevUser Model
 
     Columns:
@@ -26,13 +28,11 @@ class Author(SQLModel, table=True):
         table (bool, optional): Defaults to True.
     """
 
-    author_id: str = Field(primary_key=True)
-    link: str
-    name: str
-    serpapi_scholar_link: str
+    snippet: str = Field(primary_key=True)
+    title: str
     cqn_pub_id: str
     # papers: List["CQNPublicationModel"] = Relationship(
-    #     back_populates="author", link_model=CQNAuthorLink
+    #     back_populates="citations", link_model=CQNCitationLink
     # )
 
     def jsonserialize(self):

@@ -1,5 +1,7 @@
 from typing import List
-from sqlalchemy import func
+
+import pymysql.err
+from sqlalchemy import func, outerjoin
 
 from sqlalchemy import delete
 import json
@@ -21,6 +23,10 @@ from core.data.models import (
     MessageUserLink,
 )
 from core.data.models.AccessCodes import AccessCodeModel
+from core.data.models.Author import Author
+from core.data.models.CQNAuthorLink import CQNAuthorLink
+from core.data.models.CQNPublicationModel import CQNPublicationModel
+from core.data.models.Citations import Citations
 from core.data.models.ResetCode import ResetCodeModel
 from core.utils import build_model_from_params
 from sqlalchemy.exc import IntegrityError
@@ -110,8 +116,26 @@ class DataBase(metaclass=Singleton):
             session.commit()
             return user, session
 
+    def insert_paper(self, model: CQNPublicationModel, citations: List[Citations], authors: List[Author]):
+        with Connection().session() as session:
+            session.add(model)
+            for cit in citations:
+                try:
+                    session.add(cit)
+                except pymysql.err.IntegrityError:
+                    print("already in db!")
+
+            for au in authors:
+                try:
+                    session.add(au)
+                except pymysql.err.IntegrityError:
+                    print("already in db!")
+
+            session.commit()
+            return model, session
+
     def insert_message(
-        self, message: MessageModel | dict, course_collname=None, user_id=None
+            self, message: MessageModel | dict, course_collname=None, user_id=None
     ) -> tuple[MessageModel, Session, List]:
         """Insert message in DataBase
 
@@ -150,7 +174,7 @@ class DataBase(metaclass=Singleton):
             return message, session, ["usr"]
 
     def insert_access_code(
-        self, access_code: AccessCodeModel | str
+            self, access_code: AccessCodeModel | str
     ) -> tuple[AccessCodeModel, Session]:
         with Connection().session() as session:
             existing_ = session.exec(
@@ -379,7 +403,7 @@ class DataBase(metaclass=Singleton):
     #         return user, course, session
 
     def enroll_user_to_course_by_collectionname(
-        self, user_id, course_collectionname
+            self, user_id, course_collectionname
     ) -> tuple[str, Session]:
         """Mark user as student of the specified course
 
@@ -480,6 +504,29 @@ class DataBase(metaclass=Singleton):
             res = session.exec(statement).all()
             urls = [x.mainpage for x in res]
             return urls
+
+    def get_complete_papers_by_author(self, author_id=None, author_name=None):
+        with Connection().session() as session:
+            statement = ''
+            if author_name is not None:
+                statement = select(
+                    CQNPublicationModel
+                ).join(CQNAuthorLink, CQNAuthorLink.cqn_id == CQNPublicationModel.result_id)\
+                    .join(Author, Author.author_id == CQNAuthorLink.author_id)\
+                    .where(Author.name == author_name)
+            else:
+                statement = select(
+                    CQNPublicationModel
+                ).join(CQNAuthorLink, CQNAuthorLink.cqn_id == CQNPublicationModel.result_id) \
+                    .join(Author, Author.author_id == CQNAuthorLink.author_id) \
+                    .where(Author.name == author_id)\
+                    .group_by(CQNPublicationModel.result_id)
+            res = session.exec(statement).all()
+            print("print models!!")
+            for m in res:
+                print(f'{m}')
+            return res, session
+
 
     def get_course_messages_by_user(self, user_id, course_id):
         with Connection().session() as session:
@@ -654,7 +701,7 @@ class DataBase(metaclass=Singleton):
             return user, session
 
     def insert_user_to_course(
-        self, user_id: str, course_id
+            self, user_id: str, course_id
     ) -> tuple[UserModel, CourseModel, Session]:
         """Make user as owner of the specified course
 
@@ -676,7 +723,7 @@ class DataBase(metaclass=Singleton):
             return user, course, session
 
     def establish_course_section_relationship(
-        self, section_id: str, course_id: str
+            self, section_id: str, course_id: str
     ) -> tuple[SectionModel, CourseModel, Session]:
         """Add section to course
 

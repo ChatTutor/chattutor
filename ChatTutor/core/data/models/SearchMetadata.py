@@ -3,8 +3,6 @@ from sqlmodel import Field, Session, SQLModel, create_engine
 import uuid as uuid_pkg
 from datetime import datetime
 from sqlmodel import Field, Relationship
-
-from core.data.models.CQNAuthorLink import CQNAuthorLink
 from core.data.models.Course import Course
 from core.data.models.SectionCourseLink import SectionCourseLink
 from core.data.models.UserCourseLink import UserCourseLink
@@ -12,7 +10,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class Author(SQLModel, table=True):
+class SearchMetadata(SQLModel, table=True):
     """DevUser Model
 
     Columns:
@@ -26,14 +24,9 @@ class Author(SQLModel, table=True):
         table (bool, optional): Defaults to True.
     """
 
-    author_id: str = Field(primary_key=True)
-    link: str
-    name: str
-    serpapi_scholar_link: str
-    cqn_pub_id: str
-    # papers: List["CQNPublicationModel"] = Relationship(
-    #     back_populates="author", link_model=CQNAuthorLink
-    # )
+    id: str = Field(primary_key=True)
+    created_at: str
+    google_scholar_cite_url: str
 
     def jsonserialize(self):
         d = self.__dict__

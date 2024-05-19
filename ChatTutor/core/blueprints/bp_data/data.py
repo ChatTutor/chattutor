@@ -26,7 +26,11 @@ from core.data import (
     CourseModel,
     ChatModel,
 )
-from scholarly import scholarly, Author, Publication
+
+from core.data.models.Author import Author
+from core.data.models.Citations import Citations
+from core.data.models.CQNPublicationModel import CQNPublicationModel
+from scholarly import scholarly, Publication
 from google_scholar_py import *
 from core.reader import parse_pdf, Text, Doc
 from core.blueprints.bp_data.cqn import CQNPublications, process, load_citations
@@ -37,6 +41,29 @@ data_bp = Blueprint("bp_data", __name__)
 
 def format_entry(entry):
     return CQNPublications(entry).toDict()
+
+
+
+def add_to_andu_db(dt: List[CQNPublications]):
+    authors: List[Author] = []
+    citations: List[Citations] = []
+    for book in dt:
+        for author in book.authors:
+            author_model = Author(author_id=author.get('author_id', 'none'), link=author.get('link', 'none'),
+                                  name=author.get('name', 'none'),
+                                  serpapi_scholar_link=author.get('serpapi_scholar_link', 'none'))
+            authors.append(author_model)
+
+        for citation in book.citations_unpacked.get('citations', []):
+            citation_model = Citations(snippet=citation.get('snippet', 'none'), title=citation.get('title', 'none'))
+            citations.append(citation_model)
+
+        model = CQNPublicationModel(result_id=book.result_id, link=book.link,
+                                    snippet=book.snippet, title=book.title)
+        DataBase().insert_paper(model=model, citations=citations, authors=authors)
+
+
+
 
 
 @data_bp.route("/refreshcqn", methods=["POST", "GET"])
@@ -65,7 +92,14 @@ def refreshcqn():
 
     print("----- DONE -----")
     dt = [x for x in data_filtered if x is not None]
+
+    print(" ------------- Adding to database -------------- ")
+
+    add_to_andu_db(dt=dt)
+
     return jsonify({"data": [x.toDict() for x in dt]})
+
+
 
 
 def getpdfcontentsfromlist(pubs: List[CQNPublications]):

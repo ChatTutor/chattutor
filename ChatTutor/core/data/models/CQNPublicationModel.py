@@ -5,14 +5,12 @@ from datetime import datetime
 from sqlmodel import Field, Relationship
 
 from core.data.models.CQNAuthorLink import CQNAuthorLink
-from core.data.models.Course import Course
-from core.data.models.SectionCourseLink import SectionCourseLink
-from core.data.models.UserCourseLink import UserCourseLink
+from core.data.models.CQNCitationLink import CQNCitationLink
 from dataclasses import dataclass
 
 
 @dataclass
-class Author(SQLModel, table=True):
+class CQNPublicationModel(SQLModel, table=True):
     """DevUser Model
 
     Columns:
@@ -26,14 +24,15 @@ class Author(SQLModel, table=True):
         table (bool, optional): Defaults to True.
     """
 
-    author_id: str = Field(primary_key=True)
+    result_id: str = Field(primary_key=True)
     link: str
-    name: str
-    serpapi_scholar_link: str
-    cqn_pub_id: str
-    # papers: List["CQNPublicationModel"] = Relationship(
-    #     back_populates="author", link_model=CQNAuthorLink
-    # )
+    chroma_doc_id: str
+    # facem cu inner join
+    course_id: str
+    snippet: str
+    title: str
+    # authors: List["Author"] = Relationship(back_populates="cqnpublicationmodel", link_model=CQNAuthorLink)
+    # citations: List["Citations"] = Relationship(back_populates="cqnpublicationmodel", link_model=CQNCitationLink)
 
     def jsonserialize(self):
         d = self.__dict__

@@ -68,6 +68,7 @@ class CQNPublications:
     authors: List
     pdf_contents: List[Text] = []
     citations_unpacked: dict = {}
+    result_id: str
 
     def set_pdf_contents(self, content_url, i):
         doc = Doc(docname=f"{content_url}", citation="", dockey=f"{content_url}")
@@ -103,6 +104,7 @@ class CQNPublications:
         self.title = entry.get("title", "None")
         self.snippet = entry.get("snippet", "None")
         self.entry = entry
+        self.result_id = entry.get("result_id", "None")
 
     def toDict(self):
         return {
