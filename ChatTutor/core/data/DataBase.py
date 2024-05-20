@@ -122,35 +122,40 @@ class DataBase(metaclass=Singleton):
         with Connection().session() as session:
             session.add(model)
             print(f'\n\n\nINSERT PAPER:: {model}\n\n\n')
-            for cit in citations:
-                try:
-                    session.add(cit)
-                    link = PublicationCitationLink(citation_id=cit.citation_id, publication_id=model.result_id)
-                    # session.refresh(link)
-                    session.add(link)
-                except pymysql.err.IntegrityError:
-                    print("already in db!")
-                except sqlalchemy.exc.IntegrityError:
-                    print("Already in db!")
-
-            for au in authors:
-                try:
-                    session.add(au)
-                    link = PublicationAuthorLink(author_id=au.author_id, publication_id=model.result_id)
-                    # session.refresh(link)
-                    session.add(link)
-                except pymysql.err.IntegrityError:
-                    print("already in db!")
-                except sqlalchemy.exc.IntegrityError:
-                    print("Already in db!")
-
             try:
                 session.commit()
             except pymysql.err.IntegrityError:
                 print("Already")
             except sqlalchemy.exc.IntegrityError:
                 print("Already")
-            return model, session
+
+        for cit in citations:
+            with Connection().session() as session:
+                session.add(cit)
+                link = PublicationCitationLink(citation_id=cit.citation_id, publication_id=model.result_id)
+                # session.refresh(link)
+                session.add(link)
+                try:
+                    session.commit()
+                except pymysql.err.IntegrityError:
+                    print("Already")
+                except sqlalchemy.exc.IntegrityError:
+                    print("Already")
+
+        for au in authors:
+            with Connection().session() as session:
+                session.add(au)
+                link = PublicationAuthorLink(author_id=au.author_id, publication_id=model.result_id)
+                # session.refresh(link)
+                session.add(link)
+                try:
+                    session.commit()
+                except pymysql.err.IntegrityError:
+                    print("Already")
+                except sqlalchemy.exc.IntegrityError:
+                    print("Already")
+
+
 
     def insert_message(
             self, message: MessageModel | dict, course_collname=None, user_id=None
