@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class CQNPaperCourseLink(SQLModel, table=True):
+class PublicationCourseLink(SQLModel, table=True):
     """User <-> Course Link (MtoM)
 
     Columns:
@@ -20,7 +20,7 @@ class CQNPaperCourseLink(SQLModel, table=True):
     """
 
     course: str = Field(foreign_key="course.course_id", primary_key=True)
-    paper_id: str = Field(foreign_key="cqnpublicationmodel.result_id", primary_key=True)
+    publication_id: str = Field(foreign_key="publication.result_id", primary_key=True)
 
     def jsonserialize(self):
         d = self.__dict__

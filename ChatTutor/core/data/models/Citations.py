@@ -4,12 +4,6 @@ import uuid as uuid_pkg
 from datetime import datetime
 from sqlmodel import Field, Relationship
 
-from core.data.models.CQNCitationLink import CQNCitationLink
-from core.data.models.CQNPaperCourseLink import CQNPaperCourseLink
-from core.data.models.CQNPublicationModel import CQNPublicationModel
-from core.data.models.Course import Course
-from core.data.models.SectionCourseLink import SectionCourseLink
-from core.data.models.UserCourseLink import UserCourseLink
 from dataclasses import dataclass
 
 
@@ -28,7 +22,8 @@ class Citations(SQLModel, table=True):
         table (bool, optional): Defaults to True.
     """
 
-    snippet: str = Field(primary_key=True)
+    citation_id: str = Field(primary_key=True)
+    snippet: str
     title: str
     cqn_pub_id: str
     # papers: List["CQNPublicationModel"] = Relationship(

@@ -86,6 +86,22 @@ class VectorDatabase:
         else:
             raise Exception("db_provider must be one of 'chroma' or 'deeplake'")
 
+    def load_datasource_papers(
+        self, collection_name, extra=["titles", "summary", "authors", "citations"]
+    ):
+        """Load Chroma collection"""
+        openai_ef = embedding_functions.OpenAIEmbeddingFunction(model_name="text-embedding-ada-002")
+        self.datasource = self.client.get_or_create_collection(
+            name=collection_name, embedding_function=openai_ef
+        )
+
+        self.extra_datasources = {
+            x: self.client.get_or_create_collection(
+                name=collection_name + "_" + x, embedding_function=openai_ef
+            )
+            for x in extra
+        }
+
     def load_datasource_chroma(self, collection_name):
         """Load Chroma collection"""
         openai_ef = embedding_functions.OpenAIEmbeddingFunction(model_name="text-embedding-ada-002")
@@ -133,6 +149,28 @@ class VectorDatabase:
             documents=[text.text for text in texts],
         )
 
+    def add_texts_papers(self, texts: List[Text], variant=None):
+        """
+        Adding texts to Chroma data source with specified ids, metadatas, and documents
+
+        Args:
+            texts (List[Text]): Texts to add to database
+        """
+        count = self.datasource.count()
+        ids = [str(i) for i in range(count, count + len(texts))]
+        if variant == None:
+            self.datasource.add(
+                ids=ids,
+                metadatas=[{"doc": text.doc.docname} for text in texts],
+                documents=[text.text for text in texts],
+            )
+        else:
+            self.extra_datasources[variant].add(
+                ids=ids,
+                metadatas=[{"doc": text.doc.docname} for text in texts],
+                documents=[text.text for text in texts],
+            )
+
     def add_texts_chroma_lock(self, texts: List[Text], lock: Lock):
         """
         Adding texts to Chroma data source with specified ids, metadatas, and documents,
@@ -179,6 +217,8 @@ class VectorDatabase:
         else:
             raise Exception("db_provider must be one of 'chroma' or 'deeplake'")
 
+
+
     def query_chroma(self, prompt, n_results, from_doc, include=["documents"]):
         """Querying Chroma data source with specified query text,
         getting best match from the chroma embeddings
@@ -204,6 +244,52 @@ class VectorDatabase:
                 )
         else:
             return self.datasource.query(query_texts=prompt, n_results=n_results, include=include)
+
+    def query_papers(self, prompt, n_results, from_doc, include=["documents"], variant=None):
+        """Querying Chroma data source with specified query text,
+        getting best match from the chroma embeddings
+        Args:
+            from_doc (string | list[string]) -  should be either a string  a list of strings
+            include (list[string]) - any cmbination of embeddings, documents, metadatas. Defaults to ["documents"]
+            prompt - the query text
+            variant - the query text
+        """
+        if variant is None:
+            if from_doc:
+                if hasattr(from_doc, "__len__") and (not isinstance(from_doc, str)):
+                    return self.datasource.query(
+                        query_texts=prompt,
+                        n_results=n_results,
+                        where={"doc": {"$in": from_doc}},
+                        include=include,
+                    )
+                else:
+                    return self.datasource.query(
+                        query_texts=prompt,
+                        n_results=n_results,
+                        where={"doc": from_doc},
+                        include=include,
+                    )
+            else:
+                return self.datasource.query(query_texts=prompt, n_results=n_results, include=include)
+        else:
+            if from_doc:
+                if hasattr(from_doc, "__len__") and (not isinstance(from_doc, str)):
+                    return self.extra_datasources[variant].query(
+                        query_texts=prompt,
+                        n_results=n_results,
+                        where={"doc": {"$in": from_doc}},
+                        include=include,
+                    )
+                else:
+                    return self.extra_datasources[variant].query(
+                        query_texts=prompt,
+                        n_results=n_results,
+                        where={"doc": from_doc},
+                        include=include,
+                    )
+            else:
+                return self.extra_datasources[variant].query(query_texts=prompt, n_results=n_results, include=include)
 
     def get_chroma(self, n_results, from_doc, include=["documents"]):
         """

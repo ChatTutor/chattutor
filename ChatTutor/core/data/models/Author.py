@@ -4,7 +4,7 @@ import uuid as uuid_pkg
 from datetime import datetime
 from sqlmodel import Field, Relationship
 
-from core.data.models.CQNAuthorLink import CQNAuthorLink
+from core.data.models.PublicationAuthorLink import PublicationAuthorLink
 from core.data.models.Course import Course
 from core.data.models.SectionCourseLink import SectionCourseLink
 from core.data.models.UserCourseLink import UserCourseLink

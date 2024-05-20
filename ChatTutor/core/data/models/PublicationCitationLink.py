@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class CQNCitationLink(SQLModel, table=True):
+class PublicationCitationLink(SQLModel, table=True):
     """User <-> Course Link (MtoM)
 
     Columns:
@@ -19,8 +19,8 @@ class CQNCitationLink(SQLModel, table=True):
         table (bool, optional): Defaults to True.
     """
 
-    snippet: str = Field(foreign_key="citations.snippet", primary_key=True)
-    cqn_id: str = Field(foreign_key="cqnpublicationmodel.result_id", primary_key=True)
+    citation_id: str = Field(foreign_key="citations.citation_id", primary_key=True)
+    publication_id: str = Field(foreign_key="publication.result_id", primary_key=True)
 
     def jsonserialize(self):
         d = self.__dict__

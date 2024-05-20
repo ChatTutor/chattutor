@@ -4,13 +4,11 @@ import uuid as uuid_pkg
 from datetime import datetime
 from sqlmodel import Field, Relationship
 
-from core.data.models.CQNAuthorLink import CQNAuthorLink
-from core.data.models.CQNCitationLink import CQNCitationLink
 from dataclasses import dataclass
 
 
 @dataclass
-class CQNPublicationModel(SQLModel, table=True):
+class Publication(SQLModel, table=True):
     """DevUser Model
 
     Columns:
@@ -28,7 +26,6 @@ class CQNPublicationModel(SQLModel, table=True):
     link: str
     chroma_doc_id: str
     # facem cu inner join
-    course_id: str
     snippet: str
     title: str
     # authors: List["Author"] = Relationship(back_populates="cqnpublicationmodel", link_model=CQNAuthorLink)

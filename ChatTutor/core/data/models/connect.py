@@ -45,7 +45,7 @@ class Connection(metaclass=Singleton):
         # Only use these when resetting the tables
         # SQLModel.metadata.drop_all(self.engine)
 
-        SQLModel.metadata.create_all(self.engine)
+        # SQLModel.metadata.create_all(self.engine)
 
     def get_engine(self):
         return self.engine

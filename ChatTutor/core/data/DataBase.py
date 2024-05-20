@@ -1,6 +1,7 @@
 from typing import List
 
 import pymysql.err
+import sqlalchemy.exc
 from sqlalchemy import func, outerjoin
 
 from sqlalchemy import delete
@@ -24,9 +25,10 @@ from core.data.models import (
 )
 from core.data.models.AccessCodes import AccessCodeModel
 from core.data.models.Author import Author
-from core.data.models.CQNAuthorLink import CQNAuthorLink
-from core.data.models.CQNPublicationModel import CQNPublicationModel
+from core.data.models.PublicationAuthorLink import PublicationAuthorLink
+from core.data.models.Publication import Publication
 from core.data.models.Citations import Citations
+from core.data.models.PublicationCitationLink import PublicationCitationLink
 from core.data.models.ResetCode import ResetCodeModel
 from core.utils import build_model_from_params
 from sqlalchemy.exc import IntegrityError
@@ -116,22 +118,36 @@ class DataBase(metaclass=Singleton):
             session.commit()
             return user, session
 
-    def insert_paper(self, model: CQNPublicationModel, citations: List[Citations], authors: List[Author]):
+    def insert_paper(self, model: Publication, citations: List[Citations], authors: List[Author]):
         with Connection().session() as session:
             session.add(model)
             for cit in citations:
                 try:
                     session.add(cit)
+                    link = PublicationCitationLink(citation_id=cit.citation_id, publication_id=model.result_id)
+                    # session.refresh(link)
+                    session.add(link)
                 except pymysql.err.IntegrityError:
                     print("already in db!")
+                except sqlalchemy.exc.IntegrityError:
+                    print("Already in db!")
 
             for au in authors:
                 try:
                     session.add(au)
+                    link = PublicationAuthorLink(author_id=au.author_id, publication_id=model.result_id)
+                    # session.refresh(link)
+                    session.add(link)
                 except pymysql.err.IntegrityError:
                     print("already in db!")
-
-            session.commit()
+                except sqlalchemy.exc.IntegrityError:
+                    print("Already in db!")
+            try:
+                session.commit()
+            except pymysql.err.IntegrityError:
+                print("Already")
+            except sqlalchemy.exc.IntegrityError:
+                print("Already")
             return model, session
 
     def insert_message(
@@ -510,17 +526,17 @@ class DataBase(metaclass=Singleton):
             statement = ''
             if author_name is not None:
                 statement = select(
-                    CQNPublicationModel
-                ).join(CQNAuthorLink, CQNAuthorLink.cqn_id == CQNPublicationModel.result_id)\
+                    Publication
+                ).join(CQNAuthorLink, CQNAuthorLink.cqn_id == Publication.result_id)\
                     .join(Author, Author.author_id == CQNAuthorLink.author_id)\
                     .where(Author.name == author_name)
             else:
                 statement = select(
-                    CQNPublicationModel
-                ).join(CQNAuthorLink, CQNAuthorLink.cqn_id == CQNPublicationModel.result_id) \
+                    Publication
+                ).join(CQNAuthorLink, CQNAuthorLink.cqn_id == Publication.result_id) \
                     .join(Author, Author.author_id == CQNAuthorLink.author_id) \
                     .where(Author.name == author_id)\
-                    .group_by(CQNPublicationModel.result_id)
+                    .group_by(Publication.result_id)
             res = session.exec(statement).all()
             print("print models!!")
             for m in res:
