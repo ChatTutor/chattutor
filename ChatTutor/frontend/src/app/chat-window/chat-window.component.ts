@@ -12,7 +12,7 @@ import { environment } from '../../environments/environment';
 })
 export class ChatWindowComponent implements OnInit{
     messages: Message[] = [];
-    @Input() collections: string[] | undefined = ['test_embedding']
+    @Input() collections: string[] | undefined = ['cqn_ttvv']
     @Input() restrictToDocument: any = undefined
     @Input() type: any
     documentInfo: any = undefined

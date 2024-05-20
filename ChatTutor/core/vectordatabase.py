@@ -257,6 +257,58 @@ class VectorDatabase:
         else:
             raise Exception("db_provider must be one of 'chroma' or 'deeplake'")
 
+    def query_papers_m(
+        self, prompt, n_results, from_doc, metadatas=False, distances=False, variant=None
+    ):
+        """Equivalent of query_chroma
+        Args:
+            from_doc (string | list[string]) -  should be either a string  a list of strings
+            include (list[string]) - any cmbination of embeddings, documents, metadatas. Defaults to ["documents"]
+            prompt - the query text
+        """
+        if variant is None:
+            if self.db_provider == "chroma":
+                print(from_doc)
+                data = self.query_chroma(
+                    prompt,
+                    n_results=n_results,
+                    from_doc=from_doc,
+                    include=["documents", "metadatas", "distances"],
+                )
+                if metadatas:
+                    return (
+                        data["documents"][0],
+                        data["metadatas"][0],
+                        data["distances"][0],
+                        " ".join(data["documents"][0]),
+                        data,
+                    )
+                return " ".join(data["documents"][0]), data
+            else:
+                raise Exception("db_provider must be one of 'chroma' or 'deeplake'")
+        else:
+            if self.db_provider == "chroma":
+                print(from_doc)
+                data = self.query_papers(
+                    prompt,
+                    n_results=n_results,
+                    from_doc=from_doc,
+                    include=["documents", "metadatas", "distances"],
+                    variant=variant,
+                )
+                if metadatas:
+                    return (
+                        data["documents"][0],
+                        data["metadatas"][0],
+                        data["distances"][0],
+                        " ".join(data["documents"][0]),
+                        data,
+                    )
+                return " ".join(data["documents"][0]), data
+
+            else:
+                raise Exception("db_provider must be one of 'chroma' or 'deeplake'")
+
     def query_chroma(self, prompt, n_results, from_doc, include=["documents"]):
         """Querying Chroma data source with specified query text,
         getting best match from the chroma embeddings

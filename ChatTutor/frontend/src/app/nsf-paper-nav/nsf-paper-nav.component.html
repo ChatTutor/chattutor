@@ -1,0 +1,87 @@
+<mat-drawer #drawer class="example-sidenav" mode="side" position="end">
+    <div class="pad">
+        <!-- <h3>CQN Papers Explorer</h3> -->
+        <mat-form-field class="input-container">
+            <textarea matInput [(ngModel)]="request" placeholder="Query the CQN DB..."
+            cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="1"
+            cdkAutosizeMaxRows="5"></textarea>
+
+            
+
+            <button mat-icon-button color="primary" matSuffix class="b1" (click)="send()">
+              <mat-icon class="icon-display">search</mat-icon>
+            </button>
+            
+        </mat-form-field>
+        <div class="flex-row">
+            <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
+                <mat-button-toggle value="content" (click)="set_mode('content')">content</mat-button-toggle>
+                <mat-button-toggle value="titles" (click)="set_mode('titles')">titles</mat-button-toggle>
+                <mat-button-toggle value="authors" (click)="set_mode('authors')">authors</mat-button-toggle>
+            </mat-button-toggle-group>
+            <div *ngIf="loading">
+                <mat-chip style="padding: 3px;">
+                    <mat-spinner [diameter]="15"></mat-spinner>
+                </mat-chip>
+            </div>
+            <div>
+                <div *ngIf="mode == 'content'">
+                    <div class="padding">
+
+                        <mat-icon class="icon-display">view_headline</mat-icon>
+                    </div>
+
+                </div>
+                <div *ngIf="mode == 'titles'">
+
+                    <div class="padding">
+                        
+                        <mat-icon class="icon-display">titles</mat-icon>
+                    </div>
+                </div>
+                <div *ngIf="mode == 'authors'">
+
+                    <div class="padding">
+                        
+                        <mat-icon class="icon-display">person_pin</mat-icon>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div *ngIf="data.length == 0">
+            <div class="filler">
+                <span>Search for CQN papers!</span>
+                <img src="https://wp.optics.arizona.edu/sguha/wp-content/uploads/sites/71/2022/03/CQNLogo-300x155.png">
+            </div>
+        </div>
+
+        <div>
+            
+            <div *ngFor="let doc of data">
+                <div class="paper-card">
+
+                    <h3>
+                        {{doc["id"]}} | {{doc["metadata"]["doc"]}}
+                    </h3>
+                    <div class="limit">
+                        {{doc["document"]}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</mat-drawer>
+
+
+
+<div class="example-sidenav-content" style="position: fixed; top: 20px; right: 50px; z-index: 19000;">
+    <button type="button" mat-fab mat-mini-fab color="primary" matTooltip="Explore CQN" matTooltipPosition="left" (click)="drawer.toggle()">
+        <mat-icon class="icon-display">search</mat-icon>
+    </button>
+</div>
+  

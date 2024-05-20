@@ -154,7 +154,7 @@ class CQNTutor(Tutor):
         paper_titles_from_prompt = paper_titles_from_prompt.replace('"', "")
         paper_titles_from_prompt = paper_titles_from_prompt.replace("[", "")
         paper_titles_from_prompt = paper_titles_from_prompt.replace("]", "")
-        self.embedding_db.load_datasource(f"test_embedding_basic")
+        self.embedding_db.load_datasource(f"cqn_ttvv_titles")
         (
             documents,
             metadatas,
@@ -172,6 +172,7 @@ class CQNTutor(Tutor):
     def process_prompt(
         self, conversation, from_doc=None, threshold=0.5, limit=3, pipeline="openai"
     ):
+        id
         # Ensuring the last message in the conversation is a user's question
         assert (
             conversation[-1]["role"] == "user"
@@ -212,7 +213,7 @@ class CQNTutor(Tutor):
         show_limit = 0
 
         if (
-            "test_embedding" in str(self.collections.items())
+            "cqn_ttvv" in str(self.collections.items())
             and required_level_of_information == "db_summary"
         ):
             import db_summary
@@ -225,15 +226,13 @@ class CQNTutor(Tutor):
                 #    continue
                 if self.embedding_db:
                     keep_only_first_x_tokens_for_processing = None  # none means all
-                    if coll_name == "test_embedding" and required_level_of_information == "basic":
-                        self.embedding_db.load_datasource(f"{coll_name}_basic")
+                    if coll_name == "cqn_ttvv" and required_level_of_information == "basic":
+                        self.embedding_db.load_datasource(f"{coll_name}")
                         query_limit = 100
                         process_limit = 20  # each basic entry has close to 100 tokens
                         show_limit = 0
-                    elif (
-                        coll_name == "test_embedding" and required_level_of_information == "medium"
-                    ):
-                        self.embedding_db.load_datasource(f"{coll_name}_medium")
+                    elif coll_name == "cqn_ttvv" and required_level_of_information == "medium":
+                        self.embedding_db.load_datasource(f"{coll_name}")
                         query_limit = 100
                         process_limit = 10  # each basic entry has close to 350 tokens
                         keep_only_first_x_tokens_for_processing = 200
@@ -257,7 +256,11 @@ class CQNTutor(Tutor):
                             process_limit = 3
                             show_limit = 1
 
-                    pprint("\nQuerying embedding_db with prompt:", blue(prompt))
+                    pprint(
+                        "\nQuerying embedding_db with prompt:",
+                        blue(prompt),
+                        self.embedding_db.datasource,
+                    )
 
                     (
                         documents,
@@ -269,9 +272,10 @@ class CQNTutor(Tutor):
                     )(prompt, query_limit, from_doc, metadatas=True)
                     pprint(rf"got {len(documents)} documents")
                     for doc, meta, dist in zip(documents, metadatas, distances):
+                        pprint(green(doc), dist, "\n")
                         # if no fromdoc specified, and distance is lowe thhan thersh, add to array of possible related documents
                         # if from_doc is specified, threshold is redundant as we have only one possible doc
-                        if dist <= threshold or from_doc != None:
+                        if dist <= threshold or from_doc != None or pipeline == "gemini":
                             arr.append(
                                 {
                                     "coll_desc": coll_desc,
@@ -285,7 +289,7 @@ class CQNTutor(Tutor):
             valid_docs = sorted_docs[:process_limit]
 
             # print in the console basic info of valid docs
-            pprint("valid_docs")
+            pprint("valid_docs : ", len(valid_docs))
             for idoc, doc in enumerate(valid_docs):
                 pprint(f"- {idoc}", doc["metadata"].get("docname", "(not defined)"))
                 pprint(" ", doc["metadata"].get("authors", "(not defined)"))

@@ -39,21 +39,25 @@ data_bp = Blueprint("bp_data", __name__)
 def format_entry(entry):
     return CQNPublications(entry).toDict()
 
-@data_bp.route("/get_complete_papers", methods=['POST', 'GET'])
+
+@data_bp.route("/get_complete_papers", methods=["POST", "GET"])
 def get_complete_papers():
     res, _ = DataBase().get_complete_papers_by_author()
     return jsonify({"data": res})
 
-@data_bp.route("/getchromapapers", methods=['POST'])
+
+@data_bp.route("/getchromapapers", methods=["POST"])
 def getchromapapers():
     # print("sgdfksdafgdbs")
     req_js = request.json
-    prompt = req_js.get('prompt', None)
-    variant = req_js.get('variant', None)
-    db.load_datasource_papers('cqn_ttvv')
-    ceva = db.query_papers(prompt=prompt, n_results=10, from_doc=None, variant=variant)
-    ids = ceva['ids']
-    docs = ceva['documents']
+    prompt = req_js.get("prompt", None)
+    variant = req_js.get("variant", None)
+    db.load_datasource_papers("cqn_ttvv")
+    docs, met, dist, text, ceva = db.query_papers_m(
+        prompt=prompt, n_results=10, from_doc=None, variant=variant, metadatas=True
+    )
+    ids = ceva["ids"]
+    docs = ceva["documents"]
 
     flat_ids = []
     for id_l in ids:
@@ -65,10 +69,21 @@ def getchromapapers():
         for doc in doc_l:
             flat_docs.append(doc)
 
+    flat_met = []
+    print(f"MET: {met}")
+    for metl in met:
+        flat_met.append(metl)
+
     flat_ = []
     for i in range(0, len(flat_docs)):
-        flat_.append({"id": flat_ids[i], "document": flat_docs[i]})
+        flat_.append({"id": flat_ids[i], "document": flat_docs[i], "metadata": flat_met[i]})
+        print(f"[-] i: {i} | met[i]: {flat_met[i]}")
+
+    # TODO ANDU: ai result_idurile in flat_[i]["metadata"]["doc"]
+    # intoarce aici pt fiecare si entriul din sql cu autori citatii etc
+    print(f"\n\n\n\t[FLAT_] {flat_}")
     return jsonify(flat_)
+
 
 @data_bp.route("/refreshcqn", methods=["POST", "GET"])
 def refreshcqn():

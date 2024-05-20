@@ -47,6 +47,14 @@ export class DataProviderService {
     return await resp.json();
   }
 
+  async nsfPaperRequest(prompt : string, variant : string | undefined): Promise<any> {
+    let data = JSON.stringify({prompt: prompt, variant: variant})
+    if (variant == undefined || variant == 'content')
+      data = JSON.stringify({prompt: prompt})
+    const resp = await fetch('/getchromapapers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: data });
+    return await resp.json();
+  }
+
   /**
    * 
    * @returns {"isloggedin" : true/false} true if session is authed, false otherwise

@@ -231,9 +231,9 @@ class Tutor(ABC):
         try:
             response, elapsed_time = [], 0.0
             if pipeline == "gemini":
-                response, elapsed_time = time_it_r(
-                    self.chat.send_message(messages[-1]), stream=True
-                )
+                response = self.chat.send_message(messages[-1]["content"], stream=True)
+
+                elapsed_time = 0.0
             else:
                 response, elapsed_time = time_it_r(openai.ChatCompletion.create)(
                     model=selectedModel,
@@ -250,8 +250,12 @@ class Tutor(ABC):
 
             valid_docs = valid_docs[0:limit]
             valid_docs = remove_score_and_doc_from_valid_docs(valid_docs)
-
+            print(valid_docs)
             for chunk in response:
+                print(chunk)
+                if pipeline == "gemini":
+                    chunk = {"choices": [{"delta": {"content": chunk.text}}]}
+                print(chunk)
                 # cache first setences to process it content and decide later on if we send or not documents
                 if len(first_sentence) < 20:
                     first_sentence += chunk["choices"][0]["delta"]["content"]
