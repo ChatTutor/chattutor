@@ -44,6 +44,31 @@ def get_complete_papers():
     res, _ = DataBase().get_complete_papers_by_author()
     return jsonify({"data": res})
 
+@data_bp.route("/getchromapapers", methods=['POST'])
+def getchromapapers():
+    # print("sgdfksdafgdbs")
+    req_js = request.json
+    prompt = req_js.get('prompt', None)
+    variant = req_js.get('variant', None)
+    db.load_datasource_papers('cqn_ttvv')
+    ceva = db.query_papers(prompt=prompt, n_results=10, from_doc=None, variant=variant)
+    ids = ceva['ids']
+    docs = ceva['documents']
+
+    flat_ids = []
+    for id_l in ids:
+        for id in id_l:
+            flat_ids.append(id)
+
+    flat_docs = []
+    for doc_l in docs:
+        for doc in doc_l:
+            flat_docs.append(doc)
+
+    flat_ = []
+    for i in range(0, len(flat_docs)):
+        flat_.append({"id": flat_ids[i], "document": flat_docs[i]})
+    return jsonify(flat_)
 
 @data_bp.route("/refreshcqn", methods=["POST", "GET"])
 def refreshcqn():
