@@ -121,6 +121,7 @@ class DataBase(metaclass=Singleton):
     def insert_paper(self, model: Publication, citations: List[Citations], authors: List[Author]):
         with Connection().session() as session:
             session.add(model)
+            print(f'\n\n\nINSERT PAPER:: {model}\n\n\n')
             for cit in citations:
                 try:
                     session.add(cit)
@@ -142,6 +143,7 @@ class DataBase(metaclass=Singleton):
                     print("already in db!")
                 except sqlalchemy.exc.IntegrityError:
                     print("Already in db!")
+
             try:
                 session.commit()
             except pymysql.err.IntegrityError:

@@ -14,6 +14,7 @@ import pdfreader
 import flask_login
 import requests
 
+from core.blueprints.bp_data.paper_manager import PaperManager
 from core.extensions import db
 from flask import Blueprint, Response, jsonify, request
 from datetime import datetime
@@ -65,6 +66,10 @@ def refreshcqn():
 
     print("----- DONE -----")
     dt = [x for x in data_filtered if x is not None]
+
+    PaperManager.add_to_database(dt=dt)
+    print("Added!")
+    PaperManager.add_to_chroma(dt=dt)
     return jsonify({"data": [x.toDict() for x in dt]})
 
 
