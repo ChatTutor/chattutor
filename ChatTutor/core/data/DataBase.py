@@ -529,26 +529,46 @@ class DataBase(metaclass=Singleton):
             return urls
 
     def get_complete_papers_by_author(self, author_id=None, author_name=None):
-        with Connection().session() as session:
+        with (Connection().session() as session):
             statement = ''
-            if author_name is not None:
-                statement = select(
-                    Publication
-                ).join(CQNAuthorLink, CQNAuthorLink.cqn_id == Publication.result_id)\
-                    .join(Author, Author.author_id == CQNAuthorLink.author_id)\
-                    .where(Author.name == author_name)
-            else:
-                statement = select(
-                    Publication
-                ).join(CQNAuthorLink, CQNAuthorLink.cqn_id == Publication.result_id) \
-                    .join(Author, Author.author_id == CQNAuthorLink.author_id) \
-                    .where(Author.name == author_id)\
-                    .group_by(Publication.result_id)
+            # if author_name is not None:
+            #     statement = select(
+            #         Publication
+            #     ).join(PublicationAuthorLink, PublicationAuthorLink.publication_id == Publication.result_id)\
+            #         .join(Author, Author.author_id == PublicationAuthorLink.author_id) \
+            #         .group_by(Publication.result_id)
+            # else:
+            #     statement = select(
+            #         Publication
+            #     ).join(PublicationAuthorLink, PublicationAuthorLink.author_id == Publication.result_id) \
+            #         .join(Author, Author.author_id == PublicationAuthorLink.author_id) \
+            #         .group_by(Publication.result_id)
+
+            statement = select(
+                Publication,
+                PublicationAuthorLink,
+                Author
+            ).join(PublicationAuthorLink, PublicationAuthorLink.publication_id == Publication.result_id) \
+                .join(Author, Author.author_id == PublicationAuthorLink.author_id) \
+
+            print('STATEMENT:' ,statement);
             res = session.exec(statement).all()
-            print("print models!!")
+            print(f"print models!! {res}")
+            arr: List = []
+            brr: dict = {}
             for m in res:
-                print(f'{m}')
-            return res, session
+                pub_id = m[1].publication_id
+                brr[pub_id] = {"paper": [], "author": [], "publication_author_link": []}
+            for m in res:
+                arr.append({"publication": m[0], "author": m[1], "publication_author_link": m[2]})
+                pub_id = m[1].publication_id
+                brr[pub_id]["paper"] = m[0].jsonserialize()
+                brr[pub_id]["author"].append(m[2].jsonserialize())
+                brr[pub_id]["publication_author_link"].append(m[1].jsonserialize())
+            crr = []
+            for k in brr:
+                crr.append(brr[k])
+            return brr, session
 
 
     def get_course_messages_by_user(self, user_id, course_id):

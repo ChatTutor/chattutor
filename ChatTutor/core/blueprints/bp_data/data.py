@@ -39,6 +39,11 @@ data_bp = Blueprint("bp_data", __name__)
 def format_entry(entry):
     return CQNPublications(entry).toDict()
 
+@data_bp.route("/get_complete_papers", methods=['POST', 'GET'])
+def get_complete_papers():
+    res, _ = DataBase().get_complete_papers_by_author()
+    return jsonify({"data": res})
+
 
 @data_bp.route("/refreshcqn", methods=["POST", "GET"])
 def refreshcqn():
