@@ -4,6 +4,7 @@ from typing import List
 
 import chromadb
 import openai
+import google.generativeai as genai
 from chromadb.utils import embedding_functions
 from core.definitions import Text
 
@@ -28,16 +29,43 @@ def embedding_function(texts, model="text-embedding-ada-002"):
     return [data["embedding"] for data in openai.Embedding.create(input=texts, model=model)["data"]]
 
 
+def embedding_function_gemini(texts, model="models/embedding-001"):
+    """
+    Function to generate embeddings for given texts using OpenAI API
+
+    Args:
+        texts (List(Text)): texts to generate embeddings for
+        model (str, optional): Model to use. Defaults to "text-embedding-ada-002".
+
+    Returns:
+        embeddings of the texts
+    """
+    if isinstance(texts, str):
+        texts = [texts]
+    gemini_api_key = os.getenv("GEMINI_API_KEY")
+    genai.configure(api_key=gemini_api_key)
+
+    title = "Custom query"
+    return genai.embed_content(
+        model=model, content=input, task_type="retrieval_document", title=title
+    )["embedding"]
+
+
 # Loading API keys from .env.yaml
 # print('vectordb env variables:', os.environ)
 if "CHATTUTOR_GCP" in os.environ or "_CHATUTOR_GCP" in os.environ:
     openai.api_key = os.environ["OPENAI_API_KEY"]
+    GOOGLE_API_KEY = os.environ["GEMINI_API_KEY"]
+    genai.configure(api_key=GOOGLE_API_KEY)
+
 else:
     import yaml
 
     with open(".env.yaml") as f:
         yamlenv = yaml.safe_load(f)
     keys = yamlenv["env_variables"]
+    GOOGLE_API_KEY = keys["GEMINI_API_KEY"]
+    genai.configure(api_key=GOOGLE_API_KEY)
     print(keys)
     os.environ["OPENAI_API_KEY"] = keys["OPENAI_API_KEY"]
 
@@ -55,10 +83,11 @@ class VectorDatabase:
         provider of the database: either \'chroma\' or ~~\'deeplake\'~~
     """
 
-    def __init__(self, path, db_provider, hosted=True):
+    def __init__(self, path, db_provider, hosted=True, ef="gemini"):
         self.path = path
         self.hosted = hosted
         self.db_provider = db_provider
+        self.ef = ef
 
     def init_db(self):
         """
@@ -90,7 +119,12 @@ class VectorDatabase:
         self, collection_name, extra=["titles", "summary", "authors", "citations"]
     ):
         """Load Chroma collection"""
-        openai_ef = embedding_functions.OpenAIEmbeddingFunction(model_name="text-embedding-ada-002")
+        openai_ef = embedding_functions.Text2VecEmbeddingFunction()
+
+        if self.ef == "openai":
+            openai_ef = embedding_functions.OpenAIEmbeddingFunction(
+                model_name="text-embedding-ada-002"
+            )
         self.datasource = self.client.get_or_create_collection(
             name=collection_name, embedding_function=openai_ef
         )
@@ -104,7 +138,13 @@ class VectorDatabase:
 
     def load_datasource_chroma(self, collection_name):
         """Load Chroma collection"""
-        openai_ef = embedding_functions.OpenAIEmbeddingFunction(model_name="text-embedding-ada-002")
+        openai_ef = embedding_functions.Text2VecEmbeddingFunction()
+
+        if self.ef == "openai":
+            openai_ef = embedding_functions.OpenAIEmbeddingFunction(
+                model_name="text-embedding-ada-002"
+            )
+        # embedding_functions.OpenAIEmbeddingFunction(model_name="text-embedding-ada-002")
         self.datasource = self.client.get_or_create_collection(
             name=collection_name, embedding_function=openai_ef
         )
@@ -217,8 +257,6 @@ class VectorDatabase:
         else:
             raise Exception("db_provider must be one of 'chroma' or 'deeplake'")
 
-
-
     def query_chroma(self, prompt, n_results, from_doc, include=["documents"]):
         """Querying Chroma data source with specified query text,
         getting best match from the chroma embeddings
@@ -271,7 +309,9 @@ class VectorDatabase:
                         include=include,
                     )
             else:
-                return self.datasource.query(query_texts=prompt, n_results=n_results, include=include)
+                return self.datasource.query(
+                    query_texts=prompt, n_results=n_results, include=include
+                )
         else:
             if from_doc:
                 if hasattr(from_doc, "__len__") and (not isinstance(from_doc, str)):
@@ -289,7 +329,9 @@ class VectorDatabase:
                         include=include,
                     )
             else:
-                return self.extra_datasources[variant].query(query_texts=prompt, n_results=n_results, include=include)
+                return self.extra_datasources[variant].query(
+                    query_texts=prompt, n_results=n_results, include=include
+                )
 
     def get_chroma(self, n_results, from_doc, include=["documents"]):
         """

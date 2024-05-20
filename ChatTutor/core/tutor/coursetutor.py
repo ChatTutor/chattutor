@@ -142,15 +142,14 @@ class CourseTutor(Tutor):
         pprint("len collections", len(self.collections))
 
     def process_prompt(
-        self,
-        conversation,
-        from_doc=None,
-        threshold=0.5,
-        limit=3,
+        self, conversation, from_doc=None, threshold=0.5, limit=3, pipeline="openai"
     ):
         print("\n\n")
         print("#" * 100)
         print("beggining ask_question:")
+
+        if pipeline != "openai":
+            self.engineer_prompts = False
         # Ensuring the last message in the conversation is a user's question
         assert (
             conversation[-1]["role"] == "user"

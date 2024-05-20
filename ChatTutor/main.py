@@ -46,6 +46,7 @@ import re
 # import pymysql
 import sqlite3
 import openai
+import google.generativeai as genai
 from core.reader import read_filearray, extract_file, parse_plaintext_file_read
 from datetime import datetime
 

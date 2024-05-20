@@ -12,10 +12,13 @@ from core.tutor.utils import truncate_to_x_number_of_tokens, get_number_of_token
 
 
 class CQNTutor(Tutor):
-    def __init__(self, embedding_db, embedding_db_name="CQN database", engineer_prompts=True):
+    def __init__(
+        self, embedding_db, embedding_db_name="CQN database", engineer_prompts=True, gemini=True
+    ):
+        self.gemini = gemini
         super().__init__(embedding_db, embedding_db_name, cqn_system_message, engineer_prompts)
 
-    def get_paper_titles_from_prompt(self, prompt):
+    def get_paper_titles_from_prompt_openai(self, prompt):
         # print("entering get_type_of_question")
         paper_titles_from_prompt = time_it(self.simple_gpt, "required_level_of_information")(
             f"""
@@ -30,7 +33,7 @@ class CQNTutor(Tutor):
         )
         return paper_titles_from_prompt
 
-    def get_required_level_of_information(self, prompt, explain=False):
+    def get_required_level_of_information_openai(self, prompt, explain=False):
         respond_with = ""
         if explain:
             respond_with = "Explain why"
@@ -76,6 +79,77 @@ class CQNTutor(Tutor):
         else:
             return "basic"
 
+    def get_paper_titles_from_prompt(self, prompt):
+        if self.gemini == False:
+            return self.get_paper_titles_from_prompt(prompt)
+        # print("entering get_type_of_question")
+        paper_titles_from_prompt = time_it(self.genai_model.generate_content, "generate_content")(
+            [
+                f"""
+            You will get a question, or a summary of a conversation between a bot and a user. 
+            Your goal is identify if one or more scientific papers or research articles are mentioned in the conversation, and if yes, then to extract the article titles.
+            You will return a list in python style.
+            If there are not papers, just respond with "NO".
+
+            """,
+                f"""Which paper titles can you identify in this sentence? "{prompt}""",
+            ]
+        )
+        paper_titles_from_prompt.resolve()
+        return paper_titles_from_prompt.text
+
+    def get_required_level_of_information(self, prompt, explain=False):
+        if self.gemini == False:
+            return self.get_required_level_of_information_openai(prompt, explain)
+        respond_with = ""
+        if explain:
+            respond_with = "Explain why"
+
+        # print("entering get_type_of_question")
+        required_level_of_information = time_it(
+            self.genai_model.generate_content, "required_level_of_information"
+        )(
+            [
+                f"""
+            There is a database of papers, containing:
+                - "paper title"
+                - "paper authors"
+                - "very short paper summary"
+                - "full paper content"
+                - "publishing date"
+                - "paper url"
+            There is also a text summary containing:
+                - "the total number of papers in the database"
+                - "the total number of papers per research area"
+            These 8 elements of the list are what we call "pieces of information"    
+
+            To determine if a paper is present in the database, we can search by "paper title", "paper authors" and "publishing date".
+            To make a paper summary, the "full paper content" is required.
+            To answer questions about physics concepts, theories, laws, equations, the "full paper content" of the papers is required.
+            To know the research area of the paper, the field of study, or if they are related to a topic, then the "very short paper summary" is required.
+            To list papers in a research area, a field of study or a branch of physics, then the "very short paper summary" is required.
+            To find similar papers, "very short paper summary" would be enought.
+            If someone ask to summarize the content of the database, we will provide only "the total number of papers" and "the total number of papers per research area".
+            To list papers, "paper title", "paper authors", "publishing date" and "paper url" is required.
+            {respond_with}            
+        """,
+                f"""if the user ask for "{prompt}", which "pieces of information" are required to answer his questions. Just mention what is necessary, nothing else""",
+            ]
+        )
+
+        # if explain:
+        pprint(required_level_of_information)
+        required_level_of_information.resolve()
+        required_level_of_information = required_level_of_information.text.lower()
+        if "full paper content" in required_level_of_information:
+            return "high"
+        elif "paper summary" in required_level_of_information:
+            return "medium"
+        elif "the total number" in required_level_of_information:
+            return "db_summary"
+        else:
+            return "basic"
+
     def get_metadata_from_paper_titles_from_prompt(self, paper_titles_from_prompt):
         paper_titles_from_prompt = paper_titles_from_prompt.replace('"', "")
         paper_titles_from_prompt = paper_titles_from_prompt.replace("[", "")
@@ -95,7 +169,9 @@ class CQNTutor(Tutor):
                 metadata_from_paper_titles_from_prompt.append(meta)
         return metadata_from_paper_titles_from_prompt
 
-    def process_prompt(self, conversation, from_doc=None, threshold=0.5, limit=3):
+    def process_prompt(
+        self, conversation, from_doc=None, threshold=0.5, limit=3, pipeline="openai"
+    ):
         # Ensuring the last message in the conversation is a user's question
         assert (
             conversation[-1]["role"] == "user"
@@ -113,7 +189,7 @@ class CQNTutor(Tutor):
             is_furthering_message,
             get_furthering_message,
         ) = time_it(self.engineer_prompt)(
-            conversation, context=self.engineer_prompts
+            conversation, context=False  # self.engineer_prompts
         )  # if contest is st to False, it is equivalent to conversation[-1]["content"]
         # Querying the database to retrieve relevant documents to the user's question
         arr = []

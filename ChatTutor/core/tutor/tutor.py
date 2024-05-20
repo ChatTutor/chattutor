@@ -17,6 +17,7 @@ from core.tutor.utils import (
     remove_score_and_doc_from_valid_docs,
     yield_docs_and_first_sentence_if_tutor_id_not_apologizing,
 )
+import google.generativeai as genai
 
 
 class Tutor(ABC):
@@ -58,6 +59,8 @@ class Tutor(ABC):
         self.collections = {}
         self.system_message = system_message
         self.engineer_prompts = engineer_prompts
+        self.genai_model = genai.GenerativeModel("gemini-pro")
+        self.chat = self.genai_model.start_chat(history=[])
 
     def add_collection(self, name, desc):
         """Adds a collection to self.collections
@@ -150,11 +153,7 @@ class Tutor(ABC):
 
     @abstractmethod
     def process_prompt(
-        self,
-        conversation,
-        from_doc=None,
-        threshold=0.5,
-        limit=3,
+        self, conversation, from_doc=None, threshold=0.5, limit=3, pipeline="openai"
     ):
         """Abstract function that should
         1. Engineer the prompt based on context (last few messages).
@@ -190,6 +189,7 @@ class Tutor(ABC):
         selectedModel=OPENAI_DEFAULT_MODEL,
         threshold=0.5,
         limit=3,
+        pipeline="openai",
     ):
         """Function that responds to an asked question based
         on the current database and the loaded collections from the database
@@ -222,18 +222,27 @@ class Tutor(ABC):
         """
 
         st = time.time()
-        messages, valid_docs = self.process_prompt(conversation, from_doc, threshold, limit)
+        messages, valid_docs = self.process_prompt(
+            conversation, from_doc, threshold, limit, pipeline=pipeline
+        )
         en = time.time()
         processing_prompt_time = en - st
+
         try:
-            response, elapsed_time = time_it_r(openai.ChatCompletion.create)(
-                model=selectedModel,
-                messages=messages,
-                temperature=0.7,
-                frequency_penalty=0.0,
-                presence_penalty=0.0,
-                stream=True,
-            )
+            response, elapsed_time = [], 0.0
+            if pipeline == "gemini":
+                response, elapsed_time = time_it_r(
+                    self.chat.send_message(messages[-1]), stream=True
+                )
+            else:
+                response, elapsed_time = time_it_r(openai.ChatCompletion.create)(
+                    model=selectedModel,
+                    messages=messages,
+                    temperature=0.7,
+                    frequency_penalty=0.0,
+                    presence_penalty=0.0,
+                    stream=True,
+                )
 
             # first_sentence = rf"({required_level_of_information}) "
             first_sentence = ""
@@ -384,7 +393,7 @@ class Tutor(ABC):
             # along with the time taken to generate it.
             chunks = ""
             start_time = time.time()
-            resp = self.ask_question(conversation, from_doc, selectedModel)
+            resp = self.ask_question(conversation, from_doc, selectedModel, pipeline="gemini")
             for chunk in resp:
                 chunk_content = ""
                 if "content" in chunk:
