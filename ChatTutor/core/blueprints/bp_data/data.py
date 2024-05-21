@@ -81,8 +81,17 @@ def getchromapapers():
 
     # TODO ANDU: ai result_idurile in flat_[i]["metadata"]["doc"]
     # intoarce aici pt fiecare si entriul din sql cu autori citatii etc
-    print(f"\n\n\n\t[FLAT_] {flat_}")
-    return jsonify(flat_)
+    all_db, _ = DataBase().get_complete_papers_by_author()
+
+    all_all = []
+
+    for docu in flat_:
+        sql_id = docu['metadata']['doc']
+        docu['metadata']['info'] = all_db[sql_id]
+        all_all.append(docu)
+
+    print(f"\n\n\n\t[FLAT_] {all_all}")
+    return jsonify(all_all)
 
 
 @data_bp.route("/refreshcqn", methods=["POST", "GET"])
