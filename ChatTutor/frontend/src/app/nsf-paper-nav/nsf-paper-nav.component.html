@@ -67,7 +67,14 @@
                     <h3>
                         {{doc["id"]}} | {{doc["metadata"]["doc"]}}
                     </h3>
-                    <div class="limit">
+                    <a [href]="doc['metadata']['info']['paper']['link']">{{doc['metadata']['info']['paper']['link']}}</a>
+                    <!-- <div>
+                        {{doc['metadata']['info'] | json}}
+                    </div> -->
+                    <div *ngFor="let author of doc['metadata']['info']['author']">
+                        <a [href]="author['link']">{{author['name']}}</a>
+                    </div>
+                    <div class="l">
                         {{doc["document"]}}
                     </div>
                 </div>

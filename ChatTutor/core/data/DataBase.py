@@ -119,61 +119,85 @@ class DataBase(metaclass=Singleton):
             return user, session
 
     def insert_paper(self, model: Publication, citations: List[Citations], authors: List[Author]):
+        resid = model.result_id
         with Connection().session() as session:
             session.add(model)
-            print(f'\n\n\nINSERT PAPER:: {model}\n\n\n')
+            print(f"\n\n\nINSERT PAPER:: {model}\n\n\n")
             try:
                 session.commit()
             except pymysql.err.IntegrityError:
-                print("Already")
+                print("[[Already]]")
             except sqlalchemy.exc.IntegrityError:
-                print("Already")
+                print("[[Already]]")
 
-        for cit in citations:
-            with Connection().session() as session:
-                session.add(cit)
-                link = PublicationCitationLink(citation_id=cit.citation_id, publication_id=model.result_id)
-                # session.refresh(link)
-                session.add(link)
-                try:
-                    session.commit()
-                except pymysql.err.IntegrityError:
-                    print("Already")
-                except sqlalchemy.exc.IntegrityError:
-                    print("Already")
+        # for cit in citations:
+        #     ciid = cit.citation_id
+        #     with Connection().session() as session:
+        #         session.add(cit)
+        #         try:
+        #             session.commit()
+        #         except pymysql.err.IntegrityError:
+        #             print("[Already]")
+        #         except sqlalchemy.exc.IntegrityError:
+        #             print("[Already]")
+        #     with Connection().session() as session:
+        #         link = PublicationCitationLink(citation_id=ciid, publication_id=resid)
+        #         # session.refresh(link)
+        #         session.add(link)
+        #         try:
+        #             session.commit()
+        #         except pymysql.err.IntegrityError:
+        #             print("[Already]")
+        #         except sqlalchemy.exc.IntegrityError:
+        #             print("[Already]")
 
         for au in authors:
+            auid = au.author_id
             with Connection().session() as session:
                 session.add(au)
-                link = PublicationAuthorLink(author_id=au.author_id, publication_id=model.result_id)
-                # session.refresh(link)
-                session.add(link)
                 try:
                     session.commit()
                 except pymysql.err.IntegrityError:
-                    print("Already")
+                    print("[LINK 2 Already]")
                 except sqlalchemy.exc.IntegrityError:
-                    print("Already")
+                    print("[LINK 2 Already]")
+
+        with Connection().session() as session:
+            for au in authors:
+                auid = au.author_id
+                link = PublicationAuthorLink(author_id=auid, publication_id=resid)
+                # session.refresh(link)
+                session.add(link)
+            try:
+                session.commit()
+            except pymysql.err.IntegrityError:
+                print("[LINK 2 Already]")
+            except sqlalchemy.exc.IntegrityError:
+                print("[LINK 2 Already]")
 
     def get_papers_written_by(self, author_id=None, author_name=None):
-        with (Connection().session() as session):
-            statement = ''
+        with Connection().session() as session:
+            statement = ""
             if author_name is None:
-                statement = select(
-                    Publication,
-                    PublicationAuthorLink,
-                    Author
-                ).join(PublicationAuthorLink, PublicationAuthorLink.publication_id == Publication.result_id) \
-                    .join(Author, Author.author_id == PublicationAuthorLink.author_id) \
+                statement = (
+                    select(Publication, PublicationAuthorLink, Author)
+                    .join(
+                        PublicationAuthorLink,
+                        PublicationAuthorLink.publication_id == Publication.result_id,
+                    )
+                    .join(Author, Author.author_id == PublicationAuthorLink.author_id)
                     .where(Author.author_id == author_id)
+                )
             else:
-                statement = select(
-                    Publication,
-                    PublicationAuthorLink,
-                    Author
-                ).join(PublicationAuthorLink, PublicationAuthorLink.publication_id == Publication.result_id) \
-                    .join(Author, Author.author_id == PublicationAuthorLink.author_id) \
+                statement = (
+                    select(Publication, PublicationAuthorLink, Author)
+                    .join(
+                        PublicationAuthorLink,
+                        PublicationAuthorLink.publication_id == Publication.result_id,
+                    )
+                    .join(Author, Author.author_id == PublicationAuthorLink.author_id)
                     .where(Author.name == author_name)
+                )
 
             res = session.exec(statement).all()
             print(f"print models!! {res}")
@@ -194,7 +218,7 @@ class DataBase(metaclass=Singleton):
             return brr, session
 
     def get_all_authors(self):
-        with (Connection().session() as session):
+        with Connection().session() as session:
             statement = select(Author)
             res = session.exec(statement).all()
             arr = []
@@ -204,16 +228,18 @@ class DataBase(metaclass=Singleton):
             return arr, session
 
     def get_authors_of_paper(self, paper_id):
-        with (Connection().session() as session):
-            statement = ''
+        with Connection().session() as session:
+            statement = ""
 
-            statement = select(
-                Publication,
-                PublicationAuthorLink,
-                Author
-            ).join(PublicationAuthorLink, PublicationAuthorLink.publication_id == Publication.result_id) \
-                .join(Author, Author.author_id == PublicationAuthorLink.author_id) \
+            statement = (
+                select(Publication, PublicationAuthorLink, Author)
+                .join(
+                    PublicationAuthorLink,
+                    PublicationAuthorLink.publication_id == Publication.result_id,
+                )
+                .join(Author, Author.author_id == PublicationAuthorLink.author_id)
                 .where(Publication.result_id == paper_id)
+            )
             res = session.exec(statement).all()
             print(f"print models!! {res}")
             arr: List = []
@@ -233,7 +259,7 @@ class DataBase(metaclass=Singleton):
             return brr, session
 
     def insert_message(
-            self, message: MessageModel | dict, course_collname=None, user_id=None
+        self, message: MessageModel | dict, course_collname=None, user_id=None
     ) -> tuple[MessageModel, Session, List]:
         """Insert message in DataBase
 
@@ -272,7 +298,7 @@ class DataBase(metaclass=Singleton):
             return message, session, ["usr"]
 
     def insert_access_code(
-            self, access_code: AccessCodeModel | str
+        self, access_code: AccessCodeModel | str
     ) -> tuple[AccessCodeModel, Session]:
         with Connection().session() as session:
             existing_ = session.exec(
@@ -501,7 +527,7 @@ class DataBase(metaclass=Singleton):
     #         return user, course, session
 
     def enroll_user_to_course_by_collectionname(
-            self, user_id, course_collectionname
+        self, user_id, course_collectionname
     ) -> tuple[str, Session]:
         """Mark user as student of the specified course
 
@@ -604,8 +630,8 @@ class DataBase(metaclass=Singleton):
             return urls
 
     def get_complete_papers_by_author(self, author_id=None, author_name=None):
-        with (Connection().session() as session):
-            statement = ''
+        with Connection().session() as session:
+            statement = ""
             # if author_name is not None:
             #     statement = select(
             #         Publication
@@ -619,14 +645,16 @@ class DataBase(metaclass=Singleton):
             #         .join(Author, Author.author_id == PublicationAuthorLink.author_id) \
             #         .group_by(Publication.result_id)
 
-            statement = select(
-                Publication,
-                PublicationAuthorLink,
-                Author
-            ).join(PublicationAuthorLink, PublicationAuthorLink.publication_id == Publication.result_id) \
-                .join(Author, Author.author_id == PublicationAuthorLink.author_id) \
-
-            print('STATEMENT:' ,statement);
+            statement = (
+                select(Publication, PublicationAuthorLink, Author)
+                .join(
+                    PublicationAuthorLink,
+                    PublicationAuthorLink.publication_id == Publication.result_id,
+                )
+                .join(Author, Author.author_id == PublicationAuthorLink.author_id)
+                .limit(10)
+            )
+            print("STATEMENT:", statement)
             res = session.exec(statement).all()
             print(f"print models!! {res}")
             arr: List = []
@@ -644,7 +672,6 @@ class DataBase(metaclass=Singleton):
             for k in brr:
                 crr.append(brr[k])
             return brr, session
-
 
     def get_course_messages_by_user(self, user_id, course_id):
         with Connection().session() as session:
@@ -819,7 +846,7 @@ class DataBase(metaclass=Singleton):
             return user, session
 
     def insert_user_to_course(
-            self, user_id: str, course_id
+        self, user_id: str, course_id
     ) -> tuple[UserModel, CourseModel, Session]:
         """Make user as owner of the specified course
 
@@ -841,7 +868,7 @@ class DataBase(metaclass=Singleton):
             return user, course, session
 
     def establish_course_section_relationship(
-            self, section_id: str, course_id: str
+        self, section_id: str, course_id: str
     ) -> tuple[SectionModel, CourseModel, Session]:
         """Add section to course
 

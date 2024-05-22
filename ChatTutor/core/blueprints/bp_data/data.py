@@ -46,12 +46,11 @@ def get_complete_papers():
     return jsonify({"data": res})
 
 
-
 @data_bp.route("/get_paper_by", methods=["POST"])
 def get_paper_by():
     kaka = request.json
-    a_id = kaka.get('author_id', None)
-    a_name = kaka.get('author_name', None)
+    a_id = kaka.get("author_id", None)
+    a_name = kaka.get("author_name", None)
 
     res, _ = DataBase().get_papers_written_by(author_id=a_id, author_name=a_name)
 
@@ -69,7 +68,7 @@ def get_authors():
 @data_bp.route("/get_authors_for_papers", methods=["POST"])
 def get_authors_for_papers():
     kaka = request.json
-    a_id = kaka.get('paper_id', None)
+    a_id = kaka.get("paper_id", None)
     res, _ = DataBase().get_authors_of_paper(paper_id=a_id)
 
     return jsonify({"data": res})
@@ -81,7 +80,7 @@ def getchromapapers():
     req_js = request.json
     prompt = req_js.get("prompt", None)
     variant = req_js.get("variant", None)
-    db.load_datasource_papers("cqn_ttvv")
+    db.load_datasource_papers("cqn_ttv")
     docs, met, dist, text, ceva = db.query_papers_m(
         prompt=prompt, n_results=10, from_doc=None, variant=variant, metadatas=True
     )
@@ -110,17 +109,41 @@ def getchromapapers():
 
     # TODO ANDU: ai result_idurile in flat_[i]["metadata"]["doc"]
     # intoarce aici pt fiecare si entriul din sql cu autori citatii etc
+    print("\n\nbbbbbbbbbbbbbbb\n\n")
     all_db, _ = DataBase().get_complete_papers_by_author()
+    print("\nbakekekek\n\n")
 
+    print("\n\n\n")
+    print(all_db.keys())
     all_all = []
 
     for docu in flat_:
-        sql_id = docu['metadata']['doc']
-        docu['metadata']['info'] = all_db[sql_id]
+        sql_id = docu["metadata"]["doc"]
+        docu["metadata"]["info"] = all_db[sql_id]
         all_all.append(docu)
 
     print(f"\n\n\n\t[FLAT_] {all_all}")
     return jsonify(all_all)
+
+
+from core.data.parsing.papers.json_papers import JSONPaperParser
+
+
+@data_bp.route("/backuploadcqn", methods=["POST", "GET"])
+def backuploadcqn():
+    # string = json.dumps(data, indent=2)
+
+    # for i in range(0, len(data_filtered) - 1):
+    #     data_filtered[i].set_pdf_contents(content_url=data_filtered[i].get_first_file_link())
+    dt = []
+    with open("core/blueprints/bp_data/data_backup.json", "r") as f:
+        data = json.load(f)
+        dt = [JSONPaperParser().parse(x) for x in data["data"]]
+    print("\n\n\naaaaaaaaaaaa\n\n\n")
+    PaperManager.add_to_database_static(dt=dt)
+    print("Added!")
+    # PaperManager.add_to_chroma(dt=dt)
+    return jsonify({"data": [x for x in dt]})
 
 
 @data_bp.route("/refreshcqn", methods=["POST", "GET"])
@@ -149,6 +172,9 @@ def refreshcqn():
 
     print("----- DONE -----")
     dt = [x for x in data_filtered if x is not None]
+
+    with open("./data.json", "w+") as f:
+        f.write(f"{dt}")
 
     PaperManager.add_to_database(dt=dt)
     print("Added!")
