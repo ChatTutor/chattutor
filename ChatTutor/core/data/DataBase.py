@@ -155,7 +155,82 @@ class DataBase(metaclass=Singleton):
                 except sqlalchemy.exc.IntegrityError:
                     print("Already")
 
+    def get_papers_written_by(self, author_id=None, author_name=None):
+        with (Connection().session() as session):
+            statement = ''
+            if author_name is None:
+                statement = select(
+                    Publication,
+                    PublicationAuthorLink,
+                    Author
+                ).join(PublicationAuthorLink, PublicationAuthorLink.publication_id == Publication.result_id) \
+                    .join(Author, Author.author_id == PublicationAuthorLink.author_id) \
+                    .where(Author.author_id == author_id)
+            else:
+                statement = select(
+                    Publication,
+                    PublicationAuthorLink,
+                    Author
+                ).join(PublicationAuthorLink, PublicationAuthorLink.publication_id == Publication.result_id) \
+                    .join(Author, Author.author_id == PublicationAuthorLink.author_id) \
+                    .where(Author.name == author_name)
 
+            res = session.exec(statement).all()
+            print(f"print models!! {res}")
+            arr: List = []
+            brr: dict = {}
+            for m in res:
+                pub_id = m[1].publication_id
+                brr[pub_id] = {"paper": [], "author": [], "publication_author_link": []}
+            for m in res:
+                arr.append({"publication": m[0], "author": m[1], "publication_author_link": m[2]})
+                pub_id = m[1].publication_id
+                brr[pub_id]["paper"] = m[0].jsonserialize()
+                brr[pub_id]["author"].append(m[2].jsonserialize())
+                brr[pub_id]["publication_author_link"].append(m[1].jsonserialize())
+            crr = []
+            for k in brr:
+                crr.append(brr[k])
+            return brr, session
+
+    def get_all_authors(self):
+        with (Connection().session() as session):
+            statement = select(Author)
+            res = session.exec(statement).all()
+            arr = []
+            for auth in res:
+                arr.append(auth.jsonserialize())
+
+            return arr, session
+
+    def get_authors_of_paper(self, paper_id):
+        with (Connection().session() as session):
+            statement = ''
+
+            statement = select(
+                Publication,
+                PublicationAuthorLink,
+                Author
+            ).join(PublicationAuthorLink, PublicationAuthorLink.publication_id == Publication.result_id) \
+                .join(Author, Author.author_id == PublicationAuthorLink.author_id) \
+                .where(Publication.result_id == paper_id)
+            res = session.exec(statement).all()
+            print(f"print models!! {res}")
+            arr: List = []
+            brr: dict = {}
+            for m in res:
+                pub_id = m[1].publication_id
+                brr[pub_id] = {"paper": [], "author": [], "publication_author_link": []}
+            for m in res:
+                arr.append({"publication": m[0], "author": m[1], "publication_author_link": m[2]})
+                pub_id = m[1].publication_id
+                brr[pub_id]["paper"] = m[0].jsonserialize()
+                brr[pub_id]["author"].append(m[2].jsonserialize())
+                brr[pub_id]["publication_author_link"].append(m[1].jsonserialize())
+            crr = []
+            for k in brr:
+                crr.append(brr[k])
+            return brr, session
 
     def insert_message(
             self, message: MessageModel | dict, course_collname=None, user_id=None

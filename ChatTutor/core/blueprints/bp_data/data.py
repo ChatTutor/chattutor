@@ -46,6 +46,35 @@ def get_complete_papers():
     return jsonify({"data": res})
 
 
+
+@data_bp.route("/get_paper_by", methods=["POST"])
+def get_paper_by():
+    kaka = request.json
+    a_id = kaka.get('author_id', None)
+    a_name = kaka.get('author_name', None)
+
+    res, _ = DataBase().get_papers_written_by(author_id=a_id, author_name=a_name)
+
+    return jsonify({"data": res})
+
+
+@data_bp.route("/get_authors", methods=["GET", "POST"])
+def get_authors():
+
+    res, _ = DataBase().get_all_authors()
+
+    return jsonify({"data": res})
+
+
+@data_bp.route("/get_authors_for_papers", methods=["POST"])
+def get_authors_for_papers():
+    kaka = request.json
+    a_id = kaka.get('paper_id', None)
+    res, _ = DataBase().get_authors_of_paper(paper_id=a_id)
+
+    return jsonify({"data": res})
+
+
 @data_bp.route("/getchromapapers", methods=["POST"])
 def getchromapapers():
     # print("sgdfksdafgdbs")
