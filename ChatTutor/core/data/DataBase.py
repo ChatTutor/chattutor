@@ -121,14 +121,13 @@ class DataBase(metaclass=Singleton):
     def insert_paper(self, model: Publication, citations: List[Citations], authors: List[Author]):
         resid = model.result_id
         with Connection().session() as session:
-            session.add(model)
+
             print(f"\n\n\nINSERT PAPER:: {model}\n\n\n")
-            try:
+            existing_pap = session.query(Publication).filter_by(result_id=resid).first()
+            if not existing_pap:
+                session.add(model)
                 session.commit()
-            except pymysql.err.IntegrityError:
-                print("[[Already]]")
-            except sqlalchemy.exc.IntegrityError:
-                print("[[Already]]")
+
 
         # for cit in citations:
         #     ciid = cit.citation_id
@@ -151,29 +150,28 @@ class DataBase(metaclass=Singleton):
         #         except sqlalchemy.exc.IntegrityError:
         #             print("[Already]")
 
-        for au in authors:
-            auid = au.author_id
-            with Connection().session() as session:
-                session.add(au)
-                try:
-                    session.commit()
-                except pymysql.err.IntegrityError:
-                    print("[LINK 2 Already]")
-                except sqlalchemy.exc.IntegrityError:
-                    print("[LINK 2 Already]")
+
+        auids = []
 
         with Connection().session() as session:
-            for au in authors:
+            for au_ind in range(0, len(authors)):
+                au = authors[au_ind]
+
                 auid = au.author_id
+                auids.append(auid)
+                existing_author = session.query(Author).filter_by(author_id=auid).first()
+                if not existing_author:
+                    session.add(au)
+            session.commit()
+
+        with Connection().session() as session:
+            for auid in auids:
                 link = PublicationAuthorLink(author_id=auid, publication_id=resid)
-                # session.refresh(link)
-                session.add(link)
-            try:
-                session.commit()
-            except pymysql.err.IntegrityError:
-                print("[LINK 2 Already]")
-            except sqlalchemy.exc.IntegrityError:
-                print("[LINK 2 Already]")
+                existing_link = session.query(PublicationAuthorLink).filter_by(author_id=auid, publication_id=resid).first()
+                if not existing_link:
+                    session.add(link)
+            session.commit()
+
 
     def get_papers_written_by(self, author_id=None, author_name=None):
         with Connection().session() as session:

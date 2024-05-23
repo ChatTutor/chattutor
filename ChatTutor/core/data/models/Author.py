@@ -1,4 +1,7 @@
 from typing import Deque, List, Optional, Tuple
+
+from sqlalchemy import Column
+from sqlalchemy.dialects.mysql import LONGTEXT
 from sqlmodel import Field, Session, SQLModel, create_engine
 import uuid as uuid_pkg
 from datetime import datetime
@@ -27,9 +30,9 @@ class Author(SQLModel, table=True):
     """
 
     author_id: str = Field(primary_key=True)
-    link: str
+    link: str = Field(sa_column=Column(LONGTEXT))
     name: str
-    serpapi_scholar_link: str
+    serpapi_scholar_link: str = Field(sa_column=Column(LONGTEXT))
     cqn_pub_id: str
     # papers: List["CQNPublicationModel"] = Relationship(
     #     back_populates="author", link_model=CQNAuthorLink

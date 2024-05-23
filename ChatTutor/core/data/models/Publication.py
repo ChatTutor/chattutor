@@ -1,9 +1,11 @@
 from typing import Deque, List, Optional, Tuple
+
+from sqlalchemy import Column
 from sqlmodel import Field, Session, SQLModel, create_engine
 import uuid as uuid_pkg
 from datetime import datetime
 from sqlmodel import Field, Relationship
-
+from sqlalchemy.dialects.mysql import LONGTEXT
 from dataclasses import dataclass
 
 
@@ -23,11 +25,11 @@ class Publication(SQLModel, table=True):
     """
 
     result_id: str = Field(primary_key=True)
-    link: str
+    link: str = Field(sa_column=Column(LONGTEXT))
     chroma_doc_id: str
     # facem cu inner join
-    snippet: str
-    title: str
+    snippet: str = Field(sa_column=Column(LONGTEXT))
+    title: str = Field(sa_column=Column(LONGTEXT))
     # authors: List["Author"] = Relationship(back_populates="cqnpublicationmodel", link_model=CQNAuthorLink)
     # citations: List["Citations"] = Relationship(back_populates="cqnpublicationmodel", link_model=CQNCitationLink)
 
