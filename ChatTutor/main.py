@@ -8,6 +8,7 @@ from flask import (
     url_for,
     render_template,
 )
+from flask_apscheduler.utils import CronTrigger
 from core.url_spider import URLSpider
 from flask import Blueprint, Response, jsonify, request, stream_with_context
 from nice_functions import pprint
@@ -67,12 +68,14 @@ import flask_login
 # interpreter.auto_run = True
 from core.openai_tools import load_api_keys, load_env
 from core.blueprints.bp_ask.ask import ask_bp
-from core.blueprints.bp_data.data import data_bp
+from core.blueprints.bp_data.data import data_bp, refreshcqn_scheduler
 from core.blueprints.bp_users.users import users_bp
 from core.blueprints.bp_prep.prep import prep_bp
 from core.blueprints.bp_reader.reader import reader_bp
 from core.data import DataBase, UserModel
-
+from flask_apscheduler import APScheduler
+from core.extensions import sched
+from core.blueprints.bp_data.data import test_refresh
 load_env()
 load_api_keys()
 
@@ -114,9 +117,12 @@ xcors = CORS(
 # Define a list of allowed origins
 def_origins = db_origins_parsed + default_origins
 
+
+
 app.secret_key = "fhslcigiuchsvjksvjksgkgs"
 db.init_db()
 user_db.init_db()
+
 
 
 # ------------ CORS -------------
@@ -246,6 +252,10 @@ google = oauth.register(
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 
+# function is named refresh_cqn_scheduler, just replace it here
+sched.add_job(func=refreshcqn_scheduler, trigger=CronTrigger(day=1)) # start the cronjob at each 1st date of a month
+sched.start()
+print('started scheduler!!')
 
 @login_manager.unauthorized_handler
 def unauthorized_handler():
@@ -331,4 +341,5 @@ def angular(path):
 
 # testing
 if __name__ == "__main__":
+    
     app.run(debug=True, port=5000)  # Running the app in debug mode

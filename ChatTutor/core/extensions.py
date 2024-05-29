@@ -14,7 +14,10 @@ user_db = VectorDatabase(os.getenv("VECTOR_DB_HOST"), "chroma", hosted=True)
 import random
 import string
 from datetime import datetime
-
+from flask_apscheduler import APScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+sched = BackgroundScheduler()
 
 def get_random_string(length):
     # choose from all lowercase letter

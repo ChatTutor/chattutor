@@ -33,6 +33,9 @@ from core.reader import parse_pdf, Text, Doc
 from core.blueprints.bp_data.cqn import CQNPublications, process, load_citations
 from serpapi import GoogleScholarSearch
 
+from flask_apscheduler import APScheduler
+from core.extensions import sched
+
 data_bp = Blueprint("bp_data", __name__)
 
 
@@ -129,6 +132,16 @@ def getchromapapers():
 from core.data.parsing.papers.json_papers import JSONPaperParser
 
 
+@data_bp.route("/proba_cqn", methods=['POST', 'GET'])
+def proba_cqn():
+    #return jsonify({"andu": "andu"})
+    alfa = refreshcqn_scheduler()
+    if alfa is None:
+        return jsonify({"maessaje": "err"})
+    return jsonify({"data": alfa})
+
+
+
 @data_bp.route("/backuploadcqn", methods=["POST", "GET"])
 def backuploadcqn():
     # string = json.dumps(data, indent=2)
@@ -146,46 +159,73 @@ def backuploadcqn():
     return jsonify({"data": [x for x in dt]})
 
 
-@data_bp.route("/refreshcqn", methods=["POST", "GET"])
-def refreshcqn():
-    ps = SerpApiGoogleScholarOrganic()
+#@data_bp.route("/refreshcqn", methods=["POST", "GET"])
+#def refreshcqn():
+ #   ps = SerpApiGoogleScholarOrganic()
+  #  data = ps.scrape_google_scholar_organic_results(
+ #       query="NSF-ERC CQN 1941583",
+ #       api_key=os.getenv("SERP_API_KEY"),
+ #       pagination=True,
+ #   )
 
-    data = ps.scrape_google_scholar_organic_results(
-        query="NSF-ERC CQN 1941583",
-        api_key=os.getenv("SERP_API_KEY"),
-        pagination=True,
-    )
+  #  data_formated: List[CQNPublications] = [CQNPublications(e) for e in data]
 
-    data_formated: List[CQNPublications] = [CQNPublications(e) for e in data]
-
-    data_filtered: List[CQNPublications] = list(
-        filter(lambda x: x.resources != "None", data_formated)
-    )
+  #  data_filtered: List[CQNPublications] = list(
+  #      filter(lambda x: x.resources != "None", data_formated)
+  #  )
     # string = json.dumps(data, indent=2)
 
     # for i in range(0, len(data_filtered) - 1):
     #     data_filtered[i].set_pdf_contents(content_url=data_filtered[i].get_first_file_link())
-    get_content = True
-    dt = data_filtered
-    if get_content:
-        dt = process(data_filtered)
+   # get_content = True
+  #  dt = data_filtered
+  #  if get_content:
+  #      dt = process(data_filtered)
 
-    print("----- DONE -----")
-    dt = [x for x in data_filtered if x is not None]
+  #  print("----- DONE -----")
+  #  dt = [x for x in data_filtered if x is not None]
 
-    with open("./data.json", "w+") as f:
-        f.write(f"{dt}")
+  #  with open("./data.json", "w+") as f:
+  #      f.write(f"{dt}")
 
-    PaperManager.add_to_database(dt=dt)
-    print("Added!")
-    PaperManager.add_to_chroma(dt=dt)
-    return jsonify({"data": [x.toDict() for x in dt]})
+  #  PaperManager.add_to_database(dt=dt)
+  #  print("Added!")
+   # PaperManager.add_to_chroma(dt=dt)
+   # return jsonify({"data": [x.toDict() for x in dt]})
 
+def test_refresh():
+    print('Hello world!')
+
+def refreshcqn_scheduler():
+    
+    ps = SerpApiGoogleScholarOrganic()
+    key = os.getenv("SERP_API_KEY")
+    if key is None:
+        return
+
+    data = ps.scrape_google_scholar_organic_results(
+            query="NSF-ERC CQN 1941583",
+            api_key=key,
+            pagination=True,
+        )
+    # ---- FROM BACKUP . JSON, DECOMMENT IN CASE OF ERR (doamne fereste) ----
+    #dt = []
+    #with open("core/blueprints/bp_data/data_backup.json", "r") as f:
+    #    data = json.load(f)
+    #    dt = [JSONPaperParser().parse(x) for x in data["data"]]
+
+    
+    dt = [JSONPaperParser().parse(x) for x in data]
+    print("\n\n\naaaaaaaaaaaa\n\n\n")
+    PaperManager.add_to_database_static(dt=dt)
+    
+    PaperManager.add_to_chroma_static(dt=dt)
+    return {"data": "success"}
 
 def getpdfcontentsfromlist(pubs: List[CQNPublications]):
     for i in range(0, len(pubs) - 1):
         f_link = pubs[i].get_first_file_link()
-        pubs[i].set_pdf_contents(content_url=f_link)
+        pubs[i].set_pdf_contents(content_url=f_link, i=i)
 
 
 @data_bp.route("/refreshcqnunformatted", methods=["POST", "GET"])
