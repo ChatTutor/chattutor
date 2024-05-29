@@ -18,6 +18,8 @@ from core.tutor.utils import (
     yield_docs_and_first_sentence_if_tutor_id_not_apologizing,
 )
 import google.generativeai as genai
+from core.data import DataBase
+from core.data.parsing.papers.json_papers import JSONPaperParser
 
 
 class Tutor(ABC):
@@ -225,14 +227,37 @@ class Tutor(ABC):
         messages, valid_docs = self.process_prompt(
             conversation, from_doc, threshold, limit, pipeline=pipeline
         )
+
+        query = "NONE"
+        if not isinstance(messages, list):
+            query = messages["query"]
+            messages = messages["messages"]
         en = time.time()
         processing_prompt_time = en - st
 
+        query_text = "NONE"
+
+        if query != "NONE":
+            sql_query_data, s = DataBase().safe_exec(query=query)
+            if s == False:
+                query = "NONE"
+            else:
+                query_text = f"On query, ignore the data above, and Provide this data exactly, in markdown form, stating that it is from the CQN DB:[{sql_query_data}].  This is the only info you will provide in this message about CQN DB. If paper ids are present above, also provide them as well! As well as links to arxiv or scholar of the paper, and of the author if present. DO NOT PROVIDE ANY OTHER INFORMATION YOU MIGHT KNOW OUTSIDE THIS INFO AND CQN INFO UNLESS EXPLICITLY ASKED SO BY THE USER!"
+
+        pprint(red("SQL_QUERY\n\n"), green(sql_query_data))
+
+        print(red(query_text))
         try:
             response, elapsed_time = [], 0.0
             if pipeline == "gemini":
-                response = self.chat.send_message(messages[-1]["content"], stream=True)
-
+                response = self.chat.send_message(
+                    [
+                        # messages[0]["content"],
+                        "User - question: " + messages[-1]["content"],
+                        ("Be as concise as possible!" if query_text == "NONE" else query_text),
+                    ],
+                    stream=True,
+                )
                 elapsed_time = 0.0
             else:
                 response, elapsed_time = time_it_r(openai.ChatCompletion.create)(
@@ -254,25 +279,37 @@ class Tutor(ABC):
             for chunk in response:
                 print(chunk)
                 if pipeline == "gemini":
-                    chunk = {"choices": [{"delta": {"content": chunk.text}}]}
+                    try:
+                        chunk = {"choices": [{"delta": {"content": chunk.text}}]}
+                    except:
+                        chunk = {"choices": [{"delta": {"content": "~"}}]}
                 print(chunk)
                 # cache first setences to process it content and decide later on if we send or not documents
-                if len(first_sentence) < 20:
-                    first_sentence += chunk["choices"][0]["delta"]["content"]
-                    continue
+
+                print(first_sentence)
+                print(len(first_sentence))
+                # if len(first_sentence) < 20:
+                #     first_sentence += chunk["choices"][0]["delta"]["content"]
+                #     # yield chunk["choices"][0]["delta"]
+                #     continue
+                # print("yielding")
+                # print(first_sentence)
+                # print(len(first_sentence))
 
                 # process first sentence
-                if len(first_sentence) >= 20 and not first_sentence_processed:
-                    first_sentence_processed = True
-                    first_sentence += chunk["choices"][0]["delta"]["content"]
-                    print("first_sentence", green(first_sentence))
-                    for yielded_chain in yield_docs_and_first_sentence_if_tutor_id_not_apologizing(
-                        first_sentence, valid_docs
-                    ):
-                        yielded_chain["elapsed_time"] = elapsed_time
-                        yielded_chain["processing_prompt_time"] = processing_prompt_time
-                        yield yielded_chain
-                    continue
+                # if len(first_sentence) >= 20 and not first_sentence_processed:
+                #     first_sentence_processed = True
+                #     first_sentence += chunk["choices"][0]["delta"]["content"]
+                #     print("first_sentence", green(first_sentence))
+                #     for yielded_chain in yield_docs_and_first_sentence_if_tutor_id_not_apologizing(
+                #         first_sentence, valid_docs
+                #     ):
+                #         yielded_chain["elapsed_time"] = elapsed_time
+                #         yielded_chain["processing_prompt_time"] = processing_prompt_time
+                #         yield yielded_chain
+                #     continue
+
+                # print("yielded\n")
 
                 yield chunk["choices"][0]["delta"]
         except Exception as e:

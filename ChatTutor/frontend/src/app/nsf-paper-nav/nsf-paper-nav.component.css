@@ -54,6 +54,8 @@
 
   .paper-card {
     margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
   }
 
   .filler {
@@ -72,4 +74,52 @@
   .filler img {
     opacity: 0.6;
     
+  }
+
+
+  .container.full {
+    overflow: scroll;
+    background-color: white !important;
+    position: fixed;
+    z-index: 900000;
+    padding: 20px;
+    width: 90vw;
+    height: 90vh;
+    margin-left: 5vw;
+    margin-right: 5vw;
+    margin-top: 5vh;
+    margin-bottom: 5vh;
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  }
+
+  .author_card {
+    padding: 10px;
+    
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .snippet {
+  justify-self: center;
+    align-self: center;
+  border-radius: 10px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    max-width: 50% !important;
+    padding: 10px;
+  }
+  .author_card{
+    transition: all 0.1s ease;
+    margin-left: 10px;
+  }
+  .author_card:hover{
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+
+  }
+
+  .btn {
+    margin-left: 10px;
   }

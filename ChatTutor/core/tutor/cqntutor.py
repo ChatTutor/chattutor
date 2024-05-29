@@ -3,7 +3,7 @@
 from .systemmsg import default_system_message
 from ..openai_tools import OPENAI_DEFAULT_MODEL
 from ..openai_tools import OPENAI_DEFAULT_MODEL
-from core.tutor.systemmsg import default_system_message, cqn_system_message
+from core.tutor.systemmsg import default_system_message, cqn_system_message, all_papers_by_authors
 from core.tutor.tutor import Tutor
 from abc import ABC, ABCMeta, abstractmethod
 from enum import Enum

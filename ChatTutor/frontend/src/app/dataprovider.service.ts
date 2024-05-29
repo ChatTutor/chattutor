@@ -47,11 +47,54 @@ export class DataProviderService {
     return await resp.json();
   }
 
+  /**
+   * 
+   * @param prompt 
+   * @param variant 
+   * @returns 
+   */
   async nsfPaperRequest(prompt : string, variant : string | undefined): Promise<any> {
     let data = JSON.stringify({prompt: prompt, variant: variant})
     if (variant == undefined || variant == 'content')
       data = JSON.stringify({prompt: prompt})
     const resp = await fetch('/getchromapapers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: data });
+    return await resp.json();
+  }
+
+  /**
+   * 
+   * @param author_data either {author_name: ..., author_id: ...}
+   * @returns 
+   */
+  async nsfGetPapersByAuthor(author_data: any): Promise<any> {
+    let data = JSON.stringify(author_data)
+    const resp = await fetch('/get_paper_by', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: data });
+    return await resp.json();
+  }
+
+  /**
+   * 
+   * @returns 
+   */
+  async nsfGetAllAuthors(): Promise<any> {
+    const resp = await fetch('/get_authors', { method: 'POST', headers: { 'Content-Type': 'application/json' }});
+    return await resp.json();
+  }
+
+  async nsfGetAllAuthorsByName(name: string): Promise<any> {
+    let data = JSON.stringify({author_name: name})
+    const resp = await fetch('/get_authors_by_name', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: data});
+    return await resp.json();
+  }
+
+  /**
+   * 
+   * @param paper_id id of the paper
+   * @returns 
+   */
+  async nsfGetPaperAuthors(paper_id: string | any) : Promise<any> {
+    let data = JSON.stringify({paper_id: paper_id})
+    const resp = await fetch('/get_paper_by', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: data });
     return await resp.json();
   }
 
