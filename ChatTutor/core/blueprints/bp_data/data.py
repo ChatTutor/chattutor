@@ -43,6 +43,41 @@ def format_entry(entry):
     return CQNPublications(entry).toDict()
 
 
+@data_bp.route("/get_author_likeness", methods=["POST", "GET"])
+def get_author_likeness():
+    data = request.json
+    if data is None:
+        return jsonify({"no": "no json received"})
+
+    name = data.get('name', '')
+
+    print(f'got name: {name}')
+
+    res, _ = DataBase().get_author_by_name_like(name_like=name)
+    if res is None:
+        return jsonify({"data": "no authoirs found!"})
+    return jsonify({"data": res})
+
+@data_bp.route("/add_from_json_to_db", methods=["GET"])
+def add_from_json_to_db():
+    dt = []
+    with open("core/data/parsing/papers/papers_from_pdf.json", "r") as f:
+        data = json.load(f)
+        ff = []
+        for x in data["data"]:
+            x["resources"] = [{"link": PaperManager.convert_paper_link_to_resource_link(x.get('link', ''))}]
+            if(x.get('link', '') == ''):
+                x['link'] = ''
+            ff.append(x)
+            print("::TT::", x)
+        dt = [JSONPaperParser().parse(x) for x in ff]
+    print("\n\n\naaaaaaaaaaaa\n\n\n")
+    PaperManager.add_to_database_pdfs(dt=dt)
+    print("Added!")
+    PaperManager.add_to_chroma_static(dt=dt)
+    return jsonify({"data": [x for x in dt]})
+
+
 @data_bp.route("/get_complete_papers", methods=["POST", "GET"])
 def get_complete_papers():
     res, _ = DataBase().get_complete_papers_by_author()

@@ -172,6 +172,13 @@ class DataBase(metaclass=Singleton):
                     session.add(link)
             session.commit()
 
+    def get_author_by_name_like(self, name_like):
+        with Connection().session() as session:
+            res = session.exec(select(Author).where(Author.name.op('SOUNDS LIKE')(name_like))).first()
+            print("Response: ", res)
+            if res is None: 
+                return None, session
+            return res.jsonserialize(), session
 
     def get_papers_written_by(self, author_id=None, author_name=None):
         with Connection().session() as session:
@@ -224,6 +231,15 @@ class DataBase(metaclass=Singleton):
                 arr.append(auth.jsonserialize())
 
             return arr, session
+
+    def get_paper_by_name(self, name):
+        with Connection().session() as session:
+            statement = select(Publication).where(Publication.title == name)
+            res = session.exec(statement).first()
+            if res is None:
+                return None, session
+
+            return res.jsonserialize(), session
 
     def get_authors_of_paper(self, paper_id):
         with Connection().session() as session:

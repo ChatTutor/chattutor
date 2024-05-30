@@ -34,7 +34,7 @@ from core.data import (
 from core.reader import parse_pdf, Text, Doc
 import multiprocessing
 from serpapi import GoogleScholarSearch
-
+from PyPDF2.errors import PyPdfError, PdfReadError
 from core.vectordatabase import VectorDatabase
 
 
@@ -71,13 +71,18 @@ def CQNPublicationsGetTextsFromResourceUrl(content_url: str, json_elem, i=0) -> 
     print(f"\n\n{content_url}:\n")
     open_pdf_file = resp.content
     print(f"\n\tGettng texts {i}\n")
-    texts = parse_pdf(open_pdf_file, doc, 2000, 100)
-    print(f"----\n\n GOT TEXTS {i}")
+    try:
+        texts = parse_pdf(open_pdf_file, doc, 2000, 100)
+        print(f"----\n\n GOT TEXTS {i}")
         # for page in pdf.pages:
         #     page_txt = page.extract_text()
         #     texts.append(page_txt)
-    pdf_contents: List[Text] = texts
-    return pdf_contents
+        pdf_contents: List[Text] = texts
+        return pdf_contents
+    except PdfReadError:
+        return []
+    except Exception:
+        return []
 
 class CQNPublications:
     title: str
