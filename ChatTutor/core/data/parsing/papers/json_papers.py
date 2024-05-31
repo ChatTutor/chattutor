@@ -48,6 +48,12 @@ class JSONPaperParser:
                     "key": ["resources"],
                 },
             },
+            "contents": {
+                "type": "single",
+                "match": {
+                    "key": ["contents"],
+                },
+            },
         },
         list_ignore=True,
     ):
