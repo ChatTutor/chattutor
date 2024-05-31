@@ -9,6 +9,7 @@ from abc import ABC, ABCMeta, abstractmethod
 from enum import Enum
 from nice_functions import pprint, bold, green, blue, red, time_it
 from core.tutor.utils import truncate_to_x_number_of_tokens, get_number_of_tokens
+from core.data import DataBase
 
 
 class SQLQueryTutor(Tutor):
@@ -194,8 +195,10 @@ class SQLQueryTutor(Tutor):
         prompt = conversation[-1]["content"]
         required_level_of_information = self.get_required_level_of_information(prompt=prompt)
         pprint("required_level_of_information ", green(required_level_of_information))
-        required_type_of_information = self.get_required_type_of_information(prompt=prompt)
-        pprint("required_type_of_information ", green(required_type_of_information))
+        required_type_of_information = self.get_required_type_of_information(prompt=prompt).strip(
+            " "
+        )
+        pprint("required_type_of_information ", "|", green(required_type_of_information), "|")
 
         # todo: fix prompt to take context from all messages
         (
@@ -221,27 +224,39 @@ class SQLQueryTutor(Tutor):
                 #    continue
                 if self.embedding_db:
                     keep_only_first_x_tokens_for_processing = None  # none means all
-                    if coll_name == "cqn_ttvv" and required_type_of_information == "TITLE":
+                    if coll_name == "cqn_ttvv" and "TITLE" == required_type_of_information.strip():
+                        pprint(red("TTL"), green(required_type_of_information.strip()))
+
                         self.embedding_db.load_datasource(f"{coll_name}_titles")
                         query_limit = 100
                         process_limit = 20  # each basic entry has close to 100 tokens
                         show_limit = 0
-                    elif coll_name == "cqn_ttvv" and required_level_of_information == "AUTHORS":
-                        self.embedding_db.load_datasource(f"{coll_name}_authors")
-                        query_limit = 100
-                        process_limit = 10  # each basic entry has close to 350 tokens
-                        keep_only_first_x_tokens_for_processing = 200
-                        show_limit = 3
-                    elif coll_name == "cqn_ttvv" and required_level_of_information == "CONTENT":
+                    # elif (
+                    #     coll_name == "cqn_ttvv"
+                    #     and required_level_of_information.strip() ==
+                    # ):
+                    #     self.embedding_db.load_datasource(f"{coll_name}_authors")
+                    #     query_limit = 100
+                    #     process_limit = 10  # each basic entry has close to 350 tokens
+                    #     keep_only_first_x_tokens_for_processing = 200
+                    #     show_limit = 3
+                    elif (
+                        coll_name == "cqn_ttvv"
+                        and "CONTENT" == required_type_of_information.strip()
+                    ):
+                        pprint(red("CONT"), green(required_type_of_information.strip()))
                         self.embedding_db.load_datasource(coll_name)
                         query_limit = 10
                         process_limit = 3  # each is close to 800
                         show_limit = 3
                     elif coll_name == "cqn_ttvv":
-                        self.embedding_db.load_datasource(f"{coll_name}_titles")
+                        pprint(red("DEF"), green(required_type_of_information.strip()))
+
+                        self.embedding_db.load_datasource(f"{coll_name}")
                         query_limit = 10
                         process_limit = 3  # each is close to 800
                         show_limit = 3
+
                     pprint(
                         "\nQuerying embedding_db with prompt:",
                         blue(prompt),
@@ -275,7 +290,7 @@ class SQLQueryTutor(Tutor):
                                     "distance": dist,
                                 }
                             )
-            sorted_docs = sorted(arr, key=lambda el: el["distance"])
+            sorted_docs = sorted(arr, key=lambda el: -el["distance"])
             valid_docs = sorted_docs[:process_limit]
 
             # print in the console basic info of valid docs
@@ -292,17 +307,57 @@ class SQLQueryTutor(Tutor):
             docs = ""
             if from_doc is not None:
                 docs = f"If the user is talking about 'this paper', he's probably refering to the paper with the id {from_doc}. You WILL find it's title below!"
+            i = 0
+            vd = []
             for doc in valid_docs:
+
                 doc_title_or_file_name = doc["metadata"].get("title", None) or doc["metadata"].get(
                     "doc", None
                 )
+
+                id = doc_title_or_file_name
+
+                papers, _ = DataBase().get_paper_by_name(id)
+                paper = papers[0]
+                authors, _ = DataBase().get_authors_of_paper(id)
+                # print("\n\n", green("Paper:"))
+                # print(red(paper))
                 doc_authors = ""
                 doc_content = doc["doc"]
-                if doc["metadata"].get("authors"):
-                    doc_authors = doc["metadata"].get("authors")
+                doc_authors = doc["metadata"].get("authors", None)
+                if doc_authors == None:
+                    doc_authors = f"{authors}"
+                    doc["metadata"]["title"] = paper["title"]
+                    doc["metadata"]["id"] = doc_title_or_file_name
+                    doc["metadata"]["authors"] = authors
+                    doc["metadata"]["entry_id"] = paper["link"]
+                    doc["metadata"]["links"] = paper["link"]
+                    doc["metadata"]["elaborate"] = True
                     doc_authors += rf" by '{doc_authors}'"
-
-                doc_content = rf"CQN BD PAPER: (If the user asks about a PAPER's TITLE, use this) Paper Title:'{doc_title_or_file_name}'| {doc_authors}: \n\n{doc_content}"
+                i += 1
+                vd.append(doc)
+                doc_content = rf"""CQN BD PAPER #{i}: 
+                                    - Paper Title:'{paper['title']}'| 
+                                    
+                                    Authors: {authors}
+                                    
+                                    Relevant paper section:
+                                    ```
+                                    {doc_content}
+                                    ```
+                                    
+                                    Snippet:
+                                    ```
+                                    {paper['snippet']}
+                                    ```
+                                    
+                                    Link:
+                                    {paper['link']}
+                                    
+                                    Title:
+                                    {paper['title']}
+                                    
+                                    """
                 doc_content = truncate_to_x_number_of_tokens(
                     doc_content, keep_only_first_x_tokens_for_processing
                 )
@@ -330,4 +385,4 @@ class SQLQueryTutor(Tutor):
         # messages[-1]["content"] += required_level_of_information
         print("\n\n-----SQL QUERY-----\n\n")
         print(required_level_of_information)
-        return {"messages": messages, "query": required_level_of_information}, valid_docs
+        return {"messages": messages, "query": required_level_of_information}, vd

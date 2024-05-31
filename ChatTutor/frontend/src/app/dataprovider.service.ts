@@ -87,6 +87,13 @@ export class DataProviderService {
     return await resp.json();
   }
 
+  async nsfGetAllPapersByName(name: string): Promise<any> {
+    let data = JSON.stringify({paper_name: name})
+    const resp = await fetch('/get_papers_by_name', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: data});
+    return await resp.json();
+  }
+
+
   /**
    * 
    * @param paper_id id of the paper

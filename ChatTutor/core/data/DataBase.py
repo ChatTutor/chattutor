@@ -32,8 +32,10 @@ from core.data.models.Citations import Citations
 from core.data.models.PublicationCitationLink import PublicationCitationLink
 from core.data.models.ResetCode import ResetCodeModel
 from core.utils import build_model_from_params
+from core.natlang import to_sql_match
 from sqlalchemy.exc import IntegrityError
 import re
+from sqlalchemy.sql import union_all
 
 
 def extract_sql_text(text):
@@ -124,13 +126,18 @@ class DataBase(metaclass=Singleton):
             and (not "INSERT" in query)
             and (not "UPDATE" in query)
         ):
-            query = extract_sql_text(query)
-            if query == None:
-                return {"error": "Invalid query!"}, False
-            # try:
-            with Connection().session() as session:
-                result = session.exec(text(query)).mappings().all()
-                return result, session
+            try:
+
+                query = extract_sql_text(query)
+                if query == None:
+                    return {"error": "Invalid query!"}, False
+                # try:
+                with Connection().session() as session:
+                    result = session.exec(text(query)).mappings().all()
+                    return result, session
+            except:
+                return {"error": "Invalid query, try again!"}, False
+
         # except:
         # return {"error": "Invalid query!"}, False
         else:
@@ -319,13 +326,100 @@ class DataBase(metaclass=Singleton):
     def get_paper_by_name(self, query):
         with Connection().session() as session:
             # Use ilike for case-insensitive search
-            statement = select(Author).where(
-                or_(Author.name.ilike(f"%{query}%"), Author.author_id.ilike(f"%{query}%"))
+            statement = select(Publication).where(
+                or_(
+                    Publication.title.ilike(f"%{query}%"), Publication.result_id.ilike(f"%{query}%")
+                )
             )
             res = session.exec(statement).all()
             arr = [auth.jsonserialize() for auth in res]
-
             return arr, session
+
+    def search_publications(self, query_text):
+        with Connection().session() as session:
+            old_query_text = query_text
+            query_text = to_sql_match(query_text)
+            # Construct the SQL queries
+            sql_query = """
+                    SELECT p.result_id, p.title, p.snippet,
+                        MATCH(p.title) AGAINST (:query_text IN BOOLEAN MODE) AS relevance,
+                        GROUP_CONCAT(a.name SEPARATOR ', ') AS authors
+                    FROM publication p
+                    LEFT JOIN publicationauthorlink pal ON p.result_id = pal.publication_id
+                    LEFT JOIN author a ON pal.author_id = a.author_id
+                    WHERE MATCH(p.title) AGAINST (:query_text IN BOOLEAN MODE)
+                    GROUP BY p.result_id
+                    ORDER BY relevance DESC
+            """
+            sql_query_2 = """
+                SELECT p.result_id, p.title, p.snippet,
+                    MATCH(p.title) AGAINST (:query_text IN NATURAL LANGUAGE MODE) AS relevance,
+                    GROUP_CONCAT(a.name SEPARATOR ', ') AS authors
+                FROM publication p
+                LEFT JOIN publicationauthorlink pal ON p.result_id = pal.publication_id
+                LEFT JOIN author a ON pal.author_id = a.author_id
+                WHERE p.title LIKE :like_query_text
+                OR p.snippet LIKE :like_query_text
+                GROUP BY p.result_id
+                UNION ALL
+                SELECT p.result_id, p.title, p.snippet,
+                    MATCH(p.snippet) AGAINST (:query_text IN NATURAL LANGUAGE MODE) AS relevance,
+                    GROUP_CONCAT(a.name SEPARATOR ', ') AS authors
+                FROM publication p
+                LEFT JOIN publicationauthorlink pal ON p.result_id = pal.publication_id
+                LEFT JOIN author a ON pal.author_id = a.author_id
+                WHERE p.title LIKE :like_query_text
+                OR p.snippet LIKE :like_query_text
+                GROUP BY p.result_id
+                UNION ALL
+                SELECT p.result_id, p.title, p.snippet,
+                    (MATCH(p.title) AGAINST (:query_text IN BOOLEAN MODE) * 1) AS relevance,
+                    GROUP_CONCAT(a.name SEPARATOR ', ') AS authors
+                FROM publication p
+                LEFT JOIN publicationauthorlink pal ON p.result_id = pal.publication_id
+                LEFT JOIN author a ON pal.author_id = a.author_id
+                WHERE MATCH(p.title) AGAINST (:query_text IN BOOLEAN MODE)
+                GROUP BY p.result_id
+                UNION ALL
+                SELECT p.result_id, p.title, p.snippet,
+                    MATCH(p.snippet) AGAINST (:query_text IN BOOLEAN MODE) AS relevance,
+                    GROUP_CONCAT(a.name SEPARATOR ', ') AS authors
+                FROM publication p
+                LEFT JOIN publicationauthorlink pal ON p.result_id = pal.publication_id
+                LEFT JOIN author a ON pal.author_id = a.author_id
+                WHERE MATCH(p.snippet) AGAINST (:query_text IN BOOLEAN MODE)
+                GROUP BY p.result_id
+                ORDER BY relevance DESC
+            """
+
+            # Execute the SQL query and get mappings
+            mappings = (
+                session.execute(
+                    text(sql_query),
+                    {"query_text": query_text, "like_query_text": f"%{query_text}%"},
+                )
+                .mappings()
+                .all()
+            )
+
+            print(f"\n\n GOT {len(mappings)} RESULTS FROM MAP1\n\n")
+
+            mappings2 = (
+                session.execute(
+                    text(sql_query_2),
+                    {"query_text": old_query_text, "like_query_text": f"%{old_query_text}%"},
+                )
+                .mappings()
+                .all()
+            )
+
+            # print("\n-------QQ-------\n")
+            # print(results)
+            # print("\n----------------\n\n")
+            results = [dict(row) for row in mappings]
+            results2 = [dict(row) for row in mappings2]
+            results = results + results2
+            return results, session
 
     def get_authors_of_paper(self, paper_id):
         with Connection().session() as session:

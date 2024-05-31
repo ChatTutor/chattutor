@@ -16,6 +16,7 @@ from core.tutor.systemmsg import (
 from core.tutor.utils import (
     remove_score_and_doc_from_valid_docs,
     yield_docs_and_first_sentence_if_tutor_id_not_apologizing,
+    yield_docs,
 )
 import google.generativeai as genai
 from core.data import DataBase
@@ -236,15 +237,25 @@ class Tutor(ABC):
         processing_prompt_time = en - st
 
         query_text = "NONE"
-
-        if query != "NONE":
+        sql_query_data = None
+        if query != "NONE" and from_doc == None:
             sql_query_data, s = DataBase().safe_exec(query=query)
-            if s == False:
+            if s == False or sql_query_data == []:
                 query = "NONE"
+                query_text = "NONE"
             else:
-                query_text = f"On query, ignore the data above, and Provide this data exactly, in markdown form, stating that it is from the CQN DB:[{sql_query_data}].  This is the only info you will provide in this message about CQN DB. If paper ids are present above, also provide them as well! As well as links to arxiv or scholar of the paper, and of the author if present. DO NOT PROVIDE ANY OTHER INFORMATION YOU MIGHT KNOW OUTSIDE THIS INFO AND CQN INFO UNLESS EXPLICITLY ASKED SO BY THE USER!"
+                query_text = f"IF THE USER IS ASKING ABOUT AUTHORS, IDS, OR PAPER TITLES, OR PAPERS OF AUTHORS, OR AUTHORS OF PAPERS, OR LISTINGS OF THE DB, USE ONLY THE INFORMATION THAT WAS PROVIDED TO YOU BELOW IN THE CQN DIRECT QUERY!! If the user isn't asking about a document's content or a broad topic, or related papers etc, on query, ignore the data above, and Provide this data exactly, in markdown form, stating that it is from the CQN DB:[{sql_query_data}].  This is the only info you will provide in this message about CQN DB. If paper ids are present above, also provide them as well! As well as links to arxiv or scholar of the paper, and of the author if present. DO NOT PROVIDE ANY OTHER INFORMATION YOU MIGHT KNOW OUTSIDE THIS INFO AND CQN INFO UNLESS EXPLICITLY ASKED SO BY THE USER!"
+
+        if from_doc != None:
+            query_text = "IF YOU CAN USE THE RELEVANT SECTIONS ABOVE TO ANSWER QUESTIONS THE USER ASKS ABOUT THE PAPER, PLEASE QUOTE THE PART OF THE DOCUMENT YOU GOT YOUR INFO FROM. DO NOT COPY-PASTE THE WHOLE DOCUMENTS. OTHERWISE STATE THAT IT'S GENERAL KNOWLEDGE/WELL KNOWN, IF THE INFORMATION IS NOT FROM THE ABOVE DOCUMENTS/PAPERS. IF THE INFORMATION ASKED BY THE USER IS NOT STATED IN THE ABOVE DOCUMENTS, FEEL FREE TO USE YOUR OWN KNOWLEDGE, HOWEVER STATE THAT YOU DID SO, AND THAT YOU CAN'T FIND THE ANSWER IN THE PAPER, NEVERTHELESS ANSWER THE QUESTION, AND STATE THAT IF THE USER WANTS TO SEARCH FOR THIS TOPIC IN THE PAPER HE SHOULD BE MORE PRECISE WITH HIS QUERY. DO NOT LET THE USER WITHOUT AN ANSWER! DO NOT LET THE USER WITH NO ANSWER! HELP THE USER FIND THE ANSWER TO HIS/HER QUESTION!!! "
 
         pprint(red("SQL_QUERY\n\n"), green(sql_query_data))
+
+        print("\n\n\n----------\n")
+        pprint("VALID_DOCS:\n", red(valid_docs))
+
+        print("\n----------\n\n\n")
+        print(green(messages[0]["content"]))
 
         print(red(query_text))
         try:
@@ -252,9 +263,16 @@ class Tutor(ABC):
             if pipeline == "gemini":
                 response = self.chat.send_message(
                     [
-                        # messages[0]["content"],
-                        "User - question: " + messages[-1]["content"],
-                        ("Be as concise as possible!" if query_text == "NONE" else query_text),
+                        # these are the valid docs
+                        messages[0]["content"],
+                        (
+                            "Be as concise as possible! USE ONLY THE INFORMATION THAT WAS PROVIDED TO YOU IN THESE MESSAGES!! "
+                            if query_text == "NONE"
+                            else "CQN DIRECT QUERY: "
+                            + query_text
+                            + " PRESENT THIS IN A USER FRIENDLY ERROR NOT OMMITING ANY DATA FROM IT! IF THE USER ASKS ABOUT A TOPIC/ PROCEDURE/ EFFECT/ OR SOMETHING THAT COULD BE CONTAINED IN A PAPER, USE THE RELEVANT SECTIONS TO RESPOND ACCORDINGLY."
+                        ),
+                        "Use the data above to answer this question: " + messages[-1]["content"],
                     ],
                     stream=True,
                 )
@@ -284,32 +302,26 @@ class Tutor(ABC):
                     except:
                         chunk = {"choices": [{"delta": {"content": "~"}}]}
                 print(chunk)
-                # cache first setences to process it content and decide later on if we send or not documents
 
+                # cache first setences to process it content and decide later on if we send or not documents
                 print(first_sentence)
                 print(len(first_sentence))
-                # if len(first_sentence) < 20:
-                #     first_sentence += chunk["choices"][0]["delta"]["content"]
-                #     # yield chunk["choices"][0]["delta"]
-                #     continue
-                # print("yielding")
-                # print(first_sentence)
-                # print(len(first_sentence))
+                # ifx
+                print("yielding")
+                print(first_sentence)
+                print(len(first_sentence))
 
                 # process first sentence
-                # if len(first_sentence) >= 20 and not first_sentence_processed:
-                #     first_sentence_processed = True
-                #     first_sentence += chunk["choices"][0]["delta"]["content"]
-                #     print("first_sentence", green(first_sentence))
-                #     for yielded_chain in yield_docs_and_first_sentence_if_tutor_id_not_apologizing(
-                #         first_sentence, valid_docs
-                #     ):
-                #         yielded_chain["elapsed_time"] = elapsed_time
-                #         yielded_chain["processing_prompt_time"] = processing_prompt_time
-                #         yield yielded_chain
-                #     continue
+                if not first_sentence_processed:
+                    first_sentence_processed = True
+                    first_sentence += chunk["choices"][0]["delta"]["content"]
+                    print("first_sentence", green(first_sentence))
+                    for yielded_chain in yield_docs(valid_docs):
+                        yielded_chain["elapsed_time"] = elapsed_time
+                        yielded_chain["processing_prompt_time"] = processing_prompt_time
+                        yield yielded_chain
 
-                # print("yielded\n")
+                print("yielded\n")
 
                 yield chunk["choices"][0]["delta"]
         except Exception as e:

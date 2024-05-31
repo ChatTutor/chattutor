@@ -15,6 +15,7 @@ export class ChatWindowComponent implements OnInit{
     @Input() collections: string[] | undefined = ['cqn_ttvv']
     @Input() restrictToDocument: any = undefined
     @Input() type: any
+    @Input() chat_title: string = "ChatTutor"
     documentInfo: any = undefined
     loadingFiles: boolean = false
     status: WStatus = WStatus.Idle

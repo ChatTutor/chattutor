@@ -70,6 +70,29 @@ def get_authors_by_name():
     return jsonify({"data": res})
 
 
+@data_bp.route("/get_papers_by_name", methods=["GET", "POST"])
+def get_papers_by_name():
+    result = request.json
+    a_name = result.get("paper_name", None)
+    res, _ = DataBase().get_paper_by_name(a_name)
+    res2, _ = DataBase().search_publications(a_name)
+    return jsonify({"data": res + res2})
+
+
+@data_bp.route("/get_papers_by_query", methods=["GET", "POST"])
+def get_papers_by_query():
+    print("aaaaaaa\n")
+    result = request.json
+    a_name = result.get("paper_query", None)
+    res, _ = DataBase().search_publications(a_name)
+
+    print("\n\n-----------\n")
+    print(res)
+    print("\n-----------\n\n")
+
+    return jsonify({"data": res})
+
+
 @data_bp.route("/get_authors_for_papers", methods=["POST"])
 def get_authors_for_papers():
     result = request.json

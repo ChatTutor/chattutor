@@ -2,7 +2,7 @@
     <div class="pad">
         <!-- <h3>CQN Papers Explorer</h3> -->
         <mat-form-field class="input-container">
-            <textarea matInput [(ngModel)]="request" placeholder="Query the CQN DB..."
+            <textarea matInput [(ngModel)]="request" placeholder="Query the CQN papers' contents / titles / authors..."
             cdkTextareaAutosize
             #autosize="cdkTextareaAutosize"
             cdkAutosizeMinRows="1"
@@ -92,8 +92,11 @@
     </div>
     <div class="container full over">
         
-        <mat-form-field class="input-container">
-            <textarea matInput [(ngModel)]="author_input" placeholder="Search Authors by Name..."
+        <mat-form-field class="input-container" style="position: sticky;
+        top: 0;
+        margin: 1rem 1rem;
+        padding: 0.5rem;">
+            <textarea matInput [(ngModel)]="author_input" placeholder="Search Authors/Papers by Name/ID..."
             cdkTextareaAutosize
             #autosize="cdkTextareaAutosize"
             cdkAutosizeMinRows="1"
@@ -101,8 +104,12 @@
 
             
 
-            <button mat-icon-button color="primary" matSuffix class="b1" (click)="search_authors()">
-              <mat-icon class="icon-display">search</mat-icon>
+            <button mat-icon-button color="primary" matSuffix class="b1" matTooltip="Search Authors by Name/ID" (click)="search_authors()">
+              <mat-icon class="icon-display">person_pin</mat-icon>
+            </button>
+
+            <button mat-icon-button color="primary" matSuffix class="b1" matTooltip="Search Papers by Title/ID" (click)="search_papers()">
+                <mat-icon class="icon-display">search</mat-icon>
             </button>
             
         </mat-form-field>

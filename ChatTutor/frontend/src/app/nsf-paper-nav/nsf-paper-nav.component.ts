@@ -21,6 +21,7 @@ export class NsfPaperNavComponent implements OnInit{
   displayed_papers : any = []
   displayed_papers_author : any
 
+
   constructor(
     private dataProvider : DataProviderService) {
 }
@@ -44,6 +45,26 @@ export class NsfPaperNavComponent implements OnInit{
     } else {
       let author_data = await this.dataProvider.nsfGetAllAuthorsByName(this.author_input)
       this.displayed_authors = author_data["data"]
+    }
+  }
+
+
+  async search_papers() {
+    if (this.author_input.length <= 2) {
+      this.displayed_authors = this.all_authors;
+    } else {
+      
+      let paper_data = await this.dataProvider.nsfGetAllPapersByName(this.author_input)
+      this.displayed_authors = []
+      this.displayed_papers = paper_data["data"].map((x: any) => {
+        return {metadata: {info: {
+          paper: x
+        }}}
+      })
+      console.log(this.displayed_papers)
+      this.displayed_papers_author = {name : "Results for: `" + this.author_input + "`"}
+      this.show_back_button = true
+
     }
   }
   

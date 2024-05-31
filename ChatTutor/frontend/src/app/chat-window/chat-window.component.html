@@ -7,7 +7,7 @@
       </script>
     <div class="chat-messages">
         <div class="chat-header-title">
-            <a href="/"><h3>ChatTutor</h3></a>
+            <a href="/"><h3>{{chat_title}}</h3></a>
             <div *ngIf="restrictToDocument != undefined">
                 Restriced to <span>{{restrictToDocument.metadata.doc}}</span>
                 <button mat-button (click)="clearRestriction()">
