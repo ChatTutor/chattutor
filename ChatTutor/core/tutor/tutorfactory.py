@@ -91,7 +91,9 @@ class TutorFactory:
             case NSFTutorType.NSF_CQN:
                 chattutor = CQNTutor(self.db, "-- RANDOM DB NAME --")
             case NSFTutorType.NSF_SQL:
-                chattutor = SQLQueryTutor(self.db, gemini=False)
+                chattutor = SQLQueryTutor(
+                    self.db, gemini=False
+                )  # Here, to change from openai to gemini
             case _:
                 # exception here!
                 pass

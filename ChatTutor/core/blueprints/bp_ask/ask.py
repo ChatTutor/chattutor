@@ -100,6 +100,11 @@ def ask():
     _chattutor = tutorfactory.build_empty(tutor_type)
     if collection_name != None and collection_name != []:
         _chattutor = tutorfactory.build(tutor_type, collection_name, collection_desc)
+
+    # TO change from openai to gemini,
+    # 1. change pipeline to 'gemini' here,
+    # 2. and in tutorfactory.py (core/tutor/), line 94, change gemini to True
+    #    in SQLQueryTutor's constructor instance
     generate = _chattutor.stream_response_generator(
         conversation, pulling_from, selected_model, pipeline="openai"
     )
