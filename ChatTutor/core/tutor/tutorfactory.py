@@ -91,7 +91,7 @@ class TutorFactory:
             case NSFTutorType.NSF_CQN:
                 chattutor = CQNTutor(self.db, "-- RANDOM DB NAME --")
             case NSFTutorType.NSF_SQL:
-                chattutor = SQLQueryTutor(self.db)
+                chattutor = SQLQueryTutor(self.db, gemini=False)
             case _:
                 # exception here!
                 pass

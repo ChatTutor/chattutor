@@ -14,14 +14,20 @@ from core.data import DataBase
 
 class SQLQueryTutor(Tutor):
     def __init__(
-        self, embedding_db, embedding_db_name="CQN database", engineer_prompts=True, gemini=True
+        self,
+        embedding_db,
+        embedding_db_name="CQN database",
+        engineer_prompts=True,
+        gemini=True,
+        prequery=True,
     ):
+        self.prequery = prequery
         self.gemini = gemini
         super().__init__(embedding_db, embedding_db_name, cqn_system_message, engineer_prompts)
 
     def get_required_level_of_information(self, prompt, explain=False):
-        if self.gemini == False:
-            return self.get_required_level_of_information_openai(prompt, explain)
+        # if self.gemini == False:
+        #     return self.get_required_level_of_information_openai(prompt, explain)
         respond_with = ""
         if explain:
             respond_with = "Explain why"
@@ -148,8 +154,8 @@ class SQLQueryTutor(Tutor):
         return required_level_of_information.text
 
     def get_required_type_of_information(self, prompt, explain=False):
-        if self.gemini == False:
-            return self.get_required_level_of_information_openai(prompt, explain)
+        # if self.gemini == False:
+        #     return self.get_required_level_of_information_openai(prompt, explain)
         respond_with = ""
         if explain:
             respond_with = "Explain why"
@@ -186,6 +192,7 @@ class SQLQueryTutor(Tutor):
     def process_prompt(
         self, conversation, from_doc=None, threshold=0.5, limit=3, pipeline="openai"
     ):
+
         # Ensuring the last message in the conversation is a user's question
         assert (
             conversation[-1]["role"] == "user"
@@ -280,7 +287,13 @@ class SQLQueryTutor(Tutor):
                         pprint(green(doc), dist, "\n")
                         # if no fromdoc specified, and distance is lowe thhan thersh, add to array of possible related documents
                         # if from_doc is specified, threshold is redundant as we have only one possible doc
-                        if dist <= threshold or from_doc != None or pipeline == "gemini":
+                        if (
+                            dist <= threshold
+                            or from_doc != None
+                            or pipeline == "gemini"
+                            or pipeline
+                            == "openai"  # here remove it distance is w/ openai embeddings
+                        ):
                             arr.append(
                                 {
                                     "coll_desc": coll_desc,
@@ -385,4 +398,53 @@ class SQLQueryTutor(Tutor):
         # messages[-1]["content"] += required_level_of_information
         print("\n\n-----SQL QUERY-----\n\n")
         print(required_level_of_information)
+
+        # ------------------------------
+
+        if self.prequery:
+            query = required_level_of_information
+            query_text = "NONE"
+            sql_query_data = None
+            if query != "NONE" and from_doc == None:
+                sql_query_data, s = DataBase().safe_exec(query=query)
+                if s == False or sql_query_data == []:
+                    query = "NONE"
+                    query_text = "NONE"
+                else:
+                    query_text = f"IF THE USER IS ASKING ABOUT AUTHORS, IDS, OR PAPER TITLES, OR PAPERS OF AUTHORS, OR AUTHORS OF PAPERS, OR LISTINGS OF THE DB, USE ONLY THE INFORMATION THAT WAS PROVIDED TO YOU BELOW IN THE CQN DIRECT QUERY!! If the user isn't asking about a document's content or a broad topic, or related papers etc, on query, ignore the data above, and Provide this data exactly, in markdown form, stating that it is from the CQN DB:[{sql_query_data}].  This is the only info you will provide in this message about CQN DB. If paper ids are present above, also provide them as well! As well as links to arxiv or scholar of the paper, and of the author if present. DO NOT PROVIDE ANY OTHER INFORMATION YOU MIGHT KNOW OUTSIDE THIS INFO AND CQN INFO UNLESS EXPLICITLY ASKED SO BY THE USER!"
+
+            if from_doc != None:
+                query_text = "IF YOU CAN USE THE RELEVANT SECTIONS ABOVE TO ANSWER QUESTIONS THE USER ASKS ABOUT THE PAPER, PLEASE QUOTE THE PART OF THE DOCUMENT YOU GOT YOUR INFO FROM. DO NOT COPY-PASTE THE WHOLE DOCUMENTS. OTHERWISE STATE THAT IT'S GENERAL KNOWLEDGE/WELL KNOWN, IF THE INFORMATION IS NOT FROM THE ABOVE DOCUMENTS/PAPERS. IF THE INFORMATION ASKED BY THE USER IS NOT STATED IN THE ABOVE DOCUMENTS, FEEL FREE TO USE YOUR OWN KNOWLEDGE, HOWEVER STATE THAT YOU DID SO, AND THAT YOU CAN'T FIND THE ANSWER IN THE PAPER, NEVERTHELESS ANSWER THE QUESTION, AND STATE THAT IF THE USER WANTS TO SEARCH FOR THIS TOPIC IN THE PAPER HE SHOULD BE MORE PRECISE WITH HIS QUERY. DO NOT LET THE USER WITHOUT AN ANSWER! DO NOT LET THE USER WITH NO ANSWER! HELP THE USER FIND THE ANSWER TO HIS/HER QUESTION!!! "
+
+            pprint(red("SQL_QUERY\n\n"), green(sql_query_data))
+
+            print("\n\n\n----------\n")
+            pprint("VALID_DOCS:\n", red(valid_docs))
+
+            print("\n----------\n\n\n")
+            print(green(messages[0]["content"]))
+
+            print(red(query_text))
+            messages[0]["content"] += (
+                "Be as concise as possible! USE ONLY THE INFORMATION THAT WAS PROVIDED TO YOU IN THESE MESSAGES!! "
+                if query_text == "NONE"
+                else "CQN DIRECT QUERY: "
+                + query_text[:12000]
+                + " PRESENT THIS IN A USER FRIENDLY ERROR NOT OMMITING ANY DATA FROM IT! IF THE USER ASKS ABOUT A TOPIC/ PROCEDURE/ EFFECT/ OR SOMETHING THAT COULD BE CONTAINED IN A PAPER, USE THE RELEVANT SECTIONS TO RESPOND ACCORDINGLY."
+            )
+            messages[0][
+                "content"
+            ] += """
+                \n!!! DO NOT USE ANYTHING ELSE OTHER THAN THE DATA ABOVE TO PROVIDE THE USER WITH ANSWEARS!!!!
+                PAPERS IN THE INDUSTRY. IF YOU USE ANY OTHER INFORMATION OTHER THAN WHAT WAS PROVIDED ABOVE, YOU WILL CONFUSE THE USER WITH INCORRECT AND INCONSISTANT DATA DATA.
+                THE USER ONLY CARES ABOUT DATA PROVIDED HERE IN THA SYSTEM MESSAGE, AS THEY ARE EXACT QUERIES FROM THE CQN DATABASE! ANYTHING ELSE, AND ANY OTHER PAPERS WILL MAKE
+                THE USER UNHAPPY. IF YOU PROVIDE ANYTHING ELSE THAN THE PAPERS / QUERIES ABOVE TO THE USER, BAD THING WILL HAPPEN. 
+            """
+            pprint(green("\n\n----------------------\n\n"))
+
+            pprint(red("SYSTEM MESSAGE\n\n"))
+            pprint(green(messages[0]["content"]))
+            pprint("\n\n----------------------\n\n")
+            return messages, vd
+
         return {"messages": messages, "query": required_level_of_information}, vd

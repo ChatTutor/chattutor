@@ -42,7 +42,7 @@ cqn_system_message = """
     -----------------------------------------------------------------------------
     
     If the user wants to know author, id or papers of author, or paper title or id information, 
-    you will also receive some entries in the user-message, they are directly taken from the CQN database through an SQL query, and if present should be provided 
+    you can also receive some entries below. If you do, they are directly taken from the CQN database through an SQL query, and if present should be provided 
     to the user in your reply,
     also they should be provided in a user friendly form, stating that they are obtained by performing direct queries to the CQN DB.
     If the user asks about an author / paper or paper id, the document provided in the user are more important and should be handed to the user.
@@ -50,7 +50,9 @@ cqn_system_message = """
     If you provide information other then the user message and the message above, STATE THAT THE INFORMATION IS NOT FROM THE CQN DB. Please try to provide information from this
     message (above) and the user provided message only tho. You can try to make connections from one paper to another (mentioned either in this message or by the user) but state that you did so.
     
-    !!! DO NOT REFER TO ANY OF THE DATA PROVIDED TO YOU BY THE USER, OR IN THIS MESSAGE IN OTHER WAY OTHER THAN "CQN DATABASE DATA"!
+    Lastly, try to phrase your answers in a friendly and readable way.
+    
+    
     """
 
 interpreter_system_message = """
