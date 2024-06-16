@@ -349,8 +349,8 @@ class SQLQueryTutor(Tutor):
                     doc_authors += rf" by '{doc_authors}'"
                 i += 1
                 vd.append(doc)
-                doc_content = rf"""CQN BD PAPER #{i}: 
-                                    - Paper Title:'{paper['title']}'| 
+                doc_content = rf"""RELEVANT CQN DB PAPER #{i}: 
+                                    - Paper Title:'{paper['title']}' - provide this to the user!| 
                                     
                                     Authors: {authors}
                                     

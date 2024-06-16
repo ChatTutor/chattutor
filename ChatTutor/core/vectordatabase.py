@@ -83,7 +83,7 @@ class VectorDatabase:
         provider of the database: either \'chroma\' or ~~\'deeplake\'~~
     """
 
-    def __init__(self, path, db_provider, hosted=True, ef="gemini"):
+    def __init__(self, path, db_provider, hosted=True, ef="gemini"):  # TODO: ef = openai
         self.path = path
         self.hosted = hosted
         self.db_provider = db_provider
@@ -125,6 +125,7 @@ class VectorDatabase:
             openai_ef = embedding_functions.OpenAIEmbeddingFunction(
                 model_name="text-embedding-ada-002"
             )
+
         self.datasource = self.client.get_or_create_collection(
             name=collection_name, embedding_function=openai_ef
         )
