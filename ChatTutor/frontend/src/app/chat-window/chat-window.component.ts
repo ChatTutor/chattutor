@@ -12,7 +12,7 @@ import { environment } from '../../environments/environment';
 })
 export class ChatWindowComponent implements OnInit{
     messages: Message[] = [];
-    @Input() collections: string[] | undefined = ['cqn_ttvv']
+    @Input() collections: string[] | undefined = ['cqn_openaicol_ttv']
     @Input() restrictToDocument: any = undefined
     @Input() type: any
     @Input() chat_title: string = "ChatTutor"

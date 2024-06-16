@@ -225,13 +225,13 @@ class SQLQueryTutor(Tutor):
         process_limit = 0
         show_limit = 0
 
-        if "cqn_ttvv" in str(self.collections.items()):
+        if "cqn_openaicol_ttv" in str(self.collections.items()):
             for coll_name, coll_desc in self.collections.items():
                 # if is_generic_message:
                 #    continue
                 if self.embedding_db:
                     keep_only_first_x_tokens_for_processing = None  # none means all
-                    if coll_name == "cqn_ttvv" and "TITLE" == required_type_of_information.strip():
+                    if coll_name == "cqn_openaicol_ttv" and "TITLE" == required_type_of_information.strip():
                         pprint(red("TTL"), green(required_type_of_information.strip()))
 
                         self.embedding_db.load_datasource(f"{coll_name}_titles")
@@ -239,7 +239,7 @@ class SQLQueryTutor(Tutor):
                         process_limit = 20  # each basic entry has close to 100 tokens
                         show_limit = 0
                     # elif (
-                    #     coll_name == "cqn_ttvv"
+                    #     coll_name == "cqn_openaicol_ttv"
                     #     and required_level_of_information.strip() ==
                     # ):
                     #     self.embedding_db.load_datasource(f"{coll_name}_authors")
@@ -248,7 +248,7 @@ class SQLQueryTutor(Tutor):
                     #     keep_only_first_x_tokens_for_processing = 200
                     #     show_limit = 3
                     elif (
-                        coll_name == "cqn_ttvv"
+                        coll_name == "cqn_openaicol_ttv"
                         and "CONTENT" == required_type_of_information.strip()
                     ):
                         pprint(red("CONT"), green(required_type_of_information.strip()))
@@ -256,7 +256,7 @@ class SQLQueryTutor(Tutor):
                         query_limit = 10
                         process_limit = 3  # each is close to 800
                         show_limit = 3
-                    elif coll_name == "cqn_ttvv":
+                    elif coll_name == "cqn_openaicol_ttv":
                         pprint(red("DEF"), green(required_type_of_information.strip()))
 
                         self.embedding_db.load_datasource(f"{coll_name}")
