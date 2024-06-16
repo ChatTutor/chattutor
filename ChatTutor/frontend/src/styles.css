@@ -53,6 +53,14 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; }
     flex-direction: row;
 }
 
+.row-cent {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+}
+
 .talk_to_chattutor {
     padding: 10px;
     padding-right: 20px;

@@ -15,6 +15,14 @@ def yield_docs_and_first_sentence_if_tutor_id_not_apologizing(first_sentence: st
         yield {"content": rf" {word}"}
 
 
+def yield_docs(valid_docs=list):
+    # TODO: replace is_tutor_apologizing_or_thanking by a simple questions to simple_gpt in order to know if the answer was related to a paper?
+    # we would need more than the first sentence, and also it might take additional precious time.
+    yield {"content": "", "valid_docs": valid_docs}
+
+    # yield {"role÷: "assistant", "content": f"{first_sentence}"}
+
+
 def truncate_to_x_number_of_tokens(string, num_of_tokens=None):
     if num_of_tokens == None or num_of_tokens == 0:
         return string

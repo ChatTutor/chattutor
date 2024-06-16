@@ -61,14 +61,14 @@ def ask():
     credential_user = data.get("credential_token")
     multiple = data.get("multiple")
 
-    key = data.get('key')
-    ver = data.get('chattutor_version', 'donotaskforkey')
-    user_id = data.get('user_id')
-    if ver != 'donotaskforkey':
+    key = data.get("key")
+    ver = data.get("chattutor_version", "donotaskforkey")
+    user_id = data.get("user_id")
+    if ver != "donotaskforkey":
         acc, _ = DataBase().get_acces_code(code=key, uid=user_id)
         if acc is None:
             # MARK: do not change this
-            print('unauthorised')
+            print("unauthorised")
             return jsonify({"message": "notloggedin"})
 
     print("Asked: ", key, ver)
@@ -100,7 +100,14 @@ def ask():
     _chattutor = tutorfactory.build_empty(tutor_type)
     if collection_name != None and collection_name != []:
         _chattutor = tutorfactory.build(tutor_type, collection_name, collection_desc)
-    generate = _chattutor.stream_response_generator(conversation, pulling_from, selected_model)
+
+    # TO change from openai to gemini,
+    # 1. change pipeline to 'gemini' here,
+    # 2. and in tutorfactory.py (core/tutor/), line 94, change gemini to True
+    #    in SQLQueryTutor's constructor instance
+    generate = _chattutor.stream_response_generator(
+        conversation, pulling_from, selected_model, pipeline="openai"
+    )
     return Response(stream_with_context(generate()), content_type="text/event-stream")
 
 

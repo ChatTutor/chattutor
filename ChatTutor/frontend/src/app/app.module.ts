@@ -9,7 +9,7 @@ import { ChatWindowComponent } from './chat-window/chat-window.component';
 import { InputBoxComponent } from './input-box/input-box.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatListModule } from '@angular/material/list';
-
+import { NsfPaperNavComponent } from './nsf-paper-nav/nsf-paper-nav.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
@@ -44,7 +44,8 @@ import { RegisterStudentPageComponent } from './register-student-page/register-s
 import { GradientBackgroundComponent } from './gradient-background/gradient-background.component';
 import { OAuthCallbackComponent } from './oauth-callback/oauth-callback.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
 import { OAuthModule, AuthConfig, JwksValidationHandler, ValidationHandler, OAuthStorage, OAuthModuleConfig } from 'angular-oauth2-oidc'; // Added
 import { AuthService } from './auth.service';
@@ -52,6 +53,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { UserPasswordResetComponent } from './user-password-reset/user-password-reset.component';
 import { OauthCallbackStudentsComponent } from './oauth-callback-students/oauth-callback-students.component';
 import { UserMessageAnalizerComponent } from './user-message-analizer/user-message-analizer.component';
+import { TextCollapsibleComponent } from './text-collapsible/text-collapsible.component';
 
 const authModuleConfig: OAuthModuleConfig = {
   resourceServer: {
@@ -88,6 +90,8 @@ const authModuleConfig: OAuthModuleConfig = {
     UserPasswordResetComponent,
     OauthCallbackStudentsComponent,
     UserMessageAnalizerComponent,
+    NsfPaperNavComponent,
+    TextCollapsibleComponent,
   ],
     imports: [
         BrowserModule,
@@ -97,6 +101,7 @@ const authModuleConfig: OAuthModuleConfig = {
         MatInputModule,
         MatIconModule,
         MatListModule,
+        MatSidenavModule,
         FormsModule,
         MatDividerModule,
         MatButtonModule,
@@ -110,6 +115,7 @@ const authModuleConfig: OAuthModuleConfig = {
         MatExpansionModule,
         HttpClientModule,
         MatCheckboxModule,
+        MatButtonToggleModule,
         OAuthModule.forRoot(authModuleConfig),
     ],
   providers: [

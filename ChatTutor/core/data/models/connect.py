@@ -1,4 +1,4 @@
-from sqlmodel import Field, Session, SQLModel, create_engine, select, delete
+from sqlmodel import Field, Session, SQLModel, create_engine, select, delete, MetaData, Table
 import os
 import threading
 import functools
@@ -31,6 +31,13 @@ class Singleton(type):
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
 
 
+def drop_table(engine, table_name):
+    metadata = SQLModel.metadata
+    # metadata.create_all(bind=engine)
+    table = Table(table_name, metadata)
+    table.drop(engine)
+
+
 # Python3
 class Connection(metaclass=Singleton):
     def __init__(self) -> None:
@@ -43,8 +50,8 @@ class Connection(metaclass=Singleton):
         )
         self.engine = create_engine(connection_string, echo=True)
         # Only use these when resetting the tables
-        # SQLModel.metadata.drop_all(self.engine)
-        # SQLModel.metadata.create_all(self.engine)
+
+        SQLModel.metadata.create_all(self.engine)
 
     def get_engine(self):
         return self.engine

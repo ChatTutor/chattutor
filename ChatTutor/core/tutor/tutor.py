@@ -16,7 +16,11 @@ from core.tutor.systemmsg import (
 from core.tutor.utils import (
     remove_score_and_doc_from_valid_docs,
     yield_docs_and_first_sentence_if_tutor_id_not_apologizing,
+    yield_docs,
 )
+import google.generativeai as genai
+from core.data import DataBase
+from core.data.parsing.papers.json_papers import JSONPaperParser
 
 
 class Tutor(ABC):
@@ -58,6 +62,8 @@ class Tutor(ABC):
         self.collections = {}
         self.system_message = system_message
         self.engineer_prompts = engineer_prompts
+        self.genai_model = genai.GenerativeModel("gemini-pro")
+        self.chat = self.genai_model.start_chat(history=[])
 
     def add_collection(self, name, desc):
         """Adds a collection to self.collections
@@ -150,11 +156,7 @@ class Tutor(ABC):
 
     @abstractmethod
     def process_prompt(
-        self,
-        conversation,
-        from_doc=None,
-        threshold=0.5,
-        limit=3,
+        self, conversation, from_doc=None, threshold=0.5, limit=3, pipeline="openai"
     ):
         """Abstract function that should
         1. Engineer the prompt based on context (last few messages).
@@ -190,6 +192,7 @@ class Tutor(ABC):
         selectedModel=OPENAI_DEFAULT_MODEL,
         threshold=0.5,
         limit=3,
+        pipeline="openai",
     ):
         """Function that responds to an asked question based
         on the current database and the loaded collections from the database
@@ -222,18 +225,61 @@ class Tutor(ABC):
         """
 
         st = time.time()
-        messages, valid_docs = self.process_prompt(conversation, from_doc, threshold, limit)
+        messages, valid_docs = self.process_prompt(
+            conversation, from_doc, threshold, limit, pipeline=pipeline
+        )
+
+        query = "NONE"
+        if not isinstance(messages, list):
+            query = messages["query"]
+            messages = messages["messages"]
         en = time.time()
         processing_prompt_time = en - st
+
+        # query_text = "NONE"
+        # sql_query_data = None
+        # if query != "NONE" and from_doc == None:
+        #     sql_query_data, s = DataBase().safe_exec(query=query)
+        #     if s == False or sql_query_data == []:
+        #         query = "NONE"
+        #         query_text = "NONE"
+        #     else:
+        #         query_text = f"IF THE USER IS ASKING ABOUT AUTHORS, IDS, OR PAPER TITLES, OR PAPERS OF AUTHORS, OR AUTHORS OF PAPERS, OR LISTINGS OF THE DB, USE ONLY THE INFORMATION THAT WAS PROVIDED TO YOU BELOW IN THE CQN DIRECT QUERY!! If the user isn't asking about a document's content or a broad topic, or related papers etc, on query, ignore the data above, and Provide this data exactly, in markdown form, stating that it is from the CQN DB:[{sql_query_data}].  This is the only info you will provide in this message about CQN DB. If paper ids are present above, also provide them as well! As well as links to arxiv or scholar of the paper, and of the author if present. DO NOT PROVIDE ANY OTHER INFORMATION YOU MIGHT KNOW OUTSIDE THIS INFO AND CQN INFO UNLESS EXPLICITLY ASKED SO BY THE USER!"
+
+        # if from_doc != None:
+        #     query_text = "IF YOU CAN USE THE RELEVANT SECTIONS ABOVE TO ANSWER QUESTIONS THE USER ASKS ABOUT THE PAPER, PLEASE QUOTE THE PART OF THE DOCUMENT YOU GOT YOUR INFO FROM. DO NOT COPY-PASTE THE WHOLE DOCUMENTS. OTHERWISE STATE THAT IT'S GENERAL KNOWLEDGE/WELL KNOWN, IF THE INFORMATION IS NOT FROM THE ABOVE DOCUMENTS/PAPERS. IF THE INFORMATION ASKED BY THE USER IS NOT STATED IN THE ABOVE DOCUMENTS, FEEL FREE TO USE YOUR OWN KNOWLEDGE, HOWEVER STATE THAT YOU DID SO, AND THAT YOU CAN'T FIND THE ANSWER IN THE PAPER, NEVERTHELESS ANSWER THE QUESTION, AND STATE THAT IF THE USER WANTS TO SEARCH FOR THIS TOPIC IN THE PAPER HE SHOULD BE MORE PRECISE WITH HIS QUERY. DO NOT LET THE USER WITHOUT AN ANSWER! DO NOT LET THE USER WITH NO ANSWER! HELP THE USER FIND THE ANSWER TO HIS/HER QUESTION!!! "
+
+        # pprint(red("SQL_QUERY\n\n"), green(sql_query_data))
+
+        # print("\n\n\n----------\n")
+        # pprint("VALID_DOCS:\n", red(valid_docs))
+
+        # print("\n----------\n\n\n")
+        # print(green(messages[0]["content"]))
+
+        # print(red(query_text))
         try:
-            response, elapsed_time = time_it_r(openai.ChatCompletion.create)(
-                model=selectedModel,
-                messages=messages,
-                temperature=0.7,
-                frequency_penalty=0.0,
-                presence_penalty=0.0,
-                stream=True,
-            )
+            response, elapsed_time = [], 0.0
+            if pipeline == "gemini":
+                response = self.chat.send_message(
+                    [
+                        # these are the valid docs
+                        messages[0]["content"],
+                        "Use the data above to answer this question: " + messages[-1]["content"],
+                    ],
+                    stream=True,
+                )
+                elapsed_time = 0.0
+            else:
+                # msgs = [x[:16384] for x in messages]
+                response, elapsed_time = time_it_r(openai.ChatCompletion.create)(
+                    model=selectedModel,
+                    messages=messages,
+                    temperature=0.7,
+                    frequency_penalty=0.0,
+                    presence_penalty=0.0,
+                    stream=True,
+                )
 
             # first_sentence = rf"({required_level_of_information}) "
             first_sentence = ""
@@ -241,25 +287,40 @@ class Tutor(ABC):
 
             valid_docs = valid_docs[0:limit]
             valid_docs = remove_score_and_doc_from_valid_docs(valid_docs)
-
+            pprint(red("VALID DOCS: "))
+            print("\n")
+            pprint(green(valid_docs))
+            print("\n\n\n")
             for chunk in response:
+                # print(chunk)
+                if pipeline == "gemini":
+                    try:
+                        chunk = {"choices": [{"delta": {"content": chunk.text}}]}
+                    except:
+                        chunk = {"choices": [{"delta": {"content": "~"}}]}
+                # print(chunk)
+
                 # cache first setences to process it content and decide later on if we send or not documents
-                if len(first_sentence) < 20:
-                    first_sentence += chunk["choices"][0]["delta"]["content"]
-                    continue
+                # print(first_sentence)
+                # print(len(first_sentence))
+                # # ifx
+                # print("yielding")
+                # print(first_sentence)
+                # print(len(first_sentence))
 
                 # process first sentence
-                if len(first_sentence) >= 20 and not first_sentence_processed:
+                if not first_sentence_processed:
                     first_sentence_processed = True
                     first_sentence += chunk["choices"][0]["delta"]["content"]
                     print("first_sentence", green(first_sentence))
-                    for yielded_chain in yield_docs_and_first_sentence_if_tutor_id_not_apologizing(
-                        first_sentence, valid_docs
-                    ):
+                    for yielded_chain in yield_docs(valid_docs):
                         yielded_chain["elapsed_time"] = elapsed_time
                         yielded_chain["processing_prompt_time"] = processing_prompt_time
+                        pprint(red("\n\tCHAIN:\n"))
+                        pprint(green(yielded_chain))
                         yield yielded_chain
-                    continue
+
+                # print("yielded\n")
 
                 yield chunk["choices"][0]["delta"]
         except Exception as e:
@@ -269,7 +330,7 @@ class Tutor(ABC):
             yield {"content": "", "valid_docs": []}
             # An error occured
             yield {
-                "content": """Sorry, I am not able to provide a response. 
+                "content": """\n\nSorry, I am not able to provide a response. 
                                 
                                 One of three things happened:
                                     - The context you provided was too wide, try to be more concise.
@@ -370,7 +431,11 @@ class Tutor(ABC):
         return response.choices[0].message.content
 
     def stream_response_generator(
-        self, conversation, from_doc: list[str] | None, selectedModel="gpt-3.5-turbo-16k"
+        self,
+        conversation,
+        from_doc: list[str] | None,
+        selectedModel="gpt-3.5-turbo-16k",
+        pipeline="openai",
     ):
         """Returns the generator that generates the response stream of ChatTutor.
 
@@ -384,7 +449,7 @@ class Tutor(ABC):
             # along with the time taken to generate it.
             chunks = ""
             start_time = time.time()
-            resp = self.ask_question(conversation, from_doc, selectedModel)
+            resp = self.ask_question(conversation, from_doc, selectedModel, pipeline=pipeline)
             for chunk in resp:
                 chunk_content = ""
                 if "content" in chunk:

@@ -1,0 +1,136 @@
+.pad {
+    padding: 20px;
+    padding-top: 100px;
+}
+
+.example-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+}
+
+.example-sidenav-content {
+    flex: 1;
+    padding: 16px;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 16px;
+}
+
+.b1 {
+    align-self: flex-end;
+}
+
+.example-sidenav {
+    width: 400px; /* Adjust this value to make the drawer larger or smaller */
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.padding {
+    padding: 5px;
+    padding-left: 10px;
+}
+
+.limited-text {
+    display: -webkit-box; /* Use -webkit-box for flexible box layout */
+    -webkit-box-orient: vertical; /* Set the box orientation to vertical */
+    -webkit-line-clamp: 5; /* Limit the text to 5 lines */
+    overflow: hidden; /* Hide the overflowing content */
+    text-overflow: ellipsis; /* Add ellipsis at the end of the overflowing content */
+    width: 100%; /* Ensure the container has a set width */
+    max-width: 300px; /* Optional: Set a max-width to control the length of displayed text */
+    line-height: 1.2; /* Optional: Adjust the line height for better spacing */
+    height: calc(1.2em * 5); /* Set height based on the number of lines and line height */
+}
+
+.paper-card {
+    margin: 7px;
+    display: flex;
+    flex-direction: column;
+    background-color: #f6f4ff;
+    border-radius: 10px;
+    padding: 10px;
+    overflow: hidden;
+}
+
+
+
+
+.filler {
+    min-height: 700px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.filler span {
+    opacity: 0.6;
+
+}
+
+.filler img {
+    opacity: 0.6;
+
+}
+
+
+.container.full {
+    overflow: scroll;
+    background-color: white !important;
+    position: fixed;
+    z-index: 900000;
+    width: 90vw;
+    height: 90vh;
+    margin-left: 5vw;
+    margin-right: 5vw;
+    margin-top: 5vh;
+    margin-bottom: 5vh;
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+
+.author_card {
+    padding: 10px;
+
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+}
+
+.snippet {
+    color: gray;
+    border-radius: 10px;
+}
+
+.author_card {
+    transition: all 0.1s ease;
+    margin-left: 10px;
+}
+
+.author_card:hover {
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+
+}
+
+.btn {
+    margin-left: 10px;
+}
+
+.author_display {
+    min-width: 45%;
+    margin-right: 15px;
+    min-height: 100%;
+    border-right: 2px solid #bdc5cf;
+}

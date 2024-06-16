@@ -31,7 +31,9 @@ COPY . ./
 
 # Install Python dependencies -- TODO: remove --no-cache-dir
 #RUN #pip install --no-cache-dir -r requirements.txt
-RUN pip install -r requirements.txt
+RUN python3 -m pip install -r requirements.txt
+RUN python3 -m nltk.downloader words
+
 # RUN pip install -r requirements.txt
 
 # Clean up

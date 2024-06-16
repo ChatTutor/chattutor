@@ -1,10 +1,14 @@
 from typing import List
-from sqlalchemy import func
+
+import pymysql.err
+import sqlalchemy.exc
+from sqlalchemy import func, outerjoin
+from sqlalchemy import text
 
 from sqlalchemy import delete
 import json
 from sqlalchemy.orm import joinedload
-
+from sqlalchemy import or_
 from core.data.models import Singleton, Connection, User
 from sqlmodel import Field, Session, SQLModel, create_engine, select, Sequence
 from core.data.models import (
@@ -21,9 +25,25 @@ from core.data.models import (
     MessageUserLink,
 )
 from core.data.models.AccessCodes import AccessCodeModel
+from core.data.models.Author import Author
+from core.data.models.PublicationAuthorLink import PublicationAuthorLink
+from core.data.models.Publication import Publication
+from core.data.models.Citations import Citations
+from core.data.models.PublicationCitationLink import PublicationCitationLink
 from core.data.models.ResetCode import ResetCodeModel
 from core.utils import build_model_from_params
+from core.natlang import to_sql_match
 from sqlalchemy.exc import IntegrityError
+import re
+from sqlalchemy.sql import union_all
+
+
+def extract_sql_text(text):
+    match = re.search(r"```sql\n(.*?)\n```", text, re.DOTALL)
+    if match:
+        return match.group(1)
+    else:
+        return None
 
 
 def message_from_joined(message, user, uuser, c, feeds):
@@ -99,6 +119,30 @@ class DataBase(metaclass=Singleton):
     def __init__(self) -> None:
         print("Initializing DataBase")
 
+    def safe_exec(self, query):
+        if (
+            "SELECT" in query
+            and (not "DELETE" in query)
+            and (not "INSERT" in query)
+            and (not "UPDATE" in query)
+        ):
+            try:
+
+                query = extract_sql_text(query)
+                if query == None:
+                    return {"error": "Invalid query!"}, False
+                # try:
+                with Connection().session() as session:
+                    result = session.exec(text(query)).mappings().all()
+                    return result, session
+            except:
+                return {"error": "Invalid query, try again!"}, False
+
+        # except:
+        # return {"error": "Invalid query!"}, False
+        else:
+            return {"error": "Unsafe query!"}, False
+
     def insert_user(self, user: UserModel):
         """Insert User
 
@@ -110,9 +154,370 @@ class DataBase(metaclass=Singleton):
             session.commit()
             return user, session
 
+    def insert_paper(self, model: Publication, citations: List[Citations], authors: List[Author]):
+        resid = model.result_id
+        with Connection().session() as session:
+
+            print(f"\n\n\nINSERT PAPER:: {model}\n\n\n")
+            existing_pap = session.query(Publication).filter_by(result_id=resid).first()
+            if not existing_pap:
+                session.add(model)
+                session.commit()
+
+        # for cit in citations:
+        #     ciid = cit.citation_id
+        #     with Connection().session() as session:
+        #         session.add(cit)
+        #         try:
+        #             session.commit()
+        #         except pymysql.err.IntegrityError:
+        #             print("[Already]")
+        #         except sqlalchemy.exc.IntegrityError:
+        #             print("[Already]")
+        #     with Connection().session() as session:
+        #         link = PublicationCitationLink(citation_id=ciid, publication_id=resid)
+        #         # session.refresh(link)
+        #         session.add(link)
+        #         try:
+        #             session.commit()
+        #         except pymysql.err.IntegrityError:
+        #             print("[Already]")
+        #         except sqlalchemy.exc.IntegrityError:
+        #             print("[Already]")
+
+        auids = []
+
+        with Connection().session() as session:
+            for au_ind in range(0, len(authors)):
+                au = authors[au_ind]
+
+                auid = au.author_id
+                auids.append(auid)
+                existing_author = session.query(Author).filter_by(author_id=auid).first()
+                if not existing_author:
+                    session.add(au)
+            session.commit()
+
+        with Connection().session() as session:
+            for auid in auids:
+                link = PublicationAuthorLink(author_id=auid, publication_id=resid)
+                existing_link = (
+                    session.query(PublicationAuthorLink)
+                    .filter_by(author_id=auid, publication_id=resid)
+                    .first()
+                )
+                if not existing_link:
+                    session.add(link)
+            session.commit()
+
+    def get_author_by_name_like(self, name_like):
+        with Connection().session() as session:
+            res = session.exec(
+                select(Author).where(Author.name.op("SOUNDS LIKE")(name_like))
+            ).first()
+            print("Response: ", res)
+            if res is None:
+                return None, session
+            return res.jsonserialize(), session
+
+    # def get_papers_written_by(self, author_id=None, author_name=None):
+    #     with Connection().session() as session:
+    #         statement = ""
+    #         if author_name is None:
+    #             statement = (
+    #                 select(Publication, PublicationAuthorLink, Author)
+    #                 .join(
+    #                     PublicationAuthorLink,
+    #                     PublicationAuthorLink.publication_id == Publication.result_id,
+    #                 )
+    #                 .join(Author, Author.author_id == PublicationAuthorLink.author_id)
+    #                 .where(Author.author_id == author_id)
+    #             )
+    #         else:
+    #             statement = (
+    #                 select(Publication, PublicationAuthorLink, Author)
+    #                 .join(
+    #                     PublicationAuthorLink,
+    #                     PublicationAuthorLink.publication_id == Publication.result_id,
+    #                 )
+    #                 .join(Author, Author.author_id == PublicationAuthorLink.author_id)
+    #                 .where(Author.name == author_name)
+    #             )
+
+    #         res = session.exec(statement).all()
+    #         print(f"print models!! {res}")
+    #         arr: List = []
+    #         brr: dict = {}
+    #         for m in res:
+    #             pub_id = m[1].publication_id
+    #             brr[pub_id] = {"paper": [], "author": [], "publication_author_link": []}
+    #         for m in res:
+    #             arr.append({"publication": m[0], "author": m[1], "publication_author_link": m[2]})
+    #             pub_id = m[1].publication_id
+    #             brr[pub_id]["paper"] = m[0].jsonserialize()
+    #             brr[pub_id]["author"].append(m[2].jsonserialize())
+    #             brr[pub_id]["publication_author_link"].append(m[1].jsonserialize())
+    #         crr = []
+    #         for k in brr:
+    #             crr.append(brr[k])
+    #         return brr, session
+    def get_papers_written_by(self, author_id=None, author_name=None):
+        with Connection().session() as session:
+            if author_name is None:
+                statement = (
+                    select(Publication, PublicationAuthorLink, Author)
+                    .join(
+                        PublicationAuthorLink,
+                        PublicationAuthorLink.publication_id == Publication.result_id,
+                    )
+                    .join(Author, Author.author_id == PublicationAuthorLink.author_id)
+                    .where(Author.author_id == author_id)
+                )
+            else:
+                statement = (
+                    select(Publication, PublicationAuthorLink, Author)
+                    .join(
+                        PublicationAuthorLink,
+                        PublicationAuthorLink.publication_id == Publication.result_id,
+                    )
+                    .join(Author, Author.author_id == PublicationAuthorLink.author_id)
+                    .where(Author.name == author_name)
+                )
+
+            res = session.exec(statement).all()
+
+            papers_dict = {}
+            for publication, pub_author_link, author in res:
+                pub_id = pub_author_link.publication_id
+                if not pub_id in papers_dict:
+                    # Fetch all authors for the current publication
+                    all_authors_statement = (
+                        select(Author)
+                        .join(
+                            PublicationAuthorLink,
+                            PublicationAuthorLink.author_id == Author.author_id,
+                        )
+                        .where(PublicationAuthorLink.publication_id == pub_id)
+                    )
+                    all_authors = session.exec(all_authors_statement).all()
+
+                    papers_dict[pub_id] = {
+                        "paper": publication.dict(),
+                        "authors": [author.dict() for author in all_authors],
+                    }
+
+            papers_list = [
+                {"paper": details["paper"], "authors": details["authors"]}
+                for details in papers_dict.values()
+            ]
+            return papers_list, session
+
+    def get_all_authors(self):
+        with Connection().session() as session:
+            statement = select(Author)
+            res = session.exec(statement).all()
+            arr = []
+            for auth in res:
+                arr.append(auth.jsonserialize())
+
+            return arr, session
+
+    def get_author_by_name(self, query):
+        with Connection().session() as session:
+            # Use ilike for case-insensitive search
+            statement = select(Author).where(
+                or_(Author.name.ilike(f"%{query}%"), Author.author_id.ilike(f"%{query}%"))
+            )
+            res = session.exec(statement).all()
+            arr = [auth.jsonserialize() for auth in res]
+
+            return arr, session
+
+    def get_author_by_name_soundslike(self, query):
+        with Connection().session() as session:
+            # Use ilike for case-insensitive search
+            statement = select(Author).where(
+                or_(Author.name.ilike(f"%{query}%"),
+                    Author.author_id.ilike(f"%{query}%"),
+                    Author.name.op('SOUNDS LIKE')(f"{query}"))
+            )
+            res = session.exec(statement).all()
+            arr = [auth.jsonserialize() for auth in res]
+
+            return arr, session
+
+    def get_paper_by_name(self, name):
+        query = name
+        with Connection().session() as session:
+            # Use ilike for case-insensitive search
+            statement = select(Publication).where(
+                or_(
+                    Publication.title.ilike(f"%{query}%"), Publication.result_id.ilike(f"%{query}%")
+                )
+            )
+            res = session.exec(statement).all()
+            arr = [auth.jsonserialize() for auth in res]
+            return arr, session
+
+
+    def get_paper_by_name_soundslike(self, name):
+        query = name
+        with Connection().session() as session:
+            # Use ilike for case-insensitive search
+            statement = select(Publication).where(
+                or_(
+                    Publication.title.ilike(f"%{query}%"), Publication.result_id.ilike(f"%{query}%"),
+                    Publication.title.op('SOUNDS LIKE')(f"{query}")
+                )
+            )
+            res = session.exec(statement).all()
+            arr = [auth.jsonserialize() for auth in res]
+            return arr, session
+
+
+    def get_first_paper_by_name(self, name):
+        query = name
+        with Connection().session() as session:
+            # Use ilike for case-insensitive search
+            statement = select(Publication).where(
+                or_(
+                    Publication.title.ilike(f"%{query}%"), Publication.result_id.ilike(f"%{query}%")
+                )
+            )
+            res = session.exec(statement).first()
+            if res is not None:
+                return res.jsonserialize(), session
+            return None, session
+
+    def search_publications(self, query_text):
+        with Connection().session() as session:
+            old_query_text = query_text
+            query_text = to_sql_match(query_text)
+            # Construct the SQL queries
+            sql_query = """
+                    SELECT p.result_id, p.title, p.snippet,
+                        MATCH(p.title) AGAINST (:query_text IN BOOLEAN MODE) AS relevance,
+                        GROUP_CONCAT(a.name SEPARATOR ', ') AS authors
+                    FROM publication p
+                    LEFT JOIN publicationauthorlink pal ON p.result_id = pal.publication_id
+                    LEFT JOIN author a ON pal.author_id = a.author_id
+                    WHERE MATCH(p.title) AGAINST (:query_text IN BOOLEAN MODE)
+                    GROUP BY p.result_id
+                    ORDER BY relevance DESC
+            """
+            sql_query_2 = """
+                SELECT p.result_id, p.title, p.snippet,
+                    MATCH(p.title) AGAINST (:query_text IN NATURAL LANGUAGE MODE) AS relevance,
+                    GROUP_CONCAT(a.name SEPARATOR ', ') AS authors
+                FROM publication p
+                LEFT JOIN publicationauthorlink pal ON p.result_id = pal.publication_id
+                LEFT JOIN author a ON pal.author_id = a.author_id
+                WHERE p.title LIKE :like_query_text
+                OR p.snippet LIKE :like_query_text
+                GROUP BY p.result_id
+                UNION ALL
+                SELECT p.result_id, p.title, p.snippet,
+                    MATCH(p.snippet) AGAINST (:query_text IN NATURAL LANGUAGE MODE) AS relevance,
+                    GROUP_CONCAT(a.name SEPARATOR ', ') AS authors
+                FROM publication p
+                LEFT JOIN publicationauthorlink pal ON p.result_id = pal.publication_id
+                LEFT JOIN author a ON pal.author_id = a.author_id
+                WHERE p.title LIKE :like_query_text
+                OR p.snippet LIKE :like_query_text
+                GROUP BY p.result_id
+                UNION ALL
+                SELECT p.result_id, p.title, p.snippet,
+                    (MATCH(p.title) AGAINST (:query_text IN BOOLEAN MODE) * 1) AS relevance,
+                    GROUP_CONCAT(a.name SEPARATOR ', ') AS authors
+                FROM publication p
+                LEFT JOIN publicationauthorlink pal ON p.result_id = pal.publication_id
+                LEFT JOIN author a ON pal.author_id = a.author_id
+                WHERE MATCH(p.title) AGAINST (:query_text IN BOOLEAN MODE)
+                GROUP BY p.result_id
+                UNION ALL
+                SELECT p.result_id, p.title, p.snippet,
+                    MATCH(p.snippet) AGAINST (:query_text IN BOOLEAN MODE) AS relevance,
+                    GROUP_CONCAT(a.name SEPARATOR ', ') AS authors
+                FROM publication p
+                LEFT JOIN publicationauthorlink pal ON p.result_id = pal.publication_id
+                LEFT JOIN author a ON pal.author_id = a.author_id
+                WHERE MATCH(p.snippet) AGAINST (:query_text IN BOOLEAN MODE)
+                GROUP BY p.result_id
+                ORDER BY relevance DESC
+            """
+
+            # Execute the SQL query and get mappings
+            mappings = (
+                session.execute(
+                    text(sql_query),
+                    {"query_text": query_text, "like_query_text": f"%{query_text}%"},
+                )
+                .mappings()
+                .all()
+            )
+
+            print(f"\n\n GOT {len(mappings)} RESULTS FROM MAP1\n\n")
+
+            mappings2 = (
+                session.execute(
+                    text(sql_query_2),
+                    {"query_text": old_query_text, "like_query_text": f"%{old_query_text}%"},
+                )
+                .mappings()
+                .all()
+            )
+
+            # print("\n-------QQ-------\n")
+            # print(results)
+            # print("\n----------------\n\n")
+            results = [dict(row) for row in mappings]
+            results2 = [dict(row) for row in mappings2]
+            results = results + results2
+            return results, session
+
+    # def get_paper_by_name(self, name):
+    #     with Connection().session() as session:
+    #         statement = select(Publication).where(Publication.title == name)
+    #         res = session.exec(statement).first()
+    #         if res is None:
+    #             return None, session
+
+    #         return res.jsonserialize(), session
+
+    def get_authors_of_paper(self, paper_id):
+        with Connection().session() as session:
+            statement = ""
+
+            statement = (
+                select(Publication, PublicationAuthorLink, Author)
+                .join(
+                    PublicationAuthorLink,
+                    PublicationAuthorLink.publication_id == Publication.result_id,
+                )
+                .join(Author, Author.author_id == PublicationAuthorLink.author_id)
+                .where(Publication.result_id == paper_id)
+            )
+            res = session.exec(statement).all()
+            print(f"print models!! {res}")
+            arr: List = []
+            brr: dict = {}
+            for m in res:
+                pub_id = m[1].publication_id
+                brr[pub_id] = {"paper": [], "author": [], "publication_author_link": []}
+            for m in res:
+                arr.append({"publication": m[0], "author": m[1], "publication_author_link": m[2]})
+                pub_id = m[1].publication_id
+                brr[pub_id]["paper"] = m[0].jsonserialize()
+                brr[pub_id]["author"].append(m[2].jsonserialize())
+                brr[pub_id]["publication_author_link"].append(m[1].jsonserialize())
+            crr = []
+            for k in brr:
+                crr.append(brr[k])
+            return brr, session
+
     def insert_message(
         self, message: MessageModel | dict, course_collname=None, user_id=None
-    ) -> tuple[MessageModel, Session, List]:
+    ) -> tuple[dict, Session, List]:
         """Insert message in DataBase
 
         Args:
@@ -125,6 +530,7 @@ class DataBase(metaclass=Singleton):
             message: MessageModel = message_oldformat_to_new(message)
         with Connection().session() as session:
             session.add(message)
+            msg_js = message.mes_id
             session.commit()
             # session.refresh(message)
 
@@ -147,7 +553,9 @@ class DataBase(metaclass=Singleton):
 
             # session.refresh(message)
             session.expunge_all()
-            return message, session, ["usr"]
+
+            print(f"xx: {msg_js}")
+            return msg_js, session, ["usr"]
 
     def insert_access_code(
         self, access_code: AccessCodeModel | str
@@ -480,6 +888,49 @@ class DataBase(metaclass=Singleton):
             res = session.exec(statement).all()
             urls = [x.mainpage for x in res]
             return urls
+
+    def get_complete_papers_by_author(self, author_id=None, author_name=None):
+        with Connection().session() as session:
+            statement = ""
+            # if author_name is not None:
+            #     statement = select(
+            #         Publication
+            #     ).join(PublicationAuthorLink, PublicationAuthorLink.publication_id == Publication.result_id)\
+            #         .join(Author, Author.author_id == PublicationAuthorLink.author_id) \
+            #         .group_by(Publication.result_id)
+            # else:
+            #     statement = select(
+            #         Publication
+            #     ).join(PublicationAuthorLink, PublicationAuthorLink.author_id == Publication.result_id) \
+            #         .join(Author, Author.author_id == PublicationAuthorLink.author_id) \
+            #         .group_by(Publication.result_id)
+
+            statement = (
+                select(Publication, PublicationAuthorLink, Author)
+                .join(
+                    PublicationAuthorLink,
+                    PublicationAuthorLink.publication_id == Publication.result_id,
+                )
+                .join(Author, Author.author_id == PublicationAuthorLink.author_id)
+            )
+            print("STATEMENT:", statement)
+            res = session.exec(statement).all()
+            print(f"print models!! {res}")
+            arr: List = []
+            brr: dict = {}
+            for m in res:
+                pub_id = m[1].publication_id
+                brr[pub_id] = {"paper": [], "author": [], "publication_author_link": []}
+            for m in res:
+                arr.append({"publication": m[0], "author": m[1], "publication_author_link": m[2]})
+                pub_id = m[1].publication_id
+                brr[pub_id]["paper"] = m[0].jsonserialize()
+                brr[pub_id]["author"].append(m[2].jsonserialize())
+                brr[pub_id]["publication_author_link"].append(m[1].jsonserialize())
+            crr = []
+            for k in brr:
+                crr.append(brr[k])
+            return brr, session
 
     def get_course_messages_by_user(self, user_id, course_id):
         with Connection().session() as session:

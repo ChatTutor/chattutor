@@ -12,9 +12,10 @@ import { environment } from '../../environments/environment';
 })
 export class ChatWindowComponent implements OnInit{
     messages: Message[] = [];
-    @Input() collections: string[] | undefined = ['test_embedding']
+    @Input() collections: string[] | undefined = ['cqn_openaicol_ttv']
     @Input() restrictToDocument: any = undefined
     @Input() type: any
+    @Input() chat_title: string = "ChatTutor"
     documentInfo: any = undefined
     loadingFiles: boolean = false
     status: WStatus = WStatus.Idle
@@ -87,6 +88,10 @@ export class ChatWindowComponent implements OnInit{
         }
 
         if (this.restrictToDocument != undefined) {
+            console.log("Restricting to:")
+            console.log(this.restrictToDocument)
+            console.log("Restricting>>>>\n")
+
             args.from_doc = this.restrictToDocument.metadata.doc
         }
 

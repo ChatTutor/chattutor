@@ -1,0 +1,6 @@
+<div>
+    <button style="border: none; color: #612ce7" (click)="toggle_collapsed()">Expand</button>
+    <div [class]="is_collapsed ? 'txt-collapsed' : 'txt-collapsed txt-noncollapsed'">
+        {{ text }}
+    </div>
+</div>

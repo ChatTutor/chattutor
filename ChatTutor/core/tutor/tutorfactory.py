@@ -4,6 +4,7 @@ from core.tutor.variants.focusedcoursetutor import FocusedCourseTutor
 from core.tutor.variants.restrictedcoursetutor import RestrictedCourseTutor
 from core.tutor.tutor import Tutor
 from core.tutor.cqntutor import CQNTutor
+from core.tutor.sqlquerytutor import SQLQueryTutor
 
 
 class TutorType(Enum):
@@ -19,6 +20,7 @@ class CourseTutorType(Enum):
 class NSFTutorType(Enum):
     NSF_CQN = 1
     NSF_DEFAULT = 2  # not available for now
+    NSF_SQL = 3
 
 
 class TutorTypes:
@@ -54,7 +56,7 @@ class TutorTypes:
             case "COURSE_RESTRICTED":
                 return CourseTutorType.COURSE_RESTRICTED
             case "NSF_CQN":
-                return NSFTutorType.NSF_CQN
+                return NSFTutorType.NSF_SQL
             case "NSF_DEFAULT":
                 return NSFTutorType.NSF_DEFAULT
             case _:
@@ -88,6 +90,10 @@ class TutorFactory:
         match tutor_subtype:
             case NSFTutorType.NSF_CQN:
                 chattutor = CQNTutor(self.db, "-- RANDOM DB NAME --")
+            case NSFTutorType.NSF_SQL:
+                chattutor = SQLQueryTutor(
+                    self.db, gemini=False
+                )  # Here, to change from openai to gemini
             case _:
                 # exception here!
                 pass

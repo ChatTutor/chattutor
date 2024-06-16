@@ -1,0 +1,901 @@
+{
+    "data": {
+        "-zrwprOafnkJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "-zrwprOafnkJ",
+                "link": "https://ieeexplore.ieee.org/abstract/document/10229003/",
+                "result_id": "-zrwprOafnkJ",
+                "snippet": "\u2026 ACKNOWLEDGMENTS This research was supported by the NSF ERC for Quantum Networks (CQN), awarded under cooperative agreement number 1941583 and by NSF grant CNS-\u2026",
+                "title": "On the capacity region of a quantum switch with entanglement purification"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "-zrwprOafnkJ"
+            }]
+        },
+        "3bXIsG-pePUJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "3bXIsG-pePUJ",
+                "link": "https://arxiv.org/abs/2404.07146",
+                "result_id": "3bXIsG-pePUJ",
+                "snippet": "Losses are one of the main bottlenecks for the distribution of entanglement in quantum networks, which can be overcome by the implementation of quantum repeaters. The most basic \u2026",
+                "title": "On noise in swap ASAP repeater chains: exact analytics, distributions and tight approximations"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "3bXIsG-pePUJ"
+            }]
+        },
+        "4L1lALWYX-QJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "4L1lALWYX-QJ",
+                "link": "https://arxiv.org/abs/2308.15028",
+                "result_id": "4L1lALWYX-QJ",
+                "snippet": "Quantum networks will be able to service consumers with long distance entanglement by use of repeater nodes that can both generate external Bell pairs with their neighbors, iid with \u2026",
+                "title": "Entanglement Routing over Networks with Time Multiplexed Repeaters"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "4L1lALWYX-QJ"
+            }]
+        },
+        "5hnFd9Ln2R8J": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "5hnFd9Ln2R8J",
+                "link": "https://ieeexplore.ieee.org/abstract/document/10437786/",
+                "result_id": "5hnFd9Ln2R8J",
+                "snippet": "\u2026 1A higher number of possible actions can be easily integrated into our model by allowing \u2026 ], which means that no submitted request or QS can increase its utility by swapping its current \u2026",
+                "title": "Matching game for optimized association in quantum communication networks"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "5hnFd9Ln2R8J"
+            }]
+        },
+        "5o8XWOjIjL8J": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "5o8XWOjIjL8J",
+                "link": "https://journals.aps.org/prapplied/abstract/10.1103/PhysRevApplied.19.054029",
+                "result_id": "5o8XWOjIjL8J",
+                "snippet": "\u2026 Networks (CQN), awarded under cooperative agreement number 1941583, for supporting this research. DE also acknowledges funding from the NSF C-ACCEL program. Note added.\u2014\u2026",
+                "title": "Zero-added-loss entangled-photon multiplexing for ground-and space-based quantum networks"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "5o8XWOjIjL8J"
+            }]
+        },
+        "6Ze8AlyMxAkJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "6Ze8AlyMxAkJ",
+                "link": "https://arxiv.org/abs/2109.06248",
+                "result_id": "6Ze8AlyMxAkJ",
+                "snippet": "\u2026 Clearly, for such a code, GS has a block diagonal form where we can express the X-type (resp. Z-type) operators as the rowspace of a matrix [HX, 0] (resp. [0,HZ]), and 0 represents the \u2026",
+                "title": "Distilling GHZ states using stabilizer codes"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "6Ze8AlyMxAkJ"
+            }]
+        },
+        "F_juUcwu5okJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "F_juUcwu5okJ",
+                "link": "https://arxiv.org/abs/2310.06236",
+                "result_id": "F_juUcwu5okJ",
+                "snippet": "\u2026 Furthermore, we show that the phononic bandgap can efficiently suppress phonon-color \u2026 DMR-1231319), NSF ERC (Grant No. EEC-1941583). KK acknowledges financial support \u2026",
+                "title": "Engineering phonon-qubit interactions using phononic crystals"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "F_juUcwu5okJ"
+            }]
+        },
+        "Fatv9-EfDlgJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "Fatv9-EfDlgJ",
+                "link": "https://pubs.aip.org/aip/apl/article-abstract/118/23/230601/39764",
+                "result_id": "Fatv9-EfDlgJ",
+                "snippet": "We demonstrate optical coupling between a single tin-vacancy (SnV) center in diamond and a free-standing photonic crystal nanobeam cavity. The cavities are fabricated using quasi-\u2026",
+                "title": "Coupling of a single tin-vacancy center to a photonic crystal cavity in diamond"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "Fatv9-EfDlgJ"
+            }]
+        },
+        "Fowxb1VLqXEJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "Fowxb1VLqXEJ",
+                "link": "https://arxiv.org/abs/2306.07807",
+                "result_id": "Fowxb1VLqXEJ",
+                "snippet": "The quantum nature of light enables potentially revolutionary communication technologies. Key to advancing this area of research is a clear understanding of the concepts of states, \u2026",
+                "title": "States, Modes, Fields, and Photons in Quantum Optics"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "Fowxb1VLqXEJ"
+            }]
+        },
+        "GJ61AY77RE0J": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "GJ61AY77RE0J",
+                "link": "https://ieeexplore.ieee.org/abstract/document/10313614/",
+                "result_id": "GJ61AY77RE0J",
+                "snippet": "\u2026 ACKNOWLEDGMENT This research was supported in part by the NSF grant CNS1955744, NSF-ERC Center for Quantum Networks grant EEC1941583, and MURI ARO Grant \u2026",
+                "title": "Optimistic Entanglement Purification in Quantum Networks"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "GJ61AY77RE0J"
+            }]
+        },
+        "GL-DRAa_rAQJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "GL-DRAa_rAQJ",
+                "link": "https://repository.arizona.edu/handle/10150/670485",
+                "result_id": "GL-DRAa_rAQJ",
+                "snippet": "\u2026 , and NSF-ERC 1941583. Bane Vasic was also supported by the Jet Propulsion Laboratory, California Institute of Technology, under a contract with the National Aeronautics and Space \u2026",
+                "title": "Generalization Bounds for Neural Normalized Min-Sum Decoders"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "GL-DRAa_rAQJ"
+            }]
+        },
+        "GaPX8iFxEXQJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "GaPX8iFxEXQJ",
+                "link": "https://quantum-journal.org/papers/q-2024-01-24-1233/",
+                "result_id": "GaPX8iFxEXQJ",
+                "snippet": "Recent constructions of quantum low-density parity-check (QLDPC) codes provide optimal scaling of the number of logical qubits and the minimum distance in terms of the code length, \u2026",
+                "title": "Entanglement purification with quantum LDPC codes and iterative decoding"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "GaPX8iFxEXQJ"
+            }]
+        },
+        "HYpUoYweagYJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "HYpUoYweagYJ",
+                "link": "https://journals.aps.org/prapplied/abstract/10.1103/PhysRevApplied.21.014024",
+                "result_id": "HYpUoYweagYJ",
+                "snippet": "\u2026 FA95501610323), and NSF ERC Center for Quantum Networks (Grant No. EEC-1941583). EB and MS acknowledge funding from a NASA Space Technology Research Fellowship. \u2026",
+                "title": "Development of a Boston-area 50-km fiber quantum network testbed"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "HYpUoYweagYJ"
+            }]
+        },
+        "Hw98CcajnhIJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "Hw98CcajnhIJ",
+                "link": "https://arxiv.org/abs/2210.11465",
+                "result_id": "Hw98CcajnhIJ",
+                "snippet": "\u2026 developed as a Education and Workforce Development (EWD) initiative of the NSF ERC Center for Quantum Networks (CQN) and we plan to use it for our outreach activities. Moreover, \u2026",
+                "title": "Measurement-based Quantum Computation as a Tangram Puzzle"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "Hw98CcajnhIJ"
+            }]
+        },
+        "NrRyM-riN7MJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "NrRyM-riN7MJ",
+                "link": "https://www.nature.com/articles/s41565-023-01525-w",
+                "result_id": "NrRyM-riN7MJ",
+                "snippet": "\u2026 The subwavelength confinement of optical fields can remarkably increase the nonlinear \u2026 N00014-19-1-2190); NSF-ERC Center for Quantum Networks (grant no. EEC-1941583). The \u2026",
+                "title": "Adapted poling to break the nonlinear efficiency limit in nanophotonic lithium niobate waveguides"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "NrRyM-riN7MJ"
+            }]
+        },
+        "PI1DZI9JneYJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "PI1DZI9JneYJ",
+                "link": "https://ieeexplore.ieee.org/abstract/document/9518154/",
+                "result_id": "PI1DZI9JneYJ",
+                "snippet": "\u2026 This work is funded by the NSF under grants CCF-1855879 and NSF-ERC 1941583. An extended version of this paper is accessible at: https://arxiv.org/pdf/2012.15297.pdf [1]. \u2026",
+                "title": "Trapping set analysis of finite-length quantum LDPC codes"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "PI1DZI9JneYJ"
+            }]
+        },
+        "PP96VKigdfIJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "PP96VKigdfIJ",
+                "link": "https://arxiv.org/abs/2307.06492",
+                "result_id": "PP96VKigdfIJ",
+                "snippet": "Quantum networks are complex systems formed by the interaction among quantum processors through quantum channels. Analogous to classical computer networks, quantum \u2026",
+                "title": "Universal Quantum Walk Control Plane for Quantum Networks"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "PP96VKigdfIJ"
+            }]
+        },
+        "RYUzqtzzUc8J": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "RYUzqtzzUc8J",
+                "link": "https://ieeexplore.ieee.org/abstract/document/10418200/",
+                "result_id": "RYUzqtzzUc8J",
+                "snippet": "\u2026 , and NSF-ERC 1941583. Bane Vasic was also supported by the Jet Propulsion Laboratory, California Institute of Technology, under a contract with the National Aeronautics and Space \u2026",
+                "title": "Generalization bounds for neural belief propagation decoders"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "RYUzqtzzUc8J"
+            }]
+        },
+        "SVSc1FLUfQYJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "SVSc1FLUfQYJ",
+                "link": "https://arxiv.org/abs/2405.00849",
+                "result_id": "SVSc1FLUfQYJ",
+                "snippet": "\u2026 states onto the code space, she can send Bob\u2019s qubits to him. Since we can see Werner states as perfect Bell pairs going through depolarizing noise, we can use (6) to consider Alice\u2019s \u2026",
+                "title": "Entanglement Routing using Quantum Error Correction for Distillation"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "SVSc1FLUfQYJ"
+            }]
+        },
+        "SrCCDN-mH5AJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "SrCCDN-mH5AJ",
+                "link": "https://arxiv.org/abs/2107.10961",
+                "result_id": "SrCCDN-mH5AJ",
+                "snippet": "\u2026 The optical transition labelled ++ can be excited resonantly by laser pulses to initialize the SiV in |T> via optical pumping, while the +T transition can be driven acoustically to coherently \u2026",
+                "title": "Coherent coupling of mechanics to a single nuclear spin"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "SrCCDN-mH5AJ"
+            }]
+        },
+        "TZyh7p7QQWAJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "TZyh7p7QQWAJ",
+                "link": "https://ieeexplore.ieee.org/abstract/document/9951214/",
+                "result_id": "TZyh7p7QQWAJ",
+                "snippet": "\u2026 The star graph is a simple type of tree for which we can observe the workings of the distribution process and study tomography in detail. We consider the bi-partition of the nodes defined \u2026",
+                "title": "Quantum network tomography with multi-party state distribution"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "TZyh7p7QQWAJ"
+            }]
+        },
+        "Tj22m4DkhQUJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "Tj22m4DkhQUJ",
+                "link": "https://ieeexplore.ieee.org/abstract/document/9605337/",
+                "result_id": "Tj22m4DkhQUJ",
+                "snippet": "\u2026 , the number of time slots over which a repeater can mix-and-match successful links to perform \u2026 We can conjecture that this construction can be extended to arbitrary locations of A and B. \u2026",
+                "title": "Distance-independent entanglement generation in a quantum network using space-time multiplexed greenberger\u2013horne\u2013zeilinger (ghz) measurements"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "Tj22m4DkhQUJ"
+            }]
+        },
+        "Uqwy9x3vhV4J": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "Uqwy9x3vhV4J",
+                "link": "https://ieeexplore.ieee.org/abstract/document/9605308/",
+                "result_id": "Uqwy9x3vhV4J",
+                "snippet": "\u2026 \u2022 We demonstrate how the protocol can be used to recover the behavior of entanglement distribu\u2026 grant CNS-1955834, and NSF-ERC Center for Quantum Networks grant EEC-1941583. \u2026",
+                "title": "A quantum walk control plane for distributed quantum computing in quantum networks"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "Uqwy9x3vhV4J"
+            }]
+        },
+        "ZRpdjGNQMZ4J": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "ZRpdjGNQMZ4J",
+                "link": "https://www.researchsquare.com/article/rs-3603404/latest",
+                "result_id": "ZRpdjGNQMZ4J",
+                "snippet": "\u2026 Furthermore, our new model can be used to design and discover new physical phenomena that involves strong coupling or entanglement among phonons, magnons, and photons33\u2013\u2026",
+                "title": "Dynamical phase-field model of cavity electromagnonic systems"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "ZRpdjGNQMZ4J"
+            }]
+        },
+        "_rXKcyT9cx0J": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "_rXKcyT9cx0J",
+                "link": "https://journals.aps.org/prapplied/abstract/10.1103/PhysRevApplied.17.034071",
+                "result_id": "_rXKcyT9cx0J",
+                "snippet": "\u2026 (CQN), under cooperative agreement number 1941583. SG additionally acknowledges support from ATA, under a NASA-funded research consulting contract. The contributions of SJ \u2026",
+                "title": "Heralded multiplexed high-efficiency cascaded source of dual-rail entangled photon pairs using spontaneous parametric down-conversion"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "_rXKcyT9cx0J"
+            }]
+        },
+        "beca1AEE6OQJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "beca1AEE6OQJ",
+                "link": "https://arxiv.org/abs/2402.05811",
+                "result_id": "beca1AEE6OQJ",
+                "snippet": "\u2026 The significant improvement of the experimental Q factors in this work can be attributed to the use of a high-optical-quality thin film diamond membrane with a smooth surface roughness \u2026",
+                "title": "High-Q Cavity Interface for Color Centers in Thin Film Diamond"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "beca1AEE6OQJ"
+            }]
+        },
+        "caWr1c3howYJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "caWr1c3howYJ",
+                "link": "https://www.nature.com/articles/s41567-024-02409-z",
+                "result_id": "caWr1c3howYJ",
+                "snippet": "\u2026 , can be substantially reduced to increase the fidelity to \u223c80%. The heralding rate of 0.14 s \u22121 in the present work can \u2026 fibre-to-waveguide coupling efficiency can each be improved by a \u2026",
+                "title": "Non-classical microwave\u2013optical photon pair generation with a chip-scale transducer"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "caWr1c3howYJ"
+            }]
+        },
+        "fAhAnfJ5PiQJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "fAhAnfJ5PiQJ",
+                "link": "https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.6.013055",
+                "result_id": "fAhAnfJ5PiQJ",
+                "snippet": "\u2026 (NSF) Engineering Research Center for Quantum Networks (CQN), awarded under cooperative agreement number 1941583, for synergistic research support. SG has outside interests \u2026",
+                "title": "Phonon-induced decoherence in color-center qubits"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "fAhAnfJ5PiQJ"
+            }]
+        },
+        "h80Luph9LpYJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "h80Luph9LpYJ",
+                "link": "https://pubs.aip.org/aip/apl/article-abstract/119/17/171106/40648",
+                "result_id": "h80Luph9LpYJ",
+                "snippet": "We demonstrate two-dimensional photonic crystal cavities operating at telecommunication wavelengths in a single-crystal diamond membrane. We use a high-optical-quality and thin (\u2026",
+                "title": "Telecommunication-wavelength two-dimensional photonic crystal cavities in a thin single-crystal diamond membrane"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "h80Luph9LpYJ"
+            }]
+        },
+        "ksU3Uck_6JcJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "ksU3Uck_6JcJ",
+                "link": "https://ieeexplore.ieee.org/abstract/document/9951266/",
+                "result_id": "ksU3Uck_6JcJ",
+                "snippet": "Quantum teleportation channels can overcome the effects of photonic loss, a major challenge in the implementation of a quantum network over fiber. Teleportation channels are created \u2026",
+                "title": "Scheduling quantum teleportation with noisy memories"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "ksU3Uck_6JcJ"
+            }]
+        },
+        "m0IXvL1sLqsJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "m0IXvL1sLqsJ",
+                "link": "https://quantum-journal.org/papers/q-2021-10-14-562/",
+                "result_id": "m0IXvL1sLqsJ",
+                "snippet": "\u2026 In this paper, we establish a systematic methodology by which one can identify and classify \u2026 We show that the knowledge of QTSs can be used to design better QLDPC codes and de\u2026",
+                "title": "Trapping sets of quantum LDPC codes"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "m0IXvL1sLqsJ"
+            }]
+        },
+        "n5d_KxYInXcJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "n5d_KxYInXcJ",
+                "link": "https://arxiv.org/abs/2307.04300",
+                "result_id": "n5d_KxYInXcJ",
+                "snippet": "\u2026 Our results show that the blockwise strategy can lead to up to $5\\%$ key rate improvement (leading to on average $1.9\\times10^{7}$ more key bits per day) when considering two types \u2026",
+                "title": "Blockwise Key Distillation in Satellite-based Quantum Key Distribution"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "n5d_KxYInXcJ"
+            }]
+        },
+        "oDr6yQ-L8JYJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "oDr6yQ-L8JYJ",
+                "link": "https://ieeexplore.ieee.org/abstract/document/10313926/",
+                "result_id": "oDr6yQ-L8JYJ",
+                "snippet": "The experimental realization of quantum information systems will be difficult due to how sensitive quantum information is to noise. Overcoming this sensitivity is central to designing \u2026",
+                "title": "On the Characterization of Quantum Flip Stars with Quantum Network Tomography"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "oDr6yQ-L8JYJ"
+            }]
+        },
+        "oNpm6mbqQe8J": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "oNpm6mbqQe8J",
+                "link": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.105.052416",
+                "result_id": "oNpm6mbqQe8J",
+                "snippet": "Graph states are a central resource in measurement-based quantum information processing. In the photonic qubit architecture based on Gottesman-Kitaev-Preskill (GKP) encoding, the \u2026",
+                "title": "Coherent manipulation of graph states composed of finite-energy Gottesman-Kitaev-Preskill-encoded qubits"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "oNpm6mbqQe8J"
+            }]
+        },
+        "p_Iazhgdw0AJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "p_Iazhgdw0AJ",
+                "link": "https://journals.aps.org/prx/abstract/10.1103/PhysRevX.12.011056",
+                "result_id": "p_Iazhgdw0AJ",
+                "snippet": "Nuclear spins interact weakly with their environment and therefore exhibit long coherence times. This has led to their use as memory qubits in quantum information platforms, where \u2026",
+                "title": "Mechanical control of a single nuclear spin"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "p_Iazhgdw0AJ"
+            }]
+        },
+        "uLBMER3SXKwJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "uLBMER3SXKwJ",
+                "link": "https://arxiv.org/abs/2312.13559",
+                "result_id": "uLBMER3SXKwJ",
+                "snippet": "\u2026 By matching the duration between the pump pulses, Td = 279ns to the electro-acoustic oscillation period expected from microwave spectroscopy [1], we can achieve orthogonal early \u2026",
+                "title": "Quantum entanglement between optical and microwave photonic qubits"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "uLBMER3SXKwJ"
+            }]
+        },
+        "vFrkkwI32qAJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "vFrkkwI32qAJ",
+                "link": "https://ieeexplore.ieee.org/abstract/document/10273456/",
+                "result_id": "vFrkkwI32qAJ",
+                "snippet": "\u2026 This work is funded by the NSF Center for Quantum Networks (CQN) under the grant NSF-ERC 1941583, partly by NASA through the Jet Propulsion Laboratory\u2019s SURP program, and \u2026",
+                "title": "GHZ Distillation using Quantum LDPC Codes"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "vFrkkwI32qAJ"
+            }]
+        },
+        "wKeTnpZ3k-kJ": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "wKeTnpZ3k-kJ",
+                "link": "https://ieeexplore.ieee.org/abstract/document/9951209/",
+                "result_id": "wKeTnpZ3k-kJ",
+                "snippet": "Quantum switches distribute entangled pairs among end nodes by entanglement swapping and are critical components in quantum networks. In this work, we design protocols that \u2026",
+                "title": "The capacity region of entanglement switching: Stability and zero latency"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "wKeTnpZ3k-kJ"
+            }]
+        },
+        "ymtHymQTeB8J": {
+            "author": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "cqn_pub_id": "bh3aeUoAAAAJ",
+                "link": "https://scholar.google.com/citations?user=bh3aeUoAAAAJ&hl=en&oi=sra",
+                "name": "K Goodenough",
+                "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=bh3aeUoAAAAJ&engine=google_scholar_author&hl=en"
+            }],
+            "paper": {
+                "_sa_instance_state": null,
+                "chroma_doc_id": "ymtHymQTeB8J",
+                "link": "https://arxiv.org/abs/2310.05889",
+                "result_id": "ymtHymQTeB8J",
+                "snippet": "Achieving the ultimate Holevo limit of optical communications capacity requires a joint-detection receiver: a device that makes a collective quantum measurement over multiple \u2026",
+                "title": "Superadditive communications with the green machine: a practical demonstration of nonlocality without entanglement"
+            },
+            "publication_author_link": [{
+                "_sa_instance_state": null,
+                "author_id": "bh3aeUoAAAAJ",
+                "publication_id": "ymtHymQTeB8J"
+            }]
+        }
+    }
+}
