@@ -53,6 +53,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { UserPasswordResetComponent } from './user-password-reset/user-password-reset.component';
 import { OauthCallbackStudentsComponent } from './oauth-callback-students/oauth-callback-students.component';
 import { UserMessageAnalizerComponent } from './user-message-analizer/user-message-analizer.component';
+import { TextCollapsibleComponent } from './text-collapsible/text-collapsible.component';
 
 const authModuleConfig: OAuthModuleConfig = {
   resourceServer: {
@@ -90,6 +91,7 @@ const authModuleConfig: OAuthModuleConfig = {
     OauthCallbackStudentsComponent,
     UserMessageAnalizerComponent,
     NsfPaperNavComponent,
+    TextCollapsibleComponent,
   ],
     imports: [
         BrowserModule,

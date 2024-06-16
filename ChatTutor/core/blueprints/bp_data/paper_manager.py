@@ -148,6 +148,8 @@ class PaperManager:
             print(book["authors"])
             # TODO: decomenteaza if you dare :)))
             DataBase().insert_paper(model=model, citations=citations, authors=authors)
+            # print('add bokiki')
+            # return
 
     @staticmethod
     def add_to_chroma_static(dt: List):

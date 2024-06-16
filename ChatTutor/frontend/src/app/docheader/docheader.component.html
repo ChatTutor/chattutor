@@ -20,7 +20,9 @@
 
                 <div>
                     <div *ngIf="document.metadata.authors">
-                        <p>Authored by {{document.metadata.authors}}</p>
+                        <div *ngFor="let author of document.metadata.authors[document.metadata.doc]['author']">
+                            <span>{{ author['name'] }}&nbsp;,</span>
+                        </div>
                     </div>
 
                     <div *ngIf="document.metadata.published">

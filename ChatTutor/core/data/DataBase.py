@@ -333,6 +333,19 @@ class DataBase(metaclass=Singleton):
 
             return arr, session
 
+    def get_author_by_name_soundslike(self, query):
+        with Connection().session() as session:
+            # Use ilike for case-insensitive search
+            statement = select(Author).where(
+                or_(Author.name.ilike(f"%{query}%"),
+                    Author.author_id.ilike(f"%{query}%"),
+                    Author.name.op('SOUNDS LIKE')(f"{query}"))
+            )
+            res = session.exec(statement).all()
+            arr = [auth.jsonserialize() for auth in res]
+
+            return arr, session
+
     def get_paper_by_name(self, name):
         query = name
         with Connection().session() as session:
@@ -345,6 +358,22 @@ class DataBase(metaclass=Singleton):
             res = session.exec(statement).all()
             arr = [auth.jsonserialize() for auth in res]
             return arr, session
+
+
+    def get_paper_by_name_soundslike(self, name):
+        query = name
+        with Connection().session() as session:
+            # Use ilike for case-insensitive search
+            statement = select(Publication).where(
+                or_(
+                    Publication.title.ilike(f"%{query}%"), Publication.result_id.ilike(f"%{query}%"),
+                    Publication.title.op('SOUNDS LIKE')(f"{query}")
+                )
+            )
+            res = session.exec(statement).all()
+            arr = [auth.jsonserialize() for auth in res]
+            return arr, session
+
 
     def get_first_paper_by_name(self, name):
         query = name
@@ -488,7 +517,7 @@ class DataBase(metaclass=Singleton):
 
     def insert_message(
         self, message: MessageModel | dict, course_collname=None, user_id=None
-    ) -> tuple[MessageModel, Session, List]:
+    ) -> tuple[dict, Session, List]:
         """Insert message in DataBase
 
         Args:
@@ -501,6 +530,7 @@ class DataBase(metaclass=Singleton):
             message: MessageModel = message_oldformat_to_new(message)
         with Connection().session() as session:
             session.add(message)
+            msg_js = message.mes_id
             session.commit()
             # session.refresh(message)
 
@@ -523,7 +553,9 @@ class DataBase(metaclass=Singleton):
 
             # session.refresh(message)
             session.expunge_all()
-            return message, session, ["usr"]
+
+            print(f"xx: {msg_js}")
+            return msg_js, session, ["usr"]
 
     def insert_access_code(
         self, access_code: AccessCodeModel | str

@@ -105,15 +105,21 @@ def get_authors():
 def get_authors_by_name():
     result = request.json
     a_name = result.get("author_name", None)
-    res, _ = DataBase().get_author_by_name(a_name)
-    return jsonify({"data": res})
+    ares = []
+
+    print(a_name.split(' '))
+    for k in a_name.split(' '):
+        if k != ' ' and k != '':
+            res, _ = DataBase().get_author_by_name_soundslike(k)
+            ares = ares + res
+    return jsonify({"data": ares})
 
 
 @data_bp.route("/get_papers_by_name", methods=["GET", "POST"])
 def get_papers_by_name():
     result = request.json
     a_name = result.get("paper_name", None)
-    res, _ = DataBase().get_paper_by_name(a_name)
+    res, _ = DataBase().get_paper_by_name_soundslike(a_name)
     res2, _ = DataBase().search_publications(a_name)
     return jsonify({"data": res + res2})
 
@@ -285,6 +291,31 @@ def refreshcqn_scheduler():
     PaperManager.add_to_chroma_static(dt=dt)
     return {"data": "success"}
 
+@data_bp.route('/refreshmeme', methods=['POST', 'GET'])
+def refreshcqn_scheduler_root():
+    ps = SerpApiGoogleScholarOrganic()
+    key = os.getenv("SERP_API_KEY")
+    if key is None:
+        return
+
+    data = ps.scrape_google_scholar_organic_results(
+        query="NSF-ERC CQN 1941583",
+        api_key=key,
+        pagination=True,
+    )
+    # ---- FROM BACKUP . JSON, DECOMMENT IN CASE OF ERR (doamne fereste) ----
+    # dt = []
+    # with open("core/blueprints/bp_data/data_backup.json", "r") as f:
+    #    data = json.load(f)
+    #    dt = [JSONPaperParser().parse(x) for x in data["data"]]
+
+    dt = [JSONPaperParser().parse(x) for x in data]
+    print("\n\n\naaaaaaaaaaaa\n\n\n")
+    PaperManager.add_to_database_static(dt=dt)
+
+    PaperManager.add_to_chroma_static(dt=dt)
+    return {"data": "success"}
+
 def getpdfcontentsfromlist(pubs: List[CQNPublications]):
     for i in range(0, len(pubs) - 1):
         f_link = pubs[i].get_first_file_link()
@@ -362,7 +393,7 @@ def addtodb():
     print("succesfully added message ", "with users", user)
     return jsonify(
         {
-            "message_id": uploaded_message.mes_id,
+            "message_id": uploaded_message,
             "content": content,
             "role": role,
             "chat": chat_k_id,
