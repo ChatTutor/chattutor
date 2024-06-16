@@ -231,7 +231,10 @@ class SQLQueryTutor(Tutor):
                 #    continue
                 if self.embedding_db:
                     keep_only_first_x_tokens_for_processing = None  # none means all
-                    if coll_name == "cqn_openaicol_ttv" and "TITLE" == required_type_of_information.strip():
+                    if (
+                        coll_name == "cqn_openaicol_ttv"
+                        and "TITLE" == required_type_of_information.strip()
+                    ):
                         pprint(red("TTL"), green(required_type_of_information.strip()))
 
                         self.embedding_db.load_datasource(f"{coll_name}_titles")
@@ -304,12 +307,18 @@ class SQLQueryTutor(Tutor):
                                 }
                             )
             sorted_docs = sorted(arr, key=lambda el: -el["distance"])
+            if pipeline == "openai":
+                sorted_docs = sorted(arr, key=lambda el: el["distance"])
+
             valid_docs = sorted_docs[:process_limit]
 
             # print in the console basic info of valid docs
             pprint("valid_docs : ", len(valid_docs))
             for idoc, doc in enumerate(valid_docs):
-                pprint(f"- {idoc}", doc["metadata"].get("docname", "(not defined)"))
+                pprint(
+                    f"- {idoc}",
+                    doc["metadata"].get("docname", doc["metadata"].get("title", "(not defined)")),
+                )
                 pprint(" ", doc["metadata"].get("authors", "(not defined)"))
                 pprint(" ", doc["metadata"].get("pdf_url", "(not defined)"))
                 pprint(" ", doc["distance"])
