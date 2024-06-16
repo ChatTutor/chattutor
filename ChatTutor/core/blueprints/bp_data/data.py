@@ -58,6 +58,7 @@ def get_author_likeness():
         return jsonify({"data": "no authoirs found!"})
     return jsonify({"data": res})
 
+
 @data_bp.route("/add_from_json_to_db", methods=["GET"])
 def add_from_json_to_db():
     dt = []
@@ -73,9 +74,10 @@ def add_from_json_to_db():
         dt = [JSONPaperParser().parse(x) for x in ff]
     print("\n\n\naaaaaaaaaaaa\n\n\n")
     PaperManager.add_to_database_pdfs(dt=dt)
-    print("Added!")
+
     PaperManager.add_to_chroma_static(dt=dt)
-    return jsonify({"data": [x for x in dt]})
+    print("Added bokiki!")
+    return jsonify({"data": "pdfadded"})
 
 
 @data_bp.route("/get_complete_papers", methods=["POST", "GET"])
@@ -90,7 +92,6 @@ def get_paper_by():
     a_id = result.get("author_id", None)
     a_name = result.get("author_name", None)
     res, _ = DataBase().get_papers_written_by(author_id=a_id, author_name=a_name)
-
     return jsonify({"data": res})
 
 
@@ -145,7 +146,7 @@ def getchromapapers():
     req_js = request.json
     prompt = req_js.get("prompt", None)
     variant = req_js.get("variant", None)
-    db.load_datasource_papers("cqn_ttv")
+    db.load_datasource_papers("cqn_openaicol_ttv")
     docs, met, dist, text, ceva = db.query_papers_m(
         prompt=prompt, n_results=10, from_doc=None, variant=variant, metadatas=True
     )
@@ -215,9 +216,10 @@ def backuploadcqn():
         data = json.load(f)
         dt = [JSONPaperParser().parse(x) for x in data["data"]]
     print("\n\n\naaaaaaaaaaaa\n\n\n")
+
     PaperManager.add_to_database_static(dt=dt)
-    print("Added!")
-    # PaperManager.add_to_chroma(dt=dt)
+    # print("Added!")
+    PaperManager.add_to_chroma_static(dt=dt)
     return jsonify({"data": [x for x in dt]})
 
 
@@ -259,7 +261,6 @@ def test_refresh():
     print('Hello world!')
 
 def refreshcqn_scheduler():
-    
     ps = SerpApiGoogleScholarOrganic()
     key = os.getenv("SERP_API_KEY")
     if key is None:

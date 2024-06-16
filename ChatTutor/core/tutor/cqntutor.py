@@ -154,7 +154,7 @@ class CQNTutor(Tutor):
         paper_titles_from_prompt = paper_titles_from_prompt.replace('"', "")
         paper_titles_from_prompt = paper_titles_from_prompt.replace("[", "")
         paper_titles_from_prompt = paper_titles_from_prompt.replace("]", "")
-        self.embedding_db.load_datasource(f"cqn_ttvv_titles")
+        self.embedding_db.load_datasource(f"cqn_openaicol_ttv_titles")
         (
             documents,
             metadatas,
@@ -213,7 +213,7 @@ class CQNTutor(Tutor):
         show_limit = 0
 
         if (
-            "cqn_ttvv" in str(self.collections.items())
+            "cqn_openaicol_ttv" in str(self.collections.items())
             and required_level_of_information == "db_summary"
         ):
             import db_summary
@@ -226,12 +226,12 @@ class CQNTutor(Tutor):
                 #    continue
                 if self.embedding_db:
                     keep_only_first_x_tokens_for_processing = None  # none means all
-                    if coll_name == "cqn_ttvv" and required_level_of_information == "basic":
+                    if coll_name == "cqn_openaicol_ttv" and required_level_of_information == "basic":
                         self.embedding_db.load_datasource(f"{coll_name}")
                         query_limit = 100
                         process_limit = 20  # each basic entry has close to 100 tokens
                         show_limit = 0
-                    elif coll_name == "cqn_ttvv" and required_level_of_information == "medium":
+                    elif coll_name == "cqn_openaicol_ttv" and required_level_of_information == "medium":
                         self.embedding_db.load_datasource(f"{coll_name}")
                         query_limit = 100
                         process_limit = 10  # each basic entry has close to 350 tokens

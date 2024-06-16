@@ -1,3 +1,4 @@
+numpy==1.26.0
 chromadb==0.4.14
 deeplake==3.6.15
 Flask==2.3.2
@@ -23,7 +24,6 @@ scholarly==1.7.11
 scrape-google-scholar-py==0.3.4
 pdfreader==0.1.15
 google-generativeai==0.5.4
-text2vec==1.2.9
 torchvision
 nltk==3.8.1
 Flask-APScheduler

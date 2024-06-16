@@ -333,7 +333,8 @@ class DataBase(metaclass=Singleton):
 
             return arr, session
 
-    def get_paper_by_name(self, query):
+    def get_paper_by_name(self, name):
+        query = name
         with Connection().session() as session:
             # Use ilike for case-insensitive search
             statement = select(Publication).where(
@@ -344,6 +345,20 @@ class DataBase(metaclass=Singleton):
             res = session.exec(statement).all()
             arr = [auth.jsonserialize() for auth in res]
             return arr, session
+
+    def get_first_paper_by_name(self, name):
+        query = name
+        with Connection().session() as session:
+            # Use ilike for case-insensitive search
+            statement = select(Publication).where(
+                or_(
+                    Publication.title.ilike(f"%{query}%"), Publication.result_id.ilike(f"%{query}%")
+                )
+            )
+            res = session.exec(statement).first()
+            if res is not None:
+                return res.jsonserialize(), session
+            return None, session
 
     def search_publications(self, query_text):
         with Connection().session() as session:

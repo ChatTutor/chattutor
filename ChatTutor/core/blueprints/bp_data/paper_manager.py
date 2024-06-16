@@ -87,7 +87,7 @@ class PaperManager:
                                    cqn_pub_id=auth_rand_id)
                             )
             
-            pot_model, _ = DataBase().get_paper_by_name(name=book['title'])
+            pot_model, _ = DataBase().get_first_paper_by_name(name=book['title'])
 
             if pot_model is None:
                 book_res_id = f'{uuid.uuid4()}'
@@ -159,7 +159,7 @@ class PaperManager:
         )
         for book in dt:
             print(f"Adding book: {book}")
-            sel_model, _ = DataBase().get_paper_by_name(name=book['title'])
+            sel_model, _ = DataBase().get_first_paper_by_name(name=book['title'])
             if sel_model is not None:
                 book['result_id'] = sel_model['result_id']
             doc = Doc(
@@ -210,8 +210,8 @@ class PaperManager:
                 )
                 citations.append(citation_model)
 
-            db.load_datasource_papers("cqn_ttv_may291")
-            print(f"Book: {book}")
+            db.load_datasource_papers("cqn_openaicol_ttv")
+            print(f"Bookiki: {book}")
             resource = book['resources'][0]
             
             if resource.get('link', '') != '':
@@ -228,6 +228,8 @@ class PaperManager:
                 [titles_text_all, titles_text_reverse_all, titles_text_reverse_just], "titles"
             )
             db.add_texts_papers([citations_text_all], "citations")
+            # print("Added one bookiki")
+            # return
 
 
     @staticmethod
@@ -288,7 +290,7 @@ class PaperManager:
                 )
                 citations.append(citation_model)
 
-            db.load_datasource_papers("cqn_ttv")
+            db.load_datasource_papers("cqn_openaicol_ttv")
 
             content_texts: List[Text] = book.pdf_contents
 

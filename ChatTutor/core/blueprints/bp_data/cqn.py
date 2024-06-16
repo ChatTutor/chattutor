@@ -17,6 +17,7 @@ import pdfreader
 # import markdown
 import flask_login
 import requests
+from requests.exceptions import ChunkedEncodingError
 
 from core.data.models.Citations import Citations
 from core.extensions import db
@@ -62,16 +63,16 @@ def load_citations(data):
     return data
 
 def CQNPublicationsGetTextsFromResourceUrl(content_url: str, json_elem, i=0) -> List[Text]:
-    result_id = json_elem['result_id']
-    doc = Doc(docname=f"{result_id}", citation=f"{content_url}", dockey=f"{result_id}")
-
-    texts = []
-    content_url = content_url.replace("html", "pdf")    
-    resp = requests.get(content_url)
-    print(f"\n\n{content_url}:\n")
-    open_pdf_file = resp.content
-    print(f"\n\tGettng texts {i}\n")
     try:
+        result_id = json_elem['result_id']
+        doc = Doc(docname=f"{result_id}", citation=f"{content_url}", dockey=f"{result_id}")
+
+        texts = []
+        content_url = content_url.replace("html", "pdf")
+        resp = requests.get(content_url)
+        print(f"\n\n{content_url}:\n")
+        open_pdf_file = resp.content
+        print(f"\n\tGettng texts {i}\n")
         texts = parse_pdf(open_pdf_file, doc, 2000, 100)
         print(f"----\n\n GOT TEXTS {i}")
         # for page in pdf.pages:
@@ -80,6 +81,8 @@ def CQNPublicationsGetTextsFromResourceUrl(content_url: str, json_elem, i=0) -> 
         pdf_contents: List[Text] = texts
         return pdf_contents
     except PdfReadError:
+        return []
+    except ChunkedEncodingError:
         return []
     except Exception:
         return []
