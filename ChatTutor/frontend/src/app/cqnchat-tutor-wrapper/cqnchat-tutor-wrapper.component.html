@@ -1,5 +1,5 @@
 <mat-drawer-container class="example-container" autosize>
-<app-nsf-paper-nav>
+<app-nsf-paper-nav (updateContextRestriction)="restrict($event)">
 
 </app-nsf-paper-nav>
 <app-chat-window [chat_title]="'ChatCQN'" [openingMessage]="'

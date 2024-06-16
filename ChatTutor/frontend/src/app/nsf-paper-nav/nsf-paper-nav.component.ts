@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataProviderService } from 'app/dataprovider.service';
 @Component({
@@ -7,11 +7,15 @@ import { DataProviderService } from 'app/dataprovider.service';
   styleUrls: ['./nsf-paper-nav.component.css']
 })
 export class NsfPaperNavComponent implements OnInit{
+  @Output() updateContextRestriction: EventEmitter<any> = new EventEmitter();
+
   request: string
   mode: string = 'content'
   canSend: boolean = false
   data: any = []
   loading : boolean = false
+  loading_author : boolean = false
+
   all_authors : any = []
   displayed_authors : any = []
   full_screen : boolean = false
@@ -20,7 +24,10 @@ export class NsfPaperNavComponent implements OnInit{
   show_back_button : boolean = false
   displayed_papers : any = []
   displayed_papers_author : any
-
+  
+  doc_restrictContext(document: any) {
+      this.updateContextRestriction.emit(document)
+  }
 
   constructor(
     private dataProvider : DataProviderService) {
@@ -78,6 +85,7 @@ export class NsfPaperNavComponent implements OnInit{
     console.log(this.displayed_authors, this.all_authors)
     this.displayed_papers_author = this.displayed_authors[0]
     this.show_back_button = true
+    this.loading_author = true
     let paper_data = await this.dataProvider.nsfGetPapersByAuthor({'author_id' : author_id})
     console.log("PAPER DATA", paper_data)
     
@@ -88,6 +96,8 @@ export class NsfPaperNavComponent implements OnInit{
         "metadata" : {"info": paper}
       })
     }
+    this.loading_author = false
+
     console.log(this.displayed_papers)
     // this.displayed_papers = paper_data['data']
   }

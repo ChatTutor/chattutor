@@ -19,7 +19,7 @@
             <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
                 <mat-button-toggle value="content" (click)="set_mode('content')">content</mat-button-toggle>
                 <mat-button-toggle value="titles" (click)="set_mode('titles')">titles</mat-button-toggle>
-                <mat-button-toggle value="authors" (click)="set_mode('authors')">authors</mat-button-toggle>
+                <!-- <mat-button-toggle value="authors" (click)="set_mode('authors')">authors</mat-button-toggle> -->
             </mat-button-toggle-group>
             <div *ngIf="loading">
                 <mat-chip style="padding: 3px;">
@@ -95,7 +95,8 @@
         <mat-form-field class="input-container" style="position: sticky;
         top: 0;
         margin: 1rem 1rem;
-        padding: 0.5rem;">
+        padding: 0.5rem;
+        background-color:white;">
             <textarea matInput [(ngModel)]="author_input" placeholder="Search Authors/Papers by Name/ID..."
             cdkTextareaAutosize
             #autosize="cdkTextareaAutosize"
@@ -114,9 +115,9 @@
             
         </mat-form-field>
         <div class="row">
-            <div>
+            <div class="author_display">
                 <div *ngFor="let author of displayed_authors">
-                    <div class="author_card column">
+                    <div class="author_card column" (click)="get_author_papers(author['author_id'])">
                         <h3 (click)="get_author_papers(author['author_id'])">{{author['name']}}</h3>
                         <a (click)="get_author_papers(author['author_id'])">Scholar ID: {{author['author_id']}}</a>
                         <a [href]="author['link']" target="_blank">Scholar Link: {{author['link']}}</a>
@@ -128,6 +129,12 @@
                     <mat-icon class="icon-display">keyboard_arrow_left</mat-icon>
                 </button>
                 <h3>{{displayed_papers_author['name']}}</h3>
+
+                <div *ngIf="loading_author">
+                    <mat-chip style="padding: 3px;">
+                        <mat-spinner [diameter]="15"></mat-spinner>
+                    </mat-chip>
+                </div>
                 <div *ngFor="let doc of displayed_papers">
                     <div class="paper-card">
                         <h3>
@@ -152,6 +159,7 @@
                         <!-- <div class="l">
                             {{doc["document"]}}
                         </div> -->
+                        <button (click)="doc_restrictContext(doc)">FOCUS ON</button>
                     </div>
                     <br />
                 </div>

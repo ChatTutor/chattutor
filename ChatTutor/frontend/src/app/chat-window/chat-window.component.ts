@@ -88,6 +88,10 @@ export class ChatWindowComponent implements OnInit{
         }
 
         if (this.restrictToDocument != undefined) {
+            console.log("Restricting to:")
+            console.log(this.restrictToDocument)
+            console.log("Restricting>>>>\n")
+
             args.from_doc = this.restrictToDocument.metadata.doc
         }
 
