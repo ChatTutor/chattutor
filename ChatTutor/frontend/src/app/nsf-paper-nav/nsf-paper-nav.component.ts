@@ -26,6 +26,8 @@ export class NsfPaperNavComponent implements OnInit {
     displayed_papers_author: any
 
     doc_restrictContext(document: any) {
+        console.log("doc_restrictContext")
+        console.log(document)
         this.updateContextRestriction.emit(document)
     }
 

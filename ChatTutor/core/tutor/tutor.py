@@ -271,10 +271,12 @@ class Tutor(ABC):
                 )
                 elapsed_time = 0.0
             else:
-                # msgs = [x[:16384] for x in messages]
+                msgs = messages
+                # for i in range(len(msgs)):
+                #     msgs[i]["content"] = msgs[i]["content"][:12000]
                 response, elapsed_time = time_it_r(openai.ChatCompletion.create)(
                     model=selectedModel,
-                    messages=messages,
+                    messages=msgs,
                     temperature=0.7,
                     frequency_penalty=0.0,
                     presence_penalty=0.0,
