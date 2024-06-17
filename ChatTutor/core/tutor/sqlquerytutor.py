@@ -442,7 +442,10 @@ class SQLQueryTutor(Tutor):
                 sql_query_data = [sql_query_data]
 
             if isinstance(sql_query_data, list):
-                is_paper = True if sql_query_data[0].get("result_id", None) is not None else False
+                if len(sql_query_data) > 0:
+                    is_paper = (
+                        True if sql_query_data[0].get("result_id", None) is not None else False
+                    )
 
                 if is_paper:
                     try:
