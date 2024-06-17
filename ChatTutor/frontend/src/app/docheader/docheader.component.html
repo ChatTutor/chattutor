@@ -19,6 +19,11 @@
                 <!-- {{document | json}} -->
 
                 <div>
+                    <div *ngIf="document.metadata.ignore">
+                        <span style="color: rgb(157, 156, 161);">
+                            Focus on for more information about authors / content.
+                        </span>
+                    </div>
                     <div *ngIf="document.metadata.authors">
                         <div *ngFor="let author of document.metadata.authors[document.metadata.doc]['author']">
                             <span>{{ author['name'] }}&nbsp;,</span>

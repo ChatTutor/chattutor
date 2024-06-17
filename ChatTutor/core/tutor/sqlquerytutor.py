@@ -370,7 +370,7 @@ class SQLQueryTutor(Tutor):
                                     
                                     Snippet:
                                     ```
-                                    {paper['snippet']}
+                                    {paper['snippet'][:2000]}
                                     ```
                                     
                                     Link:
@@ -420,7 +420,7 @@ class SQLQueryTutor(Tutor):
                     query = "NONE"
                     query_text = "NONE"
                 else:
-                    query_text = f"IF THE USER IS ASKING ABOUT AUTHORS, IDS, OR PAPER TITLES, OR PAPERS OF AUTHORS, OR AUTHORS OF PAPERS, OR LISTINGS OF THE DB, USE ONLY THE INFORMATION THAT WAS PROVIDED TO YOU BELOW IN THE CQN DIRECT QUERY!! If the user isn't asking about a document's content or a broad topic, or related papers etc, on query, ignore the data above, and Provide this data exactly, in markdown form, stating that it is from the CQN DB:[{sql_query_data}].  This is the only info you will provide in this message about CQN DB. If paper ids are present above, also provide them as well! As well as links to arxiv or scholar of the paper, and of the author if present. DO NOT PROVIDE ANY OTHER INFORMATION YOU MIGHT KNOW OUTSIDE THIS INFO AND CQN INFO UNLESS EXPLICITLY ASKED SO BY THE USER!"
+                    query_text = f"Below you will find a json variable called sql_query_data which will contain RELEVANT INFORMATION TO THE USER QUERY THAT SHOULD BE PROVIDED TO THE USER IF PRESENT REGARDLESS OF WHAT YOU WERE PROVIDED ABOVE! IF THE sql_query_data IS NOT EMPTY, IGNORE ALL OF THE DATA ABOVE AS IT IS IRRELEVANT. IRRELEVANT. PROVIDE ONLY THE sql_query_data in a user friendly way. IF THE USER IS ASKING ABOUT AUTHORS, IDS, OR PAPER TITLES, OR PAPERS OF AUTHORS, OR AUTHORS OF PAPERS, OR LISTINGS OF THE DB, USE ONLY THE INFORMATION THAT IS PROVIDED TO YOU BELOW IN THE CQN DIRECT QUERY!! If the user isn't asking about a document's content or a broad topic, or related papers etc, on query, ignore the data above, and Provide this data exactly, in markdown form, stating that it is from the CQN DB: \n```\nsql_query_data={sql_query_data}\n # !! PROVIDE THIS TO THE USER, AS IT IS RELEVANT CQN DB INFORMATION\n```\n.  This is the only info you will provide in this message about CQN DB. If paper ids are present above, also provide them as well! As well as links to arxiv or scholar of the paper, and of the author if present. DO NOT PROVIDE ANY OTHER INFORMATION YOU MIGHT KNOW OUTSIDE THIS INFO AND CQN INFO UNLESS EXPLICITLY ASKED SO BY THE USER!"
 
             if from_doc != None:
                 query_text = "IF YOU CAN USE THE RELEVANT SECTIONS ABOVE TO ANSWER QUESTIONS THE USER ASKS ABOUT THE PAPER, PLEASE QUOTE THE PART OF THE DOCUMENT YOU GOT YOUR INFO FROM. DO NOT COPY-PASTE THE WHOLE DOCUMENTS. OTHERWISE STATE THAT IT'S GENERAL KNOWLEDGE/WELL KNOWN, IF THE INFORMATION IS NOT FROM THE ABOVE DOCUMENTS/PAPERS. IF THE INFORMATION ASKED BY THE USER IS NOT STATED IN THE ABOVE DOCUMENTS, FEEL FREE TO USE YOUR OWN KNOWLEDGE, HOWEVER STATE THAT YOU DID SO, AND THAT YOU CAN'T FIND THE ANSWER IN THE PAPER, NEVERTHELESS ANSWER THE QUESTION, AND STATE THAT IF THE USER WANTS TO SEARCH FOR THIS TOPIC IN THE PAPER HE SHOULD BE MORE PRECISE WITH HIS QUERY. DO NOT LET THE USER WITHOUT AN ANSWER! DO NOT LET THE USER WITH NO ANSWER! HELP THE USER FIND THE ANSWER TO HIS/HER QUESTION!!! "
@@ -433,14 +433,50 @@ class SQLQueryTutor(Tutor):
             print("\n----------\n\n\n")
             print(green(messages[0]["content"]))
 
+            json_papers = None
+            if (
+                sql_query_data is not None
+                and not isinstance(sql_query_data, list)
+                and sql_query_data.get("result_id", None) is not None
+            ):
+                sql_query_data = [sql_query_data]
+
+            if isinstance(sql_query_data, list):
+                is_paper = True if sql_query_data[0].get("result_id", None) is not None else False
+
+                if is_paper:
+                    try:
+                        json_papers = [
+                            {
+                                "coll_desc": "Use the following user uploaded files to provide information: ",
+                                "coll_name": "cqn_openaicol_ttv",
+                                "doc": "",
+                                "metadata": {
+                                    "doc": x.get("result_id", None),
+                                    "id": x.get("result_id", None),
+                                    "title": x.get("title", None),
+                                    "authors": x.get("authors", None),
+                                    "entry_id": x.get("link", None),
+                                    "extra": True,
+                                    "ignore": True,
+                                },
+                                "ignore": True,
+                            }
+                            for x in sql_query_data
+                        ]
+                    except:
+                        json_papers = None
+
             print(red(query_text))
+            messages[0]["content"] = messages[0]["content"][:12000]
             messages[0]["content"] += (
                 "Be as concise as possible! USE ONLY THE INFORMATION THAT WAS PROVIDED TO YOU IN THESE MESSAGES!! "
                 if query_text == "NONE"
-                else "CQN DIRECT QUERY: "
+                else "\n\nCQN DIRECT QUERY: "
                 + query_text[:12000]
                 + " PRESENT THIS IN A USER FRIENDLY ERROR NOT OMMITING ANY DATA FROM IT! IF THE USER ASKS ABOUT A TOPIC/ PROCEDURE/ EFFECT/ OR SOMETHING THAT COULD BE CONTAINED IN A PAPER, USE THE RELEVANT SECTIONS TO RESPOND ACCORDINGLY."
             )
+
             messages[0][
                 "content"
             ] += """
@@ -454,6 +490,8 @@ class SQLQueryTutor(Tutor):
             pprint(red("SYSTEM MESSAGE\n\n"))
             pprint(green(messages[0]["content"]))
             pprint("\n\n----------------------\n\n")
+            if json_papers is not None:
+                vd = json_papers + vd
             return messages, vd
 
         return {"messages": messages, "query": required_level_of_information}, vd

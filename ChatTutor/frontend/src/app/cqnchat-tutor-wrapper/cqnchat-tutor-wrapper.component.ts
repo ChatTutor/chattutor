@@ -12,6 +12,10 @@ export class CQNChatTutorWrapperComponent {
       console.log("event@")
       console.log(document)
       document["metadata"]["doc"] = document["metadata"]["info"]["paper"]["chroma_doc_id"]
+
+      if (document["metadata"]["doc"] == undefined)
+        document["metadata"]["doc"] = document["metadata"]["info"]["paper"]["result_id"]
+
       this.child.restrict(document)
   }
 }
