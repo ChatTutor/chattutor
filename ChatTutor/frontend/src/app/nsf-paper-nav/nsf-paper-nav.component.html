@@ -102,21 +102,24 @@
     </div>
 </mat-drawer>
 
-<div *ngIf="full_screen">
+<div *ngIf="full_screen"
+     (click)="toggle_full_screen(); $event.stopPropagation()"
+     style="position: fixed; width: 100vw; height: 100vh; background-color: rgba(255, 255, 255, 0.01); z-index: 100 !important;">
     <div>
-        <button type="button" mat-fab mat-mini-fab color="primary" matTooltip="Toggle Full Search"
-                (click)="toggle_full_screen()">
+        <button type="button" mat-fab mat-mini-fab color="primary" matTooltip="Close"
+                (click)="toggle_full_screen()" style="z-index: 999">
             <mat-icon class="icon-display">close</mat-icon>
         </button>
     </div>
-    <div class="container full over">
+    <div class="container full over" (click)="$event.stopPropagation()">
 
         <mat-form-field class="input-container" style="position: sticky;
         top: 0;
         margin: 1rem 1rem;
         padding: 0.5rem;
         background-color:white;">
-            <textarea matInput [(ngModel)]="author_input" [placeholder]="author_search_semnul_intrebarii ? 'Search authors' : 'Search papers'"
+            <textarea matInput [(ngModel)]="author_input"
+                      [placeholder]="author_search_semnul_intrebarii ? 'Search authors' : 'Search papers'"
                       cdkTextareaAutosize
                       #autosize="cdkTextareaAutosize"
                       cdkAutosizeMinRows="1"
@@ -125,7 +128,8 @@
 
             <button mat-icon-button color="primary" matSuffix class="b1" matTooltip="Search..."
                     (click)="s_All()">
-                <mat-icon class="icon-display"> {{ author_search_semnul_intrebarii ? 'person_pin' : 'search' }}</mat-icon>
+                <mat-icon class="icon-display"> {{ author_search_semnul_intrebarii ? 'person_pin' : 'search' }}
+                </mat-icon>
             </button>
 
 
@@ -136,15 +140,16 @@
                     <div *ngFor="let author of displayed_authors">
                         <div class="author_card column" (click)="get_author_papers(author['author_id'])">
                             <h3 (click)="get_author_papers(author['author_id'])">{{ author['name'] }}</h3>
-    <!--                        <a (click)="get_author_papers(author['author_id'])">Scholar ID: {{ author['author_id'] }}</a>-->
+                            <!--                        <a (click)="get_author_papers(author['author_id'])">Scholar ID: {{ author['author_id'] }}</a>-->
                             <div *ngIf="author['link'] != 'no_link' && author['link'] != 'none'">
                                 <a [href]="author['link']" target="_blank">Scholar Link: {{ author['link'] }}</a>
                             </div>
                         </div>
                     </div>
                 </div>
-                </div>
-            <div *ngIf="show_back_button" [style]='"max-width: " + (author_search_semnul_intrebarii ? "50% !important;" : "100% !important;")'>
+            </div>
+            <div *ngIf="show_back_button"
+                 [style]='"max-width: " + (author_search_semnul_intrebarii ? "50% !important;" : "100% !important;")'>
                 <button type="button" mat-fab mat-mini-fab color="primary" matTooltip="Go back to authors"
                         matTooltipPosition="left" (click)="paper_back()">
                     <mat-icon class="icon-display">keyboard_arrow_left</mat-icon>
@@ -159,9 +164,9 @@
                 <div *ngFor="let doc of displayed_papers">
                     <div class="paper-card">
 
-<!--                        <span>-->
-<!--                            Scholar Paper ID: {{ doc['metadata']['info']['paper']["result_id"] }}-->
-<!--                        </span>-->
+                        <!--                        <span>-->
+                        <!--                            Scholar Paper ID: {{ doc['metadata']['info']['paper']["result_id"] }}-->
+                        <!--                        </span>-->
 
                         <a [href]="doc['metadata']['info']['paper']['link']">
                             <h3>
@@ -214,9 +219,9 @@
         <span>Search authors</span>
     </button>
 
-<!--    <button class="btn" type="button" mat-fab mat-mini-fab color="primary" matTooltip="Content-based search"-->
-<!--            matTooltipPosition="left" (click)="drawer.toggle()">-->
-<!--        <mat-icon class="icon-display">code</mat-icon>-->
-<!--    </button>-->
+    <!--    <button class="btn" type="button" mat-fab mat-mini-fab color="primary" matTooltip="Content-based search"-->
+    <!--            matTooltipPosition="left" (click)="drawer.toggle()">-->
+    <!--        <mat-icon class="icon-display">code</mat-icon>-->
+    <!--    </button>-->
 </div>
   

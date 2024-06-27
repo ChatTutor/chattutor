@@ -33,6 +33,16 @@ export class ChatWindowComponent implements OnInit{
         } as Message);
     }
 
+    getDocTitle(document: any): string {
+        let met = document['metadata']
+        let info = met['info']
+        if (info === undefined || info == null)  {
+            return met['title']
+        }
+
+        return met['info']['paper']['title']
+    }
+
     setStatus(status: WStatus) {
         this.status = status
     }

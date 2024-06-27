@@ -2,18 +2,22 @@
     <div *ngIf="document != undefined">
         <mat-card class="example-card" [class.reduced]="!full">
             <mat-card-header (click)="toggleDocument()">
-<!--                <div *ngIf="document.metadata.entry_id">-->
-<!--                    <mat-card-subtitle>Paper</mat-card-subtitle>-->
-<!--                </div>-->
-<!--                <div *ngIf="!document.metadata.entry_id">-->
-<!--                    <mat-card-subtitle>File/URL</mat-card-subtitle>-->
-<!--                </div>-->
-<!--                <mat-card-title>{{document.metadata.doc}}</mat-card-title>-->
-                <a href="{{document.metadata.entry_id}}">
-                    <span *ngIf="document.metadata.title">
-                        {{document.metadata.title}}
-                    </span>
-                </a>
+                <!--                <div *ngIf="document.metadata.entry_id">-->
+                <!--                    <mat-card-subtitle>Paper</mat-card-subtitle>-->
+                <!--                </div>-->
+                <!--                <div *ngIf="!document.metadata.entry_id">-->
+                <!--                    <mat-card-subtitle>File/URL</mat-card-subtitle>-->
+                <!--                </div>-->
+                <!--                <mat-card-title>{{document.metadata.doc}}</mat-card-title>-->
+                <div style="display: flex; flex-direction: column;">
+                    <div style="width: 30px"><mat-icon>chevron_right</mat-icon></div>
+                    <a [href]="document.metadata.links ? document.metadata.links : '#'">
+                        <span *ngIf="document.metadata.title">
+                            {{ document.metadata.title }}
+                        </span>
+                    </a>
+
+                </div>
             </mat-card-header>
             <mat-card-content *ngIf="document.metadata.entry_id">
 
@@ -32,19 +36,21 @@
                     </div>
 
                     <div *ngIf="document.metadata.published">
-                        <p>Published at {{document.metadata.published}}</p>
+                        <p>Published at {{ document.metadata.published }}</p>
                     </div>
 
-                    <div *ngIf="document.metadata.links">
-                        <p>{{document.metadata.links}}</p>
-                    </div>
+<!--                    <div *ngIf="document.metadata.links">-->
+<!--                        <p>{{ document.metadata.links }}</p>-->
+<!--                    </div>-->
                 </div>
-              <mat-divider></mat-divider>
+                <mat-divider></mat-divider>
             </mat-card-content>
             <mat-card-actions>
-                <button mat-button (click)="focusOnDocument()" *ngIf="!showHeader">Focus (Click to learn more about this paper)</button>
+                <button mat-button (click)="focusOnDocument()" *ngIf="!showHeader">Focus (Click to learn more about this
+                    paper)
+                </button>
                 <button mat-button (click)="closeInfoBox()" *ngIf="showHeader">CLOSE</button>
             </mat-card-actions>
-          </mat-card>
+        </mat-card>
     </div>
 </div>
