@@ -24,6 +24,7 @@ export class NsfPaperNavComponent implements OnInit {
     show_back_button: boolean = false
     displayed_papers: any = []
     displayed_papers_author: any
+    default_displayed_papers: any = []
 
     doc_restrictContext(document: any) {
         console.log("doc_restrictContext")
@@ -54,11 +55,19 @@ export class NsfPaperNavComponent implements OnInit {
     toggle_full_screen_authors() {
         this.full_screen = !this.full_screen;
         this.author_search_semnul_intrebarii = true;
+        if (this.full_screen == true) {
+            this.author_input = ''
+            this.displayed_authors = this.all_authors;
+        }
     }
 
-    toggle_full_screen_papers() {
+    async toggle_full_screen_papers() {
         this.full_screen = !this.full_screen;
         this.author_search_semnul_intrebarii = false;
+        if (this.full_screen == true) {
+            this.author_input = ''
+            await this.search_papers_default()
+        }
     }
 
     async search_authors() {
@@ -82,7 +91,8 @@ export class NsfPaperNavComponent implements OnInit {
 
     async search_papers() {
         if (this.author_input.length <= 2) {
-            this.displayed_authors = this.all_authors;
+            // this.displayed_authors = this.all_authors;
+            await this.search_papers_default()
         } else {
 
             let paper_data = await this.dataProvider.nsfGetAllPapersByName(this.author_input)
@@ -101,6 +111,30 @@ export class NsfPaperNavComponent implements OnInit {
             this.show_back_button = true
 
         }
+    }
+
+    async search_papers_default() {
+        let paper_data = await this.dataProvider.nsfGetAllPapersByName('quantum')
+
+        if (this.default_displayed_papers.length == 0) {
+            this.displayed_papers = paper_data["data"].map((x: any) => {
+                return {
+                    metadata: {
+                        info: {
+                            paper: x
+                        }
+                    }
+                }
+            })
+            this.default_displayed_papers = this.displayed_papers
+        } else {
+            this.displayed_papers = this.default_displayed_papers
+        }
+
+
+        console.log(this.displayed_papers)
+        this.displayed_papers_author = {name: "Results for: `" + this.author_input + "`"}
+        this.show_back_button = true
     }
 
     async get_author_papers(author_id: string) {

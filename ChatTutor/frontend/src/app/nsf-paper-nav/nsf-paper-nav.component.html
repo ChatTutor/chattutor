@@ -133,7 +133,7 @@
 
 
         </mat-form-field>
-        <div class="row">
+        <div class="row" style="justify-content: center; padding: 20px !important;">
             <div *ngIf="author_search_semnul_intrebarii">
                 <div class="author_display">
                     <div *ngFor="let author of displayed_authors">
@@ -149,10 +149,10 @@
             </div>
             <div *ngIf="show_back_button"
                  [style]='"max-width: " + (author_search_semnul_intrebarii ? "50% !important;" : "100% !important;")'>
-                <button type="button" mat-fab mat-mini-fab color="primary" matTooltip="Go back to authors"
-                        matTooltipPosition="left" (click)="paper_back()">
-                    <mat-icon class="icon-display">keyboard_arrow_left</mat-icon>
-                </button>
+<!--                <button type="button" mat-fab mat-mini-fab color="primary" matTooltip="Go back to authors"-->
+<!--                        matTooltipPosition="left" (click)="paper_back()">-->
+<!--                    <mat-icon class="icon-display">keyboard_arrow_left</mat-icon>-->
+<!--                </button>-->
                 <h3>{{ displayed_papers_author['name'] }}</h3>
 
                 <div *ngIf="loading_author">
