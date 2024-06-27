@@ -118,16 +118,15 @@
         margin: 1rem 1rem;
         padding: 0.5rem;
         background-color:white;">
-            <textarea matInput [(ngModel)]="author_input"
+            <input matInput [(ngModel)]="author_input"
                       [placeholder]="author_search_semnul_intrebarii ? 'Search authors' : 'Search papers'"
-                      cdkTextareaAutosize
-                      #autosize="cdkTextareaAutosize"
-                      cdkAutosizeMinRows="1"
-                      cdkAutosizeMaxRows="5"></textarea>
+
+
+                        (keyup.enter)="s_All($event)" />
 
 
             <button mat-icon-button color="primary" matSuffix class="b1" matTooltip="Search..."
-                    (click)="s_All()">
+                    (click)="s_All($event)">
                 <mat-icon class="icon-display"> {{ author_search_semnul_intrebarii ? 'person_pin' : 'search' }}
                 </mat-icon>
             </button>

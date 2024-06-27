@@ -71,7 +71,8 @@ export class NsfPaperNavComponent implements OnInit {
     }
 
 
-    async s_All() {
+    async s_All(ev: any) {
+        ev.preventDefault()
         if (this.author_search_semnul_intrebarii) {
             await this.search_authors()
         } else {
