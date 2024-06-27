@@ -2,20 +2,21 @@
     <div *ngIf="document != undefined">
         <mat-card class="example-card" [class.reduced]="!full">
             <mat-card-header (click)="toggleDocument()">
-                <div *ngIf="document.metadata.entry_id">
-                    <mat-card-subtitle>Paper</mat-card-subtitle>
-                </div>
-                <div *ngIf="!document.metadata.entry_id">
-                    <mat-card-subtitle>File/URL</mat-card-subtitle>
-                </div>
-                <mat-card-title>{{document.metadata.doc}}</mat-card-title>
-            </mat-card-header>
-            <mat-card-content *ngIf="document.metadata.entry_id">
+<!--                <div *ngIf="document.metadata.entry_id">-->
+<!--                    <mat-card-subtitle>Paper</mat-card-subtitle>-->
+<!--                </div>-->
+<!--                <div *ngIf="!document.metadata.entry_id">-->
+<!--                    <mat-card-subtitle>File/URL</mat-card-subtitle>-->
+<!--                </div>-->
+<!--                <mat-card-title>{{document.metadata.doc}}</mat-card-title>-->
                 <a href="{{document.metadata.entry_id}}">
                     <span *ngIf="document.metadata.title">
                         {{document.metadata.title}}
                     </span>
                 </a>
+            </mat-card-header>
+            <mat-card-content *ngIf="document.metadata.entry_id">
+
                 <!-- {{document | json}} -->
 
                 <div>
@@ -41,7 +42,7 @@
               <mat-divider></mat-divider>
             </mat-card-content>
             <mat-card-actions>
-                <button mat-button (click)="focusOnDocument()" *ngIf="!showHeader">FOCUS ON</button>
+                <button mat-button (click)="focusOnDocument()" *ngIf="!showHeader">Focus (Click to learn more about this paper)</button>
                 <button mat-button (click)="closeInfoBox()" *ngIf="showHeader">CLOSE</button>
             </mat-card-actions>
           </mat-card>
