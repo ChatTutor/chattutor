@@ -2,15 +2,15 @@ import {Component, EventEmitter, HostBinding, HostListener, Input, OnInit, Outpu
 import {Paper} from 'app/models/paper.model';
 import {DataMessage, Message} from "../models/message.model";
 import {ChatTutor} from "../models/chattutor.model";
-import { WStatus } from 'app/models/windowstatus.enum';
-import { environment } from '../../environments/environment';
+import {WStatus} from 'app/models/windowstatus.enum';
+import {environment} from '../../environments/environment';
 
 @Component({
     selector: 'app-chat-window',
     templateUrl: './chat-window.component.html',
     styleUrls: ['./chat-window.component.css']
 })
-export class ChatWindowComponent implements OnInit{
+export class ChatWindowComponent implements OnInit {
     messages: Message[] = [];
     @Input() collections: string[] | undefined = ['cqn_openaicol_ttv']
     @Input() restrictToDocument: any = undefined
@@ -31,6 +31,16 @@ export class ChatWindowComponent implements OnInit{
             role: 'assistant',
             timestamp: 0
         } as Message);
+    }
+
+    getDocTitle(document: any): string {
+        let met = document['metadata']
+        let info = met['info']
+        if (info === undefined || info == null) {
+            return met['title']
+        }
+
+        return met['info']['paper']['title']
     }
 
     setStatus(status: WStatus) {
@@ -58,14 +68,20 @@ export class ChatWindowComponent implements OnInit{
     }
 
     clearConversation() {
+
         this.messages = []
+        this.messages.push({
+            sender: "Assistant",
+            content: formatMessage(this.openingMessage),
+            role: 'assistant',
+            timestamp: 0
+        } as Message);
     }
 
     clearInfo() {
         if (this.documentInfo == this.restrictToDocument) {
             this.documentInfo = undefined
-        }
-        else {
+        } else {
             this.documentInfo = this.restrictToDocument
         }
     }
@@ -109,7 +125,11 @@ export class ChatWindowComponent implements OnInit{
         msg.time_created = msg.timestamp
         msg.chat_k = 'To set chat id'
         msg.clear_number = '0'
-        const response = await fetch('addtodb', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(msg)})
+        const response = await fetch('addtodb', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(msg)
+        })
     }
 
     async onSendMessage(messageText: string) {
@@ -131,8 +151,8 @@ export class ChatWindowComponent implements OnInit{
 
     async askForMessage() {
         let response = await this.askChatTutor()
-        console.log(response,'qqqq');
-        
+        console.log(response, 'qqqq');
+
 
         let stop_gen = false
         let is_first = true
@@ -140,6 +160,7 @@ export class ChatWindowComponent implements OnInit{
         let context_documents: any[]
         const reader = response.body!.getReader()
         let msg_in_progress: Message | undefined = undefined
+
         async function read(element: ChatWindowComponent): Promise<void> {
             //console.log(reader, "aaaa");
             let par = await reader.read()
@@ -151,15 +172,16 @@ export class ChatWindowComponent implements OnInit{
 
             const the_messages: DataMessage[] =
                 string_value.split('\n\n')
-                .filter(Boolean)
-                .map(chunk => {
-                    let spl = null
-                    try {
-                        spl = JSON.parse(chunk.split('data: ')[1]) }
-                    catch (e) { spl = {}
-                    }
-                    return spl
-                })
+                    .filter(Boolean)
+                    .map(chunk => {
+                        let spl = null
+                        try {
+                            spl = JSON.parse(chunk.split('data: ')[1])
+                        } catch (e) {
+                            spl = {}
+                        }
+                        return spl
+                    })
             for (let message_index in the_messages) {
                 const message = the_messages[message_index]
                 if (message == null)
@@ -203,6 +225,7 @@ export class ChatWindowComponent implements OnInit{
 
             }
         }
+
         console.log("Messages", this.messages);
 
         this.setStatus(WStatus.GeneratingMessage)
@@ -261,7 +284,7 @@ export class ChatWindowComponent implements OnInit{
             body: form_data
         })
         const coll = await response.json()
-        if(coll['message'] == 'error') {
+        if (coll['message'] == 'error') {
             this.setStatus(WStatus.UploadedContent)
             return {message: 'error'}
         }
@@ -283,7 +306,7 @@ export class ChatWindowComponent implements OnInit{
         })
         let res_json = await response.json()
         console.log('Res_json', res_json)
-        if(res_json['message'] == 'error') {
+        if (res_json['message'] == 'error') {
             this.setStatus(WStatus.UploadedContent)
             return {message: 'failure'}
         }
@@ -296,37 +319,37 @@ export class ChatWindowComponent implements OnInit{
 
         return {message: 'success', json_obj: res_json}
     }
-    
+
     readonly WStatus = WStatus
 }
 
 
 function formatMessage(message: string, makeLists: boolean = true) {
     const messageArr = message.split("\n")
-  
+
     let messageStr = ""
     let listSwitch = 0
     for (let messageArrIndex in messageArr) {
-      const paragraph = messageArr[messageArrIndex]
-      if(paragraph.startsWith('- ') && makeLists) {
-        if(listSwitch === 0) {
-          messageStr += "<ul style=\"padding-left: 15px !important;\">"
+        const paragraph = messageArr[messageArrIndex]
+        if (paragraph.startsWith('- ') && makeLists) {
+            if (listSwitch === 0) {
+                messageStr += "<ul style=\"padding-left: 15px !important;\">"
+            }
+
+            messageStr += `<li><p>${paragraph.slice(2)}</p></li>`
+
+            listSwitch = 1
+
+        } else if (listSwitch === 1) {
+            messageStr += "</ul>"
+            messageStr += `<p>${paragraph}</p>`
+            listSwitch = 0
+        } else {
+            messageStr += `<p>${paragraph}</p>`
+            listSwitch = 0
         }
-  
-        messageStr += `<li><p>${paragraph.slice(2)}</p></li>`
-  
-        listSwitch = 1
-  
-      } else if (listSwitch === 1) {
-        messageStr += "</ul>"
-        messageStr += `<p>${paragraph}</p>`
-        listSwitch = 0
-      } else {
-        messageStr += `<p>${paragraph}</p>`
-        listSwitch = 0
-      }
-  
+
     }
     return messageStr
-  }
+}
   

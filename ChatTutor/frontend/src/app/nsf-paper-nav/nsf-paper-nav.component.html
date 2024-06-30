@@ -70,7 +70,7 @@
                         <div style="background-color: #8a00fb; color: white !important; padding: 3px; margin: 3px; text-align: center; border-radius: 5px; overflow-x: scroll">
                             <button style="background: transparent; text-align: center; border: none; color: white"
                                     (click)="doc_restrictContext(doc)">
-                                FOCUS ON
+                                Focus (Click to learn more about this paper)
                             </button>
                         </div>
                     </div>
@@ -102,53 +102,57 @@
     </div>
 </mat-drawer>
 
-<div *ngIf="full_screen">
+<div *ngIf="full_screen"
+     (click)="toggle_full_screen(); $event.stopPropagation()"
+     style="position: fixed; width: 100vw; height: 100vh; background-color: rgba(255, 255, 255, 0.01); z-index: 100 !important;">
     <div>
-        <button type="button" mat-fab mat-mini-fab color="primary" matTooltip="Toggle Full Search"
-                (click)="toggle_full_screen()">
+        <button type="button" mat-fab mat-mini-fab color="primary" matTooltip="Close"
+                (click)="toggle_full_screen()" style="z-index: 999">
             <mat-icon class="icon-display">close</mat-icon>
         </button>
     </div>
-    <div class="container full over">
+    <div class="container full over" (click)="$event.stopPropagation()">
 
         <mat-form-field class="input-container" style="position: sticky;
         top: 0;
         margin: 1rem 1rem;
         padding: 0.5rem;
         background-color:white;">
-            <textarea matInput [(ngModel)]="author_input" placeholder="Search Authors/Papers by Name/ID..."
-                      cdkTextareaAutosize
-                      #autosize="cdkTextareaAutosize"
-                      cdkAutosizeMinRows="1"
-                      cdkAutosizeMaxRows="5"></textarea>
+            <input matInput [(ngModel)]="author_input"
+                      [placeholder]="author_search_semnul_intrebarii ? 'Search authors' : 'Search papers'"
 
 
-            <button mat-icon-button color="primary" matSuffix class="b1" matTooltip="Search Authors by Name/ID"
-                    (click)="search_authors()">
-                <mat-icon class="icon-display">person_pin</mat-icon>
+                        (keyup.enter)="s_All($event)" />
+
+
+            <button mat-icon-button color="primary" matSuffix class="b1" matTooltip="Search..."
+                    (click)="s_All($event)">
+                <mat-icon class="icon-display"> {{ author_search_semnul_intrebarii ? 'person_pin' : 'search' }}
+                </mat-icon>
             </button>
 
-            <button mat-icon-button color="primary" matSuffix class="b1" matTooltip="Search Papers by Title/ID"
-                    (click)="search_papers()">
-                <mat-icon class="icon-display">search</mat-icon>
-            </button>
 
         </mat-form-field>
-        <div class="row">
-            <div class="author_display">
-                <div *ngFor="let author of displayed_authors">
-                    <div class="author_card column" (click)="get_author_papers(author['author_id'])">
-                        <h3 (click)="get_author_papers(author['author_id'])">{{ author['name'] }}</h3>
-                        <a (click)="get_author_papers(author['author_id'])">Scholar ID: {{ author['author_id'] }}</a>
-                        <a [href]="author['link']" target="_blank">Scholar Link: {{ author['link'] }}</a>
+        <div class="row" style="justify-content: center; padding: 20px !important;">
+            <div *ngIf="author_search_semnul_intrebarii">
+                <div class="author_display">
+                    <div *ngFor="let author of displayed_authors">
+                        <div class="author_card column" (click)="get_author_papers(author['author_id'])">
+                            <h3 (click)="get_author_papers(author['author_id'])">{{ author['name'] }}</h3>
+                            <!--                        <a (click)="get_author_papers(author['author_id'])">Scholar ID: {{ author['author_id'] }}</a>-->
+                            <div *ngIf="author['link'] != 'no_link' && author['link'] != 'none'">
+                                <a [href]="author['link']" target="_blank">Scholar Link: {{ author['link'] }}</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div *ngIf="show_back_button" style="max-width: 50% !important;">
-                <button type="button" mat-fab mat-mini-fab color="primary" matTooltip="Go back to authors"
-                        matTooltipPosition="left" (click)="paper_back()">
-                    <mat-icon class="icon-display">keyboard_arrow_left</mat-icon>
-                </button>
+            <div *ngIf="show_back_button"
+                 [style]='"max-width: " + (author_search_semnul_intrebarii ? "50% !important;" : "100% !important;")'>
+<!--                <button type="button" mat-fab mat-mini-fab color="primary" matTooltip="Go back to authors"-->
+<!--                        matTooltipPosition="left" (click)="paper_back()">-->
+<!--                    <mat-icon class="icon-display">keyboard_arrow_left</mat-icon>-->
+<!--                </button>-->
                 <h3>{{ displayed_papers_author['name'] }}</h3>
 
                 <div *ngIf="loading_author">
@@ -158,19 +162,29 @@
                 </div>
                 <div *ngFor="let doc of displayed_papers">
                     <div class="paper-card">
-                        <h3>
-                            {{ doc['metadata']['info']['paper']['title'] }}
-                        </h3>
-                        <span>
-                            Scholar Paper ID: {{ doc['metadata']['info']['paper']["result_id"] }}
-                        </span>
 
-                        <a [href]="doc['metadata']['info']['paper']['link']">{{ doc['metadata']['info']['paper']['link'] }}</a>
+                        <!--                        <span>-->
+                        <!--                            Scholar Paper ID: {{ doc['metadata']['info']['paper']["result_id"] }}-->
+                        <!--                        </span>-->
+
+                        <a [href]="doc['metadata']['info']['paper']['link']">
+                            <h3>
+                                {{ doc['metadata']['info']['paper']['title'] }}
+                            </h3>
+                        </a>
                         <!-- <div>
                             {{doc['metadata']['info'] | json}}
                         </div> -->
                         <div *ngFor="let author of doc['metadata']['info']['authors']">
-                            - by <a [href]="author['link']">{{ author['name'] }}</a>
+                            <div *ngIf="author['link'] !== undefined && author['link'] != 'none' && author['link'] != 'no_link'">
+                                - by <a [href]="author['link']">{{ author['name'] }}</a>
+                            </div>
+
+
+                            <div *ngIf="author['link'] === undefined || author['link'] == 'none' || author['link'] == 'no_link'">
+                                - by <span>{{ author['name'] }}</span>
+                            </div>
+
                         </div>
 
                         <div class="snippet">
@@ -179,7 +193,7 @@
 
                         <button style="background: transparent; text-align: center; border: none; color: black"
                                 (click)="doc_restrictContext(doc)">
-                            FOCUS ON
+                            Focus (Click to learn more about this paper)
                         </button>
                     </div>
                     <br/>
@@ -194,14 +208,19 @@
 
 
 <div class="example-sidenav-content" style="position: fixed; top: 20px; right: 50px; z-index: 19000;">
-    <button class="btn" type="button" mat-fab mat-mini-fab color="primary" matTooltip="Explore CQN papers and authors"
-            (click)="toggle_full_screen()">
-        <mat-icon class="icon-display">search</mat-icon>
+    <button class="btn" type="button" color="primary" matTooltip="Explore CQN papers"
+            (click)="toggle_full_screen_papers()">
+        <span>Search papers</span>
     </button>
 
-    <button class="btn" type="button" mat-fab mat-mini-fab color="primary" matTooltip="Content-based search"
-            matTooltipPosition="left" (click)="drawer.toggle()">
-        <mat-icon class="icon-display">code</mat-icon>
+    <button class="btn" type="button" color="primary" matTooltip="Explore CQNauthors"
+            (click)="toggle_full_screen_authors()">
+        <span>Search authors</span>
     </button>
+
+    <!--    <button class="btn" type="button" mat-fab mat-mini-fab color="primary" matTooltip="Content-based search"-->
+    <!--            matTooltipPosition="left" (click)="drawer.toggle()">-->
+    <!--        <mat-icon class="icon-display">code</mat-icon>-->
+    <!--    </button>-->
 </div>
   
