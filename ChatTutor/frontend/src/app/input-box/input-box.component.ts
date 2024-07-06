@@ -54,7 +54,7 @@ export class InputBoxComponent implements OnChanges{
 
     clearChat() {
         this.clearConvo.emit('');
-        this.canClear = false;
+        // this.canClear = false;
     }
 
     stopChat() {

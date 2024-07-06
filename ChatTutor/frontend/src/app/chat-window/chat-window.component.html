@@ -9,10 +9,14 @@
         <div class="chat-header-title">
             <a href="/"><h3>{{chat_title}}</h3></a>
             <div *ngIf="restrictToDocument != undefined">
-                Restriced to <span>{{restrictToDocument.metadata.doc}}</span>
-                <button mat-button (click)="clearRestriction()">
-                    <mat-icon>cancel</mat-icon>
+                <span>{{ "The chatbot will now ONLY answer questions about " + getDocTitle(restrictToDocument)}}</span>
+
+<!--                <p>{{restrictToDocument | json}}</p>-->
+
+                To exit, click <button (click)="clearRestriction()">
+                    here
                 </button>
+
             </div>
         </div>
         <!-- Loop over the messages and display each message -->
