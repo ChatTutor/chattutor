@@ -16,10 +16,12 @@ export class ChatWindowComponent implements OnInit {
     @Input() restrictToDocument: any = undefined
     @Input() type: any
     @Input() chat_title: string = "ChatTutor"
+    @Input() chat_title_link: string = "/"
     documentInfo: any = undefined
     loadingFiles: boolean = false
     status: WStatus = WStatus.Idle
     endpoint: string = `/ask`
+    stop_gen: boolean = false
 
     pleaseStopGeneratingConvo: boolean = false
     @Input() openingMessage: string = `Hello, I am here to respond to any questions you might have about this chapter or course.\nFeel free to ask me anything!`
@@ -31,6 +33,10 @@ export class ChatWindowComponent implements OnInit {
             role: 'assistant',
             timestamp: 0
         } as Message);
+
+        if (localStorage.getItem("cqn_local_convo")) {
+            this.messages = JSON.parse(localStorage.getItem('cqn_local_convo')!)
+        }
     }
 
     getDocTitle(document: any): string {
@@ -41,6 +47,20 @@ export class ChatWindowComponent implements OnInit {
         }
 
         return met['info']['paper']['title']
+    }
+
+    getDocLink(document: any): string {
+        let met = document['metadata']
+        let info = met['info']
+        if (info === undefined || info == null) {
+            if (met['link'] == undefined && met['link'] == 'no_link')
+                return '#'
+            return met['link']
+        }
+        if (met['info']['paper'] != undefined)
+            if (met['info']['paper']['link'] != undefined && met['info']['paper']['link'] != 'no_link')
+                return met['info']['paper']['link']
+        return '#'
     }
 
     setStatus(status: WStatus) {
@@ -57,6 +77,7 @@ export class ChatWindowComponent implements OnInit {
 
     stopGeneratingConvo() {
         this.pleaseStopGeneratingConvo = true
+        this.stop_gen = true
     }
 
     clearRestriction() {
@@ -76,6 +97,9 @@ export class ChatWindowComponent implements OnInit {
             role: 'assistant',
             timestamp: 0
         } as Message);
+
+        localStorage.setItem("cqn_local_convo", JSON.stringify(this.messages))
+
     }
 
     clearInfo() {
@@ -150,11 +174,11 @@ export class ChatWindowComponent implements OnInit {
     }
 
     async askForMessage() {
+        this.stop_gen = false
         let response = await this.askChatTutor()
         console.log(response, 'qqqq');
 
 
-        let stop_gen = false
         let is_first = true
         let accumulated_content = ""
         let context_documents: any[]
@@ -165,7 +189,10 @@ export class ChatWindowComponent implements OnInit {
             //console.log(reader, "aaaa");
             let par = await reader.read()
             if (par.done) {
-                stop_gen = false
+                element.clearStatus()
+                console.log("Cleared status!!")
+                element.stop_gen = false
+                localStorage.setItem("cqn_local_convo", JSON.stringify(element.messages))
                 return
             }
             const string_value = new TextDecoder().decode(par.value)
@@ -189,7 +216,7 @@ export class ChatWindowComponent implements OnInit {
                 if (message.message.valid_docs != undefined) {
                     context_documents = message.message.valid_docs
                 }
-                if (!stop_gen) {
+                if (!element.stop_gen) {
                     const content_to_append = message.message.content
                     if (typeof (content_to_append) != 'undefined') {
                         accumulated_content += content_to_append
@@ -215,14 +242,14 @@ export class ChatWindowComponent implements OnInit {
                     element.messages[ind - 1].content = formatMessage(accumulated_content)
                     msg_in_progress = element.messages[ind - 1]
                 }
-                if (stop_gen) {
+                if (element.stop_gen) {
                     accumulated_content += ' ...Stopped generating';
                 }
             }
-            if (!stop_gen) {
+            if (!element.stop_gen) {
                 read(element);
             } else {
-
+                accumulated_content += ' ...Stopped generating';
             }
         }
 
@@ -230,7 +257,8 @@ export class ChatWindowComponent implements OnInit {
 
         this.setStatus(WStatus.GeneratingMessage)
         await read(this)
-        this.clearStatus()
+        console.log("Cleared status[?]")
+        // this.clearStatus()
         console.log("Messages", this.messages);
 
         //console.log('Reader', reader);

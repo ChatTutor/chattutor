@@ -151,9 +151,12 @@ class SQLQueryTutor(Tutor):
             ]
         )
         required_level_of_information.resolve()
+        print("\nREQUIRED LEVEL OF INFO\n\n\n", required_level_of_information)
+
         return required_level_of_information.text
 
     def get_required_type_of_information(self, prompt, explain=False):
+        return "CONTENT"
         # if self.gemini == False:
         #     return self.get_required_level_of_information_openai(prompt, explain)
         respond_with = ""
@@ -412,6 +415,7 @@ class SQLQueryTutor(Tutor):
 
         if self.prequery:
             query = required_level_of_information
+            # query = "NONE"
             query_text = "NONE"
             sql_query_data = None
             if query != "NONE" and from_doc == None:

@@ -1,6 +1,6 @@
 <div class="docheader">
     <div *ngIf="document != undefined">
-        <mat-card class="example-card" [class.reduced]="!full">
+        <mat-card class="example-card">
             <mat-card-header (click)="toggleDocument()">
                 <!--                <div *ngIf="document.metadata.entry_id">-->
                 <!--                    <mat-card-subtitle>Paper</mat-card-subtitle>-->
@@ -10,9 +10,9 @@
                 <!--                </div>-->
                 <!--                <mat-card-title>{{document.metadata.doc}}</mat-card-title>-->
                 <div style="display: flex; flex-direction: column;">
-                    <div style="width: 30px"><mat-icon>chevron_right</mat-icon></div>
+                    <!-- <div style="width: 30px"><mat-icon>chevron_right</mat-icon></div> -->
                     <a [href]="document.metadata.links ? document.metadata.links : '#'">
-                        <span *ngIf="document.metadata.title">
+                        <span *ngIf="document.metadata.title" style="word-break: break-word; word-wrap: break-word;">
                             {{ document.metadata.title }}
                         </span>
                     </a>
@@ -29,9 +29,9 @@
                             Focus on for more information about authors / content.
                         </span>
                     </div>
-                    <div *ngIf="document.metadata.authors">
+                    <div *ngIf="document.metadata.authors" class="row" style="word-break: break-word; flex-wrap: wrap !important;">
                         <div *ngFor="let author of document.metadata.authors[document.metadata.doc]['author']">
-                            <span>{{ author['name'] }}&nbsp;,</span>
+                            <span>{{author['name']}},&nbsp;</span>
                         </div>
                     </div>
 
@@ -46,8 +46,8 @@
                 <mat-divider></mat-divider>
             </mat-card-content>
             <mat-card-actions>
-                <button mat-button (click)="focusOnDocument()" *ngIf="!showHeader">Focus (Click to learn more about this
-                    paper)
+                <button mat-button (click)="focusOnDocument()" *ngIf="!showHeader">Click <u>here</u> to learn more about this
+                    paper
                 </button>
                 <button mat-button (click)="closeInfoBox()" *ngIf="showHeader">CLOSE</button>
             </mat-card-actions>

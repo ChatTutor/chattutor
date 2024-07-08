@@ -6,16 +6,30 @@
         src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
       </script>
     <div class="chat-messages">
-        <div class="chat-header-title">
-            <a href="/"><h3>{{chat_title}}</h3></a>
-            <div *ngIf="restrictToDocument != undefined">
-                <span>{{ "The chatbot will now ONLY answer questions about " + getDocTitle(restrictToDocument)}}</span>
+        <div class="chat-header-title" style=" margin-top: 0;">
+            <a href="{{chat_title_link}}"><h3>{{chat_title}}</h3></a>
+            <div *ngIf="restrictToDocument != undefined" class="col-cent">
+                <div class="col-cent">
+                    <span>The chatbot will now <u>ONLY</u> answer questions about </span>
+                    
+                    <div *ngIf="getDocLink(restrictToDocument)=='#'">
+                        <span>{{getDocTitle(restrictToDocument)}}</span> 
+                    </div>
+                    <div *ngIf="getDocLink(restrictToDocument)!='#'">
+                        <a href="{{getDocLink(restrictToDocument)}}">{{getDocTitle(restrictToDocument)}}</a> 
+                    </div>
+                </div>
+                
 
 <!--                <p>{{restrictToDocument | json}}</p>-->
 
-                To exit, click <button (click)="clearRestriction()">
-                    here
-                </button>
+                <div class="row-cent">
+                    <span>To exit, click </span>
+                    <button mat-button color="primary" (click)="clearRestriction()">
+                        here
+                    </button>
+
+                </div>
 
             </div>
         </div>
