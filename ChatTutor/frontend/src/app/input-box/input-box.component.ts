@@ -20,13 +20,18 @@ export class InputBoxComponent implements OnChanges{
     ngOnChanges(changes: SimpleChanges) {
         console.log(changes)
         if (changes['status']) {
-            console.log(changes['status'])
+            console.log("Changes!!: ", changes['status'])
             if (changes['status'].currentValue == WStatus.GeneratingMessage || 
                 changes['status'].currentValue == WStatus.LoadingMessage) {
                     this.canSend = false;
                     this.canStop = true;
                     this.canClear = false;
                 }
+            else {
+                this.canSend = true;
+                this.canStop = false;
+                this.canClear = true;
+            }
         }
     }
 
@@ -54,12 +59,14 @@ export class InputBoxComponent implements OnChanges{
 
     clearChat() {
         this.clearConvo.emit('');
-        // this.canClear = false;
+        this.canClear = false;
+        this.canStop = true
     }
 
     stopChat() {
         this.stopConvo.emit('')
         this.canClear = true;
+        this.canStop = false
     }
 
 }

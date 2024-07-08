@@ -68,9 +68,9 @@
 
                     <div style="text-align: center">
                         <div style="background-color: #8a00fb; color: white !important; padding: 3px; margin: 3px; text-align: center; border-radius: 5px; overflow-x: scroll">
-                            <button style="background: transparent; text-align: center; border: none; color: white"
+                            <button mat-button color="primary"
                                     (click)="doc_restrictContext(doc)">
-                                Focus (Click to learn more about this paper)
+                                Click <b>here</b> to learn more about this paper
                             </button>
                         </div>
                     </div>
@@ -105,8 +105,8 @@
 <div *ngIf="full_screen"
      (click)="toggle_full_screen(); $event.stopPropagation()"
      style="position: fixed; width: 100vw; height: 100vh; background-color: rgba(255, 255, 255, 0.01); z-index: 100 !important;">
-    <div>
-        <button type="button" mat-fab mat-mini-fab color="primary" matTooltip="Close"
+    <div style="margin: 20px;">
+        <button type="button" mat-fab mat-mini-fab color="primary" matTooltip="Close" 
                 (click)="toggle_full_screen()" style="z-index: 999">
             <mat-icon class="icon-display">close</mat-icon>
         </button>
@@ -133,26 +133,39 @@
 
 
         </mat-form-field>
-        <div class="row" style="justify-content: center; padding: 20px !important;">
-            <div *ngIf="author_search_semnul_intrebarii">
-                <div class="author_display">
-                    <div *ngFor="let author of displayed_authors">
+        <div class="row" style="justify-content: flex-start; padding: 20px !important; position: relative;">
+            <div *ngIf="author_search_semnul_intrebarii" style="position: relative;  flex-grow: 2;">
+                <div class="author_display"  style="position: relative; flex-grow: 2;">
+                    <div *ngFor="let author of displayed_authors" style="position: relative;">
                         <div class="author_card column" (click)="get_author_papers(author['author_id'])">
-                            <h3 (click)="get_author_papers(author['author_id'])">{{ author['name'] }}</h3>
+                            <div *ngIf="author['link'] != 'no_link' && author['link'] != 'none'">
+                                <a [href]="author['link']" target="_blank">
+                                    <h3 (click)="get_author_papers(author['author_id'])">{{ author['name'] }}</h3>
+                                </a>
+                            </div>
+                            <div *ngIf="author['link'] == 'no_link' || author['link'] == 'none'">
+                                <h3 (click)="get_author_papers(author['author_id'])">{{ author['name'] }}</h3>
+                            </div>
+
+                            <button mat-button color="primary" (click)="get_author_papers(author['author_id'])">
+                                <span>See papers of {{author['name']}}</span>
+                            </button>
                             <!--                        <a (click)="get_author_papers(author['author_id'])">Scholar ID: {{ author['author_id'] }}</a>-->
                             <div *ngIf="author['link'] != 'no_link' && author['link'] != 'none'">
-                                <a [href]="author['link']" target="_blank">Scholar Link: {{ author['link'] }}</a>
+                                Scholar Link: <a [href]="author['link']" target="_blank">{{ author['link'] }}</a>
                             </div>
+
                         </div>
                     </div>
                 </div>
             </div>
+            <div *bgIf="!show_back_button"></div>
             <div *ngIf="show_back_button"
                  [style]='"max-width: " + (author_search_semnul_intrebarii ? "50% !important;" : "100% !important;")'>
-<!--                <button type="button" mat-fab mat-mini-fab color="primary" matTooltip="Go back to authors"-->
-<!--                        matTooltipPosition="left" (click)="paper_back()">-->
-<!--                    <mat-icon class="icon-display">keyboard_arrow_left</mat-icon>-->
-<!--                </button>-->
+               <button type="button" mat-fab mat-mini-fab color="primary" matTooltip="Go back to authors"
+                       matTooltipPosition="left" (click)="just_back()">
+                   <mat-icon class="icon-display">keyboard_arrow_left</mat-icon>
+               </button>
                 <h3>{{ displayed_papers_author['name'] }}</h3>
 
                 <div *ngIf="loading_author">
@@ -166,12 +179,22 @@
                         <!--                        <span>-->
                         <!--                            Scholar Paper ID: {{ doc['metadata']['info']['paper']["result_id"] }}-->
                         <!--                        </span>-->
-
-                        <a [href]="doc['metadata']['info']['paper']['link']">
+                        <div *ngIf="doc['metadata']['info']['paper']['link'] == undefined || doc['metadata']['info']['paper']['link'] == 'no_link'">
+                            
                             <h3>
                                 {{ doc['metadata']['info']['paper']['title'] }}
                             </h3>
-                        </a>
+                            <span>No accessible link found for this paper.</span>
+                        </div>
+
+
+                        <div *ngIf="doc['metadata']['info']['paper']['link'] != undefined && doc['metadata']['info']['paper']['link'] != 'no_link'">
+                            <a [href]="doc['metadata']['info']['paper']['link']">
+                                <h3>
+                                    {{ doc['metadata']['info']['paper']['title'] }}
+                                </h3>
+                            </a>
+                        </div>
                         <!-- <div>
                             {{doc['metadata']['info'] | json}}
                         </div> -->
@@ -191,9 +214,9 @@
                             {{ doc['metadata']['info']['paper']["snippet"] }}
                         </div>
 
-                        <button style="background: transparent; text-align: center; border: none; color: black"
+                        <button mat-button color="primary"
                                 (click)="doc_restrictContext(doc)">
-                            Focus (Click to learn more about this paper)
+                            Click <u>here</u> to learn more about this paper.
                         </button>
                     </div>
                     <br/>
@@ -208,12 +231,12 @@
 
 
 <div class="example-sidenav-content" style="position: fixed; top: 20px; right: 50px; z-index: 19000;">
-    <button class="btn" type="button" color="primary" matTooltip="Explore CQN papers"
+    <button mat-button color="primary" class="btn" type="button" color="primary" matTooltip="Explore CQN papers"
             (click)="toggle_full_screen_papers()">
         <span>Search papers</span>
     </button>
 
-    <button class="btn" type="button" color="primary" matTooltip="Explore CQNauthors"
+    <button mat-button color="primary" class="btn" type="button" color="primary" matTooltip="Explore CQNauthors"
             (click)="toggle_full_screen_authors()">
         <span>Search authors</span>
     </button>

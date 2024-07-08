@@ -7,12 +7,15 @@ import {Message} from 'app/models/message.model';
   templateUrl: './docheader.component.html',
   styleUrls: ['./docheader.component.css']
 })
-export class DocheaderComponent {
+export class DocheaderComponent implements OnInit {
   @Input() document: any = {};
   @Input() showHeader: boolean = true;
   @Output() onClose: EventEmitter<any> = new EventEmitter();
   @Output() onFocus: EventEmitter<any> = new EventEmitter();
   @Output() onClick: EventEmitter<any> = new EventEmitter();
+
+  ngOnInit(): void { 
+  }
 
   @Input() full: any = true;
   closeInfoBox() {

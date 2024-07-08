@@ -41,6 +41,7 @@ export class NsfPaperNavComponent implements OnInit {
         let author_data = await this.dataProvider.nsfGetAllAuthors()
         this.all_authors = author_data["data"]
         this.displayed_authors = this.all_authors
+        this.displayed_authors_stack.push(this.displayed_authors)
     }
 
     set_mode(sm: string) {
@@ -107,7 +108,10 @@ export class NsfPaperNavComponent implements OnInit {
                 }
             })
             console.log(this.displayed_papers)
-            this.displayed_papers_author = {name: "Results for: `" + this.author_input + "`"}
+            if (this.author_input.length == 0)
+                this.displayed_papers_author = {name: "All results"}
+            else
+                this.displayed_papers_author = {name: "Your Search: `" + this.author_input + "`"}
             this.show_back_button = true
 
         }
@@ -115,7 +119,7 @@ export class NsfPaperNavComponent implements OnInit {
 
     async search_papers_default() {
         let paper_data = await this.dataProvider.nsfGetAllPapersByName('quantum')
-
+        console.log(paper_data, "paper_fata")
         if (this.default_displayed_papers.length == 0) {
             this.displayed_papers = paper_data["data"].map((x: any) => {
                 return {
@@ -133,7 +137,10 @@ export class NsfPaperNavComponent implements OnInit {
 
 
         console.log(this.displayed_papers)
-        this.displayed_papers_author = {name: "Results for: `" + this.author_input + "`"}
+        if (this.author_input.length == 0)
+            this.displayed_papers_author = {name: "All results"}
+        else
+            this.displayed_papers_author = {name: "Your Search: `" + this.author_input + "`"}
         this.show_back_button = true
     }
 
@@ -168,7 +175,18 @@ export class NsfPaperNavComponent implements OnInit {
         this.show_back_button = false
         this.displayed_papers = []
         this.displayed_authors = this.displayed_authors_stack[this.displayed_authors.length - 1]
-        this.displayed_authors_stack.pop()
+        if (this.displayed_authors_stack.length > 0)
+            this.displayed_authors_stack.pop()
+    }
+
+    just_back() {
+        this.show_back_button = true
+        this.displayed_papers = this.default_displayed_papers
+        this.displayed_authors = this.displayed_authors_stack[this.displayed_authors.length - 1]
+        if (this.displayed_authors_stack.length > 0)
+            this.displayed_authors_stack.pop()
+        this.displayed_papers_author = {name: "All results"}
+        this.displayed_authors = this.all_authors
     }
 
     async send() {

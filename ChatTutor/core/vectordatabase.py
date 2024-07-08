@@ -119,7 +119,7 @@ class VectorDatabase:
         self, collection_name, extra=["titles", "summary", "authors", "citations"]
     ):
         """Load Chroma collection"""
-        openai_ef = embedding_functions.Text2VecEmbeddingFunction()
+        openai_ef = None
 
         if self.ef == "openai":
             openai_ef = embedding_functions.OpenAIEmbeddingFunction(
@@ -139,7 +139,7 @@ class VectorDatabase:
 
     def load_datasource_chroma(self, collection_name):
         """Load Chroma collection"""
-        openai_ef = embedding_functions.Text2VecEmbeddingFunction()
+        openai_ef = None
 
         if self.ef == "openai":
             openai_ef = embedding_functions.OpenAIEmbeddingFunction(

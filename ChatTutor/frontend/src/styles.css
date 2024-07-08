@@ -48,6 +48,14 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; }
     flex-direction: column;
 }
 
+.col-cent {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+}
+
 .row {
     display: flex;
     flex-direction: row;
