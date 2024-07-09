@@ -62,9 +62,10 @@ def load_citations(data):
     data.citations_unpacked = dt.get_dictionary()
     return data
 
+
 def CQNPublicationsGetTextsFromResourceUrl(content_url: str, json_elem, i=0) -> List[Text]:
     try:
-        result_id = json_elem['result_id']
+        result_id = json_elem["result_id"]
         doc = Doc(docname=f"{result_id}", citation=f"{content_url}", dockey=f"{result_id}")
 
         texts = []
@@ -87,6 +88,7 @@ def CQNPublicationsGetTextsFromResourceUrl(content_url: str, json_elem, i=0) -> 
     except Exception:
         return []
 
+
 class CQNPublications:
     title: str
     snippet: str
@@ -98,7 +100,9 @@ class CQNPublications:
     result_id: str
 
     def set_pdf_contents(self, content_url, i):
-        doc = Doc(docname=f"{self.result_id}", citation=f"{content_url}", dockey=f"{self.result_id}")
+        doc = Doc(
+            docname=f"{self.result_id}", citation=f"{content_url}", dockey=f"{self.result_id}"
+        )
 
         texts = []
         content_url = content_url.replace("html", "pdf")

@@ -31,7 +31,6 @@ from scholarly import scholarly, Author, Publication
 from google_scholar_py import *
 from core.reader import parse_pdf, Text, Doc
 from core.blueprints.bp_data.cqn import CQNPublications, process, load_citations
-from serpapi import GoogleScholarSearch
 
 from flask_apscheduler import APScheduler
 from core.extensions import sched
@@ -49,9 +48,9 @@ def get_author_likeness():
     if data is None:
         return jsonify({"no": "no json received"})
 
-    name = data.get('name', '')
+    name = data.get("name", "")
 
-    print(f'got name: {name}')
+    print(f"got name: {name}")
 
     res, _ = DataBase().get_author_by_name_like(name_like=name)
     if res is None:
@@ -66,9 +65,11 @@ def add_from_json_to_db():
         data = json.load(f)
         ff = []
         for x in data["data"]:
-            x["resources"] = [{"link": PaperManager.convert_paper_link_to_resource_link(x.get('link', ''))}]
-            if(x.get('link', '') == ''):
-                x['link'] = ''
+            x["resources"] = [
+                {"link": PaperManager.convert_paper_link_to_resource_link(x.get("link", ""))}
+            ]
+            if x.get("link", "") == "":
+                x["link"] = ""
             ff.append(x)
             print("::TT::", x)
         dt = [JSONPaperParser().parse(x) for x in ff]
@@ -107,9 +108,9 @@ def get_authors_by_name():
     a_name = result.get("author_name", None)
     ares = []
 
-    print(a_name.split(' '))
-    for k in a_name.split(' '):
-        if k != ' ' and k != '':
+    print(a_name.split(" "))
+    for k in a_name.split(" "):
+        if k != " " and k != "":
             res, _ = DataBase().get_author_by_name_soundslike(k)
             ares = ares + res
     return jsonify({"data": ares})
@@ -201,14 +202,13 @@ def getchromapapers():
 from core.data.parsing.papers.json_papers import JSONPaperParser
 
 
-@data_bp.route("/proba_cqn", methods=['POST', 'GET'])
+@data_bp.route("/proba_cqn", methods=["POST", "GET"])
 def proba_cqn():
-    #return jsonify({"andu": "andu"})
+    # return jsonify({"andu": "andu"})
     alfa = refreshcqn_scheduler()
     if alfa is None:
         return jsonify({"maessaje": "err"})
     return jsonify({"data": alfa})
-
 
 
 @data_bp.route("/backuploadcqn", methods=["POST", "GET"])
@@ -229,42 +229,44 @@ def backuploadcqn():
     return jsonify({"data": [x for x in dt]})
 
 
-#@data_bp.route("/refreshcqn", methods=["POST", "GET"])
-#def refreshcqn():
- #   ps = SerpApiGoogleScholarOrganic()
-  #  data = ps.scrape_google_scholar_organic_results(
- #       query="NSF-ERC CQN 1941583",
- #       api_key=os.getenv("SERP_API_KEY"),
- #       pagination=True,
- #   )
+# @data_bp.route("/refreshcqn", methods=["POST", "GET"])
+# def refreshcqn():
+#   ps = SerpApiGoogleScholarOrganic()
+#  data = ps.scrape_google_scholar_organic_results(
+#       query="NSF-ERC CQN 1941583",
+#       api_key=os.getenv("SERP_API_KEY"),
+#       pagination=True,
+#   )
 
-  #  data_formated: List[CQNPublications] = [CQNPublications(e) for e in data]
+#  data_formated: List[CQNPublications] = [CQNPublications(e) for e in data]
 
-  #  data_filtered: List[CQNPublications] = list(
-  #      filter(lambda x: x.resources != "None", data_formated)
-  #  )
-    # string = json.dumps(data, indent=2)
+#  data_filtered: List[CQNPublications] = list(
+#      filter(lambda x: x.resources != "None", data_formated)
+#  )
+# string = json.dumps(data, indent=2)
 
-    # for i in range(0, len(data_filtered) - 1):
-    #     data_filtered[i].set_pdf_contents(content_url=data_filtered[i].get_first_file_link())
-   # get_content = True
-  #  dt = data_filtered
-  #  if get_content:
-  #      dt = process(data_filtered)
+# for i in range(0, len(data_filtered) - 1):
+#     data_filtered[i].set_pdf_contents(content_url=data_filtered[i].get_first_file_link())
+# get_content = True
+#  dt = data_filtered
+#  if get_content:
+#      dt = process(data_filtered)
 
-  #  print("----- DONE -----")
-  #  dt = [x for x in data_filtered if x is not None]
+#  print("----- DONE -----")
+#  dt = [x for x in data_filtered if x is not None]
 
-  #  with open("./data.json", "w+") as f:
-  #      f.write(f"{dt}")
+#  with open("./data.json", "w+") as f:
+#      f.write(f"{dt}")
 
-  #  PaperManager.add_to_database(dt=dt)
-  #  print("Added!")
-   # PaperManager.add_to_chroma(dt=dt)
-   # return jsonify({"data": [x.toDict() for x in dt]})
+#  PaperManager.add_to_database(dt=dt)
+#  print("Added!")
+# PaperManager.add_to_chroma(dt=dt)
+# return jsonify({"data": [x.toDict() for x in dt]})
+
 
 def test_refresh():
-    print('Hello world!')
+    print("Hello world!")
+
 
 def refreshcqn_scheduler():
     ps = SerpApiGoogleScholarOrganic()
@@ -273,25 +275,25 @@ def refreshcqn_scheduler():
         return
 
     data = ps.scrape_google_scholar_organic_results(
-            query="NSF-ERC CQN 1941583",
-            api_key=key,
-            pagination=True,
-        )
+        query="NSF-ERC CQN 1941583",
+        api_key=key,
+        pagination=True,
+    )
     # ---- FROM BACKUP . JSON, DECOMMENT IN CASE OF ERR (doamne fereste) ----
-    #dt = []
-    #with open("core/blueprints/bp_data/data_backup.json", "r") as f:
+    # dt = []
+    # with open("core/blueprints/bp_data/data_backup.json", "r") as f:
     #    data = json.load(f)
     #    dt = [JSONPaperParser().parse(x) for x in data["data"]]
 
-    
     dt = [JSONPaperParser().parse(x) for x in data]
     print("\n\n\naaaaaaaaaaaa\n\n\n")
     PaperManager.add_to_database_static(dt=dt)
-    
+
     PaperManager.add_to_chroma_static(dt=dt)
     return {"data": "success"}
 
-@data_bp.route('/refreshmeme', methods=['POST', 'GET'])
+
+@data_bp.route("/refreshmeme", methods=["POST", "GET"])
 def refreshcqn_scheduler_root():
     ps = SerpApiGoogleScholarOrganic()
     key = os.getenv("SERP_API_KEY")
@@ -315,6 +317,7 @@ def refreshcqn_scheduler_root():
 
     PaperManager.add_to_chroma_static(dt=dt)
     return {"data": "success"}
+
 
 def getpdfcontentsfromlist(pubs: List[CQNPublications]):
     for i in range(0, len(pubs) - 1):
