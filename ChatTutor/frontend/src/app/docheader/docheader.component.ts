@@ -17,6 +17,10 @@ export class DocheaderComponent implements OnInit {
   ngOnInit(): void { 
   }
 
+  map_name(arr : Array<any>) {
+    return arr.map(x => x['name'])
+  }
+
   @Input() full: any = true;
   closeInfoBox() {
     this.onClose.emit()

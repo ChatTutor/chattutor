@@ -11,11 +11,24 @@
                 <!--                <mat-card-title>{{document.metadata.doc}}</mat-card-title>-->
                 <div style="display: flex; flex-direction: column;">
                     <!-- <div style="width: 30px"><mat-icon>chevron_right</mat-icon></div> -->
-                    <a [href]="document.metadata.links ? document.metadata.links : '#'">
+                     <div *ngIf="document.metadata.links && document.metadata.links!='no_link'">
+                        <a [href]="document.metadata.links ? document.metadata.links : '#'">
+                            <span *ngIf="document.metadata.title" style="word-break: break-word; word-wrap: break-word;">
+                                {{ document.metadata.title }}
+                            </span>
+                        </a>
+                     </div>
+
+                     <div *ngIf="!document.metadata.links || document.metadata.links=='no_link'">
                         <span *ngIf="document.metadata.title" style="word-break: break-word; word-wrap: break-word;">
                             {{ document.metadata.title }}
                         </span>
-                    </a>
+                     </div>
+                    <!-- <a [href]="document.metadata.links ? document.metadata.links : '#'">
+                        <span *ngIf="document.metadata.title" style="word-break: break-word; word-wrap: break-word;">
+                            {{ document.metadata.title }}
+                        </span>
+                    </a> -->
 
                 </div>
             </mat-card-header>
@@ -30,9 +43,7 @@
                         </span>
                     </div>
                     <div *ngIf="document.metadata.authors" class="row" style="word-break: break-word; flex-wrap: wrap !important;">
-                        <div *ngFor="let author of document.metadata.authors[document.metadata.doc]['author']">
-                            <span>{{author['name']}},&nbsp;</span>
-                        </div>
+                        {{map_name(document.metadata.authors[document.metadata.doc]['author']).join(', ')}}
                     </div>
 
                     <div *ngIf="document.metadata.published">
@@ -46,7 +57,7 @@
                 <mat-divider></mat-divider>
             </mat-card-content>
             <mat-card-actions>
-                <button mat-button (click)="focusOnDocument()" *ngIf="!showHeader">Click <u>here</u> to learn more about this
+                <button mat-button (click)="focusOnDocument()" style="word-break: break-word;" *ngIf="!showHeader">Click <u>here</u> to learn more about this
                     paper
                 </button>
                 <button mat-button (click)="closeInfoBox()" *ngIf="showHeader">CLOSE</button>

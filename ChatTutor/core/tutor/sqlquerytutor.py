@@ -44,7 +44,8 @@ class SQLQueryTutor(Tutor):
             Tables:
             
             'author' -> table name (to use in sql query)
-            
+            Use this table if user asks about scientists as well!
+
             'author' table implementation:
             ```
             {open('core/data/models/Author.py','r').read()}

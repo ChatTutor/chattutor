@@ -68,7 +68,7 @@
 
                     <div style="text-align: center">
                         <div style="background-color: #8a00fb; color: white !important; padding: 3px; margin: 3px; text-align: center; border-radius: 5px; overflow-x: scroll">
-                            <button mat-button color="primary"
+                            <button mat-button color="primary" style="word-break: break-word;"
                                     (click)="doc_restrictContext(doc)">
                                 Click <b>here</b> to learn more about this paper
                             </button>
@@ -214,7 +214,7 @@
                             {{ doc['metadata']['info']['paper']["snippet"] }}
                         </div>
 
-                        <button mat-button color="primary"
+                        <button mat-button color="primary" style="word-break: break-word;"
                                 (click)="doc_restrictContext(doc)">
                             Click <u>here</u> to learn more about this paper.
                         </button>
