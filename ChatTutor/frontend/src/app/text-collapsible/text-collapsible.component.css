@@ -1,0 +1,10 @@
+.txt-collapsed {
+    max-height: 200px;
+    overflow-y: hidden;
+    transition: max-height 0.15s ease-out;
+}
+
+.txt-noncollapsed {
+    overflow-y: unset;
+    max-height: unset !important;
+}

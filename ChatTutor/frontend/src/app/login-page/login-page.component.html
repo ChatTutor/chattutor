@@ -1,0 +1,46 @@
+<app-navbar [onhomepage]="true"></app-navbar>
+<app-gradient-background></app-gradient-background>
+<div class="body">
+<div class="all-form chattutor_course_container" style="padding: 20px">
+    
+    <div *ngIf="stud">
+        <h3>Students</h3>
+    </div>
+
+    <div *ngIf="!stud">
+        <h3>Professors</h3>
+    </div>
+
+    <h2>Login to ChatTutor</h2>
+    
+    <form ngNoForm class="aot" [action]='endpoint' method='POST' *ngIf="!stud">
+        <mat-form-field>
+            <mat-label>E-mail</mat-label>
+            <input matInput type='text' name='email' id='email'/>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Password</mat-label>
+            <input matInput type='password' name='password' id='password'/>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput type='submit' name='submit'/>
+        </mat-form-field>
+    </form>
+    <div *ngIf="!stud">
+        <a style="color: white" href="/users/resetpassword">Forgot password</a>
+    </div>
+    <div class="login-container aot">
+        <button (click)="continueOAuth()" class="login-with-google-btn">Continue with Google</button>
+    </div>
+
+    <div *ngIf="stud" style="margin-top: 20px;">
+        <a style="color: white" href="/login">Are you a professor?</a>
+    </div>
+
+    <div *ngIf="!stud" style="margin-top: 20px;">
+        <a style="color: white" href="/student/login">Login as a student</a>
+    </div>
+
+</div>
+</div>

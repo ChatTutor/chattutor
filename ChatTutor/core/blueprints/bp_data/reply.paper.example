@@ -1,0 +1,157 @@
+paper # 1
+{
+    "authors": [
+        {
+            "author_id": "wXGtGncAAAAJ",
+            "link": "https://scholar.google.com/citations?user=wXGtGncAAAAJ&hl=en&oi=sra",
+            "name": "M Chehimi",
+            "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=wXGtGncAAAAJ&engine=google_scholar_author&hl=en"
+        },
+        {
+            "author_id": "A6dc7qMAAAAJ",
+            "link": "https://scholar.google.com/citations?user=A6dc7qMAAAAJ&hl=en&oi=sra",
+            "name": "SYC Chen",
+            "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=A6dc7qMAAAAJ&engine=google_scholar_author&hl=en"
+        },
+        {
+            "author_id": "kYDNA0UAAAAJ",
+            "link": "https://scholar.google.com/citations?user=kYDNA0UAAAAJ&hl=en&oi=sra",
+            "name": "W Saad",
+            "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=kYDNA0UAAAAJ&engine=google_scholar_author&hl=en"
+        },
+        {
+            "author_id": "KIFPVWoAAAAJ",
+            "link": "https://scholar.google.com/citations?user=KIFPVWoAAAAJ&hl=en&oi=sra",
+            "name": "D Towsley",
+            "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=KIFPVWoAAAAJ&engine=google_scholar_author&hl=en"
+        }
+    ],
+    "citations_unpacked": {
+    "citations": [
+        {
+            "snippet": "Chehimi, Mahdi, et al. \"Foundations of quantum federated learning over classical and quantum networks.\" IEEE Network (2023).",
+            "title": "MLA"
+        },
+        {
+            "snippet": "Chehimi, M., Chen, S. Y. C., Saad, W., Towsley, D., & Debbah, M. (2023). Foundations of quantum federated learning over classical and quantum networks. IEEE Network.",
+            "title": "APA"
+        },
+        {
+            "snippet": "Chehimi, Mahdi, Samuel Yen-Chi Chen, Walid Saad, Don Towsley, and Mérouane Debbah. \"Foundations of quantum federated learning over classical and quantum networks.\" IEEE Network (2023).",
+            "title": "Chicago"
+        },
+        {
+            "snippet": "Chehimi, M., Chen, S.Y.C., Saad, W., Towsley, D. and Debbah, M., 2023. Foundations of quantum federated learning over classical and quantum networks. IEEE Network.",
+            "title": "Harvard"
+        },
+        {
+            "snippet": "Chehimi M, Chen SY, Saad W, Towsley D, Debbah M. Foundations of quantum federated learning over classical and quantum networks. IEEE Network. 2023 Oct 25.",
+            "title": "Vancouver"
+        }
+    ],
+    "links": [
+        {
+            "link": "https://scholar.googleusercontent.com/scholar.bib?q=info:pVx2050mOQYJ:scholar.google.com/&output=citation&scisdr=ClH5rC39GAA:AFWwaeYAAAAAZkdzIBsBqYwmi1UDpw1qYLoowiI&scisig=AFWwaeYAAAAAZkdzIIw_E7Y_NDu8-uybqOW74iU&scisf=4&ct=citation&cd=-1&hl=en",
+            "name": "BibTeX"
+        },
+        {
+            "link": "https://scholar.googleusercontent.com/scholar.enw?q=info:pVx2050mOQYJ:scholar.google.com/&output=citation&scisdr=ClH5rC39GAA:AFWwaeYAAAAAZkdzIBsBqYwmi1UDpw1qYLoowiI&scisig=AFWwaeYAAAAAZkdzIIw_E7Y_NDu8-uybqOW74iU&scisf=3&ct=citation&cd=-1&hl=en",
+            "name": "EndNote"
+        },
+        {
+            "link": "https://scholar.googleusercontent.com/scholar.ris?q=info:pVx2050mOQYJ:scholar.google.com/&output=citation&scisdr=ClH5rC39GAA:AFWwaeYAAAAAZkdzIBsBqYwmi1UDpw1qYLoowiI&scisig=AFWwaeYAAAAAZkdzIIw_E7Y_NDu8-uybqOW74iU&scisf=2&ct=citation&cd=-1&hl=en",
+            "name": "RefMan"
+        },
+        {
+            "link": "https://scholar.googleusercontent.com/scholar.rfw?q=info:pVx2050mOQYJ:scholar.google.com/&output=citation&scisdr=ClH5rC39GAA:AFWwaeYAAAAAZkdzIBsBqYwmi1UDpw1qYLoowiI&scisig=AFWwaeYAAAAAZkdzIIw_E7Y_NDu8-uybqOW74iU&scisf=1&ct=citation&cd=-1&hl=en",
+            "name": "RefWorks"
+        }
+    ],
+    "search_metadata": {
+        "created_at": "2024-05-17 14:59:17 UTC",
+        "google_scholar_cite_url": "https://scholar.google.com/scholar?q=info:pVx2050mOQYJ:scholar.google.com&output=cite",
+        "id": "664770c53a218a5bd0583099",
+        "json_endpoint": "https://serpapi.com/searches/594351a726db33ab/664770c53a218a5bd0583099.json",
+        "prettify_html_file": "https://serpapi.com/searches/594351a726db33ab/664770c53a218a5bd0583099.prettify",
+        "processed_at": "2024-05-17 14:59:17 UTC",
+        "raw_html_file": "https://serpapi.com/searches/594351a726db33ab/664770c53a218a5bd0583099.html",
+        "status": "Success",
+        "total_time_taken": 3.72
+    },
+    "search_parameters": {
+        "engine": "google_scholar_cite",
+        "q": "pVx2050mOQYJ"
+    }
+    },
+    "contents": "[...]"
+        "entry": {
+        "inline_links": {
+            "cited_by": {
+            "cites_id": "448432097199545509",
+            "link": "https://scholar.google.com/scholar?cites=448432097199545509&as_sdt=5,33&sciodt=0,33&hl=en",
+            "serpapi_scholar_link": "https://serpapi.com/search.json?as_sdt=5%2C33&cites=448432097199545509&engine=google_scholar&hl=en",
+            "total": 7
+        },
+        "related_pages_link": "https://scholar.google.com/scholar?q=related:pVx2050mOQYJ:scholar.google.com/&scioq=NSF-ERC+CQN+1941583&hl=en&as_sdt=0,33",
+        "serpapi_cite_link": "https://serpapi.com/search.json?engine=google_scholar_cite&hl=en&q=pVx2050mOQYJ",
+        "serpapi_related_pages_link": "https://serpapi.com/search.json?as_sdt=0%2C33&engine=google_scholar&hl=en&q=related%3ApVx2050mOQYJ%3Ascholar.google.com%2F&start=0",
+        "versions": {
+        "cluster_id": "448432097199545509",
+        "link": "https://scholar.google.com/scholar?cluster=448432097199545509&hl=en&as_sdt=0,33",
+        "serpapi_scholar_link": "https://serpapi.com/search.json?as_sdt=0%2C33&cluster=448432097199545509&engine=google_scholar&hl=en",
+        "total": 4
+        }
+    },
+    "link": "https://ieeexplore.ieee.org/abstract/document/10296523/",
+    "position": 1,
+    "publication_info": {
+        "authors": [
+        {
+            "author_id": "wXGtGncAAAAJ",
+            "link": "https://scholar.google.com/citations?user=wXGtGncAAAAJ&hl=en&oi=sra",
+            "name": "M Chehimi",
+            "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=wXGtGncAAAAJ&engine=google_scholar_author&hl=en"
+        },
+        {
+            "author_id": "A6dc7qMAAAAJ",
+            "link": "https://scholar.google.com/citations?user=A6dc7qMAAAAJ&hl=en&oi=sra",
+            "name": "SYC Chen",
+            "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=A6dc7qMAAAAJ&engine=google_scholar_author&hl=en"
+        },
+        {
+            "author_id": "kYDNA0UAAAAJ",
+            "link": "https://scholar.google.com/citations?user=kYDNA0UAAAAJ&hl=en&oi=sra",
+            "name": "W Saad",
+            "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=kYDNA0UAAAAJ&engine=google_scholar_author&hl=en"
+        },
+        {
+            "author_id": "KIFPVWoAAAAJ",
+            "link": "https://scholar.google.com/citations?user=KIFPVWoAAAAJ&hl=en&oi=sra",
+            "name": "D Towsley",
+            "serpapi_scholar_link": "https://serpapi.com/search.json?author_id=KIFPVWoAAAAJ&engine=google_scholar_author&hl=en"
+        }
+        ],
+        "summary": "M Chehimi, SYC Chen, W Saad, D Towsley… - IEEE …, 2023 - ieeexplore.ieee.org"
+    },
+    "resources": [
+        {
+            "file_format": "PDF",
+            "link": "https://arxiv.org/pdf/2310.14516",
+            "title": "arxiv.org"
+        }
+    ],
+    "result_id": "pVx2050mOQYJ",
+    "snippet": "Quantum federated learning (QFL) is a novel framework that integrates the advantages of classical federated learning (FL) with the computational power of quantum technologies. This …",
+    "title": "Foundations of quantum federated learning over classical and quantum networks"
+    },
+    "files": [
+    {
+        "file_format": "PDF",
+        "link": "https://arxiv.org/pdf/2310.14516",
+        "title": "arxiv.org"
+    }
+    ],
+    "link": "Quantum federated learning (QFL) is a novel framework that integrates the advantages of classical federated learning (FL) with the computational power of quantum technologies. This …",
+    "snippet": "Quantum federated learning (QFL) is a novel framework that integrates the advantages of classical federated learning (FL) with the computational power of quantum technologies. This …",
+    "title": "Foundations of quantum federated learning over classical and quantum networks"
+}

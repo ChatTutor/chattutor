@@ -1,0 +1,34 @@
+<div class="section menu" [class.ondashboardmenu]="ondashboard" [class.onhomepagemenu]="onhomepage">
+    <!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT09TQMs5SsRhsLscHDKkO-uP-QTJRmz-JM2lDrXbhYvgAUi7uXJWtbMYgBGjg&s"/> -->
+    <div class="fl-right" [class.ondashboard]="ondashboard" [class.onhomepage]="onhomepage">
+        <div>
+            <a href="/">Home</a>
+        </div>
+        <div *ngIf="loggedin && !hidden">
+            <a href="/mycourses">My courses</a>
+        </div>
+        <div *ngIf="loggedin && show_verif && !user['google_id']">
+            <a href="/users/send_verification_mail">Verify</a>
+        </div>
+        <div *ngIf="!loggedin && !hidden">
+            <a href="/login">Login</a>
+        </div>
+        <div *ngIf="!loggedin && !hidden">
+            <a href="/register">Register</a>
+        </div>
+        <div *ngIf="loggedin && !hidden">
+            <a href="/logout">Logout</a>
+        </div>
+        <div *ngIf="loggedin && (user != undefined)" style="display: flex; flex-direction: row; align-items: center; justify-content: center">
+            <div class="divider" style="background-color: white; width: 1px; height: calc(100% - 10px); margin-right: 10px"></div>
+            <div *ngIf="user['picture'] != 'unset'" style="display: flex; flex-direction: row; align-items: center; justify-content: center">
+                <img class="profimg" src="{{user['picture']}}">
+                <div style="display: flex; flex-direction: row; align-items: center; justify-content: center"> <a style="font-size: medium">{{user['email']}}</a> </div>
+            </div>
+            <div *ngIf="user['picture'] == 'unset'" style="display: flex; flex-direction: row; align-items: center; justify-content: center">
+                <div> <a>{{user['email']}}</a> </div>
+
+            </div>
+        </div>
+    </div>
+</div>

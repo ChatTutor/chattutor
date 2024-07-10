@@ -1,0 +1,58 @@
+<div class="urllabel" [ngClass]="{'opacity' : isDeleting == true }">
+    <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header class="right-aligned-header">
+            <mat-panel-title>
+                <div class="please-horizontal">
+                    <div>
+                        <span style="display: inline-block">Section active on <a [href]="url_name"
+                                                                                 target="_blank">{{url_name}}</a></span>
+                    </div>
+                </div>
+            </mat-panel-title>
+
+
+            <mat-panel-description>
+                <button mat-icon-button
+                        (click)="emitRemove(section_info['section_id'], section_info['course_chroma_collection'])">
+                    <mat-icon>cancel</mat-icon>
+                </button>
+
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <p>Page(Section) Info:</p>
+        <ul class="cool-shadow">
+            <li>Section ID: {{section_info['section_id']}}</li>
+            <li>Course Embedding Collection Name: {{section_info['course_chroma_collection']}}</li>
+            <li>Section URL: {{section_info['section_url']}}</li>
+        </ul>
+        <p>Information available to ChatTutor:</p>
+        <ul *ngFor="let fd of from_doc_joined.split('$')" class="cool-shadow">
+            <li>{{fd}}</li>
+        </ul>
+
+        <button mat-icon-button (click)="toggleInputBox()">
+            <mat-icon>{{!toggle_input ? 'more' : 'cancel'}}</mat-icon>
+        </button>
+
+        <mat-form-field [class.hidden]="!toggle_input" class="add-input">
+            <mat-label>Add an URL</mat-label>
+            <input matInput placeholder="What should ChatTutor know about when students visit this page?"
+                   [(ngModel)]="url_to_add">
+            <button mat-icon-button color="primary" matSuffix (click)="addURLToSection()">
+                <mat-icon>add</mat-icon>
+            </button>
+        </mat-form-field>
+
+        <mat-form-field [class.hidden]="!toggle_input" class="add-input">
+            <mat-label>Add a file</mat-label>
+            <input matInput type="file" (change)="onFileChanged($event)" multiple #fileUpload />
+            <button mat-icon-button color="primary" matSuffix (click)="addFileToSection()">
+                <mat-icon>add</mat-icon>
+            </button>
+
+        </mat-form-field>
+
+    </mat-expansion-panel>
+    <mat-divider></mat-divider>
+
+</div>

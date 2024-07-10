@@ -1,17 +1,23 @@
 """
-    Defines which database is used. 
-    currenlty, only chroma is suported  
+    Defines which database is used. One can choose between chroma and deeplake
 """
 
 from core.vectordatabase import VectorDatabase
+import os
+from core.openai_tools import load_env
 
-db = VectorDatabase("34.133.39.77:8000", "chroma", hosted=True)
-user_db = VectorDatabase("34.133.39.77:8000", "chroma", hosted=True)
+load_env()
+
+db = VectorDatabase(os.getenv("VECTOR_DB_HOST"), "chroma", hosted=True)
+user_db = VectorDatabase(os.getenv("VECTOR_DB_HOST"), "chroma", hosted=True)
 
 import random
 import string
 from datetime import datetime
-
+from flask_apscheduler import APScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+sched = BackgroundScheduler()
 
 def get_random_string(length):
     # choose from all lowercase letter
@@ -26,11 +32,7 @@ def generate_unique_name(desc):
         desc
         + "_"
         + get_random_string(20)
-        + datetime.now()
-        .isoformat()
-        .replace(".", "a")
-        .replace(":", "n")
-        .replace("-", "d")
+        + datetime.now().isoformat().replace(".", "a").replace(":", "n").replace("-", "d")
     )
 
 

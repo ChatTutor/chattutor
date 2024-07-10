@@ -1,0 +1,25 @@
+<mat-drawer-container class="example-container" autosize>
+<app-nsf-paper-nav (updateContextRestriction)="restrict($event)">
+
+</app-nsf-paper-nav>
+<app-chat-window [chat_title]="'ChatCQN'" [chat_title_link]="'https://cqn-erc.org/'" [openingMessage]="'
+Hello, welcome to ChatCQN!
+
+You can use this tool to learn about anything related to quantum networks, and all of the exciting work happening at the NSF Center for Quantum Networks. Here are some example prompts:
+- Please explain quantum networking to me at the level of a high schooler!
+- What are three important papers on first generation quantum repeaters? Can you explain one of these papers to me?
+- Who are some important scientists at the CQN researching quantum computing?
+
+Along with text response, ChatCQN will produce pop-ups with information about scientific papers, and will give you the option of asking questions about a particular paper. In this mode, you can talk to ChatCQN like an expert on that paper.
+For example you can ask:
+
+- What are the authors of the paper I selected?
+- Summarize this paper`s conclusions for me.
+
+ChatCQN also enables you to search CQN papers and authors directly using the button in the top right. 
+You can directly learn more about papers by clicking `Click here to learn more about this paper.`
+
+If you have any questions or suggestions, please reach out to hkemeny@g.harvard.edu .'"></app-chat-window>
+
+</mat-drawer-container>
+

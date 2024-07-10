@@ -1,0 +1,2183 @@
+{
+    "data": 
+    [
+    {
+        "title": "Entanglement-Assisted Communication Surpassing the Ultimate Classical Capacity",
+        "authors": [
+            {"name": "S. Hao"},
+            {"name": "H. Shi"},
+            {"name": "W. Li"},
+            {"name": "J. H. Shapiro"},
+            {"name": "Q. Zhuang"},
+            {"name": "Z. Zhang"}
+        ]
+    },
+    {
+        "title": "Quantum-Enhanced Data Classification with a Variational Entangled Sensor Network",
+        "authors": [
+            {"name": "Y. Xia"},
+            {"name": "W. Li"},
+            {"name": "Q. Zhuang"},
+            {"name": "Z. Zhang"}
+        ]
+    },
+    {
+        "title": "Quantum Control of the Tin-Vacancy Spin Qubit in Diamond",
+        "authors": [
+            {"name": "R. Debroux"},
+            {"name": "C. P. Michaels"},
+            {"name": "C. M. Purser"},
+            {"name": "N. Wan"},
+            {"name": "M. E. Trusheim"},
+            {"name": "J. A. Martinez"},
+            {"name": "R. A. Parker"},
+            {"name": "A. M. Stramma"},
+            {"name": "K. C. Chen"},
+            {"name": "L. de Santis"},
+            {"name": "E. M. Alexeev"},
+            {"name": "A. C. Ferrari"},
+            {"name": "D. Englund"},
+            {"name": "D. A. Gangloff"},
+            {"name": "M. Atatüre"}
+        ]
+    },
+    {
+        "title": "A Vertically Loaded Diamond Microdisk Resonator (VLDMoRt) for Quantum Networks",
+        "authors": [
+            {"name": "Y. Duan"},
+            {"name": "K. C. Chen"},
+            {"name": "D. R. Englund"},
+            {"name": "M. E. Trusheim"}
+        ]
+    },
+    {
+        "title": "Scalable and High-Fidelity Quantum Random Access Memory in Spin-Photon Networks",
+        "authors": [
+            {"name": "K. C. Chen"},
+            {"name": "W. Dai"},
+            {"name": "C. Errando-Herranz"},
+            {"name": "S. Lloyd"},
+            {"name": "D. Englund"}
+        ]
+    },
+    {
+        "title": "Resilience of Quantum Random Access Memory to Generic Noise",
+        "authors": [
+            {"name": "C. T. Hann"},
+            {"name": "G. Lee"},
+            {"name": "S. M. Girvin"},
+            {"name": "L. Jiang"}
+        ]
+    },
+    {
+        "title": "Stability Analysis of a Quantum Network with Max-Weight Scheduling",
+        "authors": [
+            {"name": "T. Vasantam"},
+            {"name": "D. Towsley"}
+        ]
+    },
+    {
+        "title": "A Quantum Walk Control Plane for Distributed Quantum Computing in Quantum Networks",
+        "authors": [
+            {"name": "M. G. de Andrade"},
+            {"name": "W. Dai"},
+            {"name": "S. Guha"},
+            {"name": "D. Towsley"}
+        ]
+    },
+    {
+        "title": "Distributing Graph States Across Quantum Networks",
+        "authors": [
+            {"name": "A. Fischer"},
+            {"name": "D. Towsley"}
+        ]
+    },
+    {
+        "title": "Entanglement Generation in a Quantum Network at Distance-Independent Rate",
+        "authors": [
+            {"name": "A. Patil"},
+            {"name": "M. Pant"},
+            {"name": "D. Englund"},
+            {"name": "D. Towsley"},
+            {"name": "S. Guha"}
+        ]
+    },
+    {
+        "title": "Sub-Exponential Rate versus Distance with Time Multiplexed Quantum Repeaters",
+        "authors": [
+            {"name": "P. Dhara"},
+            {"name": "A. Pattl"},
+            {"name": "H. Krovi"},
+            {"name": "S. Guha"}
+        ]
+    },
+    {
+        "title": "On the Capacity Region of Bipartite and Tripartite Entanglement Switching",
+        "authors": [
+            {"name": "G. Vardoyan"},
+            {"name": "S. Guha"},
+            {"name": "P. Nain"},
+            {"name": "D. Towsley"}
+        ]
+    },
+    {
+        "title": "On the Stochastic Analysis of a Quantum Entanglement Distribution Switch",
+        "authors": [
+            {"name": "G. Vardoyan"},
+            {"name": "S. Guha"},
+            {"name": "P. Nain"},
+            {"name": "D. Towsley"}
+        ]
+    },
+    {
+        "title": "Microwave-Optical Quantum Frequency Conversion",
+        "authors": [
+            {"name": "X. Han"},
+            {"name": "W. Fu"},
+            {"name": "C.-L. Zou"},
+            {"name": "L. Jiang"},
+            {"name": "H. X. Tang"}
+        ]
+    },
+    {
+        "title": "Optically Heralded Entanglement of Superconducting Systems in Quantum Networks",
+        "authors": [
+            {"name": "S. Krastanov"},
+            {"name": "H. Raniwala"},
+            {"name": "J. Holzgrafe"},
+            {"name": "K. Jacobs"},
+            {"name": "M. Lončar"},
+            {"name": "M. J. Reagor"},
+            {"name": "D. R. Englund"}
+        ]
+    },
+    {
+        "title": "Coupling of a Single Tin-Vacancy Center to a Photonic Crystal Cavity in Diamond",
+        "authors": [
+            {"name": "K. Kuruma"},
+            {"name": "B. Pingault"},
+            {"name": "C. Chia"},
+            {"name": "D. Renaud"},
+            {"name": "P. Hoffmann"},
+            {"name": "S. Iwamoto"},
+            {"name": "C. Ronning"},
+            {"name": "M. Lončar"}
+        ]
+    },
+    {
+        "title": "Deterministic Microwave-Optical Transduction Based on Quantum Teleportation",
+        "authors": [
+            {"name": "J. Wu"},
+            {"name": "C. Cui"},
+            {"name": "L. Fan"},
+            {"name": "Q. Zhuang"}
+        ]
+    },
+    {
+        "title": "A Phononic Interface between a Superconducting Quantum Processor and Quantum Networked Spin Memories",
+        "authors": [
+            {"name": "T. Neuman"},
+            {"name": "M. Eichenfield"},
+            {"name": "M. E. Trusheim"},
+            {"name": "L. Hackett"},
+            {"name": "P. Narang"},
+            {"name": "D. Englund"}
+        ]
+    },
+    {
+        "title": "Efficient Entanglement of Spin Qubits Mediated by a Hot Mechanical Oscillator",
+        "authors": [
+            {"name": "E. Rosenfeld"},
+            {"name": "R. Riedinger"},
+            {"name": "J. Gieseler"},
+            {"name": "M. Schuetz"},
+            {"name": "M. D. Lukin"}
+        ]
+    },
+    {
+        "title": "Ultra-Broadband Quadrature Squeezing with Thin-Film Lithium Niobate Nanophotonics",
+        "authors": [
+            {"name": "P.-K. Chen"},
+            {"name": "I. Briggs"},
+            {"name": "S. Hou"},
+            {"name": "L. Fan"}
+        ]
+    },
+    {
+        "title": "High-Purity Pulsed Squeezing Generation with Integrated Photonics",
+        "authors": [
+            {"name": "C. Cui"},
+            {"name": "C. N. Gagatsos"},
+            {"name": "S. Guha"},
+            {"name": "L. Fan"}
+        ],
+        "link": "http://arxiv.org/abs/2007.07387"
+    },
+    {
+        "title": "Simultaneous Type-I and Type-II Phase Matching for Second-Order Nonlinearity in Integrated Lithium Niobate Waveguide",
+        "authors": [
+            {"name": "I. Briggs"},
+            {"name": "S. Hou"},
+            {"name": "C. Cui"},
+            {"name": "L. Fan"}
+        ],
+        "link": "https://opg.optica.org/oe/fulltext.cfm?uri=oe-29-18-26183&id=444786"
+    },
+    {
+        "title": "Open Source Photonics Simulation for Quantum Applications",
+        "authors": [
+            {"name": "R. M. Camacho"}
+        ],
+        "link": "https://www.spiedigitallibrary.org/conference-proceedings-of-spie/11844/118440O/Open-source-photonics-simulation-for-quantum-applications/10.1117/12.2599573.short"
+    },
+    {
+        "title": "Quantum Simulation of Open Quantum Systems Using a Unitary Decomposition of Operators",
+        "authors": [
+            {"name": "A. W. Schlimgen"},
+            {"name": "K. Head-Marsden"},
+            {"name": "L. M. Sager"},
+            {"name": "P. Narang"},
+            {"name": "D. A. Mazziotti"}
+        ],
+        "link": "http://arxiv.org/abs/2106.12588"
+    },
+    {
+        "title": "Quantum Internet under Random Breakdowns and Intentional Attacks",
+        "authors": [
+            {"name": "B. Zhang"},
+            {"name": "Q. Zhuang"}
+        ],
+        "link": "https://iopscience.iop.org/article/10.1088/2058-9565/ac145b"
+    },
+    {
+        "title": "Entanglement-Assisted Capacity Regions and Protocol Designs for Quantum Multiple-Access Channels",
+        "authors": [
+            {"name": "H. Shi"},
+            {"name": "M.-H. Hsieh"},
+            {"name": "S. Guha"},
+            {"name": "Z. Zhang"},
+            {"name": "Q. Zhuang"}
+        ],
+        "link": "https://www.nature.com/articles/s41534-021-00386-x"
+    },
+    {
+        "title": "Distributed Quantum Sensing",
+        "authors": [
+            {"name": "Z. Zhang"},
+            {"name": "Q. Zhuang"}
+        ],
+        "link": "https://iopscience.iop.org/article/10.1088/2058-9565/ac2aa6"
+    },
+    {
+        "title": "Entanglement-Enhanced Estimation of a Parameter Embedded in Multiple Phases",
+        "authors": [
+            {"name": "M. R. Grace"},
+            {"name": "C. N. Gagatsos"},
+            {"name": "S. Guha"}
+        ],
+        "link": "https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.3.033114"
+    },
+    {
+        "title": "Encoding a Qubit in an Oscillator",
+        "authors": [
+            {"name": "D. Gottesman"},
+            {"name": "A. Kitaev"},
+            {"name": "J. Preskill"}
+        ],
+        "link": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.64.012310"
+    },
+    {
+        "title": "Quantum Capacity Bounds of Gaussian Thermal Loss Channels and Achievable Rates With Gottesman-Kitaev-Preskill Codes",
+        "authors": [
+            {"name": "K. Noh"},
+            {"name": "V. V. Albert"},
+            {"name": "L. Jiang"}
+        ],
+        "link": "https://ieeexplore.ieee.org/document/8614318"
+    },
+    {
+        "title": "A Quantum Router Architecture for High-Fidelity Entanglement Flows in Quantum Networks",
+        "authors": [
+            {"name": "Y. Lee"},
+            {"name": "E. Bersin"},
+            {"name": "A. Dahlberg"},
+            {"name": "S. Wehner"},
+            {"name": "D. Englund"}
+        ],
+        "link": "http://arxiv.org/abs/2005.01852"
+    },
+    {
+        "title": "A Polarization Encoded Photon-to-Spin Interface",
+        "authors": [
+            {"name": "K. C. Chen"},
+            {"name": "E. Bersin"},
+            {"name": "D. Englund"}
+        ],
+        "link": "https://www.nature.com/articles/s41534-021-00384-z"
+    },
+    {
+        "title": "Convolutional Entanglement Distillation",
+        "authors": [
+            {"name": "M. M. Wilde"},
+            {"name": "H. Krovi"},
+            {"name": "T. A. Brun"}
+        ],
+        "link": "https://ieeexplore.ieee.org/document/5513653"
+    },
+    {
+        "title": "Convolutional and Tail-Biting Quantum Error-Correcting Codes",
+        "authors": [
+            {"name": "G. D. Forney"},
+            {"name": "M. Grassl"},
+            {"name": "S. Guha"}
+        ],
+        "link": "https://ieeexplore.ieee.org/document/4036194"
+    },
+    {
+        "title": "On the Stochastic Analysis of a Quantum Entanglement Switch",
+        "authors": [
+            {"name": "G. Vardoyan"},
+            {"name": "S. Guha"},
+            {"name": "P. Nain"},
+            {"name": "D. Towsley"}
+        ],
+        "link": "https://dl.acm.org/doi/10.1145/3308897.3308936"
+    },
+    {
+        "title": "Entanglement-Assisted Multiple-Access Channels: Capacity Regions and Protocol Designs",
+        "authors": [
+            {"name": "H. Shi"},
+            {"name": "M.-H. Hsieh"},
+            {"name": "S. Guha"},
+            {"name": "Z. Zhang"},
+            {"name": "Q. Zhuang"}
+        ],
+        "link": "https://www.nature.com/articles/s41534-021-00386-x"
+    },
+    {
+        "title": "Infinite-Fold Enhancement in Communications Capacity Using Pre-Shared Entanglement",
+        "authors": [
+            {"name": "S. Guha"},
+            {"name": "Q. Zhuang"},
+            {"name": "B. Bash"}
+        ],
+        "link": "http://arxiv.org/abs/2001.03934"
+    },
+    {
+        "title": "Entanglement Enhanced Estimation of a Parameter Embedded in Multiple Phases",
+        "authors": [
+            {"name": "M. R. Grace"},
+            {"name": "C. N. Gagatsos"},
+            {"name": "S. Guha"}
+        ],
+        "link": "http://arxiv.org/abs/2004.04152"
+    },
+    {
+        "title": "Room-Temperature Photonic Logical Qubits via Second-Order Nonlinearities",
+        "authors": [
+            {"name": "S. Krastanov"},
+            {"name": "M. Heuck"},
+            {"name": "J. H. Shapiro"},
+            {"name": "P. Narang"},
+            {"name": "D. R. Englund"},
+            {"name": "K. Jacobs"}
+        ],
+        "link": "http://arxiv.org/abs/2002.07193"
+    },
+    {
+        "title": "Quantum Repeaters Based on Concatenated Bosonic and Discrete-Variable Quantum Codes",
+        "authors": [
+            {"name": "F. Rozpędek"},
+            {"name": "K. Noh"},
+            {"name": "Q. Xu"},
+            {"name": "S. Guha"},
+            {"name": "L. Jiang"}
+        ],
+        "link": "https://www.nature.com/articles/s41534-021-00392-z"
+    },
+        {
+        "title": "Mixed-State Entanglement and Quantum Error Correction",
+        "authors": [
+            {"name": "C. H. Bennett"},
+            {"name": "D. P. DiVincenzo"},
+            {"name": "J. A. Smolin"},
+            {"name": "W. K. Wootters"}
+        ],
+        "link": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.54.3824"
+    },
+    {
+        "title": "Useful States and Entanglement Distillation",
+        "authors": [
+            {"name": "F. Leditzky"},
+            {"name": "N. Datta"},
+            {"name": "G. Smith"}
+        ],
+        "link": "https://ieeexplore.ieee.org/document/8405396"
+    },
+    {
+        "title": "Optimizing Practical Entanglement Distillation",
+        "authors": [
+            {"name": "F. Rozpędek"},
+            {"name": "T. Schiet"},
+            {"name": "L. P. Thinh"},
+            {"name": "D. Elkouss"},
+            {"name": "A. C. Doherty"},
+            {"name": "S. Wehner"}
+        ],
+        "link": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.97.062333"
+    },
+    {
+        "title": "Non-Asymptotic Entanglement Distillation",
+        "authors": [
+            {"name": "K. Fang"},
+            {"name": "X. Wang"},
+            {"name": "M. Tomamichel"},
+            {"name": "R. Duan"}
+        ],
+        "link": "https://ieeexplore.ieee.org/document/7510672"
+    },
+    {
+        "title": "Optimized Entanglement Purification",
+        "authors": [
+            {"name": "S. Krastanov"},
+            {"name": "V. V. Albert"},
+            {"name": "L. Jiang"}
+        ],
+        "link": "https://quantum-journal.org/papers/q-2021-06-29-478/"
+    },
+    {
+        "title": "Quantum Repeaters Based on Entanglement Purification",
+        "authors": [
+            {"name": "W. Dür"},
+            {"name": "H.-J. Briegel"},
+            {"name": "J. I. Cirac"},
+            {"name": "P. Zoller"}
+        ],
+        "link": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.59.169"
+    },
+    {
+        "title": "Distillation of Multipartite Entanglement by Complementary Stabilizer Measurements",
+        "authors": [
+            {"name": "A. Miyake"},
+            {"name": "H. J. Briegel"}
+        ],
+        "link": "https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.95.220501"
+    },
+    {
+        "title": "Entanglement Purification and Quantum Error Correction",
+        "authors": [
+            {"name": "W. Dür"},
+            {"name": "H. J. Briegel"}
+        ],
+        "link": "https://iopscience.iop.org/article/10.1088/0034-4885/70/8/R03"
+    },
+    {
+        "title": "The Heisenberg Representation of Quantum Computers",
+        "authors": [
+            {"name": "D. Gottesman"}
+        ],
+        "link": "http://arxiv.org/abs/quant-ph/9807006"
+    },
+    {
+        "title": "Convolutional Entanglement Distillation",
+        "authors": [
+            {"name": "M. M. Wilde"},
+            {"name": "H. Krovi"},
+            {"name": "T. A. Brun"}
+        ],
+        "link": "https://ieeexplore.ieee.org/document/5513653"
+    },
+    {
+        "title": "Fiber Bundle Codes: Breaking the N^1/2 Polylog(N) Barrier for Quantum LDPC Codes",
+        "authors": [
+            {"name": "M. B. Hastings"},
+            {"name": "J. Haah"},
+            {"name": "R. O'Donnell"}
+        ],
+        "link": "https://dl.acm.org/doi/10.1145/3313276.3316404"
+    },
+    {
+        "title": "Quantum LDPC Codes with Almost Linear Minimum Distance",
+        "authors": [
+            {"name": "P. Panteleev"},
+            {"name": "G. Kalachev"}
+        ],
+        "link": "http://arxiv.org/abs/2012.04068"
+    },
+    {
+        "title": "Balanced Product Quantum Codes",
+        "authors": [
+            {"name": "N. P. Breuckmann"},
+            {"name": "J. N. Eberhardt"}
+        ],
+        "link": "https://ieeexplore.ieee.org/document/8955804"
+    },
+    {
+        "title": "LDPC Quantum Codes",
+        "authors": [
+            {"name": "N. P. Breuckmann"},
+            {"name": "J. N. Eberhardt"}
+        ],
+        "link": "http://arxiv.org/abs/2103.06309"
+    },
+    {
+        "title": "A Quantum Router Architecture for High-Fidelity Entanglement Flows in Multi-User Quantum Networks",
+        "authors": [
+            {"name": "Y. Lee"},
+            {"name": "E. Bersin"},
+            {"name": "A. Dahlberg"},
+            {"name": "S. Wehner"},
+            {"name": "D. Englund"}
+        ],
+        "link": "http://arxiv.org/abs/2005.01852"
+    },
+    {
+        "title": "Field-Based Design of a Resonant Dielectric Antenna for Coherent Spin-Photon Interfaces",
+        "authors": [
+            {"name": "L. Li"},
+            {"name": "H. Choi"},
+            {"name": "M. Heuck"},
+            {"name": "D. Englund"}
+        ],
+        "link": "https://www.osapublishing.org/oe/fulltext.cfm?uri=oe-29-11-16469&id=446580"
+    },
+    {
+        "title": "Nanomagnonic Cavities for Strong Spin-Magnon Coupling and Magnon-Mediated Spin-Spin Interactions",
+        "authors": [
+            {"name": "T. Neuman"},
+            {"name": "D. S. Wang"},
+            {"name": "P. Narang"}
+        ],
+        "link": "https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.125.247702"
+    },
+    {
+        "title": "Spin Emitters beyond the Point Dipole Approximation in Nanomagnonic Cavities",
+        "authors": [
+            {"name": "D. S. Wang"},
+            {"name": "T. Neuman"},
+            {"name": "P. Narang"}
+        ],
+        "link": "https://pubs.acs.org/doi/10.1021/acs.jpcc.0c10614"
+    },
+    {
+        "title": "Revealing Multiple Classes of Stable Quantum Emitters in Hexagonal Boron Nitride with Correlated Optical and Electron Microscopy",
+        "authors": [
+            {"name": "F. Hayee"},
+            {"name": "L. Yu"},
+            {"name": "J. L. Zhang"},
+            {"name": "C. J. Ciccarino"},
+            {"name": "M. Nguyen"},
+            {"name": "A. F. Marshall"},
+            {"name": "I. Aharonovich"},
+            {"name": "J. Vučković"},
+            {"name": "P. Narang"},
+            {"name": "T. F. Heinz"},
+            {"name": "J. A. Dionne"}
+        ],
+        "link": "https://www.nature.com/articles/s41563-020-0670-1"
+    },
+    {
+        "title": "A Quantum Router Architecture for High-Fidelity Entanglement Flows in Quantum Networks",
+        "authors": [{"name": "Y. Lee"}, {"name": "E. Bersin"}, {"name": "A. Dahlberg"}, {"name": "S. Wehner"}, {"name": "D. Englund"}],
+        "link": "http://arxiv.org/abs/2005.01852"
+    },
+    {
+        "title": "Quantum materials R&D forges ahead",
+        "authors": [{"name": "J. Meiksin"}],
+        "link": "https://doi.org/10.1557/mrs.2020.288"
+    },
+    {
+        "title": "Roadmap on Integrated Quantum Photonics",
+        "authors": [{"name": "G. Moody"}, {"name": "V.J. Sorger"}, {"name": "D.J. Blumenthal"}, {"name": "P.W. Juodawlkis"}, {"name": "W. Loh"}, {"name": "C. Sorace-Agaskar"}],
+        "link": "http://arxiv.org/abs/2102.03323"
+    },
+    {
+        "title": "Scalable and High-Fidelity Quantum Random Access Memory in Spin-Photon Networks",
+        "authors": [{"name": "K.C. Chen"}, {"name": "W. Dai"}, {"name": "C. Errando-Herranz"}, {"name": "S. Lloyd"}, {"name": "D. Englund"}],
+        "link": "http://arxiv.org/abs/2103.07623"
+    },
+    {
+        "title": "Entanglement-assisted capacity regions and protocol designs for quantum multiple-access channels",
+        "authors": [{"name": "H. Shi"}, {"name": "M.-H. Hsieh"}, {"name": "S. Guha"}, {"name": "Z. Zhang"}, {"name": "Q. Zhuang"}],
+        "link": "https://doi.org/10.1038/s41534-021-00412-3"
+    },
+    {
+        "title": "Field-based design of a resonant dielectric antenna for coherent spin-photon interfaces",
+        "authors": [{"name": "L. Li"}, {"name": "H. Choi"}, {"name": "M. Heuck"}, {"name": "D. Englund"}],
+        "link": "https://doi.org/10.1364/OE.419773"
+    },
+    {
+        "title": "Quantum-Enhanced Data Classification with a Variational Entangled Sensor Network",
+        "authors": [{"name": "Y. Xia"}, {"name": "W. Li"}, {"name": "Q. Zhuang"}, {"name": "Z. Zhang"}],
+        "link": "https://doi.org/10.1103/PhysRevX.11.021047"
+    },
+    {
+        "title": "Achieving a quantum smart workforce",
+        "authors": [{"name": "C.D. Aiello"}, {"name": "D.D. Awschalom"}, {"name": "H. Bernien"}, {"name": "T. Brower"}, {"name": "K.R. Brown"}, {"name": "T.A. Brun"}],
+        "link": "https://doi.org/10.1088/2058-9565/abfa64"
+    },
+    {
+        "title": "Entanglement-Assisted Communication Surpassing the Ultimate Classical Capacity",
+        "authors": [{"name": "S. Hao"}, {"name": "H. Shi"}, {"name": "W. Li"}, {"name": "J.H. Shapiro"}, {"name": "Q. Zhuang"}, {"name": "Z. Zhang"}],
+        "link": "https://doi.org/10.1103/PhysRevLett.126.250501"
+    },
+    {
+        "title": "Automated photonic tuning of silicon microring resonators using a 3D-printed microfluidic mixer",
+        "authors": [{"name": "C. Carver"}, {"name": "M. Boaks"}, {"name": "J. Kim"}, {"name": "K. Larson"}, {"name": "G.P. Nordin"}, {"name": "R.M. Camacho"}],
+        "link": "https://doi.org/10.1364/osac.425058"
+    },
+    {
+        "title": "Quantum internet under random breakdowns and intentional attacks",
+        "authors": [{"name": "B. Zhang"}, {"name": "Q. Zhuang"}],
+        "link": "https://doi.org/10.1088/2058-9565/ac1041"
+    },
+    {
+        "title": "Quantum communication capacity transition of complex quantum networks",
+        "authors": [{"name": "Q. Zhuang"}, {"name": "B. Zhang"}],
+        "link": "https://doi.org/10.1103/PhysRevA.104.022608"
+    },
+    {
+        "title": "Entanglement Swapping in Quantum Switches: Protocol Design and Stability Analysis",
+        "authors": [{"name": "W. Dai"}, {"name": "A. Rinaldi"}, {"name": "D. Towsley"}],
+        "link": "http://arxiv.org/abs/2110.04116"
+    },
+    {
+        "title": "Trapping sets of quantum LDPC codes",
+        "authors": [{"name": "N. Raveendran"}, {"name": "B. Vasić"}],
+        "link": "https://doi.org/10.22331/q-2021-10-14-562"
+    },
+    {
+        "title": "Telecommunication-wavelength two-dimensional photonic crystal cavities in a thin single-crystal diamond membrane",
+        "authors": [{"name": "K. Kuruma"}, {"name": "A.H. Piracha"}, {"name": "D. Renaud"}, {"name": "C. Chia"}, {"name": "N. Sinclair"}, {"name": "A. Nadarajah"}],
+        "link": "https://doi.org/10.1063/5.0061778"
+    },
+    {
+        "title": "Entanglement Swapping for Repeater Chains with Finite Memory Sizes",
+        "authors": [{"name": "W. Dai"}, {"name": "D. Towsley"}],
+        "link": "http://arxiv.org/abs/2111.10994"
+    },
+    {
+        "title": "Quantum Control of the Tin-Vacancy Spin Qubit in Diamond",
+        "authors": [{"name": "R. Debroux"}, {"name": "C.P. Michaels"}, {"name": "C.M. Purser"}, {"name": "N. Wan"}, {"name": "M.E. Trusheim"}, {"name": "J. Arjona Martínez"}],
+        "link": "https://doi.org/10.1103/PhysRevX.11.041041"
+    },
+    {
+        "title": "Efficient and tunable blue light generation using lithium niobate nonlinear photonics",
+        "authors": [{"name": "A.A. Sayem"}, {"name": "Y. Wang"}, {"name": "J. Lu"}, {"name": "X. Liu"}, {"name": "A.W. Bruch"}, {"name": "H.X. Tang"}],
+        "link": "https://doi.org/10.1063/5.0071769"
+    },
+    {
+        "title": "Spectral control of nonclassical light using an integrated thin-film lithium niobate modulator",
+        "authors": [{"name": "D. Zhu"}, {"name": "C. Chen"}, {"name": "M. Yu"}, {"name": "L. Shao"}, {"name": "Y. Hu"}, {"name": "C.J. Xin"}],
+        "link": "http://arxiv.org/abs/2112.09961"
+    },
+    {
+        "title": "2022 Roadmap on integrated quantum photonics",
+        "authors": [{"name": "G. Moody"}, {"name": "V.J. Sorger"}, {"name": "D.J. Blumenthal"}, {"name": "P.W. Juodawlkis"}, {"name": "W. Loh"}, {"name": "C. Sorace-Agaskar"}],
+        "link": "https://doi.org/10.1088/2515-7647/ac1ef4"
+    },
+    {
+        "title": "Computable limits of optical multiple-access communications",
+        "authors": [{"name": "H. Shi"}, {"name": "Q. Zhuang"}],
+        "link": "https://doi.org/10.1103/PhysRevA.105.022429"
+    },
+    {
+        "title": "Information back-flow in quantum non-Markovian dynamics and its connection to teleportation",
+        "authors": [{"name": "S. Tserkis"}, {"name": "K. Head-Marsden"}, {"name": "P. Narang"}],
+        "link": "http://arxiv.org/abs/2203.00668"
+    },
+    {
+        "title": "Supporting multiple entanglement flows through a continuous-variable quantum repeater",
+        "authors": [{"name": "I.J. Tillman"}, {"name": "A. Rubenok"}, {"name": "S. Guha"}, {"name": "K.P. Seshadreesan"}],
+        "link": "http://arxiv.org/abs/2203.07965"
+    },
+    {
+        "title": "Ultra-broadband quadrature squeezing with thin-film lithium niobate nanophotonics",
+        "authors": [{"name": "P-K. Chen"}, {"name": "I. Briggs"}, {"name": "S. Hou"}, {"name": "L. Fan"}],
+        "link": "https://doi.org/10.1364/OL.447695"
+    },
+    {
+        "title": "Mechanical Control of a Single Nuclear Spin",
+        "authors": [{"name": "S. Maity"}, {"name": "B. Pingault"}, {"name": "G. Joe"}, {"name": "M. Chalupnik"}, {"name": "D. Assumpção"}, {"name": "E. Cornell"}],
+        "link": "https://doi.org/10.1103/PhysRevX.12.011056"
+    },
+    {
+        "title": "When a Small Change Makes a Big Difference: Algorithmic Fairness Among Similar Individuals",
+        "authors": [{"name": "J.R. Bambauer"}, {"name": "T. Zarsky"}, {"name": "J. Mayer"}],
+        "link": "https://papers.ssrn.com/abstract=3940705"
+    },
+    {
+        "title": "Building a Quantum Engineering Undergraduate Program",
+        "authors": [{"name": "A. Asfaw"}, {"name": "A. Blais"}, {"name": "K.R. Brown"}, {"name": "J. Candelaria"}, {"name": "C. Cantwell"}, {"name": "L.D. Carr"}],
+        "link": "https://doi.org/10.1109/TE.2022.3144943"
+    },
+    {
+        "title": "Spectrally separable photon-pair generation in dispersion engineered thin-film lithium niobate",
+        "authors": [{"name": "C.J. Xin"}, {"name": "J. Mishra"}, {"name": "C. Chen"}, {"name": "D. Zhu"}, {"name": "A. Shams-Ansari"}, {"name": "C. Langrock"}],
+        "link": "https://doi.org/10.1364/OL.456873"
+    },
+    {
+        "title": "Zero-Added-Loss Entangled Photon Multiplexing for Ground- and Space-Based Quantum Networks",
+        "authors": [{"name": "K.C. Chen"}, {"name": "P. Dhara"}, {"name": "M. Heuck"}, {"name": "Y. Lee"}, {"name": "W. Dai"}, {"name": "S. Guha"}],
+        "link": "http://arxiv.org/abs/2206.03670"
+    },
+    {
+        "title": "Finite rate QLDPC-GKP coding scheme that surpasses the CSS Hamming bound",
+        "authors": [{"name": "N. Raveendran"}, {"name": "N. Rengaswamy"}, {"name": "F. Rozpędek"}, {"name": "A. Raina"}, {"name": "L. Jiang"}, {"name": "B. Vasić"}],
+        "link": "https://doi.org/10.22331/q-2022-07-20-767"
+    },
+    {
+        "title": "Efficient Source of Shaped Single Photons Based on an Integrated Diamond Nanophotonic System",
+        "authors": [{"name": "E.N. Knall"}, {"name": "C.M. Knaut"}, {"name": "R. Bekenstein"}, {"name": "D.R. Assumpcao"}, {"name": "P.L. Stroganov"}, {"name": "W. Gong"}],
+        "link": "https://doi.org/10.1103/PhysRevLett.129.053603"
+    },
+    {
+        "title": "Analysis of a tripartite entanglement distribution switch",
+        "authors": [{"name": "P. Nain"}, {"name": "G. Vardoyan"}, {"name": "S. Guha"}, {"name": "D. Towsley"}],
+        "link": "https://doi.org/10.1007/s11134-021-09731-w"
+    },
+    {
+        "title": "Quantum-Enhanced Transmittance Sensing",
+        "authors": [{"name": "Z. Gong"}, {"name": "N. Rodriguez"}, {"name": "C.N. Gagatsos"}, {"name": "S. Guha"}, {"name": "B.A. Bash"}],
+        "link": "http://arxiv.org/abs/2208.06447"
+    },
+    {
+        "title": "Superconducting cavity electromechanics: The realization of an acoustic frequency comb at microwave frequencies",
+        "authors": [{"name": "X. Han"}, {"name": "C-L. Zou"}, {"name": "W. Fu"}, {"name": "M. Xu"}, {"name": "Y. Xu"}, {"name": "H.X. Tang"}],
+        "link": "https://doi.org/10.1103/physrevlett.129.107701"
+    },
+    {
+        "title": "Attaining quantum limited precision of localizing an object in passive imaging",
+        "authors": [{"name": "A. Sajjad"}, {"name": "M.R. Grace"}, {"name": "Q. Zhuang"}, {"name": "S. Guha"}],
+        "link": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.104.022410"
+    },
+    {
+        "title": "Entanglement-enhanced estimation of a parameter embedded in multiple phases",
+        "authors": [{"name": "M.R. Grace"}, {"name": "C.N. Gagatsos"}, {"name": "S. Guha"}],
+        "link": "https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.3.033114"
+    },
+    {
+        "title": "Unambiguous discrimination of coherent states",
+        "authors": [{"name": "J.S. Sidhu"}, {"name": "M.S. Bullock"}, {"name": "S. Guha"}, {"name": "C. Lupo"}],
+        "link": "http://arxiv.org/abs/2109.00008"
+    },
+    {
+        "title": "Impossibility to produce arbitrary non-Gaussian states using zero-mean Gaussian states and partial photon number resolving detection",
+        "authors": [{"name": "C.N. Gagatsos"}, {"name": "S. Guha"}],
+        "link": "https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.3.043182"
+    },
+    {
+        "title": "Non-Gaussian photonic state engineering with the quantum frequency processor",
+        "authors": [{"name": "A.J. Pizzimenti"}, {"name": "J.M. Lukens"}, {"name": "H.H. Lu"}, {"name": "N.A. Peters"}, {"name": "S. Guha"}],
+        "link": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.104.062437"
+    },
+    {
+        "title": "Entanglement-assisted multiple-access channels: capacity regions and protocol designs",
+        "authors": [{"name": "H. Shi"}, {"name": "M.H. Hsieh"}, {"name": "S. Guha"}, {"name": "Z. Zhang"}],
+        "link": "https://ieeexplore.ieee.org/abstract/document/9518082/"
+    },
+    {
+        "title": "Fundamental limits of bosonic broadcast channels",
+        "authors": [{"name": "E.J.D. Anderson"}, {"name": "S. Guha"}, {"name": "B.A. Bash"}],
+        "link": "https://ieeexplore.ieee.org/abstract/document/9518198/"
+    },
+    {
+        "title": "Fundamental Limits of Loss Sensing over Bosonic Channels",
+        "authors": [{"name": "Z. Gong"}, {"name": "C.N. Gagatsos"}, {"name": "S. Guha"}],
+        "link": "https://ieeexplore.ieee.org/abstract/document/9517810/"
+    },
+    {
+        "title": "Heralded-Multiplexed High-Efficiency Cascaded Source of Dual-Rail Polarization-Entangled Photon Pairs using Spontaneous Parametric Down Conversion",
+        "authors": [{"name": "P. Dhara"}, {"name": "S.J. Johnson"}, {"name": "C.N. Gagatsos"}, {"name": "P.G. Kwiat"}],
+        "link": "https://arxiv.org/abs/2107.14360"
+    },
+    {
+        "title": "Quantum-inspired Optical Super-resolution Adaptive Imaging",
+        "authors": [{"name": "K.K. Lee"}, {"name": "S. Guha"}, {"name": "A. Ashok"}],
+        "link": "https://opg.optica.org/abstract.cfm?uri=COSI-2021-CF4B.2"
+    },
+    {
+        "title": "Quantum-Optimal Object Discrimination in Sub-Diffraction Incoherent Imaging",
+        "authors": [{"name": "M.R. Grace"}, {"name": "S. Guha"}],
+        "link": "http://arxiv.org/abs/2107.00673"
+    },
+    {
+        "title": "Signaling for covert quantum sensing",
+        "authors": [{"name": "M. Tahmasbi"}, {"name": "B.A. Bash"}, {"name": "S. Guha"}],
+        "link": "https://ieeexplore.ieee.org/abstract/document/9517722/"
+    },
+    {
+        "title": "Subexponential rate versus distance with time-multiplexed quantum repeaters",
+        "authors": [{"name": "P. Dhara"}, {"name": "A. Patil"}, {"name": "H. Krovi"}, {"name": "S. Guha"}],
+        "link": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.104.052612"
+    },
+    {
+        "title": "Multiplexed quantum repeaters based on dual-species trapped-ion systems",
+        "authors": [{"name": "P. Dhara"}, {"name": "N.M. Linke"}, {"name": "E. Waks"}, {"name": "S. Guha"}],
+        "link": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.105.022623"
+    },
+    {
+        "title": "Demonstration of quantum-limited discrimination of multicopy pure versus mixed states",
+        "authors": [{"name": "A. Jagannathan"}, {"name": "M. Grace"}, {"name": "O. Brasher"}, {"name": "J.H. Shapiro"}],
+        "link": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.105.032446"
+    },
+    {
+        "title": "Coherent manipulation of graph states composed of finite-energy Gottesman-Kitaev-Preskill-encoded qubits",
+        "authors": [{"name": "K.P. Seshadreesan"}, {"name": "P. Dhara"}, {"name": "A. Patil"}, {"name": "L. Jiang"}, {"name": "S. Guha"}],
+        "link": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.105.052416"
+    },
+    {
+        "title": "Demonstration of Entanglement-Enhanced Covert Sensing",
+        "authors": [{"name": "S. Hao"}, {"name": "H. Shi"}, {"name": "C.N. Gagatsos"}, {"name": "M. Mishra"}, {"name": "B. Bash"}, {"name": "I. Djordjevic"}],
+        "link": "https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.129.010501"
+    },
+    {
+        "title": "Entanglement generation in a quantum network at distance-independent rate",
+        "authors": [{"name": "A. Patil"}, {"name": "M. Pant"}, {"name": "D. Englund"}, {"name": "D. Towsley"}, {"name": "S. Guha"}],
+        "link": "https://www.nature.com/articles/s41534-022-00536-0"
+    },
+    {
+        "title": "Quantum Multi-Parameter Adaptive Bayesian Estimation and Application to Super-Resolution Imaging",
+        "authors": [{"name": "K.K. Lee"}, {"name": "C. Gagatsos"}, {"name": "S. Guha"}, {"name": "A. Ashok"}],
+        "link": "http://arxiv.org/abs/2202.09980"
+    },
+    {
+        "title": "Optical Entanglement of Distinguishable Quantum Emitters",
+        "authors": [{"name": "D.S. Levonian"}, {"name": "R. Riedinger"}, {"name": "B. Machielse"}, {"name": "E.N. Knall"}, {"name": "M.K. Bhaskar"}, {"name": "C.M. Knaut"}, {"name": "R. Bekenstein"}, {"name": "H. Park"}, {"name": "M. Lončar"}, {"name": "M.D. Lukin"}],
+        "link": "https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.128.213602"
+    },
+    {
+        "title": "Heralding Multiple Photonic Pulsed Bell Pairs via Frequency-Resolved Entanglement Swapping",
+        "authors": [{"name": "S. Merkouche"}, {"name": "V. Thiel"}, {"name": "A.O.C. Davis"}, {"name": "B.J. Smith"}],
+        "link": "https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.128.063602"
+    },
+    {
+        "title": "Optical Fiber Characterization for the Operation of a Boston Area Quantum Network Testbed",
+        "authors": [{"name": "Dixon"}, {"name": "Grein"}, {"name": "Murphy"}, {"name": "Stevens"}, {"name": "Hamilton"}],
+        "link": "https://opg.optica.org/abstract.cfm?uri=QUANTUM-2022-QTu2A.34"
+    },
+    {
+        "title": "Optically Heralded Entanglement of Superconducting Systems in Quantum Networks",
+        "authors": [{"name": "S. Krastanov"}, {"name": "H. Raniwala"}, {"name": "J. Holzgrafe"}, {"name": "K. Jacobs"}, {"name": "M. Lončar"}, {"name": "M.J. Reagor"}],
+        "link": "https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.127.040503"
+    },
+    {
+        "title": "Distance-Independent Entanglement Generation in a Quantum Network Using Space-Time Multiplexed Greenberger–Horne–Zeilinger (GHZ) Measurements",
+        "authors": [{"name": "A. Patil"}, {"name": "J.I. Jacobson"}, {"name": "E. Van Milligen"}, {"name": "D. Towsley"}, {"name": "S. Guha"}],
+        "link": "https://ieeexplore.ieee.org/document/9669468"
+    },
+    {
+        "title": "Entanglement Generation in a Quantum Network at Distance-Independent Rate",
+        "authors": [{"name": "A. Patil"}, {"name": "M. Pant"}, {"name": "D. Englund"}, {"name": "D. Towsley"}, {"name": "S. Guha"}],
+        "link": "https://www.nature.com/articles/s41534-022-00536-0"
+    },
+    {
+        "title": "Quantum Repeaters Based on Concatenated Bosonic and Discrete-Variable Quantum Codes",
+        "authors": [{"name": "F. Rozpędek"}, {"name": "K. Noh"}, {"name": "Q. Xu"}, {"name": "S. Guha"}, {"name": "L. Jiang"}],
+        "link": "https://www.nature.com/articles/s41534-021-00406-y"
+    },
+    {
+        "title": "Distilling GHZ States Using Stabilizer Codes",
+        "authors": [{"name": "N. Rengaswamy"}, {"name": "A. Raina"}, {"name": "N. Raveendran"}, {"name": "B. Vasić"}],
+        "link": "https://arxiv.org/abs/2109.06248"
+    },
+    {
+        "title": "Heterogeneous Multipartite Entanglement Purification for Size-Constrained Quantum Devices",
+        "authors": [{"name": "S. Krastanov"}, {"name": "A.S. de la Cerda"}, {"name": "P. Narang"}],
+        "link": "https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.3.033164"
+    },
+    {
+        "title": "Scheduling Quantum Teleportation with Noisy Memories",
+        "authors": [{"name": "A. Chandra"}, {"name": "W. Dai"}, {"name": "D. Towsley"}],
+        "link": "https://arxiv.org/abs/2205.06300"
+    },
+    {
+        "title": "Quantum Network Tomography with Multi-Party State Distribution",
+        "authors": [{"name": "M. Guedes de Andrade"}, {"name": "J. Días"}, {"name": "J. Navas"}, {"name": "S. Guha"}, {"name": "I. Montaño"}, {"name": "B. Smith"}, {"name": "M. Raymer"}, {"name": "D. Towsley"}],
+        "link": "https://arxiv.org/abs/2206.02920"
+    },
+    {
+        "title": "Optimal Entanglement Distribution Using Satellite Based Quantum Networks",
+        "authors": [{"name": "N.K. Panigrahy"}, {"name": "P. Dhara"}, {"name": "D. Towsley"}, {"name": "S. Guha"}, {"name": "L. Tassiulas"}],
+        "link": "https://arxiv.org/abs/2205.12354"
+    },
+    {
+    "title": "Quaternary-binary Message-Passing Decoder for Quantum LDPC Codes",
+    "authors": [
+      {"name": "D. Chystas"},
+      {"name": "N. Raveendran"},
+      {"name": "A. Pradhan"},
+      {"name": "B. Vasic"}
+    ],
+    "link": "http://www.ieee-globecom.org/"
+  },
+  {
+    "title": "Learning to Decode Quantum Trapping Set in QLDPC Codes",
+    "authors": [
+      {"name": "A. Pradhan"},
+      {"name": "N. Raveendran"},
+      {"name": "N. Rengaswamy"},
+      {"name": "X. Xiao"},
+      {"name": "B. Vasic"}
+    ],
+    "link": "http://www.ieee-istc.org/"
+  },
+  {
+    "title": "Low-Latency Flipping Decoders for Improving Error-Floors Performance of Quantum LDPC Codes",
+    "authors": [
+      {"name": "N. Raveendran"},
+      {"name": "E. Boutillon"},
+      {"name": "B. Vasic"}
+    ],
+    "link": "http://www.ieee-istc.org/"
+  },
+  {
+    "title": "Bayesian minimum mean square error for transmissivity sensing",
+    "authors": [
+      {"name": "B. Zhou"},
+      {"name": "B.A. Bash"},
+      {"name": "S. Guha"},
+      {"name": "C.N. Gagatsos"}
+    ],
+    "link": "http://arxiv.org/abs/2304.05539"
+  },
+  {
+    "title": "Could the Quantum Internet Be Comprised of Molecular Spins with Tunable Optical Interfaces?",
+    "authors": [
+      {"name": "D.W. Laorenza"},
+      {"name": "D.E. Freedman"}
+    ],
+    "link": "https://pubs.acs.org/doi/10.1021/jacs.2c07775"
+  },
+  {
+    "title": "Accelerating Progress Towards Practical Quantum Advantage: A National Science Foundation Project Scoping Workshop",
+    "authors": [
+      {"name": "P. Alsing"},
+      {"name": "P. Battle"},
+      {"name": "J.C. Bienfang"},
+      {"name": "T. Borders"},
+      {"name": "T. Brower-Thomas"},
+      {"name": "L. Carr"}
+    ],
+    "link": "http://arxiv.org/abs/2210.14757"
+  },
+  {
+    "title": "Quantum sensing of magnetic fields with molecular color centers",
+    "authors": [
+      {"name": "K.R. Mullin"},
+      {"name": "D.W. Laorenza"},
+      {"name": "D.E. Freedman"},
+      {"name": "J.M. Rondinelli"}
+    ],
+    "link": "http://arxiv.org/abs/2302.04248"
+  },
+  {
+    "title": "Controlled-phase gate by dynamic coupling of photons to a two-level emitter",
+    "authors": [
+      {"name": "S. Krastanov"},
+      {"name": "K. Jacobs"},
+      {"name": "G. Gilbert"},
+      {"name": "D.R. Englund"}
+    ],
+    "link": "https://www.nature.com/articles/s41534-022-00604-5"
+  },
+  {
+    "title": "Spectroscopic Investigations of the Group IV spin qubits in Diamond",
+    "authors": [
+      {"name": "C. Michaels"},
+      {"name": "J. Arjona Martinez"},
+      {"name": "R. Parker"},
+      {"name": "A. Stramma"},
+      {"name": "K. Chen"},
+      {"name": "I. Harris"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/W65.8"
+  },
+  {
+    "title": "Routing single photons from a trapped ion using a photonic integrated circuit",
+    "authors": [
+      {"name": "U. Saha"},
+      {"name": "J.D. Siverns"},
+      {"name": "J. Hannegan"},
+      {"name": "M. Prabhu"}
+    ],
+    "link": "https://journals.aps.org/prapplied/abstract/10.1103/PhysRevApplied.19.034001"
+  },
+  {
+    "title": "Field programmable spin arrays for scalable quantum repeaters",
+    "authors": [
+      {"name": "H. Wang"},
+      {"name": "M.E. Trusheim"},
+      {"name": "L. Kim"},
+      {"name": "H. Raniwala"},
+      {"name": "D.R. Englund"}
+    ],
+    "link": "https://www.nature.com/articles/s41467-023-36098-8"
+  },
+  {
+    "title": "A fully packaged multi-channel cryogenic quantum memory module",
+    "authors": [
+      {"name": "D.J. Starling"},
+      {"name": "K. Shtyrkova"},
+      {"name": "I. Christen"},
+      {"name": "R. Murphy"},
+      {"name": "L. Li"},
+      {"name": "K.C. Chen"}
+    ],
+    "link": "http://arxiv.org/abs/2302.12919"
+  },
+  {
+    "title": "Resource-efficient simulation of noisy quantum circuits and application to network-enabled QRAM optimization",
+    "authors": [
+      {"name": "L. Bugalho"},
+      {"name": "E.Z. Cruzeiro"},
+      {"name": "K.C. Chen"},
+      {"name": "W. Dai"},
+      {"name": "D. Englund"},
+      {"name": "Y. Omar"}
+    ],
+    "link": "http://arxiv.org/abs/2210.13494"
+  },
+  {
+    "title": "Large-scale optical characterization of solid-state quantum emitters",
+    "authors": [
+      {"name": "M. Sutula"},
+      {"name": "I. Christen"},
+      {"name": "E. Bersin"},
+      {"name": "M.P. Walsh"},
+      {"name": "K.C. Chen"},
+      {"name": "J. Mallek"}
+    ],
+    "link": "http://arxiv.org/abs/2210.13643"
+  },
+    {
+    "title": "Quantum Network Utility: A Framework for Benchmarking Quantum Networks",
+    "authors": [
+      {"name": "Y. Lee"},
+      {"name": "W. Dai"},
+      {"name": "D. Towsley"},
+      {"name": "D. Englund"}
+    ],
+    "link": "http://arxiv.org/abs/2210.10752"
+  },
+  {
+    "title": "Modular chip-integrated photonic control of artificial atoms in diamond nanostructures",
+    "authors": [
+      {"name": "K.J. Palm"},
+      {"name": "M. Dong"},
+      {"name": "D. Andrew Golter"},
+      {"name": "G. Clark"},
+      {"name": "M. Zimmermann"},
+      {"name": "K.C. Chen"}
+    ],
+    "link": "http://arxiv.org/abs/2301.03693"
+  },
+  {
+    "title": "Multiplexed control of spin quantum memories in a photonic circuit",
+    "authors": [
+      {"name": "D. Andrew Golter"},
+      {"name": "G. Clark"},
+      {"name": "T. El Dandachi"},
+      {"name": "S. Krastanov"},
+      {"name": "A.J. Leenheer"},
+      {"name": "N.H. Wan"}
+    ],
+    "link": "http://arxiv.org/abs/2209.11853"
+  },
+  {
+    "title": "Modular chip-integrated photonic control of artificial atoms in diamond waveguides",
+    "authors": [
+      {"name": "K.J. Palm"},
+      {"name": "M. Dong"},
+      {"name": "D.A. Golter"},
+      {"name": "G. Clark"},
+      {"name": "M. Zimmermann"},
+      {"name": "K.C. Chen"}
+    ],
+    "link": "https://www.osapublishing.org/optica/abstract.cfm?uri=optica-10-4-634"
+  },
+  {
+    "title": "Zero-Added-Loss Entangled-Photon Multiplexing for Ground-and Space-Based Quantum Networks",
+    "authors": [
+      {"name": "K.C. Chen"},
+      {"name": "P. Dhara"},
+      {"name": "M. Heuck"},
+      {"name": "Y. Lee"},
+      {"name": "W. Dai"},
+      {"name": "S. Guha"}
+    ],
+    "link": "https://journals.aps.org/prapplied/abstract/10.1103/PhysRevApplied.19.054029"
+  },
+  {
+    "title": "Hyperfine Spectroscopy of Isotopically Engineered Group-IV Color Centers in Diamond",
+    "authors": [
+      {"name": "I.B.W. Harris"},
+      {"name": "C.P. Michaels"},
+      {"name": "K.C. Chen"},
+      {"name": "R.A. Parker"},
+      {"name": "M. Titze"},
+      {"name": "J.A. Martinez"}
+    ],
+    "link": "http://arxiv.org/abs/2306.00164"
+  },
+  {
+    "title": "Fully Packaged Multichannel Cryogenic Quantum Memory Module",
+    "authors": [
+      {"name": "D.J. Starling"},
+      {"name": "K. Shtyrkova"},
+      {"name": "I. Christen"},
+      {"name": "R. Murphy"},
+      {"name": "L. Li"},
+      {"name": "K.C. Chen"}
+    ],
+    "link": "https://journals.aps.org/prapplied/abstract/10.1103/PhysRevApplied.19.064028"
+  },
+  {
+    "title": "Piezoelectric Nanocavity Interface for Strong Coupling between a Superconducting Circuit, Phonon, and Spin",
+    "authors": [
+      {"name": "H. Raniwala"},
+      {"name": "S. Krastanov"},
+      {"name": "L. Hackett"},
+      {"name": "M. Eichenfield"},
+      {"name": "D.R. Englund"},
+      {"name": "M.E. Trusheim"}
+    ],
+    "link": "https://journals.aps.org/prapplied/abstract/10.1103/PhysRevApplied.19.064051"
+  },
+  {
+    "title": "Scalable Quantum Networks: Congestion-Free Hierarchical Entanglement Routing with Error Correction",
+    "authors": [
+      {"name": "H. Choi"},
+      {"name": "M.G. Davis"},
+      {"name": "Á.G. Iñesta"},
+      {"name": "D.R. Englund"}
+    ],
+    "link": "http://arxiv.org/abs/2306.09216"
+  },
+  {
+    "title": "Use coupled LSTM networks to solve constrained optimization problems",
+    "authors": [
+      {"name": "Z. Chen"},
+      {"name": "K.K. Leung"},
+      {"name": "S. Wang"},
+      {"name": "L. Tassiulas"},
+      {"name": "K. Chan"},
+      {"name": "D. Towsley"}
+    ],
+    "link": "https://ieeexplore.ieee.org/document/9712647"
+  },
+  {
+    "title": "Utilizing Quantum Network Simulators to Develop Methods of Quantum Network Tomography",
+    "authors": [
+      {"name": "J. Navas"},
+      {"name": "J. Diaz"},
+      {"name": "M. Guedes de Andrade"},
+      {"name": "M.J. Brewer"},
+      {"name": "N. Johnson"},
+      {"name": "M. Raymer"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/4CS22/Session/F01.47"
+  },
+  {
+    "title": "The Capacity Region of Entanglement Switching: Stability and Zero Latency",
+    "authors": [
+      {"name": "W. Dai"},
+      {"name": "A. Rinaldi"},
+      {"name": "D. Towsley"}
+    ],
+    "link": "Unavailable"
+  },
+  {
+    "title": "Scheduling Quantum Teleportation with Noisy Memories",
+    "authors": [
+      {"name": "A. Chandra"},
+      {"name": "W. Dai"},
+      {"name": "D. Towsley"}
+    ],
+    "link": "Unavailable"
+  },
+  {
+    "title": "Analysis of a tripartite entanglement distribution switch",
+    "authors": [
+      {"name": "P. Nain"},
+      {"name": "G. Vardoyan"},
+      {"name": "S. Guha"},
+      {"name": "D. Towsley"}
+    ],
+    "link": "https://link.springer.com/article/10.1007/s11134-021-09731-w"
+  },
+        {
+    "title": "Exploring the Potential of Quantum Network Simulators to Guide the Development of Quantum Network Tomography",
+    "authors": [
+      {"name": "J. Navas"},
+      {"name": "J. Diaz"},
+      {"name": "M. Guedes de Andrade"},
+      {"name": "M.J. Brewer"},
+      {"name": "N. Johnson"},
+      {"name": "M. Raymer"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/K67.12"
+  },
+  {
+    "title": "A Quantum Overlay Network for Efficient Entanglement Distribution",
+    "authors": [
+      {"name": "S. Pouryousef"},
+      {"name": "N.K. Panigrahy"},
+      {"name": "D. Towsley"}
+    ],
+    "link": "http://arxiv.org/abs/2212.01694"
+  },
+  {
+    "title": "On the Capacity Region of a Quantum Switch with Entanglement Purification",
+    "authors": [
+      {"name": "N.K. Panigrahy"},
+      {"name": "T. Vasantam"},
+      {"name": "D. Towsley"}
+    ],
+    "link": "https://arxiv.org/abs/2212.01463"
+  },
+  {
+    "title": "On the capacity region of bipartite and tripartite entanglement switching",
+    "authors": [
+      {"name": "G. Vardoyan"},
+      {"name": "P. Nain"},
+      {"name": "S. Guha"},
+      {"name": "D. Towsley"}
+    ],
+    "link": "https://dl.acm.org/doi/abs/10.1145/3571809"
+  },
+  {
+    "title": "Matching Game for Optimized Association in Quantum Communication Networks",
+    "authors": [
+      {"name": "M. Chehimi"},
+      {"name": "B. Simon"},
+      {"name": "W. Saad"},
+      {"name": "A. Klein"},
+      {"name": "D. Towsley"},
+      {"name": "M. Debbah"}
+    ],
+    "link": "http://arxiv.org/abs/2305.12682"
+  },
+  {
+    "title": "Scaling Limits of Quantum Repeater Networks",
+    "authors": [
+      {"name": "M. Chehimi"},
+      {"name": "S. Pouryousef"},
+      {"name": "N.K. Panigrahy"},
+      {"name": "D. Towsley"},
+      {"name": "W. Saad"}
+    ],
+    "link": "http://arxiv.org/abs/2305.08696"
+  },
+  {
+    "title": "Resource Management in Quantum Virtual Private Networks",
+    "authors": [
+      {"name": "S. Pouryousef"},
+      {"name": "N.K. Panigrahy"},
+      {"name": "M.D. Purkayastha"},
+      {"name": "S. Mukhopadhyay"},
+      {"name": "G. Grammel"},
+      {"name": "D. Di Mola"}
+    ],
+    "link": "http://arxiv.org/abs/2305.03231"
+  },
+  {
+    "title": "Tomography of star-shaped quantum networks with Pauli channels",
+    "authors": [
+      {"name": "M. Guedes de Andrade"},
+      {"name": "J. Diaz"},
+      {"name": "J. Navas"},
+      {"name": "S. Guha"},
+      {"name": "I. Montaño"},
+      {"name": "B. Smith B"}
+    ],
+    "link": "Unavailable"
+  },
+  {
+    "title": "Quantum internet: The future of internetworking",
+    "authors": [
+      {"name": "A. Abelem"},
+      {"name": "D. Towsley"},
+      {"name": "G. Vardoyan"}
+    ],
+    "link": "http://arxiv.org/abs/2305.00598"
+  },
+  {
+    "title": "A 100-pixel photon-number-resolving detector unveiling photon statistics",
+    "authors": [
+      {"name": "R. Cheng"},
+      {"name": "Y. Zhou"},
+      {"name": "S. Wang"},
+      {"name": "M. Shen"},
+      {"name": "T. Taher"}
+    ],
+    "link": "https://www.nature.com/articles/s41566-022-01119-3"
+  },
+  {
+    "title": "Quantum transduction is enhanced by single mode squeezing operators",
+    "authors": [
+      {"name": "C. Zhong"},
+      {"name": "M. Xu"},
+      {"name": "A. Clerk"},
+      {"name": "H.X. Tang"},
+      {"name": "L. Jiang"}
+    ],
+    "link": "https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.4.L042013"
+  },
+  {
+    "title": "Superconducting Cavity Electromechanics: The Realization of an Acoustic Frequency Comb at Microwave Frequencies",
+    "authors": [
+      {"name": "X. Han"},
+      {"name": "C-L Zou"},
+      {"name": "W. Fu"},
+      {"name": "M. Xu"},
+      {"name": "Y. Xu"},
+      {"name": "H.X. Tang"}
+    ],
+    "link": "https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.129.107701"
+  },
+  {
+    "title": "Architectures for Multinode Superconducting Quantum Computers",
+    "authors": [
+      {"name": "J. Ang"},
+      {"name": "G. Carini"},
+      {"name": "Y. Chen"},
+      {"name": "I. Chuang"}
+    ],
+    "link": "https://arxiv.org/abs/2212.06167"
+  },
+  {
+    "title": "Using Projective Simulation And Reinforcement Learning For Quantum Circuit Discovery And Optimization in Four Corners Section 2022 Meeting",
+    "authors": [
+      {"name": "N. Johnson"},
+      {"name": "J. Navas"},
+      {"name": "M.J. Brewer"},
+      {"name": "M. Guerrero"},
+      {"name": "N. Ceberio"},
+      {"name": "I. Montaño"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/4CS22/Session/F01.46"
+  },
+        {
+    "title": "Quantum Game Theory: An Application to Quantum Information Science",
+    "authors": [
+      {"name": "M. Brewer"},
+      {"name": "N. Johnson"},
+      {"name": "J. Navas"},
+      {"name": "J. Diaz"},
+      {"name": "I. Montaño"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/4CS22/Session/F01.45"
+  },
+  {
+    "title": "Learning Protocols for Quantum Entanglement Generation",
+    "authors": [
+      {"name": "N. Johnson"},
+      {"name": "J. Navas"},
+      {"name": "M.J. Brewer"},
+      {"name": "M. Guerrero"},
+      {"name": "N. Ceberio"},
+      {"name": "I. Montaño"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/AAA05.10"
+  },
+  {
+    "title": "Exploring the Potential of Quantum Network Simulators to Guide the Development of Quantum Network Tomography",
+    "authors": [
+      {"name": "J. Navas"},
+      {"name": "J. Diaz"},
+      {"name": "M. Guedes de Andrade"},
+      {"name": "M.J. Brewer"},
+      {"name": "N. Johnson"},
+      {"name": "M. Raymer"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/K67.12"
+  },
+  {
+    "title": "An Investigation of the Potential of Quantum Game Theory to control Routing in Quantum Networks",
+    "authors": [
+      {"name": "M. Brewer"},
+      {"name": "N. Johnson"},
+      {"name": "J. Navas"},
+      {"name": "J. Diaz"},
+      {"name": "I. Montaño"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/K67.13"
+  },
+  {
+    "title": "A Quantum Policy and Ethics Roadmap",
+    "authors": [
+      {"name": "J.R. Bambauer"},
+      {"name": "E. Kiesow Cortez"}
+    ],
+    "link": "https://papers.ssrn.com/abstract=4507090"
+  },
+  {
+    "title": "Reduced ITO for transparent superconducting electronics",
+    "authors": [
+      {"name": "E. Batson"},
+      {"name": "M. Colangelo"},
+      {"name": "J. Simonaitis"},
+      {"name": "E. Gebremeskel"},
+      {"name": "O.A. Medeiros"},
+      {"name": "M. Saravanapavanantham"}
+    ],
+    "link": "http://iopscience.iop.org/article/10.1088/1361-6668/acc280"
+  },
+  {
+    "title": "A Nanocryotron Ripple Counter Integrated with a Superconducting Nanowire Single-Photon Detector for Megapixel Arrays",
+    "authors": [
+      {"name": "M. Castellani"},
+      {"name": "et al."}
+    ],
+    "link": "https://arxiv.org/abs/2304.11700"
+  },
+  {
+    "title": "A nanocryotron memory and logic family",
+    "authors": [
+      {"name": "A. Buzzi"},
+      {"name": "et al."}
+    ],
+    "link": "https://aip.scitation.org/doi/abs/10.1063/5.0098277"
+  },
+  {
+    "title": "Improved heralded single-photon source with a photon-number-resolving superconducting nanowire detector",
+    "authors": [
+      {"name": "S.I. Davis"},
+      {"name": "A. Mueller"},
+      {"name": "R. Valivarthi"},
+      {"name": "N. Lauk"},
+      {"name": "L. Narvaez"}
+    ],
+    "link": "https://journals.aps.org/prapplied/abstract/10.1103/PhysRevApplied.18.064007"
+  },
+  {
+    "title": "A Superconducting Nanowire Binary Shift Register",
+    "authors": [
+      {"name": "R.A. Foster"},
+      {"name": "M. Castellani"},
+      {"name": "A. Buzzi"},
+      {"name": "O. Medeiros"},
+      {"name": "M. Colangelo"},
+      {"name": "K.K. Berggren"}
+    ],
+    "link": "http://arxiv.org/abs/2302.04942"
+  },
+  {
+    "title": "Impedance-matched differential superconducting nanowire detectors",
+    "authors": [
+      {"name": "M. Colangelo"},
+      {"name": "B. Korzh"},
+      {"name": "J.P. Allmaras"},
+      {"name": "A.D. Beyer"}
+    ],
+    "link": "https://journals.aps.org/prapplied/abstract/10.1103/PhysRevApplied.19.044093"
+  },
+  {
+    "title": "Full Exploitation of Limited Memory in Quantum Entanglement Switching",
+    "authors": [
+      {"name": "P. Promponas"},
+      {"name": "V. Valls"},
+      {"name": "L. Tassiulas"}
+    ],
+    "link": "http://arxiv.org/abs/2304.10602"
+  },
+  {
+    "title": "On the Capacity of the Quantum Switch with and without Entanglement Decoherence",
+    "authors": [
+      {"name": "V. Valls"},
+      {"name": "P. Promponas"},
+      {"name": "L. Tassiulas"}
+    ],
+    "link": "Unavailable"
+  },
+  {
+    "title": "Tailored XZZX codes for biased noise",
+    "authors": [
+      {"name": "Q. Xu"},
+      {"name": "N. Mannucci"},
+      {"name": "A. Seif"},
+      {"name": "A. Kubica"},
+      {"name": "S.T. Flammia"}
+    ],
+    "link": "https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.5.013035"
+  },
+  {
+    "title": "Shadow distillation: Quantum error mitigation with classical shadows for near-term quantum processors",
+    "authors": [
+      {"name": "A. Seif"},
+      {"name": "Z.P. Cian"},
+      {"name": "S. Zhou"},
+      {"name": "S. Chen"},
+      {"name": "L. Jiang"}
+    ],
+    "link": "https://link.aps.org/doi/10.1103/PRXQuantum.4.010303"
+  },
+        {
+    "title": "Construction of bias-preserving operations for pair-cat codes",
+    "authors": [
+      {"name": "M. Yuan"},
+      {"name": "Q. Xu"},
+      {"name": "L. Jiang"}
+    ],
+    "link": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.106.062422"
+  },
+  {
+    "title": "Distributed Quantum Error Correction for Chip-Level Catastrophic Errors",
+    "authors": [
+      {"name": "Q. Xu"},
+      {"name": "A. Seif"},
+      {"name": "H. Yan"},
+      {"name": "N. Mannucci"},
+      {"name": "B.O. Sane"},
+      {"name": "R. Van Meter"},
+      {"name": "et al."}
+    ],
+    "link": "https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.129.240502"
+  },
+  {
+    "title": "Quantum capacities of transducers",
+    "authors": [
+      {"name": "C-H Wang"},
+      {"name": "F. Li"},
+      {"name": "L. Jiang"}
+    ],
+    "link": "https://www.nature.com/articles/s41467-022-34373-8"
+  },
+  {
+    "title": "Representation learning via quantum neural tangent kernels",
+    "authors": [
+      {"name": "J. Liu"},
+      {"name": "F. Tacchino"},
+      {"name": "J.R. Glick"},
+      {"name": "L. Jiang"},
+      {"name": "A. Mezzacapo"}
+    ],
+    "link": "https://journals.aps.org/prxquantum/abstract/10.1103/PRXQuantum.3.030323"
+  },
+  {
+    "title": "Finite rate QLDPC-GKP coding scheme that surpasses the CSS Hamming bound",
+    "authors": [
+      {"name": "N. Raveendran"},
+      {"name": "N. Rengaswamy"},
+      {"name": "F. Rozpędek"}
+    ],
+    "link": "https://quantum-journal.org/papers/q-2022-07-20-767/"
+  },
+  {
+    "title": "Quantum repeaters: From quantum networks to the quantum internet",
+    "authors": [
+      {"name": "K. Azuma"},
+      {"name": "S.E. Economou"},
+      {"name": "D. Elkouss"},
+      {"name": "P. Hilaire"}
+    ],
+    "link": "https://arxiv.org/abs/2212.10820"
+  },
+  {
+    "title": "Resource-efficient fault-tolerant one-way quantum repeater with code concatenation",
+    "authors": [
+      {"name": "K.J. Wo"},
+      {"name": "G. Avis"},
+      {"name": "F. Rozpędek"},
+      {"name": "M.F. Mor-Ruiz"},
+      {"name": "G. Pieplow"},
+      {"name": "T. Schröder"},
+      {"name": "et al."}
+    ],
+    "link": "http://arxiv.org/abs/2306.07224"
+  },
+  {
+    "title": "Hybrid Entanglement Distribution between Remote Microwave Quantum Computers Empowered by Machine Learning",
+    "authors": [
+      {"name": "B. Zhang"},
+      {"name": "J. Wu"},
+      {"name": "L. Fan"},
+      {"name": "Q. Zhuang"}
+    ],
+    "link": "https://journals.aps.org/prapplied/abstract/10.1103/PhysRevApplied.18.064016"
+  },
+  {
+    "title": "On-chip parallel processing of quantum frequency comb",
+    "authors": [
+      {"name": "L. Zhang"},
+      {"name": "C. Cui"},
+      {"name": "J. Yan"},
+      {"name": "Y. Guo"},
+      {"name": "J. Wang"},
+      {"name": "L. Fan"}
+    ],
+    "link": "https://www.nature.com/articles/s41534-023-00725-5"
+  },
+  {
+    "title": "Two-node Remote Quantum Network using Silicon-Vacancy Centers in a Diamond Nanophotonic System (Part 2)",
+    "authors": [
+      {"name": "C. Knaut"},
+      {"name": "Y.Q. Huan"},
+      {"name": "P-J Stas"},
+      {"name": "D. Assumpcao"},
+      {"name": "Y-C- Wei"},
+      {"name": "E. Knall"},
+      {"name": "et al."}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/M70.2"
+  },
+  {
+    "title": "Two-node Remote Quantum Network using Silicon-Vacancy Centers in a Diamond Nanophotonic System (Part 1)",
+    "authors": [
+      {"name": "Y.Q. Huan"},
+      {"name": "C. Knaut"},
+      {"name": "P-J Stas"},
+      {"name": "D. Assumpcao"},
+      {"name": "Y-C- Wei"},
+      {"name": "M. Sutula"},
+      {"name": "et al."}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/M70.1"
+  },
+  {
+    "title": "Near-infrared integrated thin-film lithium-niobate devices for scalable quantum networks",
+    "authors": [
+      {"name": "D. Assumpcao"},
+      {"name": "D. Renaud"},
+      {"name": "G. Joe"},
+      {"name": "A. Shams Ansari"},
+      {"name": "D. Zhu"},
+      {"name": "Y. Hu"},
+      {"name": "et al."}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/M65.5"
+  },
+  {
+    "title": "Enabling strain tuning for cavity-coupled silicon vacancy centers in diamond",
+    "authors": [
+      {"name": "M. Haas"},
+      {"name": "G. Joe"},
+      {"name": "K. Kuruma"},
+      {"name": "D. Assumpcao"},
+      {"name": "K. Barajas"},
+      {"name": "B. Machielse"},
+      {"name": "et al."}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/M70.4"
+  },
+        {
+    "title": "Periodically poled lithium niobate ring resonators for efficient second-order optical nonlinear interactions",
+    "authors": [
+      {"name": "S. Ghosh"},
+      {"name": "R. Cheng"},
+      {"name": "C.J. Xin"},
+      {"name": "N. Sinclair"},
+      {"name": "M. Loncar"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/K65.9"
+  },
+  {
+    "title": "Mechanical control of a single nuclear spin in diamond",
+    "authors": [
+      {"name": "B. Pingault"},
+      {"name": "S. Maity"},
+      {"name": "G. Joe"},
+      {"name": "M. Chalupnik"},
+      {"name": "D. Assumpcao"},
+      {"name": "E. Cornell"},
+      {"name": "et al."}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/F74.6"
+  },
+  {
+    "title": "Probing spin-phonon interactions in silicon vacancy centers via surface acoustic waves",
+    "authors": [
+      {"name": "E. Cornell"},
+      {"name": "S.W. Ding"},
+      {"name": "B. Pingault"},
+      {"name": "Z. Xu"},
+      {"name": "M. Loncar"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/F74.5"
+  },
+  {
+    "title": "Extension of orbital lifetimes of silicon-vacancy centers in diamond using phononic crystals",
+    "authors": [
+      {"name": "K. Kuruma"},
+      {"name": "B. Pingault"},
+      {"name": "C. Chia"},
+      {"name": "M. Haas"},
+      {"name": "G. Joe"},
+      {"name": "D. Assumpcao"},
+      {"name": "et al."}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/G00.168"
+  },
+  {
+    "title": "Robust multi-qubit quantum network node with integrated error detection",
+    "authors": [
+      {"name": "P-J Stas"},
+      {"name": "Y.Q. Huan"},
+      {"name": "B. Machielse"},
+      {"name": "E.N. Knall"},
+      {"name": "A. Suleymanzade"},
+      {"name": "B. Pingault"},
+      {"name": "et al."}
+    ],
+    "link": "https://science.sciencemag.org/content/378/6590/557"
+  },
+  {
+    "title": "Efficient Source of Shaped Single Photons Based on an Integrated Diamond Nanophotonic System",
+    "authors": [
+      {"name": "E.N. Knall"},
+      {"name": "C.M. Knaut"},
+      {"name": "R. Bekenstein"},
+      {"name": "D.R. Assumpcao"},
+      {"name": "P.L. Stroganov"},
+      {"name": "W. Gong"},
+      {"name": "et al."}
+    ],
+    "link": "https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.129.053603"
+  },
+  {
+    "title": "Two-node Quantum Network using Silicon-Vacancy Centers in a Diamond Nanophotonic Cavity",
+    "authors": [
+      {"name": "Y-C- Wei"},
+      {"name": "C. Knaut"},
+      {"name": "Y.Q. Huan"},
+      {"name": "P-J Stas"},
+      {"name": "D. Assumpcao"},
+      {"name": "E. Knall"},
+      {"name": "et al."}
+    ],
+    "link": "https://meetings.aps.org/Meeting/DAMOP23/Session/N01.63"
+  },
+  {
+    "title": "On-chip synchronous pumped χ^(3) optical parametric oscillator on thin-film lithium niobate",
+    "authors": [
+      {"name": "R. Cheng"},
+      {"name": "M. Yu"},
+      {"name": "A. Shams-Ansari"},
+      {"name": "Y. Hu"},
+      {"name": "C. Reimer"},
+      {"name": "M. Zhang"},
+      {"name": "et al."}
+    ],
+    "link": "https://arxiv.org/abs/2304.12878"
+  },
+  {
+    "title": "Building a Quantum Repeater Using Optomechanical Oscillators as On-Demand Entanglement Sources",
+    "authors": [
+      {"name": "E. Chatterjee"},
+      {"name": "D. Soh"},
+      {"name": "M. Eichenfield"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/D67.5"
+  },
+  {
+    "title": "States, Modes, Fields, and Photons in Quantum Optics",
+    "authors": [
+      {"name": "M.G. Raymer"},
+      {"name": "P. Polakos"}
+    ],
+    "link": "http://arxiv.org/abs/2306.07807"
+  },
+        {
+    "title": "Utilizing Quantum Network Simulators to Develop Methods of Quantum Network Tomography",
+    "authors": [
+      {"name": "J. Navas"},
+      {"name": "J. Diaz"},
+      {"name": "M. Guedes de Andrade"},
+      {"name": "M.J. Brewer"},
+      {"name": "N. Johnson"},
+      {"name": "M. Raymer"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/4CS22/Session/F01.47"
+  },
+  {
+    "title": "Telecom quantum networking with a silicon-vacancy center in diamond",
+    "authors": [
+      {"name": "M. Sutula"},
+      {"name": "E. Bersin"},
+      {"name": "Y.Q. Huan"},
+      {"name": "D. Assumpcao"},
+      {"name": "Y-C- Wei"},
+      {"name": "P-J Stas"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/M70.8"
+  },
+  {
+    "title": "Soft syndrome decoding of quantum ldpc codes for joint correction of data and syndrome errors",
+    "authors": [
+      {"name": "N. Raveendran"},
+      {"name": "N. Rengaswamy"}
+    ],
+    "link": "https://ieeexplore.ieee.org/abstract/document/9951264/"
+  },
+  {
+    "title": "Entanglement Purification with Quantum LDPC Codes and Iterative Decoding",
+    "authors": [
+      {"name": "N. Raveendran"},
+      {"name": "N. Rengaswamy"},
+      {"name": "A. Raina"},
+      {"name": "B. Vasić"}
+    ],
+    "link": "http://arxiv.org/abs/2210.14143"
+  },
+  {
+    "title": "Optimal encoding of oscillators into more oscillators",
+    "authors": [
+      {"name": "J. Wu"},
+      {"name": "A.J. Brady"},
+      {"name": "Q. Zhuang"}
+    ],
+    "link": "https://quantum-journal.org/papers/q-2023-08-16-1082/"
+  },
+  {
+    "title": "Entanglement-assisted detection of fading targets via correlation-to-coherence conversion",
+    "authors": [
+      {"name": "X. Chen"},
+      {"name": "Q. Zhuang"}
+    ],
+    "link": "https://journals-aps-org./pra/abstract/10.1103/PhysRevA.107.062405"
+  },
+  {
+    "title": "Ultimate precision limit of noise sensing and dark matter search",
+    "authors": [
+      {"name": "H. Shi"},
+      {"name": "Q. Zhuang"}
+    ],
+    "link": "https://www.nature.com/articles/s41534-023-00693-w#Ack1"
+  },
+  {
+    "title": "Transceiver designs to attain the entanglement assisted communications capacity",
+    "authors": [
+      {"name": "A. Cox"},
+      {"name": "Q. Zhuang"},
+      {"name": "C. Gagatsos"},
+      {"name": "B. Bash"},
+      {"name": "S. Guha"}
+    ],
+    "link": "http://arxiv.org/abs/2208.07979"
+  },
+  {
+    "title": "Fulfilling entanglement’s benefit via converting correlation to coherence",
+    "authors": [
+      {"name": "H. Shi"},
+      {"name": "B. Zhang"},
+      {"name": "Q. Zhuang"}
+    ],
+    "link": "http://arxiv.org/abs/2207.06609"
+  },
+  {
+    "title": "Entanglement-assisted multi-aperture pulse-compression radar for angle resolving detection",
+    "authors": [
+      {"name": "B-H Wu"},
+      {"name": "S. Guha"},
+      {"name": "Q. Zhuang"}
+    ],
+    "link": "http://arxiv.org/abs/2207.10881"
+  },
+  {
+    "title": "Transceiver Designs Approaching the Entanglement-Assisted Communication Capacity",
+    "authors": [
+      {"name": "A. Cox"},
+      {"name": "Q. Zhuang"},
+      {"name": "C.N. Gagatsos"},
+      {"name": "B. Bash"},
+      {"name": "S. Guha"}
+    ],
+    "link": "https://doi.org/10.1103/PhysRevApplied.19.064015"
+  },
+  {
+    "title": "Optimized Free Space Emission from Layered Diamond Microdisk Resonators",
+    "authors": [
+      {"name": "H. Flores"},
+      {"name": "B. Szamosfalvi"},
+      {"name": "Y. Duan"},
+      {"name": "I. Hammond"},
+      {"name": "R. Camacho"},
+      {"name": "D. Englund"}
+    ],
+    "link": "https://doi.org/10.1109/IETC57902.2023.10152248"
+  },
+  {
+    "title": "Roadmap on integrated quantum photonics",
+    "authors": [
+      {"name": "G. Moody"}
+    ],
+    "link": "https://doi.org/10.1088/2515-7647/ac4a8f"
+  },
+  {
+    "title": "Inverse Design of a 2×2 Coupler",
+    "authors": [
+      {"name": "E. Bangerter"},
+      {"name": "R. Camacho"}
+    ],
+    "link": "https://doi.org/10.1109/IETC57902.2023.10152178"
+  },
+        {
+    "title": "Co-design of Transimpedance Amplifiers and Photonic Quantum Random Number Generators",
+    "authors": [
+      {"name": "B. Fisher"}
+    ],
+    "link": "https://doi.org/10.1109/IETC57902.2023.10152144"
+  },
+  {
+    "title": "Simphony: A Simulator for Photonic Integrated Circuits With Location-Aware Monte Carlo Features",
+    "authors": [
+      {"name": "S. Chandrasekar"},
+      {"name": "R. Camacho"}
+    ],
+    "link": ""
+  },
+  {
+    "title": "Device-Aware Quantum Photonic Simulator for Gaussian States",
+    "authors": [
+      {"name": "C. Carver"},
+      {"name": "A. Probst"},
+      {"name": "B. Arnesen"},
+      {"name": "B. Fisher"},
+      {"name": "T. Stowell"},
+      {"name": "R.M. Camacho"}
+    ],
+    "link": ""
+  },
+  {
+    "title": "Deep learning-enhanced, open-source eigenmode expansion",
+    "authors": [
+      {"name": "I.M. Hammond"},
+      {"name": "A.M. Hammond"},
+      {"name": "R.M. Camacho"}
+    ],
+    "link": "https://doi.org/10.1364/OL.447780"
+  },
+  {
+    "title": "Quantum Network Tomography with Multi-party State Distribution",
+    "authors": [
+      {"name": "M.G. De Andrade"},
+      {"name": "J. Diaz"},
+      {"name": "J. Navas"},
+      {"name": "S. Guha"},
+      {"name": "I. Montaño"},
+      {"name": "B. Smith"}
+    ],
+    "link": "https://doi.org/10.1109/QCE53715.2022.00061"
+  },
+  {
+    "title": "Linear optics and photodetection achieve near-optimal unambiguous coherent state discrimination",
+    "authors": [
+      {"name": "J. Sidhu"},
+      {"name": "M. Bullock"},
+      {"name": "S. Guha"},
+      {"name": "C. Lupo"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/A67.4"
+  },
+  {
+    "title": "Optimal Control Policies for Distributed Quantum Computing with Quantum Walks",
+    "authors": [
+      {"name": "M. Guedes de Andrade"},
+      {"name": "D. Towsley"},
+      {"name": "W. Dai"},
+      {"name": "S. Guha"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/K67.3"
+  },
+  {
+    "title": "Identifying domain or superadditivity for non-idealistic joint detection receivers",
+    "authors": [
+      {"name": "J. Postlewaite"},
+      {"name": "K. Seshadreesan"},
+      {"name": "S. Guha"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/G00.405"
+  },
+  {
+    "title": "Entangling Quantum Memories via Heralded Photonic Bell Measurement",
+    "authors": [
+      {"name": "P. Dhara"},
+      {"name": "D. Englund"},
+      {"name": "S. Guha"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/M70.3"
+  },
+  {
+    "title": "Bounds on Bipartite Entanglement Distribution Rates for Discrete and Continuous Variable Quantum Switches",
+    "authors": [
+      {"name": "I. Tillman"},
+      {"name": "T. Vasantam"},
+      {"name": "S. Guha"},
+      {"name": "K. Seshadreesan"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/Q70.10"
+  },
+  {
+    "title": "An All-Photonic Quantum Repeater Scheme using Biclique Cluster State",
+    "authors": [
+      {"name": "A. Patil"},
+      {"name": "S. Guha"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/M70.6"
+  },
+  {
+    "title": "Modeling Phonon-Induced Decoherence in Solid-State Defect based Qubits",
+    "authors": [
+      {"name": "P. Dhara"},
+      {"name": "S. Guha"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/UU06.6"
+  },
+  {
+    "title": "Quantum sensor network with probabilistic entanglment generation",
+    "authors": [
+      {"name": "E. Van Milligen"},
+      {"name": "E. Kaur"},
+      {"name": "C. Gagatsos"},
+      {"name": "S. Guha"}
+    ],
+    "link": "https://meetings.aps.org/Meeting/MAR23/Session/A71.1"
+  },
+  {
+    "title": "Quantum receiver enhanced by adaptive learning",
+    "authors": [
+      {"name": "C. Cui"},
+      {"name": "W. Horrocks"},
+      {"name": "S. Hao"},
+      {"name": "S. Guha"},
+      {"name": "N. Peyghambarian"},
+      {"name": "Q. Zhuang"}
+    ],
+    "link": "https://doi.org/10.1038/s41377-022-01039-5"
+  },
+  {
+    "title": "Quantum-enhanced transmittance sensing",
+    "authors": [
+      {"name": "Z. Gong"},
+      {"name": "N. Rodriguez"},
+      {"name": "C.N. Gagatsos"},
+      {"name": "S. Guha"},
+      {"name": "B.A. Bash"}
+    ],
+    "link": "https://doi.org/10.1109/jstsp.2022.3222680"
+  },
+  {
+    "title": "Perturbation Theory for Quantum Information",
+    "authors": [
+      {"name": "M.R. Grace"},
+      {"name": "S. Guha"}
+    ],
+    "link": "https://ieeexplore.ieee.org/abstract/document/9965836/"
+  },
+  {
+    "title": "Identifying Objects at the Quantum Limit for Superresolution Imaging",
+    "authors": [
+      {"name": "M.R. Grace"},
+      {"name": "S. Guha"}
+    ],
+    "link": "https://doi.org/10.1103/PhysRevLett.129.180502"
+  },
+        {
+    "title": "Quantum-inspired multi-parameter adaptive Bayesian estimation for sensing and imaging",
+    "authors": [
+      {"name": "K.K. Lee"},
+      {"name": "C.N. Gagatsos"},
+      {"name": "S. Guha"}
+    ],
+    "link": "https://ieeexplore.ieee.org/abstract/document/9919344/"
+  },
+  {
+    "title": "Measurement-Based Quantum Computing as a Tangram Puzzle",
+    "authors": [
+      {"name": "A. Patil"},
+      {"name": "Y. Jacobson"},
+      {"name": "D. Towsley"},
+      {"name": "S. Guha"}
+    ],
+    "link": "https://doi.org/10.1109/QCE53715.2022.00124"
+  },
+  {
+    "title": "Demonstration of a quantum advantage by a joint detection receiver for optical communication using quantum belief propagation on a trapped-ion device",
+    "authors": [
+      {"name": "C. Delaney"},
+      {"name": "K.P. Seshadreesan"},
+      {"name": "I. MacCormack"},
+      {"name": "A. Galda"}
+    ],
+    "link": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.106.032613"
+  },
+  {
+    "title": "On the Analysis of a Multipartite Entanglement Distribution Switch",
+    "authors": [
+      {"name": "P. Nain"},
+      {"name": "G. Vardoyan"},
+      {"name": "S. Guha"},
+      {"name": "D. Towsley"}
+    ],
+    "link": "http://arxiv.org/abs/2212.01784"
+  },
+  {
+    "title": "All-photonic multiplexed quantum repeaters based on concatenated bosonic and discrete-variable quantum codes",
+    "authors": [
+      {"name": "F. Rozpędek"},
+      {"name": "K.P. Seshadreesan"},
+      {"name": "P. Polakos"},
+      {"name": "L. Jiang"},
+      {"name": "S. Guha"}
+    ],
+    "link": "http://arxiv.org/abs/2303.14923"
+  },
+  {
+    "title": "Quantum limits of parameter estimation in long-baseline imaging",
+    "authors": [
+      {"name": "Sajjad A"},
+      {"name": "Grace MR"},
+      {"name": "Guha S"}
+    ],
+    "link": "http://arxiv.org/abs/2305.03848"
+  },
+  {
+    "title": "Phonon-Induced Decoherence in Color-Center Qubits",
+    "authors": [
+      {"name": "P. Dhara"},
+      {"name": "S. Guha"}
+    ],
+    "link": "http://arxiv.org/abs/2305.05049"
+  },
+  {
+    "title": "Entanglement distribution in two-dimensional square grid network",
+    "authors": [
+      {"name": "Kaur E"},
+      {"name": "Guha S"}
+    ],
+    "link": "http://arxiv.org/abs/2306.03319"
+  },
+  {
+    "title": "Near-term to distillation protocols using graph codes",
+    "authors": [
+      {"name": "K. Goodenough"},
+      {"name": "S. de Bone"},
+      {"name": "V.L. Addala"}
+    ],
+    "link": "https://arxiv.org/abs/2303.11465"
+  },
+  {
+    "title": "Development of a Boston-area 50-km fiber quantum network testbed",
+    "authors": [
+      {"name": "E. Bersin"},
+      {"name": "M. Grein"},
+      {"name": "M. Sutula"},
+      {"name": "R. Murphy"},
+      {"name": "YQ Huan"},
+      {"name": "M. Stevens"},
+      {"name": "A. Suleymanzade"}
+    ],
+    "link": "https://arxiv.org/abs/2307.15696"
+  },
+  {
+    "title": "Substrate-Induced Modulation of Quantum Emitter Properties in 2D Hexagonal Boron Nitride: Implications for Defect-Based SinglePhoton Sources in 2D Layers",
+    "authors": [
+      {"name": "S. K. Narayanan"},
+      {"name": "P. Dev"}
+    ],
+    "link": "https://pubs.acs.org/doi/10.1021/acsanm.1c02289"
+  }
+    ]
+}
+

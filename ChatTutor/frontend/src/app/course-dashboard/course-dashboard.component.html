@@ -1,0 +1,181 @@
+<app-navbar [ondashboard]="true"></app-navbar>
+<div class="body col">
+    <div class="container">
+        <div class="col start">
+
+            <div *ngIf="!loading" class="header">
+                <h2>Course {{course_name}}</h2>
+            </div>
+            <div class="row">
+
+                <div class="left">
+                    <mat-list>
+                        <mat-list-item>
+                            <button class="menu-btn" (click)="switchStatus('content')">Content</button>
+                        </mat-list-item>
+                        <mat-divider></mat-divider>
+                        <!-- <mat-list-item>
+                            <button class="menu-btn" (click)="switchStatus('tokens')">Access Tokens</button>
+                        </mat-list-item> -->
+                        <mat-list-item>
+                            <button class="menu-btn" (click)="switchStatus('students')">Students</button>
+                        </mat-list-item>
+
+                        <mat-divider></mat-divider>
+                        <mat-list-item>
+                            <button class="menu-btn" (click)="switchStatus('messages')">Messages</button>
+                        </mat-list-item>
+                    </mat-list>
+                </div>
+                <div class="right">
+                    <div *ngIf="status=='content'">
+                        <div *ngIf="loading">
+                            <div class="spinner">
+                                <mat-spinner diameter="30"></mat-spinner>
+                            </div>
+                        </div>
+                        <div *ngIf="!loading">
+                            <div class="acc-center">
+                                <div class="text">
+                                <span>Below are all your course's sections, either labs of readings.</span>
+                                </div>
+                                <mat-divider></mat-divider>
+                                <div class="accordeon">
+                                    <mat-accordion>
+                                        <div *ngFor="let section of sections">
+                                            <app-url-label [url_name]="section['section_url']" [section_info]="section"
+                                                        (onRemove)="removeFromCollection($event)"
+                                                        [isDeleting]="statusDel(section)"></app-url-label>
+                                        </div>
+                                    </mat-accordion>
+                                </div>
+                            </div>
+            
+                        </div>
+                    </div>
+                    <!-- <div *ngIf="status=='tokens'">
+                        
+                        <div class="acc-center">
+                            <h3>Add a token!</h3>
+
+                            <div class="text">
+                            <span>Below are all your course's tokens. Tokens help you embed ChatTutor on your course!</span>
+                            </div>
+                            <div class="border fl">
+                                <form ngNoForm action="/course/addtoken" method='POST' class="col start theform">
+
+                                    <mat-form-field>
+                                        <mat-label>Course ID (leave unchaged)</mat-label>
+                                        <input matInput type='text' name='course_id' id='course_id' placeholder="ID" [value]="course_id"/>
+                                    </mat-form-field>
+                                    <mat-form-field>
+                                        <mat-label>Domain of Course</mat-label>
+                                        <input matInput type='text' name='course_url' id='course_url' placeholder="E.g.: https://my.course.com or https://127.0.0.1"/>
+                                    </mat-form-field>
+                                    <div class="horiz">
+                                        <input type='checkbox' name='run_locally' id='run_locally'
+                                        [checked]="runlocally"
+                                        (change)="runlocally = !runlocally"/>
+                                        <mat-label>Runs on a localhost server</mat-label> 
+                                    </div>
+    
+                                    <div *ngIf="runlocally">
+                                        <mat-form-field>
+                                            <mat-label>What do you use to build your site?</mat-label>
+                                            <select matNativeControl name="built_with" id="built_with">
+                                                <option value="JUPYTER-NOTEBOOK">Jupyter Notebook</option>
+                                                <option value="SERVER">Other</option>
+                                            </select>
+                                        </mat-form-field>
+    
+                                        <div class="horiz">
+                                            <input type='checkbox' name='is_static' id='is_static'/>
+                                        <mat-label>If Jupyter Notebook is selected above, will you use the token to run the build statically on your local machine?</mat-label>
+                                        
+                                    </div>
+    
+                                    <div class="horiz">
+                                        <input type='checkbox' name='test_mode' id='test_mode'
+                                        [checked]="testmode"
+                                        (change)="testmode = !testmode"/>
+                                        <mat-label>Requests answers from a localhost ChatTutor server</mat-label>
+                                        
+                                    </div>
+    
+                                    <div *ngIf="testmode">
+                                        <mat-form-field class="full-width">
+                                            <mat-label>ChatTutor Server / PORT</mat-label>
+                                            <input matInput type='text' name='chattutor_server' id='chattutor_server'/>
+                                        </mat-form-field>
+                                    </div>
+                                    
+                                    </div>
+
+                                    <div class="horiz">
+                                        <input type='checkbox' name='is_default' id='is_default' checked/>
+                                        <mat-label>Save as default token for this course</mat-label>
+                                        
+                                    </div>
+
+
+                                    <mat-form-field class="full-width">
+
+                                        <input matInput type='submit'/>
+                                    </mat-form-field>
+                                </form>
+                            </div>
+                            <br/>
+                            <br/>
+                            <div>
+                                <h3>Your tokens</h3>
+
+                                <mat-list>
+
+                                    <div *ngFor="let tok of tokens">
+                                        <mat-divider></mat-divider>
+
+                                        <mat-list-item>
+                                        <div class="col start" style="margin: 20px;">
+                                            
+                                                <div class="col start">
+                                                    <span>Token: {{tok['token_id']}}</span>
+                        
+                                                    <span>Active on: {{tok['course_url']}}</span>
+                                                </div>
+                                        </div>
+                                        </mat-list-item>
+
+                                    </div>
+                                </mat-list>
+
+                            </div>
+                            
+                        </div>
+                    </div> -->
+
+                    <div *ngIf="status=='students'">
+                        <div *ngFor="let stud of students">
+                            <div style="flex-direction: column; align-items: center; justify-content: left; background-color: #b4ddff; padding: 10px; margin: 5px; border-radius: 10px;">
+                                <div style=" display: flex;flex-direction: row;justify-content: space-between;"><div>ID: <i>{{stud.user_id}}</i> </div> </div>
+                                <div>Email: {{stud.email}}</div>
+                                <a href="/courses/{{course_id}}/messages/{{stud.user_id}}">{{stud.user_id}}</a>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div *ngIf="status=='messages'">
+                        <div *ngFor="let mes of messages">
+                            <div style="flex-direction: column; align-items: center; justify-content: left; background-color: #b4ddff; padding: 10px; margin: 5px; border-radius: 10px;">
+                                <div style=" display: flex;flex-direction: row;justify-content: space-between;"><div>at <i>{{mes.time_created}}</i> by <i>{{mes.role}}</i></div> <i>{{mes.user_email}} | {{mes.user_id}}</i> </div>
+                                <div>{{mes.content}}</div>
+                                <div *ngFor="let feed of mes.feedbacks">
+                                    <div style="background-color: white; padding: 5px; margin: 5px; border-radius: 10px"><span>{{feed.content}}</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
