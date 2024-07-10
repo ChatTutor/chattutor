@@ -30,21 +30,7 @@ env_variables:
     CHATUTOR_GCP: false
     OPENAI_API_KEY: <your_openai_api_key>
 ```
-If you would like an OpenAI API key for the purposes of developing our repository, please reach out to hkemeny@mit.edu
-
-The project file tree should look like this:
-
-```
-root_folder (named chattutor)
-|- ChatTutor/
-      |- ... (other files and folders)
-      |- .env.yaml (the file you added)
-|- db/
-      |- ...
-|- README.md
-|- requirements.txt
-|- ...
-```
+If you would like an OpenAI API key for the purposes of developing our repository, please reach out to hkemeny@g.harvard.edu
 
 ## Usage
 
@@ -60,48 +46,23 @@ Alternatively, use docker:
 2. **Run the flask application**
 ```
    cd ChatTutor
-   python main.py
+   ./run.sh
 ```
 
 3. **Interact with ChatTutor:**
-Open a web browser and navigate to http://127.0.0.1:5000/ to interact with the application. Use the provided interface to ask questions and receive responses based on the loaded data sources.
+Open a web browser and navigate to http://localhost:5000/ to interact with the application. Use the provided interface to ask questions and receive responses based on the loaded data sources.
 
 ## Components
 
-### 1. **Flask Application**
-   - **File**: `main.py`
-     - Hosts a Flask application that serves **various** static files and handles **HTTP** routes.
-     - The `ask` route **facilitates interaction** with the `tutor` module to **formulate** responses to user queries.
-   - **File**: `extensions.py`
-     - Defines **the configuration for the selected** database **service**.
+1. core - contains the backend and the core code
+  - blueprints - contains the APIs split into blueprints based on their purpose
+  - data - contains the SQL database models
+  - natlang & scripts & test_scripts - scripts for testing / modifying language
+  - static - static files
+  - tutor - variants of tutors used for different purposes
 
-### 2. **Tutor Module**
-   - **File**: `tutor.py`
-     - Contains **core** functions to **interface with** the OpenAI API.
-     - **Crafts** responses based on user queries and **maintains** conversation context.
-
-### 3. **Database Interaction**
-   - **File**: `database.py`
-     - Defines the `VectorDatabase` class **for managing vectorized data**.
-     - **Facilitates** interaction with **various** database providers such as Chroma and Deeplake.
-     - **Manages** the loading of data sources, **the addition of new texts**, and **execution of** queries.
-   - **File**: `definitions.py`
-     - Defines **fundamental** classes for **data structure and** parsing **of the** dataset.
-
-### 4. **Text Reading and Parsing**
-   - **File**: `loader.py`
-     - **Execute** this file to **generate** embeddings for the dataset and **upload them to a cloud-based service**.
-     - Utilizes `reader.py` to **systematically** parse each file in the dataset.
-   - **File**: `reader.py`
-     - Contains functions to read directories and parse files of **varied formats** (PDF, plaintext, Jupyter notebooks) into **discrete** text chunks.
-     - **Employs** specialized parsing strategies for **each** file type.
-
-### 5. **Frontend Components**
-   - **File**: `index.js`
-     - **Manages** user interactions on the client side.
-     - **Orchestrates** the conversation flow, **transmits** user messages to the server, and **refreshes** the chat interface with responses.
-   - **File**: `index.html`
-     - Defines the **graphical user interface (GUI)** for the chatbot.
+2. frontend - contains the angular frontend
+  /src/app - frontend components
 
 ## Contribution Guidelines
 
