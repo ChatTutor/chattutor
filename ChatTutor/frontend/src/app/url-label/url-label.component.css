@@ -1,0 +1,52 @@
+.urlname {
+    display: block;
+}
+
+.urllabel {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.opacity {
+    opacity: 0.5 !important;
+}
+
+.hidden {
+    width: 0px !important;
+    opacity: 0 !important;
+}
+
+.add-input {
+
+    margin-left: 10px;
+    width: 200px;
+    opacity: 1;
+    transition: all 0.3s ease;
+}
+
+.please-horizontal {
+    max-width: calc( 30vw );
+    overflow: scroll;
+    white-space: nowrap;
+
+}
+
+.mat-expansion-panel:not([class*=mat-elevation-z])  {
+    box-shadow: none !important;
+    /* border-top: 1px solid rgb(137, 137, 137) !important; */
+    border-radius: 0px !important;
+}
+
+ul {
+    background: whitesmoke;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 10px;
+    /* border: 1px solid rgb(135, 133, 133); */
+}
+
+.fill-available {
+    width: fill;
+
+    width: max-content;
+}

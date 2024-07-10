@@ -1,0 +1,81 @@
+<div class="body">
+    <main class="main">
+        <app-navbar [onhomepage]="true"></app-navbar>
+
+        <app-gradient-background></app-gradient-background>
+
+        <div class="main-title">
+
+            <svg width="0" height="0">
+                <filter id="f">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.5"/>
+                </filter>
+            </svg>
+            <div class="titl">
+                <h1>ChatTutor</h1>
+            </div>
+
+            <div class="links">
+                <div class="innerlink talk_to_chattutor text-center">
+                    <a class="text-center" href="/chattutor" style="height: 30px; justify-content: center; align-items: center;"
+                       class="row">Talk to ChatTutor</a>
+                </div>
+
+                <div class="innerlink talk_to_chattutor text-center">
+                    <a class="text-center" href="/scrape" style="height: 30px; justify-content: center; align-items: center;" class="row">Get
+                        ChatTutor on your course</a>
+                </div>
+
+            </div>
+            <div class="links">
+
+                <div class="innerlink talk_to_chattutor text-center">
+                    <a href="/cqnchattutor" class="row"
+                       style="height: 30px; justify-content: center; align-items: center;">
+                        ChatCQN</a>
+                </div>
+
+            </div>
+
+            <div class="chattutor_course_container">
+                <div class="titl">
+                    <h2>Check out ChatTutor on courses!</h2>
+                </div>
+                <div class="checkout links">
+
+                    <div class="chattutor_course text-center">
+                        <a class="text-center" href="https://byucamacholab.github.io/Photonics-Bootcamp/" target="_blank">
+                            CamachoLab's Photonics-Bootcamp
+                        </a>
+                    </div>
+
+                    <div class="chattutor_course text-center">
+                        <a class="text-center" href="https://pr4jitd.github.io/2024.CQNSchool.DigitalTwin/Introduction.html" target="_blank">
+                            CQN Winter School
+                        </a>
+                    </div>
+
+                    <div class="text-center" class="chattutor_course">
+                        <a href="https://dkeathley.github.io/6.2410-lab" target="_blank">
+                            MIT 6.2410
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="chattutor_course_container">
+                <h2 style="color: white">How to install our extension</h2>
+                <div style="padding-bottom: 20px">
+                    <a style="color: #2c7de7" href="assets/chattutor_ext/chattutor.zip" download>Download here!</a>
+                </div>
+<!--                <img style="border-radius: 10px" src="assets/chattutor_ext/chattutor_tutorial_fast.gif" width="400px"/>-->
+                <video width="320" height="240" controls>
+                    <source src="assets/chattutor_ext/chattutor_mic.mp4" />
+                    Video tag not supported.
+                </video>
+            </div>
+        </div>
+    </main>
+
+</div>

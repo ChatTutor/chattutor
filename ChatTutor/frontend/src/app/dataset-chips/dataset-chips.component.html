@@ -1,0 +1,29 @@
+<mat-form-field class="urls-and-files" [class]="status == WStatus.DragOver ? 'urls-and-files large' : 'urls-and-files normal'" [class.hide]="!isactive">
+    <mat-label>Write url or drag files</mat-label>
+    <mat-chip-grid #chipGrid aria-label="Write url">
+        <mat-chip-row *ngFor="let file of files_data">
+            <mat-chip>{{file}}</mat-chip>
+        </mat-chip-row>
+        <mat-chip-row *ngFor="let url of urls_data">
+            <mat-chip>{{url}}</mat-chip>
+        </mat-chip-row>
+
+        <div *ngIf="status == WStatus.UploadingContent">
+            <mat-chip-row>
+                <mat-chip>
+                    <mat-spinner [diameter]="15"></mat-spinner>
+                </mat-chip>
+            </mat-chip-row>
+        </div>
+
+        <input placeholder="Add url or drag file"  [disabled]="!isactive"
+           [matChipInputFor]="chipGrid"
+           [matChipInputSeparatorKeyCodes]="[COMMA, SPACE, ENTER]"
+           [matChipInputAddOnBlur]="true"
+           (matChipInputTokenEnd)="add($event)"/>
+    </mat-chip-grid>
+
+    <button mat-icon-button color="primary" matSuffix (click)="toggle()">
+        <mat-icon class="icon-display">folder</mat-icon>
+    </button>
+</mat-form-field>
