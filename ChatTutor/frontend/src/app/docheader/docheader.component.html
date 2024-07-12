@@ -11,19 +11,20 @@
                 <!--                <mat-card-title>{{document.metadata.doc}}</mat-card-title>-->
                 <div style="display: flex; flex-direction: column;">
                     <!-- <div style="width: 30px"><mat-icon>chevron_right</mat-icon></div> -->
-                     <div *ngIf="document.metadata.links && document.metadata.links!='no_link'">
+                    <div *ngIf="document.metadata.links && document.metadata.links!='no_link'">
                         <a [href]="document.metadata.links ? document.metadata.links : '#'">
-                            <span *ngIf="document.metadata.title" style="word-break: break-word; word-wrap: break-word;">
+                            <span *ngIf="document.metadata.title"
+                                  style="word-break: break-word; word-wrap: break-word;">
                                 {{ document.metadata.title }}
                             </span>
                         </a>
-                     </div>
+                    </div>
 
-                     <div *ngIf="!document.metadata.links || document.metadata.links=='no_link'">
+                    <div *ngIf="!document.metadata.links || document.metadata.links=='no_link'">
                         <span *ngIf="document.metadata.title" style="word-break: break-word; word-wrap: break-word;">
                             {{ document.metadata.title }}
                         </span>
-                     </div>
+                    </div>
                     <!-- <a [href]="document.metadata.links ? document.metadata.links : '#'">
                         <span *ngIf="document.metadata.title" style="word-break: break-word; word-wrap: break-word;">
                             {{ document.metadata.title }}
@@ -42,22 +43,26 @@
                             Focus on for more information about authors / content.
                         </span>
                     </div>
-                    <div *ngIf="document.metadata.authors" class="row" style="word-break: break-word; flex-wrap: wrap !important;">
-                        {{map_name(document.metadata.authors[document.metadata.doc]['author']).join(', ')}}
+                    <div *ngIf="document.metadata.authors" class="row"
+                         style="word-break: break-word; flex-wrap: wrap !important;">
+                        <div *ngIf="document.metadata.authors[document.metadata.doc]">
+                            {{ map_name(document.metadata.authors[document.metadata.doc]['author']).join(', ') }}
+                        </div>
                     </div>
 
                     <div *ngIf="document.metadata.published">
                         <p>Published at {{ document.metadata.published }}</p>
                     </div>
 
-<!--                    <div *ngIf="document.metadata.links">-->
-<!--                        <p>{{ document.metadata.links }}</p>-->
-<!--                    </div>-->
+                    <!--                    <div *ngIf="document.metadata.links">-->
+                    <!--                        <p>{{ document.metadata.links }}</p>-->
+                    <!--                    </div>-->
                 </div>
                 <mat-divider></mat-divider>
             </mat-card-content>
             <mat-card-actions>
-                <button mat-button (click)="focusOnDocument()" style="word-break: break-word;" *ngIf="!showHeader">Click <u>here</u> to learn more about this
+                <button mat-button (click)="focusOnDocument()" style="word-break: break-word;" *ngIf="!showHeader">Click
+                    <u>here</u> to learn more about this
                     paper
                 </button>
                 <button mat-button (click)="closeInfoBox()" *ngIf="showHeader">CLOSE</button>

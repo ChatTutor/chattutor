@@ -16,7 +16,7 @@ import { UserMessageAnalizerComponent } from './user-message-analizer/user-messa
 
 const routes: Routes = [
     {path: '', component: LandingPageComponent},
-    {path: 'cqnchattutor', component: CQNChatTutorWrapperComponent},
+    {path: 'chatcqn', component: CQNChatTutorWrapperComponent},
     {path: 'chattutor', component: ChatTutorWrapperComponent},
     {path: 'scrape', component: CourseInputComponent},
     {path: 'mycourses', component: UserDashboardComponent},
