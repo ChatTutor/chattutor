@@ -28,7 +28,7 @@
         flex: 1;
         padding: 16px;
         position: fixed; 
-        top: calc( 100vh - 200px ); 
+        top: calc( 100vh - 260px ); 
         right: 2px; 
         z-index: 19000;
 
