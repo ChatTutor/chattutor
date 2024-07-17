@@ -117,7 +117,7 @@ export class ChatWindowComponent implements OnInit {
         this.setStatus(WStatus.LoadingMessage)
         let args: ChatTutor = {
             conversation: this.messages,
-            selectedModel: "gpt-3.5-turbo-16k",
+            selectedModel: "gpt-4o",
             multiple: true,
             credential_token: "none",
             response_type: "NSF_CQN"
