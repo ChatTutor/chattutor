@@ -52,14 +52,14 @@
     }
 
     .message {
-        padding-left: 1% !important;
-        padding-right: 1% !important;
+        padding-left: 7% !important;
+        padding-right: 7% !important;
         min-width: none !important;
-        width: 98vw !important;
+        width: 86vw !important;
     }
 
     .message .box {
-        width: 98vw !important;
+        width: 86vw !important;
     }
 
     .message-docs {
