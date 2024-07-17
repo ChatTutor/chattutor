@@ -5,6 +5,17 @@
     flex-direction: row;
 }
 
+@media screen and (max-width: 1000px) {
+    .message-container {
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }
+}
+
 .message {
     padding: 30px;
     padding-left: 20%;
@@ -29,6 +40,33 @@
     margin: 1%;
     overflow-x: hidden !important;
 
+}
+
+@media screen and (max-width: 1000px) {
+    .paper-info {
+        width: 95% !important;
+        min-width: 95% !important;
+        max-width: 95% !important;
+        margin: 1%;
+        overflow-x: hidden !important;
+    }
+
+    .message {
+        padding-left: 1% !important;
+        padding-right: 1% !important;
+        min-width: none !important;
+        width: 98vw !important;
+
+    }
+
+    .message .box {
+        width: 98vw !important;
+    }
+
+    .message-docs {
+        justify-content: center !important;
+        align-items: center !important;
+    }
 }
 
 .message-docs > * {

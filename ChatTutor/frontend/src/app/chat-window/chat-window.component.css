@@ -24,6 +24,13 @@
 
 }
 
+@media screen and (max-width: 800px) {
+    app-dataset-chips {
+        display: none !important;
+    }
+}
+
+
 .chat-messages {
     width: 100%;
     display: flex;
