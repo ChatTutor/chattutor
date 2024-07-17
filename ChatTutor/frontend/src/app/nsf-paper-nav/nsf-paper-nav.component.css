@@ -12,6 +12,27 @@
 .example-sidenav-content {
     flex: 1;
     padding: 16px;
+    position: fixed; 
+    top: 20px; 
+    right: 50px; 
+    z-index: 19000;
+}
+
+@media screen and (max-width: 800px) {
+    .example-sidenav-content {
+        display: flex;
+        flex-direction: column;
+        background-color: white;
+        border: 1px solid rgb(223, 223, 223);
+        border-radius: 5px;
+        flex: 1;
+        padding: 16px;
+        position: fixed; 
+        top: calc( 100vh - 200px ); 
+        right: 2px; 
+        z-index: 19000;
+
+    }
 }
 
 .input-container {

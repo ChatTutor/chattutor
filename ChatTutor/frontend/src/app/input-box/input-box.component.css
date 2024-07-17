@@ -7,12 +7,25 @@
     padding-right: calc(20% + 15px);
 }
 
+@media screen and (max-width: 800px) {
+    .input-container {
+        width: calc(100% - 10px);
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+}
+
 .input-container {
     justify-content: flex-end;
 }
 
 button:disabled{
     color: rgb(136, 136, 136);
+}
+
+
+textarea {
+    z-index: 99 !important;
 }
 
 button.b1:not(:disabled) {
