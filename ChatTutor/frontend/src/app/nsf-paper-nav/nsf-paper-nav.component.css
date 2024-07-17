@@ -20,7 +20,7 @@
 
 @media screen and (max-width: 800px) {
     .example-sidenav-content {
-        display: flex;
+        display: none !important;
         flex-direction: column;
         background-color: white;
         border: 1px solid rgb(223, 223, 223);
