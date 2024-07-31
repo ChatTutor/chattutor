@@ -5,8 +5,13 @@ from nltk.corpus import words
 from nltk.tokenize import word_tokenize
 from nltk.metrics import edit_distance
 
+word_list = None
 # Load the list of words from the NLTK corpus
-word_list = set(words.words())
+try:
+    word_list = set(words.words())
+except:
+    nltk.download("words")
+    word_list = set(words.words())
 
 
 stop_words = [
