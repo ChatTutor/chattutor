@@ -5,13 +5,13 @@ from nltk.corpus import words
 from nltk.tokenize import word_tokenize
 from nltk.metrics import edit_distance
 
-word_list = None
-# Load the list of words from the NLTK corpus
-try:
-    word_list = set(words.words())
-except:
-    nltk.download("words")
-    word_list = set(words.words())
+# word_list = None
+# # Load the list of words from the NLTK corpus
+# try:
+#     word_list = set(words.words())
+# except:
+#     nltk.download("words")
+#     word_list = set(words.words())
 
 
 stop_words = [
@@ -56,14 +56,14 @@ stop_words = [
 stop_words = [s.strip() for s in stop_words]
 
 
-def correct_word(word):
-    # If the word is already correct, return it
-    if word in word_list:
-        return word
+# def correct_word(word):
+#     # If the word is already correct, return it
+#     if word in word_list:
+#         return word
 
-    # Otherwise, find the closest match based on edit distance
-    closest_word = min(word_list, key=lambda w: edit_distance(word, w))
-    return closest_word
+#     # Otherwise, find the closest match based on edit distance
+#     closest_word = min(word_list, key=lambda w: edit_distance(word, w))
+#     return closest_word
 
 
 def longest_common_prefix(strs):
@@ -84,14 +84,14 @@ def longest_common_prefix(strs):
     return prefix
 
 
-def correct_text(text):
-    # Tokenize the text
-    tokens = word_tokenize(text)
-    # Correct each word
-    corrected_tokens = [correct_word(token) for token in tokens]
-    # Join corrected tokens into a string
-    corrected_text = " ".join(corrected_tokens)
-    return corrected_text
+# def correct_text(text):
+#     # Tokenize the text
+#     tokens = word_tokenize(text)
+#     # Correct each word
+#     corrected_tokens = [correct_word(token) for token in tokens]
+#     # Join corrected tokens into a string
+#     corrected_text = " ".join(corrected_tokens)
+#     return corrected_text
 
 
 def to_sql_match(query):
